@@ -156,10 +156,17 @@ class TestFisherMatrix:
         m = FisherMatrix([[2, -1], [-1, 3]])
         v = FisherVector([3, 4])
         assert m / 2 == FisherMatrix([[1, -0.5], [-0.5, 3 / 2.]])
-        # we don't define matrix/vector division
+        # we only define matrix division for same-sized objects
+        # also, due to potential divisions by zero and negative eigenvalues,
+        # we turn off the safety flags
+        FisherTensor.set_unsafe_global()
+        assert m / m == FisherMatrix(np.ones((m.size, m.size)))
+        assert v / v == FisherVector(np.ones(v.size))
+        # the other stuff should raise errors
         with pytest.raises(TypeError):
             2 / m
         with pytest.raises(TypeError):
             v / m
         with pytest.raises(TypeError):
             m / v
+        FisherTensor.set_safe_global()

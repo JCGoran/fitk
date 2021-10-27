@@ -755,7 +755,39 @@ class FisherTensor:
         Returns the result of dividing two Fisher tensors, or a Fisher tensor
         by a number.
         """
-        return NotImplemented
+        # we can only divide two objects if they have the same dimensions and sizes
+        try:
+            value = float(value)
+        except TypeError as err:
+            # maybe it's a FisherTensor
+            if isinstance(value, FisherTensor):
+                # make sure they have the right parameters
+                if set(value.names) != set(self.names):
+                    raise ValueError
+                # make sure the fiducials match
+                fiducial = np.array(
+                    [value.fiducial[self.names.index(x)] for x in value.names]
+                )
+                if not np.allclose(fiducial, self.fiducial):
+                    raise ValueError
+
+                if value.ndim == self.ndim:
+                    # TODO parameter ordering again...
+                    data = self.data / value.data
+                else:
+                    raise TypeError from err
+            else:
+                raise TypeError from err
+        else:
+            data = self.data / value
+
+        return FisherTensor(
+            data,
+            names=self.names,
+            fiducial=self.fiducial,
+            safe=self.safe,
+            ndim=self.ndim,
+        )
 
     def __mul__(
         self,
@@ -896,7 +928,7 @@ class FisherVector(FisherTensor):
         Returns the result of dividing two Fisher vectors, or a Fisher vector
         by a number.
         """
-        return FisherVector(super().__mul__(1. / value))
+        return FisherVector(super().__truediv__(value))
 
     def __mul__(
         self,
@@ -1094,7 +1126,7 @@ class FisherMatrix(FisherTensor):
         Returns the result of dividing two Fisher matrices, or a Fisher matrix
         by a number.
         """
-        return FisherMatrix(super().__mul__(1. / value))
+        return FisherMatrix(super().__truediv__(value))
 
     def __add__(self, value):
         return FisherMatrix(super().__add__(value))

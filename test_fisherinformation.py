@@ -132,7 +132,8 @@ class TestFisherMatrix:
 
     def test_float(self):
         data = FisherMatrix([3])
-        assert np.allclose(float(data), 3)
+        with pytest.raises(TypeError):
+            float(data)
 
     def test_add(self):
         m1 = FisherMatrix([1, 2, 3])

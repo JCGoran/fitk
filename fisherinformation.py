@@ -703,14 +703,6 @@ class FisherTensor:
             raise ValueError
         self._names = value
 
-    def __float__(self):
-        """
-        Convenience function when the Fisher object contains only one element.
-        """
-        if len(self) == 1:
-            return float(self.trace())
-        return NotImplemented
-
     @property
     def names_latex(self):
         # TODO should this be a generic function instead? I.e. there may be

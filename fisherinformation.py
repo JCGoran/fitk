@@ -1308,3 +1308,19 @@ class FisherMatrix(FisherTensor):
                 fmt_values=fmt_values,
             )
         )
+
+    def pprint_fiducial(
+        self,
+        **kwargs,
+    ):
+        """
+        Shortcut for pretty printing the fiducial values.
+        """
+        fmt_values = kwargs.pop('fmt_values', '{:.3f}')
+        return _HTML_Wrapper(
+            _make_html_table(
+                self.fiducial,
+                names=self.names,
+                fmt_values=fmt_values,
+            )
+        )

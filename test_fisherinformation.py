@@ -119,6 +119,11 @@ class TestFisherMatrix:
         with pytest.raises(ValueError):
             data.constraints(sigma=-1)
 
+    def test_sort(self):
+        data = FisherMatrix([1, 2, 3], fiducial=[-1, 0, 1], names=['p3', 'p1', 'p2'])
+        data_new = data.sort()
+        assert data_new == FisherMatrix([3, 1, 2], fiducial=[1, -1, 0])
+
     def test_drop(self):
         data = FisherMatrix([1, 2, 3], fiducial=[-1, 0, 1])
         data_new = data.drop(['p1'])

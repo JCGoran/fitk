@@ -360,6 +360,8 @@ class FisherTensor:
     ):
         """
         Sorts the Fisher tensor by name according to some criterion.
+        Note that each element of names should be sortable, i.e. should have
+        the comparison operators (==, <, <=, >, =>, !=) implemented.
 
         Parameters
         ----------
@@ -369,7 +371,29 @@ class FisherTensor:
         **kwargs
             all of the other keyword arguments for the builtin `sorted`
         """
-        return NotImplemented
+        names = sorted(self.names, **kwargs)
+        index = np.array([names.index(name) for name in self.names])
+        fiducial = self.fiducial[index]
+
+        if self.ndim == 1:
+            data = self.data[index]
+        elif self.ndim == 2:
+            data = self.data[index][:, index]
+        else:
+            raise ValueError('Arrays with ndim > 2 not implemented.')
+
+        if not inplace:
+            return FisherTensor(
+                data,
+                names=names,
+                fiducial=fiducial,
+                safe=self.safe,
+                ndim=self.ndim,
+            )
+
+        self.data = data
+        self.names = names
+        self.fiducial = fiducial
 
     @staticmethod
     def safe_global():
@@ -468,14 +492,30 @@ class FisherTensor:
                 )
 
     def __eq__(self, other):
-        # TODO implement comparison when the parameters are shuffled
+        """
+        The equality operator.
+        Returns True if the operands have the following properties:
+            - are instances of FisherTensor
+            - have same names (potentially shuffled)
+            - have same dimensionality
+            - have same fiducials (potentially shuffled)
+            - have same data (potentially shuffled)
+        """
+        if set(self.names) != set(other.names):
+            return False
+        # index for re-shuffling parameters
+        index = np.array([other.names.index(name) for name in self.names])
         return isinstance(other, FisherTensor) \
         and self.ndim == other.ndim \
         and len(self) == len(other) \
         and set(self.names) == set(other.names) \
         and np.allclose(
-            self.fiducial,
-            np.array([other.fiducial[self.names.index(x)] for x in self.names])
+            self.fiducial[index],
+            other.fiducial
+        ) \
+        and np.allclose(
+            self.data[index],
+            other.data
         )
 
     # TODO finish this

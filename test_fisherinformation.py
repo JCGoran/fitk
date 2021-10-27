@@ -175,3 +175,11 @@ class TestFisherMatrix:
         with pytest.raises(TypeError):
             m / v
         FisherTensor.set_safe_global()
+
+    def test_reparametrize(self):
+        FisherTensor.set_unsafe_global()
+        data = FisherMatrix([[2, -1], [-1, 3]])
+        jacobian = np.array([[3, 2], [6, 7]])
+        data_new = data.reparametrize(jacobian)
+        assert np.allclose(data_new.data, np.array([[18, 45], [45, 135]]))
+        FisherTensor.set_safe_global()

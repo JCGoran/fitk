@@ -890,16 +890,75 @@ class FisherTensor:
             ndim=ndim,
         )
 
-    def change_parameters(
+    def reparametrize(
         self,
-        parameters_new : Iterable[Any],
         jacobian : Iterable[Any],
+        names : Iterable[Any] = None,
+        inplace : bool = False,
     ):
         """
-        Returns a new Fisher matrix with parameters `parameters_new`, which are
-        related to the old ones via a transformation `jacobian`.
+        Returns a new Fisher tensor with parameters `names`, which are
+        related to the old ones via the transformation `jacobian`.
+        Currently limited to rank 26 tensors (we run out of single letters in
+        the English alphabet otherwise).
+        Does not differentiate between covariant/contravariant indices.
+
+        Parameters
+        ----------
+        transformation : array-like
+            the Jacobian of the transformation
+
+        names : array-like, default = None
+            list of new names for the Fisher object. If None, uses the old names.
+
+        inplace : bool, default = False
+            should the operation be done in-place
         """
-        return NotImplemented
+        if self.ndim > 26:
+            raise ValueError
+        char_first = 'A'
+        char_second = 'a'
+        # makes the string 'aA,bB,cC,dD,...'
+        index_transformation = ','.join(
+            [
+                '{}{}'.format(
+                    chr(ord(char_first) + i),
+                    chr(ord(char_second) + i)
+                ) for i in range(self.ndim)
+            ]
+        )
+        # the tensor to be transformed has just dummy indices 'ABCD...'
+        index_dummy = ''.join(
+            ['{}'.format(chr(ord(char_second) + i)) for i in range(self.ndim)]
+        )
+        # the output tensor has indices 'abcd...'
+        index_result = ''.join(
+            ['{}'.format(chr(ord(char_first) + i)) for i in range(self.ndim)]
+        )
+
+        data = np.einsum(
+            f'{index_transformation},{index_dummy}->{index_result}',
+            *([jacobian for i in range(len(self))] + [self.data])
+        )
+
+        if names is not None:
+            names_new = names
+            if len(set(names_new)) != self.names:
+                raise ValueError
+        else:
+            # we don't transform the names
+            names_new = self.names
+
+        if not inplace:
+            return FisherTensor(
+                data,
+                names=names_new,
+                fiducial=self.fiducial,
+                safe=self.safe,
+                ndim=self.ndim,
+            )
+        self.data = data
+        self.names = names_new
 
 
 class FisherVector(FisherTensor):

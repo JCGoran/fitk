@@ -894,7 +894,6 @@ class FisherTensor:
         self,
         jacobian : Iterable[Any],
         names : Iterable[Any] = None,
-        inplace : bool = False,
     ):
         """
         Returns a new Fisher tensor with parameters `names`, which are
@@ -910,9 +909,6 @@ class FisherTensor:
 
         names : array-like, default = None
             list of new names for the Fisher object. If None, uses the old names.
-
-        inplace : bool, default = False
-            should the operation be done in-place
         """
         if self.ndim > 26:
             raise ValueError
@@ -921,24 +917,18 @@ class FisherTensor:
         # makes the string 'aA,bB,cC,dD,...'
         index_transformation = ','.join(
             [
-                '{}{}'.format(
-                    chr(ord(char_first) + i),
-                    chr(ord(char_second) + i)
-                ) for i in range(self.ndim)
+                f'{chr(ord(char_first) + i)}{chr(ord(char_second) + i)}' \
+                for i in range(self.ndim)
             ]
         )
         # the tensor to be transformed has just dummy indices 'ABCD...'
-        index_dummy = ''.join(
-            ['{}'.format(chr(ord(char_second) + i)) for i in range(self.ndim)]
-        )
+        index_dummy = ''.join([chr(ord(char_second) + i) for i in range(self.ndim)])
         # the output tensor has indices 'abcd...'
-        index_result = ''.join(
-            ['{}'.format(chr(ord(char_first) + i)) for i in range(self.ndim)]
-        )
+        index_result = ''.join([chr(ord(char_first) + i) for i in range(self.ndim)])
 
         data = np.einsum(
             f'{index_transformation},{index_dummy}->{index_result}',
-            *([jacobian for i in range(len(self))] + [self.data])
+            *([jacobian] * self.ndim), self.data
         )
 
         if names is not None:
@@ -949,16 +939,13 @@ class FisherTensor:
             # we don't transform the names
             names_new = self.names
 
-        if not inplace:
-            return FisherTensor(
-                data,
-                names=names_new,
-                fiducial=self.fiducial,
-                safe=self.safe,
-                ndim=self.ndim,
-            )
-        self.data = data
-        self.names = names_new
+        return FisherTensor(
+            data,
+            names=names_new,
+            fiducial=self.fiducial,
+            safe=self.safe,
+            ndim=self.ndim,
+        )
 
 
 class FisherVector(FisherTensor):

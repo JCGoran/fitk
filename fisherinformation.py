@@ -548,21 +548,23 @@ class FisherTensor:
 
     def drop(
         self,
-        names : Iterable,
-        inplace : bool = False,
-    ) -> Union[FisherTensor, None]:
+        *names : Any,
+    ) -> FisherTensor:
         """
         Removes parameters from the Fisher object.
         The opposite of `insert`.
 
         Parameters
         ----------
-        names : Iterable
-            an array-like object containing the parameters to drop.
+        names : Any
+            the parameters to drop.
+            If passing a list or a tuple, make sure to unpack it using the
+            asterisk (*).
 
-        inplace : bool, default = False
-            should the change be performed on the existing object or should
-            the function return a new one
+        Examples
+        --------
+        > m = FisherTensor(np.diag(1, 2, 3))
+        > assert m.drop('p1', 'p3') == FisherTensor(np.diag(2), names=['p2']) # returns True
         """
         if not set(names).issubset(set(self.names)):
             raise ValueError
@@ -587,19 +589,14 @@ class FisherTensor:
             if name not in names
         ]
 
-        if not inplace:
-            # TODO how do we cast this to whatever the subclass is?
-            return FisherTensor(
-                data,
-                names=names_new,
-                fiducial=fiducial_new,
-                ndim=self.ndim,
-                safe=self.safe,
-            )
-
-        self._data = data
-        self._names = names_new
-        self._fiducial = fiducial_new
+        # TODO how do we cast this to whatever the subclass is?
+        return FisherTensor(
+            data,
+            names=names_new,
+            fiducial=fiducial_new,
+            ndim=self.ndim,
+            safe=self.safe,
+        )
 
     def trace(
         self,

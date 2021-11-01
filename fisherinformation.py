@@ -551,7 +551,6 @@ class FisherTensor:
     ) -> FisherTensor:
         """
         Removes parameters from the Fisher object.
-        The opposite of `insert`.
 
         Parameters
         ----------

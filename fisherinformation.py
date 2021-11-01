@@ -546,39 +546,6 @@ class FisherTensor:
         """
         return self._size
 
-    # TODO finish this
-    def insert(
-        self,
-        names,
-        values,
-        inplace : bool = False,
-    ):
-        """
-        Inserts parameters into the Fisher object.
-
-        Parameters
-        ----------
-        names
-            the names of the parameters which we want to insert.
-
-        values
-            the values corresponding to the parameters which we want to insert.
-
-        inplace : bool, default = False
-            should the operation be performed in-place or not
-        """
-        # make sure the names are either iterable, or at least hashable
-        try:
-            _ = iter(names)
-        except TypeError as err:
-            try:
-                _ = hash(names)
-            except TypeError as err:
-                raise TypeError('Unhashable type') from err
-            # the name should be unique
-            if names in self.names:
-                raise ValueError
-
     def drop(
         self,
         names : Iterable,

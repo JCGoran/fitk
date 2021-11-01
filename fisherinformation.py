@@ -336,6 +336,7 @@ class FisherTensor:
     ):
         """
         Implements setting of elements in the Fisher tensor.
+        Does not support slicing.
         """
         try:
             _ = iter(keys)
@@ -365,7 +366,7 @@ class FisherTensor:
     @property
     def safe(self):
         """
-        Returns whether the safety flag is turned on or off.
+        Returns whether the safety flag of the object is turned on or off.
         """
         return self._safe
 
@@ -654,9 +655,11 @@ class FisherTensor:
         value,
     ):
         """
-        The setter for the names.
-        Alternatively, one can use the `rename` method to set new parameters.
-        The length of the names must be the same as the one of the original object.
+        The bulk setter for the names.
+        Alternatively, one can use `<instance>[<name>] = <new name>` for
+        setting individual names.
+        The length of the names must be the same as the one of the original
+        object.
         """
         if len(set(value)) != len(self):
             raise ValueError

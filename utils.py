@@ -63,3 +63,6 @@ class CustomSet:
 
     def __eq__(self, other):
         return tuple(self._data.keys()) == other
+
+    def __hash__(self):
+        return hash(self.data)

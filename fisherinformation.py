@@ -706,6 +706,17 @@ class FisherTensor:
             ndim=self.ndim,
         )
 
+    def __sub__(
+        self,
+        value : FisherTensor,
+    ) -> FisherTensor:
+        """
+        Returns the result of subtracting two Fisher tensors.
+        """
+        temp = copy.deepcopy(value)
+        temp.data = -temp.data
+        return self.__add__(temp)
+
     def __truediv__(
         self,
         value : Union[FisherTensor, float, int],

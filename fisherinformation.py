@@ -85,6 +85,36 @@ def _default_names(
     return [f'{character}{_ + 1}' for _ in range(size)]
 
 
+def _is_square(data):
+    """
+    Checks whether a numpy array-able object is square.
+    """
+
+    shape = np.shape(data)
+    return all(shape[0] == _ for _ in shape)
+
+
+def _is_symmetric(data):
+    """
+    Checks whether a numpy array-able object is symmetric.
+    """
+    return np.allclose(np.transpose(data), np.array(data))
+
+
+def _is_positive_semidefinite(data):
+    """
+    Checks whether a numpy array-able object is positive semi-definite.
+    """
+    return np.all(np.linalg.eigvalsh(data) >= 0)
+
+
+def _has_positive_diagonal(data):
+    """
+    Checks whether all of the values on the diagonal are positive.
+    """
+    return np.all(np.diag(data) >= 0)
+
+
 # TODO make custom errors so we don't just raise a ValueError all the time
 def _check_fisher_tensor(
     data,
@@ -101,41 +131,33 @@ def _check_fisher_tensor(
     ndim : int
         the expected number of dimensions of the data
     """
-    if ndim == 1:
-        if np.ndim(data) != 1:
-            raise ValueError(
-                f'Expected 1 dimension, got {np.ndim(data)}.'
-            )
-    elif ndim == 2:
-        # check it's a matrix
-        if np.ndim(data) != 2:
-            raise ValueError(
-                f'Expected 2 dimensions, got {np.ndim(data)}.'
-            )
+    if (ndim == 1 and np.ndim(data) != 1) \
+    or (ndim == 2 and np.ndim(data) != 2):
+        raise ValueError(
+            f'Expected {ndim} dimension(s), got {np.ndim(data)}.'
+        )
 
     # check that it's square
-    if not all(_ == np.shape(data)[0] for _ in np.shape(data)):
+    if not _is_square(data):
         raise ValueError(
             f'Expected a square tensor, got {np.shape(data)}'
         )
 
     # -||- with positive diagonal elements in even dimensions
-    if np.ndim(data) % 2 == 0:
-        for element in np.diag(data):
-            if element <= 0:
-                raise ValueError(
-                    f'Found non-positive diagonal element: {element}'
-                )
+    if np.ndim(data) % 2 == 0 and not _has_positive_diagonal(data):
+        raise ValueError(
+            f'The array {data} has negative elements on the diagonal'
+        )
 
     if ndim == 2:
         # -||- that is also symmetric
-        if not np.allclose(data, np.transpose(data)):
+        if not _is_symmetric(data):
             raise ValueError(
                 f'The matrix {data} must be symmetric'
             )
         # check that it also has non-negative eigenvalues
         # see https://stats.stackexchange.com/a/49961
-        if not np.all(np.linalg.eigvalsh(data) >= 0):
+        if not _is_positive_semidefinite(data):
             raise ValueError(
                 f'The matrix {data} must be positive semi-definite'
             )
@@ -504,6 +526,10 @@ class FisherTensor:
         """
         if self.safe and FisherTensor.safe_global():
             _check_fisher_tensor(value, self.ndim)
+        if len(value) != len(self) \
+        or self.ndim != np.dim(value) \
+        or not _is_square(value):
+            raise ValueError
         self._data = value
 
     def diagonal(self, **kwargs):

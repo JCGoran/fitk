@@ -279,7 +279,23 @@ class FisherTensor:
     ):
         """
         Implements access to elements in the Fisher tensor.
+        Has support for slicing.
         """
+        # the object can be sliced
+        if isinstance(keys, slice):
+            start, stop, step = keys.indices(len(self))
+            indices = (slice(start, stop, step),) * self.ndim
+            data_new = self.data[indices]
+            names_new = self.names[start:stop:step]
+            fiducial_new = self.fiducial[start:stop:step]
+            return FisherTensor(
+                data_new,
+                names=names_new,
+                fiducial=fiducial_new,
+                ndim=self.ndim,
+                safe=self.safe,
+            )
+
         try:
             _ = iter(keys)
         except TypeError as err:

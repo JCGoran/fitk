@@ -146,7 +146,7 @@ class TestFisherMatrix:
 
     def test_drop(self):
         data = FisherMatrix([1, 2, 3], fiducial=[-1, 0, 1])
-        data_new = data.drop(['p1'])
+        data_new = data.drop('p1')
 
         assert np.allclose(data_new.data, np.diag([2, 3]))
         assert data_new.names == ('p2', 'p3')

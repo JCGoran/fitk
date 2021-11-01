@@ -474,34 +474,6 @@ class FisherTensor:
             other.data
         )
 
-    # TODO finish this
-    def reorder(
-        self,
-        other : Union[FisherTensor, Iterable],
-        inplace : bool = False,
-    ):
-        """
-        Reorders the names of the FisherTensor to match the other FisherTensor.
-        Raises a ValueError if the names don't match.
-
-        Parameters
-        ----------
-        other : FisherTensor or Iterable
-            the names of the other FisherTensor (or the Tensor itself)
-
-        inplace : bool, default = False
-            should the operation be done in-place or not
-        """
-        if isinstance(other, FisherTensor):
-            names = other.names
-        else:
-            names = other
-        if set(self.names) != set(names):
-            raise ValueError
-
-        if not inplace:
-            return NotImplemented
-
     @property
     def ndim(self):
         """

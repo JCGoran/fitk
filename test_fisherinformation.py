@@ -71,7 +71,7 @@ class TestFisherMatrix:
         assert data['p1', 'p2'] == 0
         assert data['p2', 'p2'] == 2
         assert data['p3', 'p3'] == 3
-        assert ['p1', 'p2', 'p3'] == data.names
+        assert ('p1', 'p2', 'p3') == data.names
 
         # same type, keys don't exist
         with pytest.raises(ValueError):
@@ -120,16 +120,36 @@ class TestFisherMatrix:
             data.constraints(sigma=-1)
 
     def test_sort(self):
-        data = FisherMatrix([1, 2, 3], fiducial=[-1, 0, 1], names=['p3', 'p1', 'p2'])
-        data_new = data.sort()
-        assert data_new == FisherMatrix([3, 1, 2], fiducial=[1, -1, 0])
+        FisherMatrix.set_unsafe_global()
+        v = FisherVector([5, 6, 7], names=['p3', 'p2', 'p1'])
+        m = FisherMatrix([
+            [11, 12, 13],
+            [21, 22, 23],
+            [31, 32, 33]],
+            fiducial=[-1, 0, 1],
+            names=['p3', 'p1', 'p2']
+        )
+        v_new = v.sort()
+        m_new = m.sort()
+        assert v_new == FisherVector(
+            [7, 6, 5],
+            names=['p1', 'p2', 'p3']
+        )
+        assert m_new == FisherMatrix([
+            [33, 31, 32],
+            [13, 11, 12],
+            [23, 21, 22]],
+            fiducial=[1, -1, 0],
+            names=['p1', 'p2', 'p3']
+        )
+        FisherMatrix.set_safe_global()
 
     def test_drop(self):
         data = FisherMatrix([1, 2, 3], fiducial=[-1, 0, 1])
         data_new = data.drop(['p1'])
 
         assert np.allclose(data_new.data, np.diag([2, 3]))
-        assert data_new.names == ['p2', 'p3']
+        assert data_new.names == ('p2', 'p3')
         assert np.allclose(data_new.fiducial, np.array([0, 1]))
 
         with pytest.raises(ValueError):
@@ -178,8 +198,12 @@ class TestFisherMatrix:
 
     def test_reparametrize(self):
         FisherTensor.set_unsafe_global()
-        data = FisherMatrix([[2, -1], [-1, 3]])
-        jacobian = np.array([[3, 2], [6, 7]])
-        data_new = data.reparametrize(jacobian)
-        assert np.allclose(data_new.data, np.array([[18, 45], [45, 135]]))
+        v = FisherVector([1, 2, 3])
+        m = FisherMatrix([[2, -1], [-1, 3]])
+        jacobian_v = np.array([[3, 2, 4], [8, 3, 7], [1, 9, 2]])
+        jacobian_m = np.array([[3, 2], [6, 7]])
+        v_new = v.reparametrize(jacobian_v)
+        m_new = m.reparametrize(jacobian_m)
+        assert np.allclose(v_new.data, np.array([19, 35, 25]))
+        assert np.allclose(m_new.data, np.array([[18, 45], [45, 135]]))
         FisherTensor.set_safe_global()

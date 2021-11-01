@@ -11,6 +11,8 @@ from typing import NamedTuple, Sequence, Mapping, Iterable, Optional, Callable, 
 
 import numpy as np
 
+from utils import CustomSet
+
 # TODO implement custom errors
 # TODO implement plotting of contours, Fisher vectors and Fisher matrices
 # TODO implement plotting of bananas (a la DALI)
@@ -236,10 +238,10 @@ class FisherTensor:
 
         # setting the names
         if _isdict:
-            self._names = list(data.keys())
+            self._names = CustomSet(list(data.keys()))
         else:
             if names is None:
-                self._names = _default_names(self._size, character)
+                self._names = CustomSet(_default_names(self._size, character))
             else:
                 try:
                     _ = iter(names)
@@ -253,7 +255,7 @@ class FisherTensor:
                 # this will catch anything that isn't hashable
                 if len(set(names)) != len(names):
                     raise ValueError('The parameter names must be unique.')
-                self._names = list(names)
+                self._names = CustomSet(names)
 
         # setting the fiducial
         if fiducial is None:

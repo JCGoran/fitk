@@ -438,68 +438,6 @@ class FisherTensor:
         """
         self._safe = True
 
-    def rename(
-        self,
-        parameters : Union[Iterable, dict, Callable],
-        inplace : bool = False,
-    ) -> Union[FisherTensor, None]:
-        """
-        Renames existing parameters.
-
-        Parameters
-        ----------
-        parameters : array-like, or dict, or function
-            how the new parameters are mapped to the old ones.
-
-        inplace : bool, default = False
-            should the function be called in-place.
-            Returns None if `inplace=True`.
-        """
-
-        if isinstance(parameters, dict):
-            for key in parameters.keys():
-                if key not in self._names:
-                    raise ValueError
-            if len(set(parameters.values())) != len(self):
-                raise ValueError
-            if inplace:
-                for key in parameters.keys():
-                    self._names[self._names.index(key)] = parameters[key]
-            else:
-                return FisherTensor(
-                    self._data,
-                    names=[self._names[self._names.index(key)] for key in parameters.keys()],
-                    fiducial=self._fiducial,
-                )
-
-        elif callable(parameters):
-            try:
-                temp_names = [parameters(name) for name in self._names]
-            except:
-                raise ValueError
-            if len(set(temp_names)) != len(self):
-                raise ValueError
-            if inplace:
-                self._names = temp_names
-            else:
-                return FisherTensor(
-                    self._data,
-                    names=temp_names,
-                    fiducial=self._fiducial,
-                )
-
-        else:
-            if len(set(parameters)) != len(self):
-                raise ValueError
-            if inplace:
-                self._names = parameters
-            else:
-                return FisherTensor(
-                    self._data,
-                    names=parameters,
-                    fiducial=self._fiducial,
-                )
-
     def __eq__(self, other):
         """
         The equality operator.

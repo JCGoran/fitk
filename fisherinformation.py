@@ -174,7 +174,7 @@ class FisherTensor:
         names : array-like, default = None
             The names of the parameters.
             If not specified (a None-like object), default to `p1, ..., pn`.
-            Must be a hashable type
+            Must be a hashable type that's not an int
 
         fiducial : array-like, default = None
             The fiducial values of the parameters. If not specified (a
@@ -238,7 +238,12 @@ class FisherTensor:
 
         # setting the names
         if _isdict:
-            self._names = CustomSet(list(data.keys()))
+            _names = list(data.keys())
+            # validation that they're not integers or floats
+            for name in _names:
+                if hasattr(name, '__abs__'):
+                    raise ValueError
+            self._names = CustomSet(_names)
         else:
             if names is None:
                 self._names = CustomSet(_default_names(self._size, character))
@@ -255,6 +260,9 @@ class FisherTensor:
                 # this will catch anything that isn't hashable
                 if len(set(names)) != len(names):
                     raise ValueError('The parameter names must be unique.')
+                for name in names:
+                    if hasattr(name, '__abs__'):
+                        raise ValueError
                 self._names = CustomSet(names)
 
         # setting the fiducial

@@ -373,7 +373,6 @@ class FisherTensor:
 
     def sort(
         self,
-        inplace = False,
         **kwargs
     ):
         """
@@ -383,35 +382,27 @@ class FisherTensor:
 
         Parameters
         ----------
-        inplace : bool, default = False
-            should the sorting be done in-place or should a copy be returned.
-
         **kwargs
             all of the other keyword arguments for the builtin `sorted`
         """
+        data = self.data
         names = sorted(self.names, **kwargs)
         index = np.array([names.index(name) for name in self.names])
         fiducial = self.fiducial[index]
 
-        if self.ndim == 1:
-            data = self.data[index]
-        elif self.ndim == 2:
-            data = self.data[index][:, index]
-        else:
-            raise ValueError('Arrays with ndim > 2 not implemented.')
-
-        if not inplace:
-            return FisherTensor(
-                data,
-                names=names,
-                fiducial=fiducial,
-                safe=self.safe,
-                ndim=self.ndim,
+        for dim in range(self.ndim):
+            data = np.swapaxes(
+                np.swapaxes(data, 0, dim)[index],
+                dim, 0
             )
 
-        self.data = data
-        self.names = names
-        self.fiducial = fiducial
+        return FisherTensor(
+            data,
+            names=names,
+            fiducial=fiducial,
+            safe=self.safe,
+            ndim=self.ndim,
+        )
 
     @staticmethod
     def safe_global():

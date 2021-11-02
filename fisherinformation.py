@@ -620,24 +620,12 @@ class FisherTensor:
         """
         The setter for the fiducial values of the FisherTensor.
         """
-        if isinstance(value, dict):
-            # check we don't have any stray parameters
-            if not all(key in self.names for key in value.keys()):
-                raise ValueError
-            # the values must be float-able
-            try:
-                [float(_) for _ in value.values()]
-            except TypeError as err:
-                raise TypeError from err
-            for key in value.keys():
-                self.fiducial[self.names.index(key)] = float(value[key])
-        else:
-            if len(value) != len(self):
-                raise ValueError
-            try:
-                self._fiducial = np.array([float(_) for _ in value])
-            except TypeError as err:
-                raise TypeError from err
+        if len(value) != len(self):
+            raise ValueError
+        try:
+            self._fiducial = np.array([float(_) for _ in value])
+        except TypeError as err:
+            raise TypeError from err
 
     @property
     def names(self):
@@ -977,7 +965,7 @@ class FisherVector(FisherTensor):
 
         body = '<tbody>'
         for index, name in enumerate(self._names):
-            body += f'<tr><th>{name}</th>' + '<td>{:.3f}</td>'.format(self.data[index]) + '</tr>'
+            body += f'<tr><th>{name}</th><td>{self.data[index]:.3f}</td></tr>'
         body += '</tbody>'
 
         return f'<table>{body}</table>'

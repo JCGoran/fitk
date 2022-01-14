@@ -1,24 +1,83 @@
 """
-Library for performing operations on Fisher-like objects (vectors, matrices, tensors).
+Library for performing operations on Fisher objects.
 """
 
+# needed for compatibility with Python 3.7
 from __future__ import annotations
 
-from itertools import permutations
 import copy
-from typing import NamedTuple, Sequence, Mapping, Iterable, Optional, Callable, \
-    Union, List, Any, Dict, Set, Tuple
+
+from itertools import \
+    permutations, \
+    product
+
+from typing import \
+    AnyStr, \
+    NamedTuple, \
+    Sequence, \
+    Mapping, \
+    Iterable, \
+    Optional, \
+    Callable, \
+    Union, \
+    List, \
+    Any, \
+    Dict, \
+    Set, \
+    SupportsFloat, \
+    Tuple
+
 
 import numpy as np
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+from matplotlib.patheffects import Stroke, Normal
+from matplotlib import colors
+import pandas as pd
+import scipy
 
-from utils import CustomSet
 
-# TODO implement custom errors
-# TODO implement plotting of contours, Fisher vectors and Fisher matrices
-# TODO implement plotting of bananas (a la DALI)
-# TODO implement an index method which can access elements by index
-# TODO implement saving of objects to disk. Decide how this should be done (in same file, in another file, etc.)
-# TODO implement arbitrary metadata for the FisherTensor
+
+def float_to_latex(value : float):
+    """
+    Format a float into a useful LaTeX representation.
+    """
+    float_str = f"{value:.2g}"
+    if "e" in float_str:
+        base, exponent = float_str.split("e")
+        return f"{base} \\times 10^{{{int(exponent)}}}"
+
+    return float_str
+
+
+
+class ParameterNotFoundError(Exception):
+    """
+    Error raised when a parameter is not found in the Fisher object.
+    """
+    def __init__(
+        self,
+        name : AnyStr,
+        names : Iterable[AnyStr],
+    ):
+        self.message = f'Parameter \'{name}\' not found in array {names}'
+        super().__init__(self.message)
+
+
+
+class MismatchingSizeError(Exception):
+    """
+    Error for handling a list of arrays that have mismatching sizes.
+    """
+    def __init__(
+        self,
+        *args,
+    ):
+        sizes = [len(arg) for arg in args]
+        self.message = f'Mismatching lengths: {", ".join(sizes)}'
+        super().__init__(self.message)
+
+
 
 class _HTML_Wrapper:
     """
@@ -28,6 +87,7 @@ class _HTML_Wrapper:
         self._string = string
     def _repr_html_(self):
         return self._string
+
 
 
 def _make_html_table(
@@ -73,6 +133,7 @@ def _make_html_table(
     return f'<table>{header}{body}</table>'
 
 
+
 def _default_names(
     size : int,
     character : str = 'p',
@@ -82,230 +143,143 @@ def _default_names(
     """
     if size < 0:
         raise ValueError
-    return [f'{character}{_ + 1}' for _ in range(size)]
+    return np.array([f'{character}{_ + 1}' for _ in range(size)])
 
 
-def _is_square(data):
+
+def _is_square(values):
     """
     Checks whether a numpy array-able object is square.
     """
 
-    shape = np.shape(data)
+    shape = np.shape(values)
     return all(shape[0] == _ for _ in shape)
 
 
-def _is_symmetric(data):
+
+def _is_symmetric(values):
     """
     Checks whether a numpy array-able object is symmetric.
     """
-    return np.allclose(np.transpose(data), np.array(data))
+    return np.allclose(
+        np.transpose(values),
+        values
+    )
 
 
-def _is_positive_semidefinite(data):
+
+def _is_positive_semidefinite(values):
     """
     Checks whether a numpy array-able object is positive semi-definite.
     """
-    return np.all(np.linalg.eigvalsh(data) >= 0)
+    return np.all(np.linalg.eigvalsh(values) >= 0)
 
 
-def _has_positive_diagonal(data):
+
+def _has_positive_diagonal(values):
     """
     Checks whether all of the values on the diagonal are positive.
     """
-    return np.all(np.diag(data) >= 0)
+    return np.all(np.diag(values) >= 0)
 
 
-# TODO make custom errors so we don't just raise a ValueError all the time
-def _check_fisher_tensor(
-    data,
-    ndim : int,
-):
+
+class FisherMatrix:
     """
-    Checks if an object is a valid Fisher tensor.
-
-    Parameters
-    ----------
-    data : array-like
-        the data we wish to validate
-
-    ndim : int
-        the expected number of dimensions of the data
+    Class for handling Fisher objects.
     """
-    if (ndim == 1 and np.ndim(data) != 1) \
-    or (ndim == 2 and np.ndim(data) != 2):
-        raise ValueError(
-            f'Expected {ndim} dimension(s), got {np.ndim(data)}.'
-        )
-
-    # check that it's square
-    if not _is_square(data):
-        raise ValueError(
-            f'Expected a square tensor, got {np.shape(data)}'
-        )
-
-    # -||- with positive diagonal elements in even dimensions
-    if np.ndim(data) % 2 == 0 and not _has_positive_diagonal(data):
-        raise ValueError(
-            f'The array {data} has negative elements on the diagonal'
-        )
-
-    if ndim == 2:
-        # -||- that is also symmetric
-        if not _is_symmetric(data):
-            raise ValueError(
-                f'The matrix {data} must be symmetric'
-            )
-        # check that it also has non-negative eigenvalues
-        # see https://stats.stackexchange.com/a/49961
-        if not _is_positive_semidefinite(data):
-            raise ValueError(
-                f'The matrix {data} must be positive semi-definite'
-            )
-
-
-class FisherTensor:
-    """
-    Class for handling arbitrary tensor data with names.
-    """
-
-    # global safety flag
-    _safe_global = True
 
     def __init__(
         self,
-        data,
-        names = None,
-        fiducial = None,
-        ndim : int = None,
-        character : str = 'p',
-        safe : bool = True,
-        **kwargs,
+        values : np.array,
+        names : Optional[Iterable[AnyStr]] = None,
+        names_latex : Optional[AnyStr] = None,
+        fiducial : Optional[Iterable[float]] = None,
     ):
         """
-        Constructor for Fisher tensor.
+        Constructor for Fisher object.
 
         Parameters
         ----------
-        data : array-like or string (path to file) or dict or FisherTensor
-            The data of the Fisher tensor.
-            If it's a string, accepts the same keyword arguments as numpy.loadtxt.
-            If it's a dict, it creates a diagonal tensor, and the `names`
-            argument is ignored.
-            If it's array-like, it attempts to convert it to a numpy array.
+        values : array-like
+            The values of the Fisher object.
 
-        names : array-like, default = None
+        names : array-like iterable of `str`, default = None
             The names of the parameters.
-            If not specified (a None-like object), default to `p1, ..., pn`.
-            Must be a hashable type that's not an int
+            If not specified, defaults to `p1, ..., pn`.
 
-        fiducial : array-like, default = None
-            The fiducial values of the parameters. If not specified (a
-            None-like object), default to 0 for all parameters.
+        names_latex : array-like iterable of `str`, default = None
+            The LaTeX names of the parameters.
+            If not specified, defaults to `names`.
 
-        ndim : int, default = None
-            The expected dimensionality of the Fisher tensor.
-
-        character : str, default = 'p'
-            The name of the default parameters.
-
-        safe : bool, default = True
-            Whether an error should be raised if the data format is invalid.
+        fiducial : array-like iterable of `float`, default = None
+            The fiducial values of the parameters. If not specified, default to
+            0 for all parameters.
         """
 
-        # short circuiting if we're just typecasting
-        if isinstance(data, FisherTensor):
-            other = FisherTensor(
-                data.data,
-                names=data.names,
-                fiducial=data.fiducial,
-                safe=data.safe,
-                ndim=data.ndim,
-            )
-            self._data = copy.deepcopy(other.data)
-            self._size = copy.deepcopy(other.size)
-            self._names = copy.deepcopy(other.names)
-            self._fiducial = copy.deepcopy(other.fiducial)
-            self._safe = copy.deepcopy(other.safe)
-            self._ndim = copy.deepcopy(other.ndim)
-            return
+        # try to treat it as an array-like object
+        self._values = np.array(values)
 
-        self._safe = safe
-
-        _isdict = False
-
-        if isinstance(data, str):
-            self._data = np.loadtxt(data, **kwargs)
-        # NOTE if we pass a dict, the Fisher object will always be diagonal,
-        # and the `names` parameter passed is not necessary
-        elif isinstance(data, dict):
-            if ndim == 2:
-                self._data = np.diag(list(data.values()))
-            else:
-                self._data = np.array(list(data.values()))
-            _isdict = True
-        else:
-            # try to treat it as an array-like object
-            self._data = np.array(data)
-
-        # special case: we pass a flat array to a FisherMatrix constructor
-        if np.ndim(self._data) == 1 and ndim == 2:
-            self._data = np.diag(np.array(self._data))
-
-        # check that the data is sane
-        if ndim and self._safe and FisherTensor._safe_global:
-            _check_fisher_tensor(self._data, ndim)
-
-        # we can access the element if the above check succeeded
-        self._size = np.shape(self._data)[0]
-
-        # setting the names
-        if _isdict:
-            _names = list(data.keys())
-            # validation that they're not integers or floats
-            for name in _names:
-                if hasattr(name, '__abs__'):
-                    raise ValueError
-            self._names = CustomSet(_names)
-        else:
-            if names is None:
-                self._names = CustomSet(_default_names(self._size, character))
-            else:
-                try:
-                    _ = iter(names)
-                except TypeError as err:
-                    raise TypeError from err
-                # special case: we can't pass a string-like object
-                if hasattr(names, 'split'):
-                    raise TypeError(f'Invalid type {type(names)} for argument `names`.')
-                if len(names) != self._size:
-                    raise ValueError
-                # this will catch anything that isn't hashable
-                if len(set(names)) != len(names):
-                    raise ValueError('The parameter names must be unique.')
-                for name in names:
-                    if hasattr(name, '__abs__'):
-                        raise ValueError
-                self._names = CustomSet(names)
+        self._size = np.shape(self._values)[0]
+        self._ndim = np.ndim(self._values)
 
         # setting the fiducial
         if fiducial is None:
             self._fiducial = np.zeros(self._size)
-        else:
-            try:
-                _ = iter(fiducial)
-            except TypeError as err:
-                raise TypeError('The fiducial must be iterable') from err
-            if len(fiducial) != self._size:
-                raise ValueError('Fiducial length different from size of input array')
-            # fiducials must be castable to numbers
-            try:
-                self._fiducial = np.array([float(_) for _ in fiducial])
-            except TypeError as err:
-                raise TypeError('Unable to convert fiducials to float type') from err
+
+        # setting the names
+        if names is None:
+            self._names = _default_names(self._size)
+
+        # setting the pretty names (LaTeX)
+        if names_latex is None:
+            self._names_latex = self._names
+
+        # check sizes of inputs
+        if not all(
+            len(_) == self._size \
+            for _ in (self._names, self._fiducial, self._names_latex)
+        ):
+            raise MismatchingSizeError(
+                self._names,
+                self._size,
+                self._fiducial,
+                self._names_latex,
+            )
+
+        # internal representation
+        self._df = pd.DataFrame(
+            self._values,
+            index=self._names_latex,
+            columns=self._names_latex,
+        )
+
+
+    def _repr_html_(self):
+        """
+        Representation of the Fisher object suitable for viewing in Jupyter
+        notebook environments.
+        """
+        return self._df._repr_html_()
+
+
+    def __repr__(self):
+        """
+        Representation of the Fisher object for non-Jupyter interfaces.
+        """
+        return self._df.__repr__()
+
+
+    def __str__(self):
+        """
+        String representation of the Fisher object.
+        """
+        return self._df.__str__()
+
 
     def __getitem__(
         self,
-        keys,
+        keys : Union[Tuple[AnyStr], slice],
     ):
         """
         Implements access to elements in the Fisher tensor.
@@ -315,15 +289,17 @@ class FisherTensor:
         if isinstance(keys, slice):
             start, stop, step = keys.indices(len(self))
             indices = (slice(start, stop, step),) * self.ndim
-            data_new = self.data[indices]
-            names_new = self.names[start:stop:step]
-            fiducial_new = self.fiducial[start:stop:step]
-            return FisherTensor(
+            sl = slice(start, stop, step)
+            data_new = self.values[indices]
+            names_new = self.names[sl]
+            names_latex_new = self.names_latex[sl]
+            fiducial_new = self.fiducial[sl]
+
+            return FisherMatrix(
                 data_new,
                 names=names_new,
+                names_latex=names_latex_new,
                 fiducial=fiducial_new,
-                ndim=self.ndim,
-                safe=self.safe,
             )
 
         try:
@@ -334,30 +310,34 @@ class FisherTensor:
         # the keys can be a tuple
         if isinstance(keys, tuple):
             if len(keys) != self.ndim:
-                raise ValueError(f'Got length {len(keys)}')
+                raise ValueError(
+                    f'Got length {len(keys)}'
+                )
 
+            # error checking
             for key in keys:
-                if key not in self._names:
-                    raise ValueError(
-                        f'Parameter {key} not found'
-                    )
+                if key not in self.names:
+                    raise ParameterNotFoundError(key, self.names)
 
-            indices = tuple(self._names.index(key) for key in keys)
+            indices = tuple(np.where(self.names == key) for key in keys)
 
         # otherwise, it's some generic object
         else:
-            if keys not in self._names:
-                raise ValueError(f'Parameter {keys} not found')
-            indices = (self._names.index(keys),)
-        return self._data[indices]
+            if keys not in self.names:
+                raise ParameterNotFoundError(key, self.names)
+
+            indices = (np.where(self.names == keys),)
+
+        return self._values[indices]
+
 
     def __setitem__(
         self,
-        keys,
-        value,
+        keys : Tuple[AnyStr],
+        value : SupportsFloat,
     ):
         """
-        Implements setting of elements in the Fisher tensor.
+        Implements setting of elements in the Fisher object.
         Does not support slicing.
         """
         try:
@@ -369,9 +349,9 @@ class FisherTensor:
             raise ValueError(f'Got length {len(keys)}')
 
         # automatically raises a value error
-        indices = tuple(self._names.index(key) for key in keys)
+        indices = tuple(np.where(self.names == key) for key in keys)
 
-        temp_data = copy.deepcopy(self._data)
+        temp_data = copy.deepcopy(self._values)
 
         if not all(index == indices[0] for index in indices):
             for permutation in list(permutations(indices)):
@@ -380,110 +360,150 @@ class FisherTensor:
         else:
             temp_data[indices] = value
 
-        if self.safe and FisherTensor.safe_global():
-            _check_fisher_tensor(temp_data, np.ndim(temp_data))
+        self._values = copy.deepcopy(temp_data)
 
-        self._data = copy.deepcopy(temp_data)
-
-    @property
-    def safe(self):
-        """
-        Returns whether the safety flag of the object is turned on or off.
-        """
-        return self._safe
 
     def is_valid(self):
         """
-        Checks whether the data in the object is a valid Fisher tensor.
+        Checks whether the values make a valid Fisher matrix.
         """
-        try:
-            _check_fisher_tensor(self.data, self.ndim)
-            return True
-        except ValueError:
-            return False
+        return \
+            _is_symmetric(self.values) and \
+            _is_positive_semidefinite(self.values)
+
+
+    def imshow(
+        self,
+        colorbar : bool = False,
+        show_values : bool = False,
+        normalized : bool = False,
+        colorbar_space : float = 0.02,
+        colorbar_width : float = 0.05,
+        orientation : str = 'vertical',
+        rc : dict = {},
+        **kwargs,
+    ):
+        """
+        Returns the image of the Fisher object.
+        """
+        # TODO should only work with 2D data.
+        with plt.rc_context(rc):
+            fig, ax = plt.subplots(figsize=(self.size, self.size))
+            img = ax.imshow(
+                self.values,
+                interpolation='none',
+                norm=colors.CenteredNorm(),
+                **kwargs,
+            )
+
+            ax.set_xticks(np.arange(self.size))
+            ax.set_yticks(np.arange(self.size))
+            ax.set_xticklabels(self.names_latex)
+            ax.set_yticklabels(self.names_latex)
+
+            if colorbar:
+                allowed_orientations = ('vertical', 'horizontal')
+                if orientation not in allowed_orientations:
+                    raise ValueError(
+                        f'\'{orientation}\' is not one of: {allowed_orientations}'
+                    )
+
+                if orientation == 'vertical':
+                    cax = fig.add_axes(
+                        [ax.get_position().x1 + colorbar_space,
+                        ax.get_position().y0,
+                        colorbar_width,
+                        ax.get_position().height]
+                    )
+                    fig.colorbar(img, cax=cax)
+                    cax.set_yticklabels(
+                        [f'${float_to_latex(_)}$' for _ in cax.get_yticks()]
+                    )
+                else:
+                    cax = fig.add_axes(
+                        [ax.get_position().x0,
+                        ax.get_position().y1 + colorbar_space,
+                        ax.get_position().width,
+                        colorbar_width]
+                    )
+                    fig.colorbar(img, cax=cax, orientation='horizontal')
+                    cax.xaxis.set_ticks_position('top')
+                    cax.set_xticklabels(
+                        [f'${float_to_latex(_)}$' for _ in cax.get_xticks()]
+                    )
+                fig.colorbar(img)
+
+            # whether or not we want to display the actual values inside the
+            # matrix
+            if show_values:
+                mid_coords = np.arange(self.size)
+                for index1, index2 in product(range(self.size), range(self.size)):
+                    x = mid_coords[index1]
+                    y = mid_coords[index2]
+                    value = self.values[index1, index2] / \
+                        np.sqrt(
+                            self.values[index1, index1] \
+                           *self.values[index2, index2]
+                        ) if normalized \
+                        else self.values[index1, index2]
+                    text = ax.text(
+                            x, y, f'${float_to_latex(value)}$',
+                            ha='center', va='center', color='white',
+                    )
+                    text.set_path_effects(
+                        [Stroke(linewidth=1, foreground="black"), Normal()]
+                    )
+
+        return fig
+
 
     def sort(
         self,
-        **kwargs
+        **kwargs,
     ):
         """
-        Sorts the Fisher tensor by name according to some criterion.
-        Note that each element of names should be sortable, i.e. should have
-        the comparison operators (==, <, <=, >, =>, !=) implemented.
+        Sorts the Fisher object by name according to some criterion.
 
         Parameters
         ----------
         **kwargs
-            all of the other keyword arguments for the builtin `sorted`
+            all of the other keyword arguments for the Python builtin `sorted`
         """
-        data = self.data
+        values = self.values
         names = sorted(self.names, **kwargs)
-        index = np.array([names.index(name) for name in self.names])
+        index = np.array([np.where(names == name) for name in self.names])
+        names_latex = self.names_latex[index]
         fiducial = self.fiducial[index]
 
         for dim in range(self.ndim):
-            data = np.swapaxes(
-                np.swapaxes(data, 0, dim)[index],
+            values = np.swapaxes(
+                np.swapaxes(values, 0, dim)[index],
                 dim, 0
             )
 
-        return FisherTensor(
-            data,
+        return FisherMatrix(
+            values,
             names=names,
+            names_latex=names_latex,
             fiducial=fiducial,
-            safe=self.safe,
-            ndim=self.ndim,
         )
 
-    @staticmethod
-    def safe_global():
-        """
-        Returns the state of the global safety flag.
-        """
-        return FisherTensor._safe_global
-
-    @staticmethod
-    def set_unsafe_global():
-        """
-        Sets the `safe_global` parameter to False.
-        """
-        FisherTensor._safe_global = False
-
-    @staticmethod
-    def set_safe_global():
-        """
-        Sets the `safe_global` parameter to True.
-        """
-        FisherTensor._safe_global = True
-
-    def set_unsafe(self):
-        """
-        Causes the object not to perform checks if we input invalid data
-        (__setattr__, @property, etc.)
-        """
-        self._safe = False
-
-    def set_safe(self):
-        """
-        The inverse of `set_safe`.
-        """
-        self._safe = True
 
     def __eq__(self, other):
         """
         The equality operator.
         Returns True if the operands have the following properties:
-            - are instances of FisherTensor
+            - are instances of FisherMatrix
             - have same names (potentially shuffled)
             - have same dimensionality
             - have same fiducials (potentially shuffled)
-            - have same data (potentially shuffled)
+            - have same values (potentially shuffled)
         """
         if set(self.names) != set(other.names):
             return False
         # index for re-shuffling parameters
-        index = np.array([other.names.index(name) for name in self.names])
-        return isinstance(other, FisherTensor) \
+        index = np.array([np.where(other.names == name) for name in self.names])
+        return isinstance(other, FisherMatrix) \
         and self.ndim == other.ndim \
         and len(self) == len(other) \
         and set(self.names) == set(other.names) \
@@ -492,125 +512,260 @@ class FisherTensor:
             other.fiducial
         ) \
         and np.allclose(
-            self.data[index],
-            other.data
+            self.values[index],
+            other.values
         )
+
 
     @property
     def ndim(self):
         """
-        Returns the number of dimensions of the tensor.
+        Returns the number of dimensions of the Fisher object (for now always 2).
         """
-        return np.ndim(self._data)
+        return np.ndim(self._values)
+
 
     def __len__(self):
         """
-        Returns the number of parameters in the Fisher tensor.
+        Returns the number of parameters in the Fisher object.
         """
         return self._size
 
-    @property
-    def data(self):
-        """
-        Returns the object as a numpy array.
-        """
-        return self._data
 
-    @data.setter
-    def data(
+    @property
+    def values(self):
+        """
+        Returns the values in the Fisher object as a numpy array.
+        """
+        return self._values
+
+
+    @values.setter
+    def values(
         self,
         value,
     ):
         """
-        Setter for the values of the FisherTensor.
+        Setter for the values of the Fisher object.
         """
-        if self.safe and FisherTensor.safe_global():
-            _check_fisher_tensor(value, self.ndim)
-        if len(value) != len(self) \
-        or self.ndim != np.dim(value) \
-        or not _is_square(value):
-            raise ValueError
-        self._data = value
+        if self.ndim != np.dim(value):
+            raise ValueError(
+                f'The dimensionality of the matrices do not match: {self.ndim} and {np.ndim(value)}'
+            )
+        if len(self) != len(value):
+            raise MismatchingSizeError(self, value)
+
+        if not _is_square(value):
+            raise ValueError(
+                f'{value} is not a square object'
+            )
+
+        self._values = value
+
+
+    def is_diagonal(self):
+        """
+        Checks whether the Fisher matrix is diagonal.
+        """
+        return np.all(self.values == np.diag(np.diagonal(self.values)))
+
 
     def diagonal(self, **kwargs):
         """
-        Returns the diagonal elements of the Fisher tensor as a numpy array.
+        Returns the diagonal elements of the Fisher object as a numpy array.
         """
-        return np.diag(self._data, **kwargs)
+        return np.diag(self.values, **kwargs)
+
 
     @property
     def size(self):
         """
-        Returns the number of parameters in the Fisher tensor.
+        Returns the number of parameters in the Fisher object (same as
+        `len(object)`).
         """
         return self._size
 
+
     def drop(
         self,
-        *names : Any,
-    ) -> FisherTensor:
+        *names : AnyStr,
+    ) -> FisherMatrix:
         """
         Removes parameters from the Fisher object.
 
         Parameters
         ----------
-        names : Any
-            the parameters to drop.
+        names : string-like
+            the names of the parameters to drop.
             If passing a list or a tuple, make sure to unpack it using the
             asterisk (*).
 
         Examples
         --------
-        > m = FisherTensor(np.diag(1, 2, 3))
-        > assert m.drop('p1', 'p3') == FisherTensor(np.diag(2), names=['p2']) # returns True
+        > m = FisherMatrix(np.diag(1, 2, 3))
+        > assert m.drop('p1', 'p3') == FisherMatrix(np.diag(2), names=['p2'])
+        True
         """
         if not set(names).issubset(set(self.names)):
-            raise ValueError
+            raise ValueError(
+                f'The names to drop ({names}) is not a strict subset ' \
+                f'of the parameters in the Fisher object ({self.names})'
+            )
+
+        # TODO should we remove this?
         if set(names) == set(self.names):
             raise ValueError('Unable to remove all parameters')
 
-        data = self.data
+        values = self.values
+
         for index in range(self.ndim):
-            data = np.delete(
-                data,
-                [self.names.index(name) for name in names],
+            values = np.delete(
+                values,
+                [np.where(self.names == name) for name in names],
                 axis=index,
             )
-        fiducial_new = np.array(
+
+        fiducial = np.array(
             [
-                self.fiducial[self.names.index(name)] for name in self.names \
+                self.fiducial[np.where(self.names == name)] for name in self.names \
                 if name not in names
             ]
         )
-        names_new = [
-            self.names[self.names.index(name)] for name in self.names \
-            if name not in names
-        ]
 
-        # TODO how do we cast this to whatever the subclass is?
-        return FisherTensor(
-            data,
-            names=names_new,
-            fiducial=fiducial_new,
-            ndim=self.ndim,
-            safe=self.safe,
+        names = np.array([
+            self.names[np.where(self.names == name)] for name in self.names \
+            if name not in names
+        ])
+
+        names_latex = np.array([
+            self.names_latex[np.where(self.names == name)] for name in self.names \
+            if name not in names
+        ])
+
+        return FisherMatrix(
+            values,
+            names=names,
+            names_latex=names_latex,
+            fiducial=fiducial,
         )
+
 
     def trace(
         self,
         **kwargs,
     ):
         """
-        Returns the trace of the Fisher tensor as a numpy array.
+        Returns the trace of the Fisher object as a numpy array.
         """
-        return np.trace(self._data, **kwargs)
+        return np.trace(self.values, **kwargs)
+
+
+    def eigenvalues(self):
+        """
+        Returns the eigenvalues of the Fisher object as a numpy array.
+        """
+        return np.linalg.eigvalsh(self.values)
+
+
+    def eigenvectors(self):
+        """
+        Returns the right eigenvectors of the Fisher object as a numpy array.
+        """
+        return np.linalg.eigh(self.values)[-1]
+
+
+    def inverse(self):
+        """
+        Returns the inverse of the Fisher matrix.
+        """
+        # inverse satisfies properties of Fisher matrix, see:
+        # https://math.stackexchange.com/a/26200
+        return FisherMatrix(
+            np.linalg.inv(self.values),
+            names=self.names,
+            names_latex=self.names_latex,
+            fiducial=self.fiducial,
+        )
+
+
+    def determinant(self):
+        """
+        Returns the determinant of the matrix.
+        """
+        return np.linalg.det(self.values)
+
+
+    def constraints(
+        self,
+        name : Optional[AnyStr] = None,
+        marginalized : bool = True,
+        sigma : Optional[SupportsFloat] = None,
+        p : Optional[SupportsFloat] = None,
+    ):
+        """
+        Returns the constraints on a parameter as a float, or on all of them
+        as a numpy array if `name` is not specified.
+
+        Parameters
+        ----------
+        name : Optional[AnyStr] = None
+            the name of the parameter for which we we want the constraints
+
+        marginalized : bool, default = True
+            whether we want the marginalized or the unmarginalized
+            constraints.
+
+        sigma : Optional[SupportsFloat], default = None
+            how many sigmas away.
+
+        p : Optional[SupportsFloat], default = None
+            the confidence interval (p-value)
+
+        Notes
+        -----
+        The user should specify either `sigma` or `p`, but not both
+        simultaneously.
+        If unspecified, defaults to `sigma=1`.
+        """
+        if sigma is None and p is None:
+            sigma = 1
+        elif p is not None:
+            if not 0 < p < 1:
+                raise ValueError(
+                    f'The value {p} is outside of the allowed range (0, 1)'
+                )
+            sigma = norm.ppf(p)
+        else:
+            raise ValueError(
+                'Cannot specify both `p` and `sigma` simultaneously'
+            )
+
+        if sigma <= 0:
+            raise ValueError(
+                'Value of `sigma` cannot be <= 0'
+            )
+
+        if marginalized:
+            inv = self.inverse()
+            result = np.sqrt(np.diag(inv.values)) * sigma
+        else:
+            result = 1. / np.sqrt(np.diag(self.values)) * sigma
+
+        if name is not None:
+            if name in self.names:
+                return result[np.where(self.names == name)]
+            raise ParameterNotFoundError(name, self.names)
+
+        return result
+
 
     @property
     def fiducial(self):
         """
-        Returns the fiducial values of the Fisher tensor as a numpy array.
+        Returns the fiducial values of the Fisher object as a numpy array.
         """
         return self._fiducial
+
 
     @fiducial.setter
     def fiducial(
@@ -618,21 +773,23 @@ class FisherTensor:
         value,
     ):
         """
-        The setter for the fiducial values of the FisherTensor.
+        The setter for the fiducial values of the Fisher object.
         """
         if len(value) != len(self):
-            raise ValueError
+            raise MismatchingSizeError(value, self)
         try:
             self._fiducial = np.array([float(_) for _ in value])
         except TypeError as err:
-            raise TypeError from err
+            raise TypeError(err)
+
 
     @property
     def names(self):
         """
-        Returns the parameter names of the Fisher matrix.
+        Returns the parameter names of the Fisher object.
         """
         return self._names
+
 
     @names.setter
     def names(
@@ -641,74 +798,143 @@ class FisherTensor:
     ):
         """
         The bulk setter for the names.
-        Alternatively, one can use `<instance>[<name>] = <new name>` for
-        setting individual names.
         The length of the names must be the same as the one of the original
         object.
         """
         if len(set(value)) != len(self):
-            raise ValueError
+            raise MismatchingSizeError(set(value), self)
         self._names = value
+
 
     @property
     def names_latex(self):
-        # TODO should this be a generic function instead? I.e. there may be
-        # names other than latex ones
         """
         Returns the LaTeX names of the parameters of the Fisher matrix.
         """
-        return NotImplemented
+        return self._names_latex
+
+
+    @names_latex.setter
+    def names_latex(
+        self,
+        value,
+    ):
+        """
+        The bulk setter for the LaTeX names.
+        The length of the names must be the same as the one of the original
+        object.
+        """
+        if len(set(value)) != len(self):
+            raise MismatchingSizeError(set(value), self)
+        self._names_latex = value
+
 
     def __add__(
         self,
-        value : FisherTensor,
-    ) -> FisherTensor:
+        other : FisherMatrix,
+    ) -> FisherMatrix:
         """
-        Returns the result of adding two Fisher tensors.
+        Returns the result of adding two Fisher objects.
         """
-        # maybe it's a FisherTensor
-        if not isinstance(value, FisherTensor):
-            raise TypeError
-
         # make sure the dimensions match
-        if value.ndim != self.ndim:
-            raise ValueError
+        if other.ndim != self.ndim:
+            raise ValueError(
+                f'The dimensions of the objects do not match: {other.ndim} and {self.ndim}'
+            )
 
         # make sure they have the right parameters
-        if set(value.names) != set(self.names):
-            raise ValueError
+        if set(other.names) != set(self.names):
+            raise ValueError(
+                f'Incompatible parameter names: {other.names} and {self.names}'
+            )
 
         # make sure the fiducials match
         fiducial = np.array(
-            [value.fiducial[self.names.index(x)] for x in value.names]
+            [other.fiducial[np.where(self.names == x)] for x in other.names]
         )
-        if not np.allclose(fiducial, self.fiducial):
-            raise ValueError
 
-        # TODO implement addition when parameters are shuffled
-        return FisherTensor(
-            data=self.data + value.data,
-            names=self.names,
-            fiducial=self.fiducial,
-            safe=self.safe,
-            ndim=self.ndim,
+        if not np.allclose(fiducial, self.fiducial):
+            raise ValueError(
+                f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
+            )
+
+        values = np.reshape(
+            [
+                self._df[name1, name2] + other._df[name1, name2] \
+                for name1, name2 in product(self.names, self.names)
+            ],
+            (self.size, self.size)
         )
+
+        return FisherMatrix(
+            values,
+            names=self.names,
+            names_latex=self.names_latex,
+            fiducial=self.fiducial,
+        )
+
 
     def __sub__(
         self,
-        value : FisherTensor,
-    ) -> FisherTensor:
+        other : FisherMatrix,
+    ) -> FisherMatrix:
         """
-        Returns the result of subtracting two Fisher tensors.
+        Returns the result of subtracting two Fisher objects.
         """
-        temp = copy.deepcopy(value)
-        temp.data = -temp.data
+        temp = copy.deepcopy(other)
+        temp.values = -temp.values
         return self.__add__(temp)
+
+
+    def __matmul__(
+        self,
+        other : FisherMatrix,
+    ):
+        """
+        Multiplies two Fisher objects.
+        """
+        # make sure the dimensions match
+        if other.ndim != self.ndim:
+            raise ValueError(
+                f'The dimensions of the objects do not match: {other.ndim} and {self.ndim}'
+            )
+
+        # make sure they have the right parameters
+        if set(other.names) != set(self.names):
+            raise ValueError(
+                f'Incompatible parameter names: {other.names} and {self.names}'
+            )
+
+        # make sure the fiducials match
+        fiducial = np.array(
+            [other.fiducial[np.where(self.names == x)] for x in other.names]
+        )
+
+        if not np.allclose(fiducial, self.fiducial):
+            raise ValueError(
+                f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
+            )
+
+        values = np.reshape(
+            [
+                self._df[name1, name2] * other._df[name1, name2] \
+                for name1, name2 in product(self.names, self.names)
+            ],
+            (self.size, self.size)
+        )
+
+        return FisherMatrix(
+            values,
+            names=self.names,
+            names_latex=self.names_latex,
+            fiducial=self.fiducial,
+        )
+
 
     def __truediv__(
         self,
-        value : Union[FisherTensor, float, int],
-    ) -> FisherTensor:
+        value : Union[FisherMatrix, float, int],
+    ) -> FisherMatrix:
         """
         Returns the result of dividing two Fisher tensors, or a Fisher tensor
         by a number.
@@ -717,104 +943,71 @@ class FisherTensor:
         try:
             value = float(value)
         except TypeError as err:
-            # maybe it's a FisherTensor
-            if isinstance(value, FisherTensor):
-                # make sure they have the right parameters
-                if set(value.names) != set(self.names):
-                    raise ValueError
-                # make sure the fiducials match
-                fiducial = np.array(
-                    [value.fiducial[self.names.index(x)] for x in value.names]
-                )
-                if not np.allclose(fiducial, self.fiducial):
-                    raise ValueError
+            # maybe it's a FisherMatrix
+            # make sure they have the right parameters
+            if set(value.names) != set(self.names):
+                raise ValueError
+            # make sure the fiducials match
+            fiducial = np.array(
+                [value.fiducial[self.names.index(x)] for x in value.names]
+            )
+            if not np.allclose(fiducial, self.fiducial):
+                raise ValueError
 
-                if value.ndim == self.ndim:
-                    # TODO parameter ordering again...
-                    data = self.data / value.data
-                else:
-                    raise TypeError from err
+            if value.ndim == self.ndim:
+                values = np.reshape(
+                    [
+                        self._df[name1, name2] + value._df[name1, name2] \
+                        for name1, name2 in product(self.names, self.names)
+                    ],
+                    (self.size, self.size)
+                )
             else:
                 raise TypeError from err
         else:
-            data = self.data / value
+            values = self.values / value
 
-        return FisherTensor(
-            data,
+        return FisherMatrix(
+            values,
             names=self.names,
+            names_latex=self.names_latex,
             fiducial=self.fiducial,
-            safe=self.safe,
-            ndim=self.ndim,
         )
+
 
     def __mul__(
         self,
-        value : Union[FisherTensor, float, int, np.array],
-    ) -> Union[FisherTensor, float]:
+        value : Union[float, int],
+    ) -> FisherMatrix:
         """
-        Returns the result of multiplying two Fisher tensors, or an int or float
+        Returns the result of multiplying a Fisher object with a number.
         """
         # first idea: it's a float-like object
         try:
             value = float(value)
         except TypeError as err:
-            # maybe it's a FisherTensor
-            if isinstance(value, FisherTensor):
-                # make sure they have the right parameters
-                if set(value.names) != set(self.names):
-                    raise ValueError
-                # make sure the fiducials match
-                fiducial = np.array(
-                    [value.fiducial[self.names.index(x)] for x in value.names]
-                )
-                if not np.allclose(fiducial, self.fiducial):
-                    raise ValueError
-
-                # vector x vector (special case since we return a float)
-                if value.ndim == 1 and self.ndim == 1:
-                    return np.dot(self.data, value.data)
-
-                # matrix x vector or vector x matrix
-                if (value.ndim == 1 and self.ndim == 2) \
-                or (value.ndim == 2 and self.ndim == 1):
-                    data = np.dot(
-                        self.data,
-                        np.array([value.data[self.names.index(x)] for x in value.names])
-                    )
-                    ndim = 1
-
-                # matrix x matrix
-                elif value.ndim == 2 and self.ndim == 2:
-                    # TODO make sure the names aren't shuffled
-                    data = np.dot(
-                        self.data,
-                        value,
-                    )
-                    ndim = 2
-
-                else:
-                    return NotImplemented
-            else:
-                raise TypeError from err
+            raise TypeError from err
         else:
-            data = self.data * value
+            values = self.values * value
             ndim = self.ndim
 
-        return FisherTensor(
-            data,
+        return FisherMatrix(
+            values,
             names=self.names,
+            names_latex=self.names_latex,
             fiducial=self.fiducial,
-            safe=self.safe,
-            ndim=ndim,
         )
+
 
     def reparametrize(
         self,
         jacobian : Iterable[Any],
-        names : Iterable[Any] = None,
+        names : Optional[Iterable[AnyStr]] = None,
+        names_latex : Optional[Iterable[AnyStr]] = None,
+        fiducial : Optional[Iterable[float]] = None,
     ):
         """
-        Returns a new Fisher tensor with parameters `names`, which are
+        Returns a new Fisher object with parameters `names`, which are
         related to the old ones via the transformation `jacobian`.
         Currently limited to rank 26 tensors (we run out of single letters in
         the English alphabet otherwise).
@@ -826,12 +1019,24 @@ class FisherTensor:
             the Jacobian of the transformation
 
         names : array-like, default = None
-            list of new names for the Fisher object. If None, uses the old names.
+            list of new names for the Fisher object. If None, uses the old
+            names.
+
+        names_latex: array-like, default = None
+            list of new LaTeX names for the Fisher object. If None, and
+            `names` is set, uses those instead, otherwise uses the old LaTeX names.
+
+        fiducial : array-like, default = None
+            the new values of the fiducial. If not set, defaults to old values.
         """
         if self.ndim > 26:
-            raise ValueError
+            raise ValueError(
+                'The dimensionality of the Fisher object is > 26, which is not supported'
+            )
+
         char_first = 'A'
         char_second = 'a'
+
         # makes the string 'aA,bB,cC,dD,...'
         index_transformation = ','.join(
             [
@@ -844,344 +1049,37 @@ class FisherTensor:
         # the output tensor has indices 'abcd...'
         index_result = ''.join([chr(ord(char_first) + i) for i in range(self.ndim)])
 
-        data = np.einsum(
+        values = np.einsum(
             f'{index_transformation},{index_dummy}->{index_result}',
-            *([jacobian] * self.ndim), self.data
+            *([jacobian] * self.ndim), self.values
         )
 
         if names is not None:
-            names_new = names
-            if len(set(names_new)) != self.names:
-                raise ValueError
+            if len(set(names)) != self.names:
+                raise MismatchingSizeError(names, self.names)
+            if names_latex is not None:
+                if len(set(names_latex)) != self.names_latex:
+                    raise MismatchingSizeError(names_latex, self.names_latex)
+            else:
+                names_latex = names
         else:
             # we don't transform the names
-            names_new = self.names
+            names = self.names
+            names_latex = self.names_latex
 
-        return FisherTensor(
-            data,
-            names=names_new,
-            fiducial=self.fiducial,
-            safe=self.safe,
-            ndim=self.ndim,
-        )
-
-
-class FisherVector(FisherTensor):
-    """
-    Class for handling vectors which can be multiplied with Fisher matrices.
-    As an example, see e.g. https://arxiv.org/abs/2004.12981, eq. (3.9)
-    """
-
-    def __init__(
-        self,
-        data,
-        names = None,
-        fiducial = None,
-        **kwargs,
-    ):
-        # short circuiting if we're just typecasting
-        if isinstance(data, FisherTensor) and data.ndim == 1:
-            other = FisherVector(
-                data.data,
-                names=data.names,
-                fiducial=data.fiducial,
-                safe=data.safe,
-            )
-            self._data = copy.deepcopy(other.data)
-            self._size = copy.deepcopy(other.size)
-            self._names = copy.deepcopy(other.names)
-            self._fiducial = copy.deepcopy(other.fiducial)
-            self._safe = copy.deepcopy(other.safe)
-            return
-
-        # TODO fix this in the FisherTensor constructor
-        if isinstance(data, FisherTensor) and data.ndim >= 2:
-            raise ValueError
-
-        super().__init__(
-            data=data,
-            names=names,
-            fiducial=fiducial,
-            ndim=1,
-            **kwargs
-        )
-
-    @staticmethod
-    def join(*vectors : FisherVector):
-        """
-        Joins (concatenates) a bunch of Fisher vectors into a new one and
-        returns the result.
-        """
-        return NotImplemented
-
-    def __add__(
-        self,
-        value : FisherVector,
-    ) -> FisherVector:
-        """
-        Returns the result of adding two Fisher vectors.
-        """
-        result = super().__add__(value)
-        return FisherVector(result)
-
-    def __truediv__(
-        self,
-        value : Union[FisherVector, float, int],
-    ) -> FisherVector:
-        """
-        Returns the result of dividing two Fisher vectors, or a Fisher vector
-        by a number.
-        """
-        return FisherVector(super().__truediv__(value))
-
-    def __mul__(
-        self,
-        value : Union[float, int, FisherVector],
-    ) -> Union[float, FisherVector]:
-        """
-        Returns the result of multiplying two Fisher vectors, or a Fisher
-        vector by an int or float
-        """
-        result = super().__mul__(value)
-
-        try:
-            result = float(result)
-        except TypeError as err:
-            if isinstance(result, FisherTensor):
-                if result.ndim == 1:
-                    return FisherVector(result)
-                if result.ndim == 2:
-                    return FisherMatrix(result)
+        if fiducial is not None:
+            if len(fiducial) != len(self.fiducial):
+                raise MismatchingSizeError(fiducial, self.fiducial)
         else:
-            return result
+            fiducial = self.fiducial
 
-        return NotImplemented
-
-    def _repr_html_(self):
-        """
-        HTML representation of the FisherVector.
-        Useful when using a Jupyter notebook.
-        """
-
-        body = '<tbody>'
-        for index, name in enumerate(self._names):
-            body += f'<tr><th>{name}</th><td>{self.data[index]:.3f}</td></tr>'
-        body += '</tbody>'
-
-        return f'<table>{body}</table>'
-
-
-class FisherMatrix(FisherTensor):
-    """
-    Class for handling Fisher matrices.
-    """
-    # TODO implement caching maybe?
-
-    def __init__(
-        self,
-        data,
-        names = None,
-        fiducial = None,
-        **kwargs,
-    ):
-        """
-        Constructor for Fisher matrix.
-
-        Parameters
-        ----------
-        data : array-like or string (path to file) or dict or FisherMatrix
-            The data of the Fisher matrix.
-            If it's a string, accepts the same keyword arguments as numpy.loadtxt.
-            If it's a dict, it creates a diagonal matrix, and the `names`
-            argument is ignored.
-            If it's array-like, it attempts to convert it to a numpy array.
-
-        names : array-like, default = None
-            The names of the parameters.
-            If not specified (a None-like object), default to `p1, ..., pn`.
-            Must be a hashable type
-
-        fiducial : array-like, default = None
-            The fiducial values of the parameters. If not specified (a
-            None-like object), default to 0 for all parameters.
-        """
-
-        # short circuiting if we're just typecasting
-        if isinstance(data, FisherTensor) and data.ndim in [1, 2]:
-            other = FisherMatrix(
-                data.data,
-                names=data.names,
-                fiducial=data.fiducial,
-                safe=data.safe,
-            )
-            self._data = copy.deepcopy(other.data)
-            self._size = copy.deepcopy(other.size)
-            self._names = copy.deepcopy(other.names)
-            self._fiducial = copy.deepcopy(other.fiducial)
-            self._safe = copy.deepcopy(other.safe)
-            return
-
-        # TODO fix this in the FisherTensor constructor
-        if isinstance(data, FisherTensor) and data.ndim >= 3:
-            raise ValueError
-
-        # just run the constructor for a FisherTensor of dimension 2
-        super().__init__(
-            data,
+        return FisherMatrix(
+            values,
             names=names,
+            names_latex=names_latex,
             fiducial=fiducial,
-            ndim=2,
-            **kwargs
         )
 
-    def diagonal(self):
-        """
-        Returns the diagonal elements of the Fisher matrix as a numpy array.
-        """
-        return super().diagonal()
-
-    def trace(self):
-        """
-        Returns the trace of the Fisher matrix.
-        """
-        return super().trace()
-
-    def eigenvalues(self):
-        """
-        Returns the eigenvalues of the Fisher matrix as a numpy array.
-        """
-        return np.linalg.eigvalsh(self._data)
-
-    def eigenvectors(self):
-        """
-        Returns the right eigenvectors of the Fisher matrix as a numpy array.
-        """
-        return np.linalg.eigh(self._data)[-1]
-
-    def determinant(self):
-        """
-        Returns the determinant of the matrix.
-        """
-        return np.linalg.det(self._data)
-
-    def constraints(
-        self,
-        marginalized : bool = True,
-        sigma : float = 1.0,
-    ):
-        """
-        Returns the constraints on the parameters as a [TODO].
-
-        Parameters
-        ----------
-        marginalized : bool, default = True
-            whether we want the marginalized or the unmarginalized constraints.
-
-        sigma : float, default = 1.0
-            how many sigmas away.
-        """
-        if sigma <= 0:
-            raise ValueError
-
-        if marginalized:
-            inv = self.inverse()
-            return np.sqrt(np.diag(inv.data)) * sigma
-
-        return 1. / np.sqrt(np.diag(self.data)) * sigma
-
-
-    @staticmethod
-    def blockdiagonal(*matrices):
-        """
-        Returns a block diagonal matrix of Fisher elements.
-        The names of the parameters should be unique.
-        """
-        # TODO see if we can make them unique if they aren't already
-        return NotImplemented
-
-    def inverse(
-        self,
-        inplace : bool = False,
-    ):
-        """
-        Returns the inverse of the Fisher matrix as another FisherMatrix.
-
-        Parameters
-        ----------
-        inplace : bool, default = False
-            if True, modifies the existing FisherMatrix and returns None
-        """
-        # inverse satisfies properties of Fisher matrix, see:
-        # https://math.stackexchange.com/a/26200
-        if not inplace:
-            return FisherMatrix(
-                np.linalg.inv(self.data),
-                names=self.names,
-                fiducial=self.fiducial,
-                safe=self.safe,
-            )
-        self._data = np.linalg.inv(self.data)
-
-    def __truediv__(
-        self,
-        value : Union[FisherMatrix, float, int],
-    ) -> FisherMatrix:
-        """
-        Returns the result of dividing two Fisher matrices, or a Fisher matrix
-        by a number.
-        """
-        return FisherMatrix(super().__truediv__(value))
-
-    def __add__(self, value):
-        return FisherMatrix(super().__add__(value))
-
-    def __mul__(
-        self,
-        value : Union[FisherMatrix, float, int, FisherVector, np.array],
-    ) -> Union[FisherMatrix, float, FisherVector]:
-        """
-        Returns the result of multiplying two Fisher matrices, or by a
-        FisherVector, an int, or float
-        """
-        result = super().__mul__(value)
-        try:
-            result = float(value)
-        except TypeError as err:
-            if isinstance(result, FisherTensor):
-                if result.ndim == 1:
-                    return FisherVector(result)
-                if result.ndim == 2:
-                    return FisherMatrix(result)
-        else:
-            return result
-
-        return NotImplemented
-
-    def is_diagonal(self):
-        """
-        Checks whether the Fisher matrix is diagonal.
-        """
-        return np.all(self.data == np.diag(np.diagonal(self.data)))
-
-    def _repr_html_(self):
-        """
-        HTML representation of the FisherMatrix.
-        Useful when using a Jupyter notebook.
-        """
-        header_matrix = '<thead><tr><th></th>' + (
-            '<th>{}</th>' * len(self)
-        ).format(*self._names) + '</tr></thead>'
-
-        body_matrix = '<tbody>'
-        for index, name in enumerate(self._names):
-            body_matrix += f'<tr><th>{name}</th>' + (
-                '<td>{:.3f}</td>' * len(self)
-            ).format(*(self.data[:, index])) + '</tr>'
-        body_matrix += '</tbody>'
-
-        html_matrix = f'<table>{header_matrix}{body_matrix}</table>'
-
-        return html_matrix
 
     def pprint_eigenvalues(
         self,
@@ -1198,6 +1096,7 @@ class FisherMatrix(FisherTensor):
             )
         )
 
+
     def pprint_constraints(
         self,
         **kwargs,
@@ -1213,6 +1112,7 @@ class FisherMatrix(FisherTensor):
                 fmt_values=fmt_values,
             )
         )
+
 
     def pprint_fiducial(
         self,

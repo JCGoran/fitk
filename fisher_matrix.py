@@ -85,6 +85,16 @@ class FisherMatrix:
             0 for all parameters.
         """
 
+        if np.ndim(values) != 2:
+            raise ValueError(
+                f'The object {values} is not 2-dimensional'
+            )
+
+        if not is_square(values):
+            raise ValueError(
+                f'The object {values} is not square-like'
+            )
+
         # try to treat it as an array-like object
         self._values = np.array(values)
 

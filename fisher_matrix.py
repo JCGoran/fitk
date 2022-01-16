@@ -137,21 +137,34 @@ class FisherMatrix:
         Representation of the Fisher object suitable for viewing in Jupyter
         notebook environments.
         """
-        return self._df._repr_html_()
+        header_matrix = '<thead><tr><th></th>' + (
+            '<th>{}</th>' * len(self)
+        ).format(*self.names_latex) + '</tr></thead>'
+
+        body_matrix = '<tbody>'
+        for index, name in enumerate(self.names_latex):
+            body_matrix += f'<tr><th>{name}</th>' + (
+                '<td>{:.3f}</td>' * len(self)
+            ).format(*(self.values[:, index])) + '</tr>'
+        body_matrix += '</tbody>'
+
+        html_matrix = f'<table>{header_matrix}{body_matrix}</table>'
+
+        return html_matrix
 
 
     def __repr__(self):
         """
         Representation of the Fisher object for non-Jupyter interfaces.
         """
-        return self._df.__repr__()
+        return str(self.values)
 
 
     def __str__(self):
         """
         String representation of the Fisher object.
         """
-        return self._df.__str__()
+        return str(self.values)
 
 
     def __getitem__(

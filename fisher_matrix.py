@@ -180,16 +180,16 @@ class FisherMatrix:
             start, stop, step = keys.indices(len(self))
             indices = (slice(start, stop, step),) * self.ndim
             sl = slice(start, stop, step)
-            data_new = self.values[indices]
-            names_new = self.names[sl]
-            names_latex_new = self.names_latex[sl]
-            fiducial_new = self.fiducial[sl]
+            values = self.values[indices]
+            names = self.names[sl]
+            names_latex = self.names_latex[sl]
+            fiducial = self.fiducial[sl]
 
             return FisherMatrix(
-                data_new,
-                names=names_new,
-                names_latex=names_latex_new,
-                fiducial=fiducial_new,
+                values,
+                names=names,
+                names_latex=names_latex,
+                fiducial=fiducial,
             )
 
         try:

@@ -612,22 +612,23 @@ class FisherMatrix:
         simultaneously.
         If unspecified, defaults to `sigma=1`.
         """
-        if sigma is None and p is None:
-            sigma = 1
-        elif p is not None:
-            if not 0 < p < 1:
-                raise ValueError(
-                    f'The value {p} is outside of the allowed range (0, 1)'
-                )
-            sigma = norm.ppf(p)
-        else:
+        if sigma is not None and p is not None:
             raise ValueError(
                 'Cannot specify both `p` and `sigma` simultaneously'
             )
 
+        if p is not None:
+            if not 0 < p < 1:
+                raise ValueError(
+                    f'The value of `p` {p} is outside of the allowed range (0, 1)'
+                )
+            sigma = norm.ppf(p)
+        elif sigma is None:
+            sigma = 1
+
         if sigma <= 0:
             raise ValueError(
-                'Value of `sigma` cannot be <= 0'
+                f'The value of `sigma` {sigma} is outside of the allowed range (0, infinify)'
             )
 
         if marginalized:

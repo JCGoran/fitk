@@ -511,22 +511,21 @@ class FisherMatrix:
                 axis=index,
             )
 
-        fiducial = np.array(
-            [
-                self.fiducial[np.where(self.names == name)] for name in self.names \
-                if name not in names
-            ]
+        fiducial = np.delete(
+            self.fiducial,
+            [np.where(self.names == name) for name in names],
         )
 
-        names = np.array([
-            self.names[np.where(self.names == name)] for name in self.names \
-            if name not in names
-        ])
+        names_latex = np.delete(
+            self.names_latex,
+            [np.where(self.names == name) for name in names],
+        )
 
-        names_latex = np.array([
-            self.names_latex[np.where(self.names == name)] for name in self.names \
-            if name not in names
-        ])
+        # this one is last since we actually overwrite it
+        names = np.delete(
+            self.names,
+            [np.where(self.names == name) for name in names],
+        )
 
         return FisherMatrix(
             values,

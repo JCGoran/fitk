@@ -385,8 +385,10 @@ class FisherMatrix:
         """
         if set(self.names) != set(other.names):
             return False
+
         # index for re-shuffling parameters
-        index = np.array([np.where(other.names == name) for name in self.names])
+        index = get_index_of_other_array(self.names, other.names)
+
         return isinstance(other, FisherMatrix) \
         and self.ndim == other.ndim \
         and len(self) == len(other) \
@@ -396,7 +398,7 @@ class FisherMatrix:
             other.fiducial
         ) \
         and np.allclose(
-            self.values[index],
+            reindex_array(self.values, index),
             other.values
         )
 

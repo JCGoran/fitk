@@ -7,7 +7,8 @@ from __future__ import annotations
 
 from typing import \
     AnyStr, \
-    Iterable
+    Iterable, \
+    Optional
 
 import numpy as np
 
@@ -25,14 +26,36 @@ def is_iterable(value):
 
 
 
-def float_to_latex(value : float):
+# TODO make sure that the representation doesn't exceed some fixed number of digits
+def float_to_latex(
+    value : float,
+    sigdigits : int = 3,
+    ):
     """
     Format a float into a useful LaTeX representation.
+
+    Parameters
+    ----------
+    sigdigits : int, default = 3
+        number of significant digits
     """
-    float_str = f"{value:.2g}"
-    if "e" in float_str:
-        base, exponent = float_str.split("e")
-        return f"{base} \\times 10^{{{int(exponent)}}}"
+
+    # annoying case of small exponents
+    if 1e-4 <= np.abs(value) < 1e-2:
+        specifier = 'e'
+    else:
+        specifier = 'g'
+
+    fmt_string = f'{{:.{sigdigits}{specifier}}}'
+    float_str = fmt_string.format(value)
+
+    if 'e' in float_str:
+        base, exponent = float_str.split('e')
+        if np.isclose(float(base), 1):
+            return f'10^{{{int(exponent)}}}'
+        # remove any trailing zeros and decimal points
+        base = base.rstrip('0.')
+        return f'{base} \\times 10^{{{int(exponent)}}}'
 
     return float_str
 
@@ -72,6 +95,8 @@ class HTMLWrapper:
     """
     def __init__(self, string):
         self._string = string
+
+
     def _repr_html_(self):
         return self._string
 
@@ -104,7 +129,6 @@ def make_html_table(
     title : Optional[AnyStr], default = None
         the title of the table
     """
-
     if title is not None:
         title = f'<tr><th align="left">{title}</th></tr>'
     else:
@@ -141,6 +165,10 @@ def is_square(values):
     """
     Checks whether a numpy array-able object is square.
     """
+    try:
+        values = np.array(values, dtype=float)
+    except ValueError:
+        return False
 
     shape = np.shape(values)
     return all(shape[0] == _ for _ in shape)
@@ -166,18 +194,11 @@ def is_positive_semidefinite(values):
 
 
 
-def has_positive_diagonal(values):
-    """
-    Checks whether all of the values on the diagonal are positive.
-    """
-    return np.all(np.diag(values) >= 0)
-
-
-
 def get_index_of_other_array(A, B):
     """
     Returns the index (an array) which is such that `B[index] == A`.
     """
+    A, B = np.array(A), np.array(B)
     xsorted = np.argsort(B)
 
     return xsorted[np.searchsorted(B[xsorted], A)]

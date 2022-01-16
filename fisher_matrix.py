@@ -795,7 +795,7 @@ class FisherMatrix:
                 f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
             )
 
-        values = self.values @ other.values[index, index]
+        values = self.values @ reindex_array(other.values, index)
 
         return FisherMatrix(
             values,

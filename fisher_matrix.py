@@ -882,6 +882,16 @@ class FisherMatrix:
         )
 
 
+    def __rmul__(
+        self,
+        other : Union[float, int],
+    ) -> FisherMatrix:
+        """
+        Returns the result of multiplying a number with a Fisher object.
+        """
+        return self.__mul__(other)
+
+
     def reparametrize(
         self,
         jacobian : Iterable[Any],

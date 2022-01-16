@@ -159,7 +159,7 @@ class FisherMatrix:
         keys : Union[Tuple[AnyStr], slice],
     ):
         """
-        Implements access to elements in the Fisher tensor.
+        Implements access to elements in the Fisher object.
         Has support for slicing.
         """
         # the object can be sliced
@@ -201,7 +201,7 @@ class FisherMatrix:
         # otherwise, it's some generic object
         else:
             if keys not in self.names:
-                raise ParameterNotFoundError(key, self.names)
+                raise ParameterNotFoundError(keys, self.names)
 
             indices = (np.where(self.names == keys),)
 
@@ -245,8 +245,8 @@ class FisherMatrix:
         Checks whether the values make a valid Fisher matrix.
         """
         return \
-            _is_symmetric(self.values) and \
-            _is_positive_semidefinite(self.values)
+            is_symmetric(self.values) and \
+            is_positive_semidefinite(self.values)
 
 
     def imshow(
@@ -256,7 +256,7 @@ class FisherMatrix:
         normalized : bool = False,
         colorbar_space : float = 0.02,
         colorbar_width : float = 0.05,
-        orientation : str = 'vertical',
+        colorbar_orientation : str = 'vertical',
         rc : dict = {},
         **kwargs,
     ):
@@ -280,12 +280,12 @@ class FisherMatrix:
 
             if colorbar:
                 allowed_orientations = ('vertical', 'horizontal')
-                if orientation not in allowed_orientations:
+                if colorbar_orientation not in allowed_orientations:
                     raise ValueError(
-                        f'\'{orientation}\' is not one of: {allowed_orientations}'
+                        f'\'{colorbar_orientation}\' is not one of: {allowed_orientations}'
                     )
 
-                if orientation == 'vertical':
+                if colorbar_orientation == 'vertical':
                     cax = fig.add_axes(
                         [ax.get_position().x1 + colorbar_space,
                         ax.get_position().y0,
@@ -432,7 +432,7 @@ class FisherMatrix:
         if len(self) != len(value):
             raise MismatchingSizeError(self, value)
 
-        if not _is_square(value):
+        if not is_square(value):
             raise ValueError(
                 f'{value} is not a square object'
             )
@@ -725,23 +725,17 @@ class FisherMatrix:
                 f'Incompatible parameter names: {other.names} and {self.names}'
             )
 
+        index = get_index_of_other_array(self.names, other.names)
+
         # make sure the fiducials match
-        fiducial = np.array(
-            [other.fiducial[np.where(self.names == x)] for x in other.names]
-        )
+        fiducial = other.fiducial[index]
 
         if not np.allclose(fiducial, self.fiducial):
             raise ValueError(
                 f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
             )
 
-        values = np.reshape(
-            [
-                self._df[name1, name2] + other._df[name1, name2] \
-                for name1, name2 in product(self.names, self.names)
-            ],
-            (self.size, self.size)
-        )
+        values = self.values + other.values[index, index]
 
         return FisherMatrix(
             values,
@@ -782,23 +776,17 @@ class FisherMatrix:
                 f'Incompatible parameter names: {other.names} and {self.names}'
             )
 
+        index = get_index_of_other_array(self.names, other.names)
+
         # make sure the fiducials match
-        fiducial = np.array(
-            [other.fiducial[np.where(self.names == x)] for x in other.names]
-        )
+        fiducial = other.fiducial[index]
 
         if not np.allclose(fiducial, self.fiducial):
             raise ValueError(
                 f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
             )
 
-        values = np.reshape(
-            [
-                self._df[name1, name2] * other._df[name1, name2] \
-                for name1, name2 in product(self.names, self.names)
-            ],
-            (self.size, self.size)
-        )
+        values = self.values @ other.values[index, index]
 
         return FisherMatrix(
             values,
@@ -808,41 +796,50 @@ class FisherMatrix:
         )
 
 
-    def __truediv__(
+    def __floordiv__(
         self,
-        value : Union[FisherMatrix, float, int],
+        other : FisherMatrix,
     ) -> FisherMatrix:
         """
-        Returns the result of dividing two Fisher tensors, or a Fisher tensor
+        Returns the result of dividing two Fisher objects.
+        """
+        if type(other) != type(self):
+            raise TypeError(
+                f'Incompatible types for division: {type(other)} and {type(self)}'
+            )
+        # TODO implement this
+        return NotImplemented
+
+
+    def __truediv__(
+        self,
+        other : Union[FisherMatrix, float, int],
+    ) -> FisherMatrix:
+        """
+        Returns the result of dividing two Fisher objects, or a Fisher object
         by a number.
         """
         # we can only divide two objects if they have the same dimensions and sizes
         try:
-            value = float(value)
+            other = float(other)
         except TypeError as err:
             # maybe it's a FisherMatrix
             # make sure they have the right parameters
-            if set(value.names) != set(self.names):
+            if set(other.names) != set(self.names):
                 raise ValueError
             # make sure the fiducials match
             fiducial = np.array(
-                [value.fiducial[self.names.index(x)] for x in value.names]
+                [other.fiducial[np.where(self.names == x)] for x in other.names]
             )
             if not np.allclose(fiducial, self.fiducial):
                 raise ValueError
 
-            if value.ndim == self.ndim:
-                values = np.reshape(
-                    [
-                        self._df[name1, name2] + value._df[name1, name2] \
-                        for name1, name2 in product(self.names, self.names)
-                    ],
-                    (self.size, self.size)
-                )
+            if other.ndim == self.ndim:
+                values = self.values
             else:
                 raise TypeError from err
         else:
-            values = self.values / value
+            values = self.values / other
 
         return FisherMatrix(
             values,
@@ -960,14 +957,15 @@ class FisherMatrix:
 
     def pprint_eigenvalues(
         self,
+        orientation : str = 'horizontal',
         **kwargs,
     ):
         """
         Shotcut for pretty printing eigenvalues.
         """
         fmt_values = kwargs.pop('fmt_values', '{:.3f}')
-        return _HTML_Wrapper(
-            _make_html_table(
+        return HTMLWrapper(
+            make_html_table(
                 self.eigenvalues(),
                 fmt_values=fmt_values,
             )
@@ -976,16 +974,17 @@ class FisherMatrix:
 
     def pprint_constraints(
         self,
+        orientation : str = 'horizontal',
         **kwargs,
     ):
         """
         Shortcut for pretty printing constraints.
         """
         fmt_values = kwargs.pop('fmt_values', '{:.3f}')
-        return _HTML_Wrapper(
-            _make_html_table(
+        return HTMLWrapper(
+            make_html_table(
                 self.constraints(**kwargs),
-                names=self.names,
+                names=self.names_latex,
                 fmt_values=fmt_values,
             )
         )
@@ -993,16 +992,98 @@ class FisherMatrix:
 
     def pprint_fiducial(
         self,
+        orientation : str = 'horizontal',
         **kwargs,
     ):
         """
         Shortcut for pretty printing the fiducial values.
         """
         fmt_values = kwargs.pop('fmt_values', '{:.3f}')
-        return _HTML_Wrapper(
-            _make_html_table(
+        return HTMLWrapper(
+            make_html_table(
                 self.fiducial,
-                names=self.names,
+                names=self.names_latex,
                 fmt_values=fmt_values,
             )
         )
+
+
+    def to_file(
+        self,
+        path : AnyStr,
+        *args : AnyStr,
+        overwrite : bool = False,
+    ):
+        """
+        Saves the Fisher object to a file.
+
+        Parameters
+        ----------
+        path : AnyStr
+            the path to save the data to.
+
+        args : AnyStr
+            whatever other metadata about the object needs to be saved.
+            Needs to be a name of one of the methods of the class.
+
+        overwrite : bool, default = False
+            whether to overwrite the file if it exists
+        """
+        data = {
+            'values' : self.values.tolist(),
+            'names' : self.names.tolist(),
+            'names_latex' : self.names_latex.tolist(),
+            'fiducial' : self.fiducial.tolist(),
+        }
+
+        allowed_metadata = {
+            'is_valid' : bool,
+            'eigenvalues' : np.array,
+            'eigenvectors' : np.array,
+            'trace' : float,
+            'determinant' : float,
+        }
+
+        for arg in args:
+            if arg not in allowed_metadata:
+                raise ValueError(
+                    f'name {arg} is not one of {list(allowed_metadata.keys())}'
+                )
+
+        for arg in args:
+            data.update(
+                {arg : jsonify(getattr(self, arg)())},
+            )
+
+        if os.path.exists(path) and not overwrite:
+            raise FileExistsError(
+                f'The file {path} already exists, please pass ' \
+                '`overwrite=True` if you wish to explicitly overwrite '
+                'the file'
+            )
+
+        with open(path, 'w') as f:
+            f.write(json.dumps(data, indent=4))
+
+
+
+def from_file(
+    path : AnyStr,
+):
+    """
+    Reads a Fisher object from a file.
+
+    Parameters
+    ----------
+    path : AnyStr
+        the path to the file
+    """
+    with open(path, 'r') as f:
+        data = json.loads(f.read())
+
+    return FisherMatrix(
+        data['values'],
+        names=data['names'],
+        names_latex=data['names_latex'],
+        fiducial=data['fiducial'],
+    )

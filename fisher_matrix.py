@@ -359,17 +359,11 @@ class FisherMatrix:
         **kwargs
             all of the other keyword arguments for the Python builtin `sorted`
         """
-        values = self.values
         names = sorted(self.names, **kwargs)
-        index = np.array([np.where(names == name) for name in self.names])
+        index = get_index_of_other_array(self.names, names)
         names_latex = self.names_latex[index]
         fiducial = self.fiducial[index]
-
-        for dim in range(self.ndim):
-            values = np.swapaxes(
-                np.swapaxes(values, 0, dim)[index],
-                dim, 0
-            )
+        values = reindex_array(self.values, index)
 
         return FisherMatrix(
             values,

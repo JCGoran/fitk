@@ -104,14 +104,20 @@ class FisherMatrix:
         # setting the fiducial
         if fiducial is None:
             self._fiducial = np.zeros(self._size)
+        else:
+            self._fiducial = np.array(fiducial)
 
         # setting the names
         if names is None:
-            self._names = _default_names(self._size)
+            self._names = make_default_names(self._size)
+        else:
+            self._names = np.array(names)
 
         # setting the pretty names (LaTeX)
         if names_latex is None:
             self._names_latex = self._names
+        else:
+            self._names_latex = np.array(names_latex)
 
         # check sizes of inputs
         if not all(
@@ -119,18 +125,11 @@ class FisherMatrix:
             for _ in (self._names, self._fiducial, self._names_latex)
         ):
             raise MismatchingSizeError(
+                self._values[0],
                 self._names,
-                self._size,
                 self._fiducial,
                 self._names_latex,
             )
-
-        # internal representation
-        self._df = pd.DataFrame(
-            self._values,
-            index=self._names_latex,
-            columns=self._names_latex,
-        )
 
 
     def _repr_html_(self):

@@ -825,8 +825,7 @@ class FisherMatrix:
         other : Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
-        Returns the result of dividing two Fisher objects, or a Fisher object
-        by a number.
+        Returns the result of dividing a Fisher object by a number, or another Fisher object.
         """
         # we can only divide two objects if they have the same dimensions and sizes
         try:
@@ -836,15 +835,17 @@ class FisherMatrix:
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
                 raise ValueError
+
+            index = get_index_of_other_array(self.names, other.names)
+
             # make sure the fiducials match
-            fiducial = np.array(
-                [other.fiducial[np.where(self.names == x)] for x in other.names]
-            )
+            fiducial = other.fiducial[index]
+
             if not np.allclose(fiducial, self.fiducial):
                 raise ValueError
 
             if other.ndim == self.ndim:
-                values = self.values
+                values = self.values / reindex_array(other.values, index)
             else:
                 raise TypeError from err
         else:
@@ -860,19 +861,34 @@ class FisherMatrix:
 
     def __mul__(
         self,
-        value : Union[float, int],
+        other : Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
-        Returns the result of multiplying a Fisher object with a number.
+        Returns the result of multiplying a Fisher object by a number, or another Fisher object.
         """
-        # first idea: it's a float-like object
+        # we can only multiply two objects if they have the same dimensions and sizes
         try:
-            value = float(value)
+            other = float(other)
         except TypeError as err:
-            raise TypeError from err
+            # maybe it's a FisherMatrix
+            # make sure they have the right parameters
+            if set(other.names) != set(self.names):
+                raise ValueError
+
+            index = get_index_of_other_array(self.names, other.names)
+
+            # make sure the fiducials match
+            fiducial = other.fiducial[index]
+
+            if not np.allclose(fiducial, self.fiducial):
+                raise ValueError
+
+            if other.ndim == self.ndim:
+                values = self.values * reindex_array(other.values, index)
+            else:
+                raise TypeError(err) from err
         else:
-            values = self.values * value
-            ndim = self.ndim
+            values = self.values * other
 
         return FisherMatrix(
             values,

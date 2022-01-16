@@ -38,7 +38,7 @@ def float_to_latex(value : float):
 
 
 
-class ParameterNotFoundError(Exception):
+class ParameterNotFoundError(ValueError):
     """
     Error raised when a parameter is not found in the Fisher object.
     """
@@ -60,7 +60,7 @@ class MismatchingSizeError(Exception):
         self,
         *args,
     ):
-        sizes = [len(arg) for arg in args]
+        sizes = [str(len(arg)) for arg in args]
         self.message = f'Mismatching lengths: {", ".join(sizes)}'
         super().__init__(self.message)
 
@@ -79,10 +79,10 @@ class HTMLWrapper:
 
 def make_html_table(
     values : Iterable,
-    names : Iterable = None,
+    names : Optional[Iterable[AnyStr]] = None,
     fmt_values : str = '{}',
     fmt_names : str = '{}',
-    title : str = '',
+    title : Optional[AnyStr] = None,
 ):
     """
     Makes a HTML formatted table with names (optional) and values.
@@ -101,16 +101,19 @@ def make_html_table(
     fmt_names : str, default = '{}'
         the format string for the names
 
-    title : str, default = ''
+    title : Optional[AnyStr], default = None
         the title of the table
     """
 
-    if title:
+    if title is not None:
         title = f'<tr><th align="left">{title}</th></tr>'
+    else:
+        title = ''
 
     temp = (
         '<tr>' + (f'<th>{fmt_names}</th>' * len(names)).format(*names) + '</tr>'
-    ) if names else ''
+    ) if names is not None else ''
+
     header = f'<thead>{title}{temp}</thead>'
 
     body = '<tbody>' + (
@@ -168,3 +171,38 @@ def has_positive_diagonal(values):
     Checks whether all of the values on the diagonal are positive.
     """
     return np.all(np.diag(values) >= 0)
+
+
+
+def get_index_of_other_array(A, B):
+    """
+    Returns the index (an array) which is such that `B[index] == A`.
+    """
+    xsorted = np.argsort(B)
+
+    return xsorted[np.searchsorted(B[xsorted], A)]
+
+
+
+def jsonify(data):
+    """
+    Converts arbitrary data into a JSON-compatible format.
+    """
+    try:
+        return data.tolist()
+    except AttributeError:
+        return data
+
+
+
+def reindex_array(values, index):
+    """
+    Returns the array sorted according to (1D) index `index`.
+    """
+    for dim in range(np.ndim(values)):
+        values = np.swapaxes(
+            np.swapaxes(values, 0, dim)[index],
+            dim, 0
+        )
+
+    return values

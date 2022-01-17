@@ -161,7 +161,7 @@ class FisherMatrix:
         """
         Representation of the Fisher object for non-Jupyter interfaces.
         """
-        return f'FisherMatrix({self.values}, names={self.names}, fiducial={self.fiducial})'
+        return f'FisherMatrix({self.values}, names={self.names}, names_latex = {self.names_latex}, fiducial={self.fiducial})'
 
 
     def __str__(self):

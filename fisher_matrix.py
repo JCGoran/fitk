@@ -52,6 +52,27 @@ from fisher_utils import \
 
 
 
+class Parameter:
+    def __init__(
+        self,
+        name : AnyStr,
+        name_latex : Optional[AnyStr] = None,
+        fiducial : Optional[float] = None,
+    ):
+        self.name = name
+        self.name_latex = name_latex if name_latex is not None else name
+        self.fiducial = fiducial if fiducial is not None else 0
+
+
+    def __repr__(self):
+        return f"Parameter(name='{self.name}', name_latex='{self.name_latex}', fiducial={self.fiducial})"
+
+
+    def __str__(self):
+        return self.__repr__()
+
+
+
 class FisherMatrix:
     """
     Class for handling Fisher objects.
@@ -134,6 +155,65 @@ class FisherMatrix:
                 self._fiducial,
                 self._names_latex,
             )
+
+
+    def rename(
+        self,
+        names : Mapping[AnyStr, Union[AnyStr, Parameter]],
+        ignore_errors : bool = False,
+    ):
+        """
+        Returns a Fisher object with new names.
+
+        Parameters
+        ----------
+        names : Mapping[AnyStr, Union[AnyStr, Parameter]]
+            a mapping (dictionary-like object) between the old names and the
+            new ones. The values it maps to can either be a string (the new name), or an
+            instance of `Parameter`, which takes a name, a latex name, and a fiducial as
+            its arguments.
+
+        ignore_errors : bool, default = False
+            if set to True, will not raise an error if a parameter doesn't exist
+
+        Examples
+        --------
+        >>> m = FisherMatrix(np.diag([1, 2, 3]))
+        >>> m.rename({'p1' : 'a', 'p2' : Parameter('b', name_latex='$b$', fiducial=2)})
+        FisherMatrix([[1 0 0]
+         [0 2 0]
+         [0 0 3]], names=['a' 'b' 'p3'], names_latex=['a' '$b$' 'p3'], fiducial=[0. 2. 0.])
+        """
+        # check uniqueness and size
+        if len(set(names)) != len(names):
+            raise MismatchingSizeError(set(names), names)
+
+        if not ignore_errors:
+            for name in names:
+                if name not in self.names:
+                    raise ParameterNotFoundError(name, self.names)
+
+        names_new = copy.deepcopy(self.names)
+        names_latex_new = copy.deepcopy(self.names_latex)
+        fiducial_new = copy.deepcopy(self.fiducial)
+
+        for name, value in names.items():
+            index = np.where(names_new == name)
+            # it's a mapping to a Parameter
+            if isinstance(value, Parameter):
+                names_latex_new[index] = value.name_latex
+                fiducial_new[index] = value.fiducial
+                names_new[index] = value.name
+            else:
+                names_new[index] = value
+                names_latex_new[index] = value
+
+        return FisherMatrix(
+            self.values,
+            names=names_new,
+            names_latex=names_latex_new,
+            fiducial=fiducial_new,
+        )
 
 
     def _repr_html_(self):

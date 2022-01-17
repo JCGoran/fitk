@@ -22,6 +22,7 @@ from fisher_utils import \
 
 from fisher_matrix import from_file
 from fisher_matrix import FisherMatrix as FisherTensor
+from fisher_matrix import Parameter
 
 
 
@@ -161,6 +162,47 @@ class TestFisherTensor:
             names=list('bac'),
             names_latex=[r'\mathcal{B}', r'\mathcal{A}', r'\mathcal{C}'],
             fiducial=[5, 4, 6],
+        )
+
+
+    def test_rename(self):
+        m1 = FisherTensor(np.diag([1, 2, 3]), names=list('abc'))
+        m2 = m1.rename({'a' : Parameter(name='x', name_latex=None, fiducial=1)})
+
+        assert m2 == FisherTensor(
+            m1.values,
+            names=list('xbc'),
+            names_latex=list('xbc'),
+            fiducial=[1, 0, 0],
+        )
+
+        # duplicate parameter
+        with pytest.raises(ValueError):
+            m2 = m1.rename({'a' : 'b'})
+
+        # parameter to rename doesn't exist
+        with pytest.raises(ValueError):
+            m2 = m1.rename({'x' : 'y'})
+
+        # this should work since we explicitly turned off the checker
+        m2 = m1.rename({'x' : 'y', 'b' : 'b'}, ignore_errors=True)
+        assert m2 == m1
+
+        m2 = m1.rename({'x' : 'y', 'b' : 'd'}, ignore_errors=True)
+        assert m2 != m1
+        assert not np.all(m2.names == m1.names)
+
+        m = FisherTensor(np.diag([1, 2, 3]))
+        assert m.rename(
+            {
+                'p1' : 'a',
+                'p2' : Parameter('b', name_latex='$b$', fiducial=2),
+            },
+        ) == FisherTensor(
+            m1.values,
+            names=['a', 'b', 'p3'],
+            fiducial=[0, 2, 0],
+            names_latex=['a', '$b$', 'p3'],
         )
 
 

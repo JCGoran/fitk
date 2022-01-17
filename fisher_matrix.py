@@ -103,9 +103,9 @@ class FisherMatrix:
 
         # setting the fiducial
         if fiducial is None:
-            self._fiducial = np.zeros(self._size)
+            self._fiducial = np.zeros(self._size, dtype=float)
         else:
-            self._fiducial = np.array(fiducial)
+            self._fiducial = np.array(fiducial, dtype=float)
 
         # setting the names
         if names is None:
@@ -115,13 +115,13 @@ class FisherMatrix:
             if len(set(names)) != len(names):
                 raise MismatchingSizeError(set(names), names)
 
-            self._names = np.array(names)
+            self._names = np.array(names, dtype=object)
 
         # setting the pretty names (LaTeX)
         if names_latex is None:
             self._names_latex = copy.deepcopy(self._names)
         else:
-            self._names_latex = np.array(names_latex)
+            self._names_latex = np.array(names_latex, dtype=object)
 
         # check sizes of inputs
         if not all(
@@ -450,7 +450,7 @@ class FisherMatrix:
                 f'{value} is not a square object'
             )
 
-        self._values = value
+        self._values = np.array(value, dtype=float)
 
 
     def is_diagonal(self):
@@ -690,7 +690,7 @@ class FisherMatrix:
         """
         if len(set(value)) != len(self):
             raise MismatchingSizeError(set(value), self)
-        self._names = value
+        self._names = np.array(value, dtype=object)
 
 
     @property
@@ -713,7 +713,7 @@ class FisherMatrix:
         """
         if len(set(value)) != len(self):
             raise MismatchingSizeError(set(value), self)
-        self._names_latex = value
+        self._names_latex = np.array(value, dtype=object)
 
 
     def __add__(

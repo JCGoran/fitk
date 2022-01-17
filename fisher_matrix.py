@@ -506,7 +506,8 @@ class FisherMatrix:
                 f'of the parameter names in the Fisher object ({self.names}); ' \
                 'you can pass `ignore_errors=True` to ignore this error'
             )
-        elif ignore_errors:
+
+        if ignore_errors:
             names = np.array([name for name in names if name in self.names])
 
         # TODO should we remove this?

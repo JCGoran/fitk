@@ -475,6 +475,7 @@ class FisherMatrix:
     def drop(
         self,
         *names : AnyStr,
+        ignore_errors : bool = False,
     ) -> FisherMatrix:
         """
         Removes parameters from the Fisher object.
@@ -486,46 +487,41 @@ class FisherMatrix:
             If passing a list or a tuple, make sure to unpack it using the
             asterisk (*).
 
+        ignore_errors : bool, default = False
+            should non-existing parameters be ignored
+
         Examples
         --------
         > m = FisherMatrix(np.diag(1, 2, 3))
         > assert m.drop('p1', 'p3') == FisherMatrix(np.diag(2), names=['p2'])
         True
         """
-        if not set(names).issubset(set(self.names)):
+        if not ignore_errors and not set(names).issubset(set(self.names)):
             raise ValueError(
-                f'The names to drop ({names}) is not a strict subset ' \
-                f'of the parameters in the Fisher object ({self.names})'
+                f'The names ({list(names)}) are not a strict subset ' \
+                f'of the parameter names in the Fisher object ({self.names}); ' \
+                'you can pass `ignore_errors=True` to ignore this error'
             )
+        elif ignore_errors:
+            names = np.array([name for name in names if name in self.names])
 
         # TODO should we remove this?
         if set(names) == set(self.names):
             raise ValueError('Unable to remove all parameters')
 
-        values = self.values
+        index = [np.array(np.where(self.names == name), dtype=int) for name in names]
 
-        for index in range(self.ndim):
+        values = self.values
+        for dim in range(self.ndim):
             values = np.delete(
                 values,
-                [np.where(self.names == name) for name in names],
-                axis=index,
+                index,
+                axis=dim,
             )
 
-        fiducial = np.delete(
-            self.fiducial,
-            [np.where(self.names == name) for name in names],
-        )
-
-        names_latex = np.delete(
-            self.names_latex,
-            [np.where(self.names == name) for name in names],
-        )
-
-        # this one is last since we actually overwrite it
-        names = np.delete(
-            self.names,
-            [np.where(self.names == name) for name in names],
-        )
+        fiducial = np.delete(self.fiducial, index)
+        names_latex = np.delete(self.names_latex, index)
+        names = np.delete(self.names, index)
 
         return FisherMatrix(
             values,

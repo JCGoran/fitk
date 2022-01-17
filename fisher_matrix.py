@@ -119,7 +119,7 @@ class FisherMatrix:
 
         # setting the pretty names (LaTeX)
         if names_latex is None:
-            self._names_latex = self._names
+            self._names_latex = copy.deepcopy(self._names)
         else:
             self._names_latex = np.array(names_latex)
 

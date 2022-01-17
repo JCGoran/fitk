@@ -157,7 +157,7 @@ def make_default_names(
     """
     if size < 0:
         raise ValueError
-    return np.array([f'{character}{_ + 1}' for _ in range(size)])
+    return np.array([f'{character}{_ + 1}' for _ in range(size)], dtype=object)
 
 
 

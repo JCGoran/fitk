@@ -260,6 +260,12 @@ class FisherMatrix:
     def is_valid(self):
         """
         Checks whether the values make a valid Fisher matrix.
+
+        Examples
+        --------
+        >>> m = FisherMatrix(np.diag([1, 2, 3]))
+        >>> m.is_valid()
+        True
         """
         return \
             is_symmetric(self.values) and \
@@ -361,10 +367,33 @@ class FisherMatrix:
         Parameters
         ----------
         **kwargs
-            all of the other keyword arguments for the Python builtin `sorted`
+            all of the other keyword arguments for the Python builtin `sorted`.
+            If none are specified, will sort according to the names of the parameters.
+            In the special case that the value of the keyword `key` is set to
+            either 'fiducial' or 'names_latex', it will sort according to those.
+
+        Examples
+        --------
+        >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'), names_latex=['hjkl', 'qwe', 'll'], fiducial=[8, 7, 3])
+        >>> m.sort(key='fiducial')
+        FisherMatrix([[2 0 0]
+         [0 1 0]
+         [0 0 3]], names=['f' 'd' 's'], names_latex = ['ll' 'qwe' 'hjkl'], fiducial=[3. 7. 8.])
+        >>> m.sort(key='names_latex')
+        FisherMatrix([[1 0 0]
+         [0 2 0]
+         [0 0 3]], names=['d' 'f' 's'], names_latex = ['qwe' 'll' 'hjkl'], fiducial=[7. 3. 8.])
         """
-        names = sorted(self.names, **kwargs)
-        index = get_index_of_other_array(self.names, names)
+        allowed_keys = ('fiducial', 'names_latex')
+        if 'key' in kwargs and kwargs['key'] in allowed_keys:
+            index = np.argsort(getattr(self, kwargs['key']))
+            if 'reversed' in kwargs and kwargs['reversed'] is True:
+                index = np.flip(index)
+            names = self.names[index]
+        else:
+            names = sorted(self.names, **kwargs)
+            index = get_index_of_other_array(self.names, names)
+
         names_latex = self.names_latex[index]
         fiducial = self.fiducial[index]
         values = reindex_array(self.values, index)
@@ -496,9 +525,9 @@ class FisherMatrix:
 
         Examples
         --------
-        > m = FisherMatrix(np.diag(1, 2, 3))
-        > assert m.drop('p1', 'p3') == FisherMatrix(np.diag(2), names=['p2'])
-        True
+        >>> m = FisherMatrix(np.diag([1, 2, 3]))
+        >>> m.drop('p1', 'p3')
+        FisherMatrix([[2]], names=['p2'], names_latex = ['p2'], fiducial=[0.])
         """
         if not ignore_errors and not set(names).issubset(set(self.names)):
             raise ValueError(

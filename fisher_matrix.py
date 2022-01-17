@@ -766,6 +766,21 @@ class FisherMatrix:
         return self.__add__(temp)
 
 
+    def __pow__(
+        self,
+        other : SupportsFloat,
+    ):
+        """
+        Raises the Fisher object to some power.
+        """
+        return FisherMatrix(
+            np.power(self.values, other),
+            names=self.names,
+            names_latex=self.names_latex,
+            fiducial=self.fiducial,
+        )
+
+
     def __matmul__(
         self,
         other : FisherMatrix,

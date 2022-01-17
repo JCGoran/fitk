@@ -111,6 +111,10 @@ class FisherMatrix:
         if names is None:
             self._names = make_default_names(self._size)
         else:
+            # check they're unique
+            if len(set(names)) != len(names):
+                raise MismatchingSizeError(set(names), names)
+
             self._names = np.array(names)
 
         # setting the pretty names (LaTeX)

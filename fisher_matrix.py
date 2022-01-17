@@ -1,5 +1,5 @@
 """
-Library for performing operations on Fisher objects.
+Package for performing operations on Fisher objects.
 """
 
 # needed for compatibility with Python 3.7
@@ -157,14 +157,14 @@ class FisherMatrix:
         """
         Representation of the Fisher object for non-Jupyter interfaces.
         """
-        return str(self.values)
+        return f'FisherMatrix({self.values}, names={self.names}, fiducial={self.fiducial})'
 
 
     def __str__(self):
         """
         String representation of the Fisher object.
         """
-        return str(self.values)
+        return self.__repr__()
 
 
     def __getitem__(
@@ -201,7 +201,7 @@ class FisherMatrix:
         if isinstance(keys, tuple):
             if len(keys) != self.ndim:
                 raise ValueError(
-                    f'Got length {len(keys)}'
+                    f'Expected {self.ndim} arguments, got {len(keys)}'
                 )
 
             # error checking

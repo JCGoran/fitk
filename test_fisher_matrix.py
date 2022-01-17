@@ -126,7 +126,7 @@ class TestFisherTensor:
     """
     def test_init(self):
         # a file
-        FisherTensor(np.loadtxt('test_matrix.dat', comments='#'))
+        FisherTensor(np.loadtxt('test_numpy_matrix.dat', comments='#'))
         # a 2D array
         FisherTensor(np.diag([1, 2, 3]))
 
@@ -155,7 +155,7 @@ class TestFisherTensor:
 
 
     def test_from_file(self):
-        fm = from_file('example_fisher.json')
+        fm = from_file('test_matrix.json')
         assert fm == FisherTensor(
             np.diag([2, 1, 3]),
             names=list('bac'),

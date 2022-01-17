@@ -850,21 +850,6 @@ class FisherMatrix:
         )
 
 
-    def __floordiv__(
-        self,
-        other : FisherMatrix,
-    ) -> FisherMatrix:
-        """
-        Returns the result of dividing two Fisher objects.
-        """
-        if type(other) != type(self):
-            raise TypeError(
-                f'Incompatible types for division: {type(other)} and {type(self)}'
-            )
-        # TODO implement this
-        return NotImplemented
-
-
     def __truediv__(
         self,
         other : Union[FisherMatrix, float, int],

@@ -7,7 +7,7 @@ from scipy.stats import ortho_group
 import pytest
 
 
-from .fisher_utils import \
+from fitk.fisher_utils import \
     ParameterNotFoundError, \
     MismatchingSizeError, \
     is_iterable, \
@@ -20,10 +20,10 @@ from .fisher_utils import \
     jsonify, \
     reindex_array
 
-from .fisher_matrix import from_file
-from .fisher_matrix import FisherMatrix as FisherTensor
-from .fisher_matrix import FisherParameter
-from .fisher_plotter import FisherPlotter
+from fitk.fisher_matrix import from_file
+from fitk.fisher_matrix import FisherMatrix as FisherTensor
+from fitk.fisher_matrix import FisherParameter
+from fitk.fisher_plotter import FisherPlotter
 
 
 class TestFisherUtils:

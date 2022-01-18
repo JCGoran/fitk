@@ -1,3 +1,9 @@
+"""
+FITK - Fisher Information ToolKit
+
+A Python package for manipulating and plotting Fisher-like objects.
+"""
+
 from .fisher_utils import \
     float_to_latex, \
     get_index_of_other_array, \

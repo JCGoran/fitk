@@ -296,8 +296,8 @@ def get_chisq(
     df : int = 2,
 ):
     r"""
-    Returns :math: `\Delta \chi^2`.
-    To obtain the scaling coefficient :math: `\alpha`, just take the square root of the output.
+    Returns \(\Delta \chi^2\).
+    To obtain the scaling coefficient \(\alpha\), just take the square root of the output.
     """
     return chi2.ppf(norm.cdf(sigma) - norm.cdf(-sigma), df=df)
 

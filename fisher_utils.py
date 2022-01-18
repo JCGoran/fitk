@@ -75,7 +75,7 @@ class ParameterNotFoundError(ValueError):
 
 
 
-class MismatchingSizeError(Exception):
+class MismatchingSizeError(ValueError):
     """
     Error for handling a list of arrays that have mismatching sizes.
     """
@@ -84,7 +84,7 @@ class MismatchingSizeError(Exception):
         *args,
     ):
         sizes = [str(len(arg)) for arg in args]
-        self.message = f'Mismatching lengths: {", ".join(sizes)}'
+        self.message = f'Mismatching sizes: {", ".join(sizes)}'
         super().__init__(self.message)
 
 

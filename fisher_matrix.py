@@ -52,7 +52,10 @@ from .fisher_utils import \
 
 
 
-class Parameter:
+class FisherParameter:
+    """
+    Simple container for specifying the name, the LaTeX name, and the fiducial of a parameter.
+    """
     def __init__(
         self,
         name : AnyStr,
@@ -65,7 +68,7 @@ class Parameter:
 
 
     def __repr__(self):
-        return f"Parameter(name='{self.name}', name_latex='{self.name_latex}', fiducial={self.fiducial})"
+        return f"FisherParameter(name='{self.name}', name_latex='{self.name_latex}', fiducial={self.fiducial})"
 
 
     def __str__(self):
@@ -159,7 +162,7 @@ class FisherMatrix:
 
     def rename(
         self,
-        names : Mapping[AnyStr, Union[AnyStr, Parameter]],
+        names : Mapping[AnyStr, Union[AnyStr, FisherParameter]],
         ignore_errors : bool = False,
     ):
         """
@@ -167,10 +170,10 @@ class FisherMatrix:
 
         Parameters
         ----------
-        names : Mapping[AnyStr, Union[AnyStr, Parameter]]
+        names : Mapping[AnyStr, Union[AnyStr, FisherParameter]]
             a mapping (dictionary-like object) between the old names and the
             new ones. The values it maps to can either be a string (the new name), or an
-            instance of `Parameter`, which takes a name, a latex name, and a fiducial as
+            instance of `FisherParameter`, which takes a name, a LaTeX name, and a fiducial as
             its arguments.
 
         ignore_errors : bool, default = False
@@ -179,7 +182,7 @@ class FisherMatrix:
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
-        >>> m.rename({'p1' : 'a', 'p2' : Parameter('b', name_latex='$b$', fiducial=2)})
+        >>> m.rename({'p1' : 'a', 'p2' : FisherParameter('b', name_latex='$b$', fiducial=2)})
         FisherMatrix([[1 0 0]
          [0 2 0]
          [0 0 3]], names=['a' 'b' 'p3'], names_latex=['a' '$b$' 'p3'], fiducial=[0. 2. 0.])
@@ -199,8 +202,8 @@ class FisherMatrix:
 
         for name, value in names.items():
             index = np.where(names_new == name)
-            # it's a mapping to a Parameter
-            if isinstance(value, Parameter):
+            # it's a mapping to a FisherParameter
+            if isinstance(value, FisherParameter):
                 names_latex_new[index] = value.name_latex
                 fiducial_new[index] = value.fiducial
                 names_new[index] = value.name

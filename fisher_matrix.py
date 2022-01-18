@@ -451,6 +451,9 @@ class FisherMatrix:
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
             either 'fiducial' or 'names_latex', it will sort according to those.
+            In the second special case that the value of the keyword `key` is
+            set to an array of integers of equal size as the Fisher object, sorts them
+            according to those instead.
 
         Examples
         --------
@@ -465,11 +468,17 @@ class FisherMatrix:
          [0 0 3]], names=['d' 'f' 's'], names_latex = ['qwe' 'll' 'hjkl'], fiducial=[7. 3. 8.])
         """
         allowed_keys = ('fiducial', 'names_latex')
-        if 'key' in kwargs and kwargs['key'] in allowed_keys:
+        # an integer index
+        if 'key' in kwargs and all(hasattr(_, '__index__') for _ in kwargs['key']):
+            index = np.array(kwargs['key'], dtype=int)
+            names = self.names[index]
+        # either 'fiducial' or 'names_latex'
+        elif 'key' in kwargs and kwargs['key'] in allowed_keys:
             index = np.argsort(getattr(self, kwargs['key']))
             if 'reversed' in kwargs and kwargs['reversed'] is True:
                 index = np.flip(index)
             names = self.names[index]
+        # something that can be passed to `sorted`
         else:
             names = sorted(self.names, **kwargs)
             index = get_index_of_other_array(self.names, names)

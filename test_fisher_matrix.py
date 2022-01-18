@@ -278,14 +278,21 @@ class TestFisherTensor:
             names=['p3', 'p1', 'p2'],
         )
 
-        m_new = m.sort()
-
-        assert m_new == FisherTensor([
+        assert m.sort() == FisherTensor([
             [33, 31, 32],
             [13, 11, 12],
             [23, 21, 22]],
             fiducial=[1, -1, 0],
-            names=['p1', 'p2', 'p3']
+            names=['p1', 'p2', 'p3'],
+            names_latex=['p1', 'p2', 'p3'],
+        )
+
+        assert m.sort(key=[2, 1, 0]) == FisherTensor([
+            [33, 32, 31],
+            [23, 22, 21],
+            [13, 12, 11]],
+            fiducial=[1, 0, -1],
+            names=['p2', 'p1', 'p3'],
         )
 
 

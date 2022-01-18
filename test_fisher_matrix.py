@@ -23,7 +23,7 @@ from fisher_utils import \
 from fisher_matrix import from_file
 from fisher_matrix import FisherMatrix as FisherTensor
 from fisher_matrix import Parameter
-
+from fisher_plotter import FisherPlotter
 
 
 class TestFisherUtils:
@@ -358,3 +358,55 @@ class TestFisherTensor:
         jacobian_m = np.array([[3, 2], [6, 7]])
         m_new = m.reparametrize(jacobian_m)
         assert np.allclose(m_new.values, np.array([[18, 45], [45, 135]]))
+
+
+
+class TestFisherPlotter:
+    def test_init(self):
+        names = list('abcde')
+        names_latex = names_latex=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        val1 = np.diag([1, 2, 3, 9.3, 3])
+        val2 = np.diag([6, 7, 20, 1.5, .6])
+        fid1 = [0, 0, 0, 1, 2]
+        fid2 = [-1, 0.1, 5, -1, 3]
+        m1 = FisherTensor(val1, names=names, fiducial=fid1, names_latex=names_latex)
+        m2 = FisherTensor(val2, names=names, fiducial=fid2, names_latex=names_latex)
+        fp = FisherPlotter(m1, m2, labels=['first', 'second'])
+
+        assert fp.values[0] == m1
+        assert fp.values[1] == m2
+
+        with pytest.raises(ValueError):
+            m1 = FisherTensor([[3]], names=['a'])
+            m2 = FisherTensor([[5]], names=['b'])
+            FisherPlotter(m1, m2)
+
+
+    def test_plot_1d(self):
+        names = list('abcde')
+        names_latex = names_latex=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        val1 = np.diag([1, 2, 3, 9.3, 3])
+        val2 = np.diag([6, 7, 20, 1.5, .6])
+        val3 = np.diag([10, 4.2, 6.4, 0.2, 0.342])
+        fid1 = [0, 0, 0, 1, 2]
+        fid2 = [-1, 0.1, 5, -1, 3]
+        fid3 = fid1
+        m1 = FisherTensor(val1, names=names, fiducial=fid1, names_latex=names_latex)
+        m2 = FisherTensor(val2, names=names, fiducial=fid2, names_latex=names_latex)
+        m3 = FisherTensor(val3, names=names, fiducial=fid3, names_latex=names_latex)
+        fp = FisherPlotter(m1, m2, m3, labels=['first', 'second', 'third'])
+
+        ffigure = fp.plot_1d(
+            legend=True, title=True,
+            rc={'mathtext.fontset' : 'cm', 'font.family' : 'serif'},
+        )
+
+        ffigure['a'].plot(
+            np.linspace(-2, 2, 100),
+            [0.5 for _ in np.linspace(-2, 2, 100)],
+            ls='--',
+            label='another line',
+        )
+
+        ffigure['a'].legend()
+        ffigure.figure.savefig('test_plot_1d.pdf', dpi=300, bbox_inches='tight')

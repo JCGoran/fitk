@@ -36,7 +36,7 @@ from matplotlib.patheffects import Stroke, Normal
 from matplotlib import colors
 
 # first party imports
-from fisher_utils import \
+from .fisher_utils import \
     float_to_latex, \
     ParameterNotFoundError, \
     MismatchingSizeError, \

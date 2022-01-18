@@ -24,13 +24,13 @@ from matplotlib.patches import Ellipse
 from scipy.stats import chi2, norm
 
 # first party imports
-from fisher_utils import \
+from .fisher_utils import \
     MismatchingSizeError, \
     ParameterNotFoundError, \
     is_iterable, \
     get_index_of_other_array, \
     float_to_latex
-from fisher_matrix import FisherMatrix
+from .fisher_matrix import FisherMatrix
 
 
 

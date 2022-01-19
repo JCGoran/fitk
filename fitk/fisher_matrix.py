@@ -1125,7 +1125,8 @@ class FisherMatrix:
         other : Union[float, int],
     ) -> FisherMatrix:
         """
-        Returns the result of multiplying a number with a Fisher object.
+        Returns the result of multiplying a number by a Fisher object, or
+        another Fisher object.
         """
         return self.__mul__(other)
 

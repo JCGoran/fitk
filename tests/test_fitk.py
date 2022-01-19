@@ -453,3 +453,17 @@ class TestFisherPlotter:
 
         ffigure['a'].legend()
         ffigure.figure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d.pdf'), dpi=300, bbox_inches='tight')
+
+
+    def test_plot_1d_euclid(self):
+        fm_optimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_optimistic.json'))
+        fm_pessimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_pessimistic.json'))
+        fp = FisherPlotter(fm_optimistic, fm_pessimistic, labels=['optimistic case', 'pessimistic case'])
+
+        ffigure = fp.plot_1d(
+            legend=True,
+            title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
+            rc={'mathtext.fontset' : 'cm', 'font.family' : 'serif'},
+        )
+
+        ffigure.figure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d_euclid.pdf'), dpi=300, bbox_inches='tight')

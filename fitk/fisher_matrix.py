@@ -1278,6 +1278,7 @@ class FisherMatrix:
         self,
         path : AnyStr,
         *args : AnyStr,
+        metadata : dict = {},
         overwrite : bool = False,
     ):
         r"""
@@ -1292,8 +1293,11 @@ class FisherMatrix:
             the path to save the data to.
 
         args : AnyStr
-            whatever other metadata about the object needs to be saved.
+            whatever other information about the object needs to be saved.
             Needs to be a name of one of the methods of the class.
+
+        metadata : dict, default = {}
+            any metadata that should be associated to the object saved
 
         overwrite : bool, default = False
             whether to overwrite the file if it exists
@@ -1335,9 +1339,10 @@ class FisherMatrix:
                 )
 
         for arg in args:
-            data.update(
-                {arg : jsonify(getattr(self, arg)())},
-            )
+            data.update({
+                **{arg : jsonify(getattr(self, arg)())},
+                **metadata,
+            })
 
         if os.path.exists(path) and not overwrite:
             raise FileExistsError(

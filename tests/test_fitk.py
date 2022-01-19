@@ -161,6 +161,41 @@ class TestFisherTensor:
         )
 
 
+    def test_to_file(self):
+        names = 'Omegam Omegab w0 wa h ns sigma8 aIA etaIA betaIA'.split(' ')
+        # taken from v2 of https://arxiv.org/abs/1910.09273, table 1, and page 23
+        fiducial = [0.32, 0.05, -1, 0, 0.67, 0.96, 0.816, 1.72, -0.41, 2.17]
+        names_latex = [
+            r'$\Omega_\mathrm{m}$',
+            r'$\Omega_\mathrm{b}$',
+            '$w_0$',
+            '$w_a$',
+            '$h$',
+            '$n_s$',
+            r'$\sigma_8$',
+            r'$\mathcal{A}_\mathrm{IA}$',
+            r'$\eta_\mathrm{IA}$',
+            r'$\beta_\mathrm{IA}$',
+        ]
+        fm = FisherTensor(
+            np.loadtxt(os.path.join(DATADIR_INPUT, 'test_numpy_matrix.dat'), comments='#'),
+            names=names,
+            names_latex=names_latex,
+            fiducial=fiducial,
+        )
+        fm.to_file(
+            os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'),
+            overwrite=True,
+            metadata={
+                'comment' : 'Fisher matrix forecast from Euclid IST:F paper',
+                'url_arxiv' : 'https://arxiv.org/abs/1910.09273',
+                'url_github' : 'https://github.com/euclidist-forecasting/fisher_for_public/blob/94bdfd09b26e4bed3654c0b95f4a2fb1f0cb192e/All_Results/optimistic/flat/EuclidISTF_WL_w0wa_flat_optimistic.txt',
+            },
+        )
+        fm_read = from_file(os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'))
+        assert fm == fm_read
+
+
     def test_from_file(self):
         fm = from_file(os.path.join(DATADIR_INPUT, 'test_matrix.json'))
         assert fm == FisherTensor(

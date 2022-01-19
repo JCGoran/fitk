@@ -1338,11 +1338,17 @@ class FisherMatrix:
                     f'name {arg} is not one of {list(allowed_metadata.keys())}'
                 )
 
-        for arg in args:
-            data.update({
-                **{arg : jsonify(getattr(self, arg)())},
-                **metadata,
-            })
+        for arg in metadata:
+            if arg in data:
+                raise ValueError(
+                    f'name {arg} cannot be one of {list(data.keys())}'
+                )
+
+        data = {
+            **data,
+            **{arg : jsonify(getattr(self, arg)()) for arg in args},
+            **metadata,
+        }
 
         if os.path.exists(path) and not overwrite:
             raise FileExistsError(

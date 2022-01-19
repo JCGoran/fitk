@@ -1,5 +1,6 @@
 """
 Package for performing operations on Fisher objects.
+See here for documentation of `FisherMatrix`, `FisherParameter`, and `from_file`.
 """
 
 # needed for compatibility with Python 3.7
@@ -126,6 +127,15 @@ class FisherMatrix:
     >>> fm @ fm_names # likewise, we can do matrix multiplication
     FisherMatrix([[5 0]
      [0 8]], names=['x' 'y'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
+    >>> fm.trace() # other linear algebra methods include: `eigenvalues`, `eigenvectors`, `determinant`
+    9
+    >>> fm.inverse() # can also take the matrix inverse
+    FisherMatrix([[0.2  0.  ]
+     [0.   0.25]], names=['x' 'y'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
+    >>> fm.drop('x') # we can drop parameters from the Fisher matrix
+    FisherMatrix([[4]], names=['y'], names_latex = ['p2'], fiducial=[0.])
+    >>> fm.to_file('example_matrix.json') # we can save it to a file
+    >>> fm_new = from_file('example_matrix.json') # we can of course load it as well
     """
 
     def __init__(

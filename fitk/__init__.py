@@ -2,6 +2,14 @@
 FITK - Fisher Information ToolKit
 
 A Python package for manipulating and plotting Fisher-like objects.
+
+Notes
+--------
+Througout the documentation, it is assumed that the modules are imported in the
+following way:
+
+>>> import numpy as np
+>>> from fitk import from_file, FisherMatrix, FisherParameter, FisherPlotter
 """
 
 from .fisher_utils import \

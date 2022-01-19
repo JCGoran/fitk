@@ -1,5 +1,6 @@
 """
-Package for plotting of Fisher objects
+Package for plotting of Fisher objects.
+See here for documentation of `FisherPlotter`, `FisherFigure1D`, and `FisherFigure2D`.
 """
 
 from __future__ import annotations
@@ -43,6 +44,17 @@ class FisherBaseFigure(ABC):
     ):
         """
         Constructor.
+
+        Parameters
+        ----------
+        figure : Figure
+            the figure plotted by `FisherPlotter`
+
+        axes : Iterable[Axes]
+            the axes of the above figure
+
+        names : Iterable[AnyStr]
+            the names of the parameters that are plotted
         """
         self._figure = figure
         self._axes = axes
@@ -59,16 +71,25 @@ class FisherBaseFigure(ABC):
 
     @property
     def figure(self):
+        """
+        Returns the underlying figure, an instance of `matplotlib.figure.Figure`.
+        """
         return self._figure
 
 
     @property
     def axes(self):
+        """
+        Returns the axes of the figure as a numpy array.
+        """
         return self._axes
 
 
     @property
     def names(self):
+        """
+        Returns the names of the parameters plotted.
+        """
         return self._names
 
 
@@ -117,11 +138,16 @@ class FisherPlotter:
 
         Parameters
         ----------
-        args : FisherMatrix objects
+        args : FisherMatrix
+            `FisherMatrix` objects which we want to plot.
+            Must have the same names, otherwise throws an error.
+            Can have different fiducial values.
+            The order of plotting of the parameters and the LaTeX labels to use
+            are determined by the first argument.
 
         labels : array of strings, default None
             the list of labels to put in the legend of the plots.
-            If not set, defaults to 0, ..., len(args) - 1
+            If not set, defaults to `0, ..., len(args) - 1`
         """
         # make sure all of the Fisher objects have the same sizes
         if not all(len(args[0]) == len(arg) for arg in args):
@@ -174,12 +200,17 @@ class FisherPlotter:
     ):
         """
         Makes a 1D plot (Gaussians) of the Fisher objects and returns a
-        FisherFigure1D.
+        `FisherFigure1D`.
 
         Parameters
         ----------
         rc : dict = {}
-            any parameters meant for matplotlib.rcParams
+            any parameters meant for `matplotlib.rcParams`.
+            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html) for more information.
+
+        Returns
+        -------
+        An instance of `FisherFigure1D`.
         """
         size = len(self.values[0])
         with plt.rc_context(rc):
@@ -258,7 +289,8 @@ class FisherPlotter:
         **kwargs,
     ):
         """
-        Plots the 2D ellipses of the Fisher objects, and returns a FisherFigure.
+        Plots the 2D ellipses of the Fisher objects, and returns an instance of
+        `FisherFigure2D`.
         """
         pass
 
@@ -268,7 +300,8 @@ class FisherPlotter:
         **kwargs,
     ):
         """
-        Creates a triangle plot, and returns a Fisher2D figure.
+        Plots the 2D ellipses and 1D Gaussians of the Fisher objects, and
+        returns an instance of `FisherFigure2D`.
         """
         pass
 

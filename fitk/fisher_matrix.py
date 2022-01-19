@@ -30,7 +30,7 @@ from typing import \
 
 # third party imports
 import numpy as np
-from scipy.stats import norm
+from scipy.special import erfinv
 import matplotlib.pyplot as plt
 from matplotlib.patheffects import Stroke, Normal
 from matplotlib import colors
@@ -744,7 +744,7 @@ class FisherMatrix:
                 raise ValueError(
                     f'The value of `p` {p} is outside of the allowed range (0, 1)'
                 )
-            sigma = norm.ppf(p)
+            sigma = np.sqrt(2) * erfinv(p)
         elif sigma is None:
             sigma = 1
 

@@ -13,7 +13,8 @@ from .fisher_utils import \
     reindex_array
 from .fisher_matrix import \
     FisherMatrix, \
-    FisherParameter
+    FisherParameter, \
+    from_file
 from .fisher_plotter import \
     FisherPlotter, \
     FisherFigure1D, \

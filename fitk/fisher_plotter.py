@@ -281,6 +281,9 @@ class FisherPlotter:
                     ncol=len(self.values),
                 )
 
+            if isinstance(kwargs.get('title'), str):
+                fig.suptitle(kwargs.get('title'))
+
         return FisherFigure1D(fig, axes, names)
 
 

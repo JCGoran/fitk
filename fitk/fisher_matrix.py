@@ -98,8 +98,34 @@ class FisherParameter:
 
 
 class FisherMatrix:
-    """
+    r"""
     Class for handling Fisher objects.
+
+    Examples
+    --------
+    >>> fm = FisherMatrix(np.diag([5, 4])) # no parameter names specified
+    >>> fm # has a friendly representation in an interactive session
+    FisherMatrix([[5 0]
+     [0 4]], names=['p1' 'p2'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
+    >>> fm.names # getting the names
+    array(['p1', 'p2'], dtype=object)
+    >>> fm.values # getting the underlying numpy array of values
+    array([[5, 0],
+           [0, 4]])
+    >>> fm.fiducial # getting the values of the fiducials
+    array([0., 0.])
+    >>> fm.names = ['x', 'y'] # names can be changed (ditto for fiducial and values; dimension must of course match the original)
+    >>> fm.names_latex = [r'$\mathbf{X}$', r'$\mathbf{Y}$'] # LaTeX names as well
+    >>> fm_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y']) # with parameter names
+    >>> fm + fm_names # we can perform arithmetic operations on objects which have the same names (not necessarily in order) and fiducials; the LaTeX names do not need to match, but the resulting LaTeX names are inherited from the left-most object
+    FisherMatrix([[6 0]
+     [0 6]], names=['x' 'y'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
+    >>> fm * fm_names # we can also do element-wise multiplication (or division with `/`)
+    FisherMatrix([[5 0]
+     [0 8]], names=['x' 'y'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
+    >>> fm @ fm_names # likewise, we can do matrix multiplication
+    FisherMatrix([[5 0]
+     [0 8]], names=['x' 'y'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
     """
 
     def __init__(
@@ -128,6 +154,16 @@ class FisherMatrix:
         fiducial : array-like iterable of `float`, default = None
             The fiducial values of the parameters. If not specified, default to
             0 for all parameters.
+
+        Examples
+        --------
+        >>> FisherMatrix(np.diag([1, 2, 3])) # no names specified
+        FisherMatrix([[1 0 0]
+         [0 2 0]
+         [0 0 3]], names=['p1' 'p2' 'p3'], names_latex = ['p1' 'p2' 'p3'], fiducial=[0. 0. 0.])
+        >>> FisherMatrix(np.diag([1, 2]), names=['alpha', 'beta'], names_latex=[r'$\alpha$', r'$\beta$'], fiducial=[-3, 2]) # with names, LaTeX names, and fiducial
+        FisherMatrix([[1 0]
+         [0 2]], names=['alpha' 'beta'], names_latex = ['$\\alpha$' '$\\beta$'], fiducial=[-3.  2.])
         """
 
         if np.ndim(values) != 2:
@@ -363,13 +399,20 @@ class FisherMatrix:
 
     def is_valid(self):
         """
-        Checks whether the values make a valid Fisher matrix.
+        Checks whether the values make a valid Fisher object.
+        A (square) matrix is a Fisher matrix if it satisifies the following two
+        criteria:
+
+        * it is symmetric
+        * it is positive semi-definite
 
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
         >>> m.is_valid()
         True
+        >>> FisherMatrix(np.diag([-1, 3])).is_valid()
+        False
         """
         return \
             is_symmetric(self.values) and \
@@ -730,7 +773,7 @@ class FisherMatrix:
         sigma : Optional[SupportsFloat] = None,
         p : Optional[SupportsFloat] = None,
     ):
-        """
+        r"""
         Returns the constraints on a parameter as a float, or on all of them
         as a numpy array if `name` is not specified.
 
@@ -747,13 +790,37 @@ class FisherMatrix:
             how many sigmas away.
 
         p : Optional[SupportsFloat], default = None
-            the confidence interval (p-value)
+            the confidence interval (p-value).
+            The relationship between `p` and `sigma` is defined via:
+            \[
+                p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
+                            f(x, \mu, 1)\, \mathrm{d}x
+                          = \mathrm{Erf}(\sigma / \sqrt{2})
+            \]
+            and therefore the inverse is simply:
+            \[
+                \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
+            \]
+            The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
+            0.683, 0.954, and 0.997, respectively.
 
         Notes
         -----
         The user should specify either `sigma` or `p`, but not both
         simultaneously.
-        If unspecified, defaults to `sigma=1`.
+        If neither are specified, defaults to `sigma=1`.
+
+        Examples
+        --------
+        >>> m = FisherMatrix([[3, -2], [-2, 5]])
+        >>> m.constraints() # constraints for all parameters (marginalized)
+        array([0.67419986, 0.52223297])
+        >>> m.constraints(marginalized=False) # constraints for all parameters (unmarginalized)
+        array([0.57735027, 0.4472136 ])
+        >>> m.constraints('p1', marginalized=False) # one parameter only
+        array([0.57735027])
+        >>> m.constraints('p1', p=0.682689) # p-value roughly equal to 1 sigma
+        array([0.67419918])
         """
         if sigma is not None and p is not None:
             raise ValueError(
@@ -968,7 +1035,8 @@ class FisherMatrix:
         other : Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
-        Returns the result of dividing a Fisher object by a number, or another Fisher object.
+        Returns the result of dividing a Fisher object by a number, or another
+        Fisher object.
         """
         # we can only divide two objects if they have the same dimensions and sizes
         try:
@@ -1007,7 +1075,8 @@ class FisherMatrix:
         other : Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
-        Returns the result of multiplying a Fisher object by a number, or another Fisher object.
+        Returns the result of multiplying a Fisher object by a number, or
+        another Fisher object.
         """
         # we can only multiply two objects if they have the same dimensions and sizes
         try:
@@ -1064,6 +1133,7 @@ class FisherMatrix:
         Currently limited to rank 26 tensors (we run out of single letters in
         the English alphabet otherwise).
         Does not differentiate between covariant/contravariant indices.
+        See the [Wikipedia article](https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization) for more information.
 
         Parameters
         ----------
@@ -1080,6 +1150,14 @@ class FisherMatrix:
 
         fiducial : array-like, default = None
             the new values of the fiducial. If not set, defaults to old values.
+
+        Examples
+        --------
+        >>> fm = FisherMatrix(np.diag([1, 2]))
+        >>> jac = [[1, 4], [3, 2]]
+        >>> fm.reparametrize(jac, names=['a', 'b'])
+        FisherMatrix([[33 19]
+         [19 17]], names=['a' 'b'], names_latex = ['a' 'b'], fiducial=[0. 0.])
         """
         if self.ndim > 26:
             raise ValueError(
@@ -1192,8 +1270,11 @@ class FisherMatrix:
         *args : AnyStr,
         overwrite : bool = False,
     ):
-        """
+        r"""
         Saves the Fisher object to a file.
+        The format is a simple JSON file, containing at least the values of the
+        Fisher object, the names of the parameters, the LaTeX names, and the
+        fiducial values.
 
         Parameters
         ----------
@@ -1206,6 +1287,21 @@ class FisherMatrix:
 
         overwrite : bool, default = False
             whether to overwrite the file if it exists
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], names_latex=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
+        >>> fm.to_file('example_matrix.json') # assuming it doesn't exist
+        >>> with open('example_matrix.json', 'r') as f:
+        ...     f.read() # see the raw contents
+        '{\n    "values": [\n        [\n            1,\n            0\n        ],\n        [\n            0,\n            2\n        ]\n    ],\n    "names": [\n        "a",\n        "b"\n    ],\n    "names_latex": [\n        "$\\\\mathbf{A}$",\n        "$\\\\mathbf{B}$"\n    ],\n    "fiducial": [\n        0.0,\n        0.0\n    ]\n}'
+        >>> fm_read = from_file('example_matrix.json') # convenience function for reading it
+        >>> fm == fm_read # verify it's the same object
+        True
         """
         data = {
             'values' : self.values.tolist(),
@@ -1255,6 +1351,10 @@ def from_file(
     ----------
     path : AnyStr
         the path to the file
+
+    Returns
+    -------
+    Instance of `FisherMatrix`
     """
     with open(path, 'r') as f:
         data = json.loads(f.read())

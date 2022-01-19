@@ -1107,23 +1107,23 @@ class FisherMatrix:
         )
 
         if names is not None:
-            if len(set(names)) != self.names:
+            if len(set(names)) != len(self.names):
                 raise MismatchingSizeError(names, self.names)
             if names_latex is not None:
-                if len(set(names_latex)) != self.names_latex:
+                if len(set(names_latex)) != len(self.names_latex):
                     raise MismatchingSizeError(names_latex, self.names_latex)
             else:
-                names_latex = names
+                names_latex = copy.deepcopy(names)
         else:
             # we don't transform the names
-            names = self.names
-            names_latex = self.names_latex
+            names = copy.deepcopy(self.names)
+            names_latex = copy.deepcopy(self.names_latex)
 
         if fiducial is not None:
             if len(fiducial) != len(self.fiducial):
                 raise MismatchingSizeError(fiducial, self.fiducial)
         else:
-            fiducial = self.fiducial
+            fiducial = copy.deepcopy(self.fiducial)
 
         return FisherMatrix(
             values,

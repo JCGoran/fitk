@@ -222,7 +222,7 @@ class FisherPlotter:
             names = self.values[0].names
             names_latex = self.values[0].names_latex
 
-            ylabel1d = r'$P (\theta)$'
+            ylabel1d = r'$p (\theta)$'
 
             handles = []
 

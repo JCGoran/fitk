@@ -54,21 +54,42 @@ from .fisher_utils import \
 
 class FisherParameter:
     """
-    Simple container for specifying the name, the LaTeX name, and the fiducial of a parameter.
+    Simple container for specifying the name, the LaTeX name, and the fiducial
+    of a parameter.
     """
     def __init__(
         self,
         name : AnyStr,
         name_latex : Optional[AnyStr] = None,
-        fiducial : Optional[float] = None,
+        fiducial : float = 0,
     ):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        name : AnyStr
+            the name of the parameter
+
+        name_latex : Optional[AnyStr], default = None
+            the LaTeX name of the parameter. If not specified, defaults to `name`.
+
+        fiducial : float, default = 0
+            the fiducial value of the parameter
+        """
         self.name = name
         self.name_latex = name_latex if name_latex is not None else name
-        self.fiducial = fiducial if fiducial is not None else 0
+        self.fiducial = fiducial
 
 
     def __repr__(self):
-        return f"FisherParameter(name='{self.name}', name_latex='{self.name_latex}', fiducial={self.fiducial})"
+        """
+        Representation of the FisherParameter
+        """
+        return \
+            f"FisherParameter(name='{self.name}', " \
+            f"name_latex='{self.name_latex}', " \
+            f"fiducial={self.fiducial})"
 
 
     def __str__(self):

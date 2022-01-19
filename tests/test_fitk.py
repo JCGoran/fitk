@@ -1,9 +1,10 @@
 """
-Various tests of the FisherTensor class.
+Various tests for the `fitk` module.
 """
 
 import numpy as np
 from scipy.stats import ortho_group
+import os
 import pytest
 
 
@@ -24,6 +25,11 @@ from fitk.fisher_matrix import from_file
 from fitk.fisher_matrix import FisherMatrix as FisherTensor
 from fitk.fisher_matrix import FisherParameter
 from fitk.fisher_plotter import FisherPlotter
+
+
+
+DATADIR_INPUT = os.path.join(os.path.dirname(__file__), 'data_input')
+DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), 'data_output')
 
 
 class TestFisherUtils:
@@ -127,7 +133,7 @@ class TestFisherTensor:
     """
     def test_init(self):
         # a file
-        FisherTensor(np.loadtxt('test_numpy_matrix.dat', comments='#'))
+        FisherTensor(np.loadtxt(os.path.join(DATADIR_INPUT, 'test_numpy_matrix.dat'), comments='#'))
         # a 2D array
         FisherTensor(np.diag([1, 2, 3]))
 
@@ -156,7 +162,7 @@ class TestFisherTensor:
 
 
     def test_from_file(self):
-        fm = from_file('test_matrix.json')
+        fm = from_file(os.path.join(DATADIR_INPUT, 'test_matrix.json'))
         assert fm == FisherTensor(
             np.diag([2, 1, 3]),
             names=list('bac'),
@@ -409,4 +415,4 @@ class TestFisherPlotter:
         )
 
         ffigure['a'].legend()
-        ffigure.figure.savefig('test_plot_1d.pdf', dpi=300, bbox_inches='tight')
+        ffigure.figure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d.pdf'), dpi=300, bbox_inches='tight')

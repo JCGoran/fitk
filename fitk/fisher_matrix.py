@@ -1401,6 +1401,7 @@ class FisherMatrix:
     def marginalize_over(
         self,
         *names : AnyStr,
+        invert : bool = False,
         ignore_errors : bool = False,
     ) -> FisherMatrix:
         """
@@ -1411,6 +1412,9 @@ class FisherMatrix:
         names : AnyStr
             the names of the parameters to marginalize over
 
+        invert : bool, default = False
+            whether to marginalize over all the parameters NOT in names
+
         ignore_errors : bool, default = False
             should non-existing parameters be ignored
 
@@ -1419,6 +1423,8 @@ class FisherMatrix:
         Instance of `FisherMatrix`.
         """
         inv = self.inverse()
+        if invert is True:
+            names = set(names) ^ set(self.names)
         fm = inv.drop(*names, ignore_errors=ignore_errors)
         return fm.inverse()
 

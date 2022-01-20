@@ -400,6 +400,18 @@ def get_chisq(
     r"""
     Returns \(\Delta \chi^2\).
     To obtain the scaling coefficient \(\alpha\), just take the square root of the output.
+
+    Parameters
+    ----------
+    sigma : float, default = 1
+        the error on the parameter
+
+    df : int, default = 2
+        the number of degrees of freedom
+
+    Returns
+    -------
+    float
     """
     return chi2.ppf(norm.cdf(sigma) - norm.cdf(-sigma), df=df)
 

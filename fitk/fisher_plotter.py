@@ -193,6 +193,39 @@ class FisherPlotter:
         return self._labels
 
 
+    def find_limits_1d(
+        self,
+        name : AnyStr,
+        sigma : float = 3,
+    ):
+        """
+        Finds "nice" 1D limits for a given parameter taking into account fiducials
+        and constraints.
+
+        Parameters
+        ----------
+        name : AnyStr
+            the name of the parameter
+
+        sigma : float, default = 3
+            how many sigmas away to plot
+
+        Returns
+        -------
+        `tuple` with lower and upper limits
+        """
+        sigmas = np.array(
+            [_.constraints(name, marginalized=True, sigma=sigma) for _ in self.values]
+        )
+        fiducial = np.array(
+            [_.fiducial[np.where(_.names == name)] for _ in self.values]
+        )
+
+        xleft, xright = np.min(fiducial - sigmas), np.max(fiducial + sigmas)
+
+        return xleft, xright
+
+
     def plot_1d(
         self,
         rc : dict = {},
@@ -227,13 +260,7 @@ class FisherPlotter:
             handles = []
 
             for (index, name), name_latex in zip(enumerate(names), names_latex):
-                ax = axes[index]
-                sigmas = np.array(
-                    [_.constraints(name, marginalized=True, sigma=3) for _ in self.values]
-                )
-                fiducial = np.array(
-                    [_.fiducial[np.where(_.names == name)] for _ in self.values]
-                )
+                ax = axes.flat[index]
                 title_list = [
                     '{0} = ${1}^{{+{2}}}_{{-{2}}}$'.format(
                     name_latex,
@@ -241,8 +268,6 @@ class FisherPlotter:
                     float_to_latex(float(_.constraints(name, marginalized=True))),
                 ) for _ in self.values
                 ]
-
-                xleft, xright = np.min(fiducial - sigmas), np.max(fiducial + sigmas)
 
                 ymax = np.max(
                     [gaussian(0, 0, _.constraints(name, marginalized=True)) for _ in self.values]
@@ -259,7 +284,7 @@ class FisherPlotter:
                         handles.append(handle)
 
                 ax.set_xlabel(name_latex)
-                ax.set_xlim(xleft, xright)
+                ax.set_xlim(*self.find_limits_1d(name))
                 ax.set_ylim(0, ymax)
 
                 if kwargs.get('title') is True:

@@ -228,6 +228,7 @@ class FisherPlotter:
 
     def plot_1d(
         self,
+        max_cols : Optional[int] = None,
         rc : dict = {},
         **kwargs,
     ):
@@ -237,19 +238,36 @@ class FisherPlotter:
 
         Parameters
         ----------
+        max_cols : Optional[int], default = None
+            the maximum number of columns to force the plot into.
+            By default, the parameters are always plotted horizontally; if you
+            need to spread it over `max_cols`, pass a non-negative integer
+            here.
+
         rc : dict = {}
             any parameters meant for `matplotlib.rcParams`.
-            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html) for more information.
+            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
+            for more information.
 
         Returns
         -------
         An instance of `FisherFigure1D`.
         """
         size = len(self.values[0])
+        if max_cols is not None:
+            full = size % max_cols == 0
+            layout = size // max_cols if full else size // max_cols + 1, max_cols
+        else:
+            layout = 1, size
+            full = True
+
         with plt.rc_context(rc):
             # general figure setup
-            fig = plt.figure(clear=True, figsize=(2 * size, 2))
-            gs = fig.add_gridspec(nrows=1, ncols=size, hspace=0.2, wspace=0.1)
+            fig = plt.figure(clear=True, figsize=(2 * layout[1], 2 * layout[0]))
+            gs = fig.add_gridspec(
+                nrows=layout[0], ncols=layout[1],
+                hspace=0.5, wspace=0.1,
+            )
             axes = gs.subplots()
 
             names = self.values[0].names
@@ -308,6 +326,14 @@ class FisherPlotter:
 
             if isinstance(kwargs.get('title'), str):
                 fig.suptitle(kwargs.get('title'))
+
+            # remove any axes which are not drawn
+            if not full:
+                for index in range(
+                    (layout[0] - 1) * layout[1] + 1,
+                    layout[0] * layout[1]
+                ):
+                    axes.flat[index].remove()
 
         return FisherFigure1D(fig, axes, names)
 

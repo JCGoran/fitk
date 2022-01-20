@@ -463,6 +463,7 @@ class TestFisherPlotter:
         ffigure = fp.plot_1d(
             legend=True,
             title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
+            max_cols=5,
             rc={'mathtext.fontset' : 'cm', 'font.family' : 'serif'},
         )
 

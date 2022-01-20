@@ -287,9 +287,10 @@ class FisherPlotter:
                 ) for _ in self.values
                 ]
 
+                # the scaling factor here is so that we don't cutoff the peak
                 ymax = np.max(
                     [gaussian(0, 0, _.constraints(name, marginalized=True)) for _ in self.values]
-                )
+                ) * 1.03
 
                 for fm in self.values:
                     handle, = add_plot_1d(
@@ -311,8 +312,7 @@ class FisherPlotter:
                 if index == 0:
                     ax.set_ylabel(ylabel1d)
 
-                else:
-                    ax.set_yticks([])
+                ax.set_yticks([])
 
             if kwargs.get('legend') is True:
                 fig.legend(

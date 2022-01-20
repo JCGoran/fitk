@@ -1398,6 +1398,31 @@ class FisherMatrix:
             f.write(json.dumps(data, indent=4))
 
 
+    def marginalize_over(
+        self,
+        *names : AnyStr,
+        ignore_errors : bool = False,
+    ) -> FisherMatrix:
+        """
+        Perform marginalization over some parameters.
+
+        Parameters
+        ----------
+        names : AnyStr
+            the names of the parameters to marginalize over
+
+        ignore_errors : bool, default = False
+            should non-existing parameters be ignored
+
+        Returns
+        -------
+        Instance of `FisherMatrix`.
+        """
+        inv = self.inverse()
+        fm = inv.drop(*names, ignore_errors=ignore_errors)
+        return fm.inverse()
+
+
 
 def from_file(
     path : AnyStr,

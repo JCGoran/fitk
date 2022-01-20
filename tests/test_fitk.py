@@ -403,6 +403,24 @@ class TestFisherTensor:
         assert np.allclose(m_new.values, np.array([[18, 45], [45, 135]]))
 
 
+    def test_marginalize_over(self):
+        size = 5
+        size_marg = 3
+        ort = ortho_group.rvs(size, random_state=12345)
+        rng = np.random.RandomState(12345)
+        values = ort.T @ rng.rand(size, size) @ ort
+        m = FisherTensor(values)
+        m_marg = m.marginalize_over(*[f'p{_ + 1}' for _ in range(size_marg)])
+        assert m_marg == FisherTensor(
+            np.linalg.inv(
+                np.linalg.inv(values)[size_marg:, size_marg:]
+            ),
+            names=m.names[size_marg:],
+            names_latex=m.names_latex[size_marg:],
+            fiducial=m.fiducial[size_marg:],
+        )
+
+
 
 class TestFisherPlotter:
     def test_init(self):

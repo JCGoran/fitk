@@ -1421,6 +1421,19 @@ class FisherMatrix:
         Returns
         -------
         Instance of `FisherMatrix`.
+
+        Examples
+        --------
+        >>> from scipy.stats import ortho_group
+        >>> rm = ortho_group.rvs(5, random_state=12345) # generate a random orthogonal matrix
+        >>> fm = FisherMatrix(rm.T @ np.diag([1, 2, 3, 7, 6]) @ rm)
+        >>> fm.marginalize_over('p1', 'p2') # marginalize over some parameters
+        FisherMatrix([[ 1.67715591 -1.01556085  0.30020773]
+         [-1.01556085  4.92788976  0.91219831]
+         [ 0.30020773  0.91219831  3.1796454 ]], names=['p3' 'p4' 'p5'], names_latex = ['p3' 'p4' 'p5'], fiducial=[0. 0. 0.])
+        >>> fm.marginalize_over('p1', 'p2', invert=True) # marginalizes over all parameters which are NOT 'p1' or 'p2'
+        FisherMatrix([[ 5.04480062 -0.04490453]
+         [-0.04490453  1.61599083]], names=['p1' 'p2'], names_latex = ['p1' 'p2'], fiducial=[0. 0.])
         """
         inv = self.inverse()
         if invert is True:

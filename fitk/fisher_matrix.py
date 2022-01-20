@@ -231,7 +231,7 @@ class FisherMatrix:
         self,
         names : Mapping[AnyStr, Union[AnyStr, FisherParameter]],
         ignore_errors : bool = False,
-    ):
+    ) -> FisherMatrix:
         """
         Returns a Fisher object with new names.
 
@@ -245,6 +245,10 @@ class FisherMatrix:
 
         ignore_errors : bool, default = False
             if set to True, will not raise an error if a parameter doesn't exist
+
+        Returns
+        -------
+        Instance of `FisherMatrix`.
 
         Examples
         --------
@@ -416,6 +420,10 @@ class FisherMatrix:
         * it is symmetric
         * it is positive semi-definite
 
+        Returns
+        -------
+        `True` or `False`
+
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
@@ -517,7 +525,7 @@ class FisherMatrix:
     def sort(
         self,
         **kwargs,
-    ):
+    ) -> FisherMatrix:
         """
         Sorts the Fisher object by name according to some criterion.
 
@@ -531,6 +539,10 @@ class FisherMatrix:
             In the second special case that the value of the keyword `key` is
             set to an array of integers of equal size as the Fisher object, sorts them
             according to those instead.
+
+        Returns
+        -------
+        Instance of `FisherMatrix`.
 
         Examples
         --------
@@ -651,6 +663,10 @@ class FisherMatrix:
     def is_diagonal(self):
         """
         Checks whether the Fisher matrix is diagonal.
+
+        Returns
+        -------
+        `True` or `False`
         """
         return np.all(self.values == np.diag(np.diagonal(self.values)))
 
@@ -658,6 +674,10 @@ class FisherMatrix:
     def diagonal(self, **kwargs):
         """
         Returns the diagonal elements of the Fisher object as a numpy array.
+
+        Returns
+        -------
+        array-like of floats
         """
         return np.diag(self.values, **kwargs)
 
@@ -688,6 +708,10 @@ class FisherMatrix:
 
         ignore_errors : bool, default = False
             should non-existing parameters be ignored
+
+        Returns
+        -------
+        Instance of `FisherMatrix`
 
         Examples
         --------
@@ -755,9 +779,13 @@ class FisherMatrix:
         return np.linalg.eigh(self.values)[-1]
 
 
-    def inverse(self):
+    def inverse(self) -> FisherMatrix:
         """
         Returns the inverse of the Fisher matrix.
+
+        Returns
+        -------
+        Instance of `FisherMatrix`
         """
         # inverse satisfies properties of Fisher matrix, see:
         # https://math.stackexchange.com/a/26200
@@ -772,6 +800,10 @@ class FisherMatrix:
     def determinant(self):
         """
         Returns the determinant of the matrix.
+
+        Returns
+        -------
+        float
         """
         return np.linalg.det(self.values)
 
@@ -1137,7 +1169,7 @@ class FisherMatrix:
         names : Optional[Iterable[AnyStr]] = None,
         names_latex : Optional[Iterable[AnyStr]] = None,
         fiducial : Optional[Iterable[float]] = None,
-    ):
+    ) -> FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are
         related to the old ones via the transformation `jacobian`.
@@ -1161,6 +1193,10 @@ class FisherMatrix:
 
         fiducial : array-like, default = None
             the new values of the fiducial. If not set, defaults to old values.
+
+        Returns
+        -------
+        Instance of `FisherMatrix`.
 
         Examples
         --------

@@ -35,6 +35,21 @@ from .fisher_matrix import FisherMatrix
 
 
 
+def get_default_rcparams():
+    """
+    Returns a dictionary with default parameters used in FITK.
+
+    Returns
+    -------
+    `dict`
+    """
+    return {
+        'mathtext.fontset' : 'cm',
+        'font.family' : 'serif',
+    }
+
+
+
 class FisherBaseFigure(ABC):
     def __init__(
         self,
@@ -229,7 +244,7 @@ class FisherPlotter:
     def plot_1d(
         self,
         max_cols : Optional[int] = None,
-        rc : dict = {},
+        rc : dict = get_default_rcparams(),
         **kwargs,
     ):
         """
@@ -244,7 +259,7 @@ class FisherPlotter:
             need to spread it over `max_cols`, pass a non-negative integer
             here.
 
-        rc : dict = {}
+        rc : dict = get_default_rcparams()
             any parameters meant for `matplotlib.rcParams`.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
             for more information.

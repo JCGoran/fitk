@@ -1449,7 +1449,7 @@ class FisherMatrix:
             the names of the parameters to marginalize over
 
         invert : bool, default = False
-            whether to marginalize over all the parameters NOT in names
+            whether to marginalize over all the parameters NOT in names (the complement)
 
         ignore_errors : bool, default = False
             should non-existing parameters be ignored

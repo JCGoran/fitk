@@ -970,32 +970,58 @@ class FisherMatrix:
         """
         Returns the result of adding two Fisher objects.
         """
-        # make sure the dimensions match
-        if other.ndim != self.ndim:
-            raise ValueError(
-                f'The dimensions of the objects do not match: {other.ndim} and {self.ndim}'
+        try:
+            other = float(other)
+        except TypeError as err:
+            # make sure the dimensions match
+            if other.ndim != self.ndim:
+                raise ValueError(
+                    f'The dimensions of the objects do not match: {other.ndim} and {self.ndim}'
+                )
+
+            # make sure they have the right parameters
+            if set(other.names) != set(self.names):
+                raise ValueError(
+                    f'Incompatible parameter names: {other.names} and {self.names}'
+                )
+
+            index = get_index_of_other_array(self.names, other.names)
+
+            # make sure the fiducials match
+            fiducial = other.fiducial[index]
+
+            if not np.allclose(fiducial, self.fiducial):
+                raise ValueError(
+                    f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
+                )
+
+            values = self.values + reindex_array(other.values, index)
+
+            return FisherMatrix(
+                values,
+                names=self.names,
+                names_latex=self.names_latex,
+                fiducial=self.fiducial,
             )
-
-        # make sure they have the right parameters
-        if set(other.names) != set(self.names):
-            raise ValueError(
-                f'Incompatible parameter names: {other.names} and {self.names}'
-            )
-
-        index = get_index_of_other_array(self.names, other.names)
-
-        # make sure the fiducials match
-        fiducial = other.fiducial[index]
-
-        if not np.allclose(fiducial, self.fiducial):
-            raise ValueError(
-                f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
-            )
-
-        values = self.values + reindex_array(other.values, index)
 
         return FisherMatrix(
-            values,
+            self.values + other,
+            names=self.names,
+            names_latex=self.names_latex,
+            fiducial=self.fiducial,
+        )
+
+
+    def __radd__(
+        self,
+        other : Union[FisherMatrix, float],
+    ) -> FisherMatrix:
+        return self.__add__(other)
+
+
+    def __neg__(self):
+        return FisherMatrix(
+            -self.values,
             names=self.names,
             names_latex=self.names_latex,
             fiducial=self.fiducial,
@@ -1004,14 +1030,21 @@ class FisherMatrix:
 
     def __sub__(
         self,
-        other : FisherMatrix,
+        other : Union[FisherMatrix, float],
     ) -> FisherMatrix:
         """
         Returns the result of subtracting two Fisher objects.
         """
-        temp = copy.deepcopy(other)
-        temp.values = -temp.values
-        return self.__add__(temp)
+        return self.__add__(-other)
+
+
+    def __rsub__(
+        self,
+        other : Union[FisherMatrix, float],
+    ):
+        # this will never be called if we subtract two FisherMatrix instances,
+        # so we just need to handle floats
+        return -self.__add__(-other)
 
 
     def __pow__(

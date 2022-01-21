@@ -356,7 +356,16 @@ class TestFisherTensor:
     def test_add(self):
         m1 = FisherTensor(np.diag([1, 2, 3]))
         m2 = FisherTensor(np.diag([6, 5, 4]))
-        assert m1 + m2 == FisherTensor(np.diag([7, 7, 7]))
+        assert m1 + m2 == FisherTensor(m1.values + m2.values)
+        assert m1 + 3 == FisherTensor(m1.values + 3)
+        assert 3 + m1 == FisherTensor(3 + m1.values)
+
+
+    def test_sub(self):
+        m1 = FisherTensor(np.diag([1, 2, 3]))
+        assert m1 - m1 == FisherTensor(m1.values - m1.values)
+        assert m1 - 1 == FisherTensor(m1.values - 1)
+        assert 1 - m1 == FisherTensor(1 - m1.values)
 
 
     def test_mul(self):

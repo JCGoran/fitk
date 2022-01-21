@@ -22,7 +22,7 @@ from typing import \
 
 # third party imports
 import numpy as np
-from scipy.special import erfinv
+from scipy.special import erfinv # pylint: disable=no-name-in-module
 import matplotlib.pyplot as plt
 from matplotlib.patheffects import Stroke, Normal
 from matplotlib import colors

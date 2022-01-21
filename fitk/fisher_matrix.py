@@ -637,7 +637,7 @@ class FisherMatrix:
         """
         Setter for the values of the Fisher object.
         """
-        if self.ndim != np.dim(value):
+        if self.ndim != np.ndim(value):
             raise ValueError(
                 f'The dimensionality of the matrices do not match: {self.ndim} and {np.ndim(value)}'
             )

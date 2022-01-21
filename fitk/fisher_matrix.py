@@ -1019,7 +1019,7 @@ class FisherMatrix:
         return self.__add__(other)
 
 
-    def __neg__(self):
+    def __neg__(self) -> FisherMatrix:
         return FisherMatrix(
             -self.values,
             names=self.names,
@@ -1041,7 +1041,7 @@ class FisherMatrix:
     def __rsub__(
         self,
         other : Union[FisherMatrix, float],
-    ):
+    ) -> FisherMatrix:
         # this will never be called if we subtract two FisherMatrix instances,
         # so we just need to handle floats
         return -self.__add__(-other)

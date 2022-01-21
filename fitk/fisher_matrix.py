@@ -686,6 +686,7 @@ class FisherMatrix:
     def drop(
         self,
         *names : str,
+        invert : bool = False,
         ignore_errors : bool = False,
     ) -> FisherMatrix:
         """
@@ -697,6 +698,9 @@ class FisherMatrix:
             the names of the parameters to drop.
             If passing a list or a tuple, make sure to unpack it using the
             asterisk (*).
+
+        invert : bool, default = False
+            whether to drop all the parameters NOT in names (the complement)
 
         ignore_errors : bool, default = False
             should non-existing parameters be ignored
@@ -720,6 +724,9 @@ class FisherMatrix:
 
         if ignore_errors:
             names = np.array([name for name in names if name in self.names])
+
+        if invert is True:
+            names = set(names) ^ set(self.names)
 
         # TODO should we remove this?
         if set(names) == set(self.names):

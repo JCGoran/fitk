@@ -349,6 +349,13 @@ class TestFisherTensor:
         #assert np.all(data_new.names == np.array(['p2', 'p3']))
         assert np.allclose(data_new.fiducial, np.array([0, 1]))
 
+        data_new = data.drop('p2', 'p1', invert=True)
+        assert data_new == FisherTensor(
+            np.diag([2, 1]),
+            names=['p2', 'p1'],
+            fiducial=[0, -1],
+        )
+
         with pytest.raises(ValueError):
             data_new = data.drop(*data.names)
 

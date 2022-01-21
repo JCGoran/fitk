@@ -578,12 +578,13 @@ class FisherMatrix:
     def __eq__(self, other):
         """
         The equality operator.
-        Returns True if the operands have the following properties:
-            - are instances of FisherMatrix
-            - have same names (potentially shuffled)
-            - have same dimensionality
-            - have same fiducials (potentially shuffled)
-            - have same values (potentially shuffled)
+        Returns `True` if the operands have the following properties:
+
+        * are instances of FisherMatrix
+        * have same names (potentially shuffled)
+        * have same dimensionality
+        * have same fiducials (potentially shuffled)
+        * have same values (potentially shuffled)
         """
         if set(self.names) != set(other.names):
             return False

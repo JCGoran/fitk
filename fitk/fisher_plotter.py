@@ -17,6 +17,7 @@ from typing import \
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.transforms import Bbox
 from matplotlib.axes import Axes
 from matplotlib.patches import Ellipse
 from scipy.stats import chi2, norm
@@ -103,6 +104,33 @@ class FisherBaseFigure(ABC):
         Returns the names of the parameters plotted.
         """
         return self._names
+
+
+    def savefig(
+        self,
+        path : str,
+        dpi : float = 300,
+        bbox_inches : Union[str, Bbox] = 'tight',
+        **kwargs,
+    ):
+        """
+        Convenience wrapper for `figure.savefig`.
+
+        Parameters
+        ----------
+        path : str
+            the path where to save the figure
+
+        dpi : float, default = 300
+            the resolution of the saved figure
+
+        bbox_inches : Union[str, Bbox], default = 'tight'
+            what is the bounding box for the figure
+
+        kwargs
+            any other keyword arguments that should be passed to `figure.savefig`
+        """
+        return self.figure.savefig(path, dpi=dpi, bbox_inches=bbox_inches, **kwargs)
 
 
 

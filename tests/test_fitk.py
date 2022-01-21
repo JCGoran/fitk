@@ -485,7 +485,7 @@ class TestFisherPlotter:
         )
 
         ffigure['a'].legend()
-        ffigure.figure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d.pdf'), dpi=300, bbox_inches='tight')
+        ffigure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d.pdf'))
 
 
     def test_plot_1d_euclid(self):
@@ -499,4 +499,4 @@ class TestFisherPlotter:
             max_cols=5,
         )
 
-        ffigure.figure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d_euclid.pdf'), dpi=300, bbox_inches='tight')
+        ffigure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d_euclid.pdf'))

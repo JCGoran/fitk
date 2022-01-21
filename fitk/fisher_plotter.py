@@ -8,11 +8,8 @@ from __future__ import annotations
 # standard library imports
 from abc import ABC, abstractmethod
 from typing import \
-    AnyStr, \
-    Iterable, \
-    List, \
+    Collection, \
     Optional, \
-    SupportsFloat, \
     Tuple, \
     Union
 
@@ -54,8 +51,8 @@ class FisherBaseFigure(ABC):
     def __init__(
         self,
         figure : Figure,
-        axes : Iterable[Axes],
-        names : Iterable[AnyStr],
+        axes : Collection[Axes],
+        names : Collection[str],
     ):
         """
         Constructor.
@@ -65,10 +62,10 @@ class FisherBaseFigure(ABC):
         figure : Figure
             the figure plotted by `FisherPlotter`
 
-        axes : Iterable[Axes]
+        axes : Collection[Axes]
             the axes of the above figure
 
-        names : Iterable[AnyStr]
+        names : Collection[str]
             the names of the parameters that are plotted
         """
         self._figure = figure
@@ -115,7 +112,7 @@ class FisherFigure1D(FisherBaseFigure):
     """
     def __getitem__(
         self,
-        key : AnyStr,
+        key : str,
     ):
         """
         Returns the axis associated to the name `key`.
@@ -133,7 +130,7 @@ class FisherFigure2D(FisherBaseFigure):
     """
     def __getitem__(
         self,
-        key : Tuple[AnyStr],
+        key : Tuple[str],
     ):
         pass
 
@@ -146,7 +143,7 @@ class FisherPlotter:
     def __init__(
         self,
         *args : FisherMatrix,
-        labels : Optional[Iterable[AnyStr]] = None,
+        labels : Optional[Collection[str]] = None,
     ):
         """
         Constructor.
@@ -210,7 +207,7 @@ class FisherPlotter:
 
     def find_limits_1d(
         self,
-        name : AnyStr,
+        name : str,
         sigma : float = 3,
     ):
         """
@@ -219,7 +216,7 @@ class FisherPlotter:
 
         Parameters
         ----------
-        name : AnyStr
+        name : str
             the name of the parameter
 
         sigma : float, default = 3

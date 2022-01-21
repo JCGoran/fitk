@@ -6,8 +6,7 @@ Various helper utilities for Fisher objects.
 from __future__ import annotations
 
 from typing import \
-    AnyStr, \
-    Iterable, \
+    Collection, \
     Optional
 
 import numpy as np
@@ -67,8 +66,8 @@ class ParameterNotFoundError(ValueError):
     """
     def __init__(
         self,
-        name : AnyStr,
-        names : Iterable[AnyStr],
+        name : str,
+        names : Collection[str],
     ):
         self.message = f'Parameter \'{name}\' not found in array {names}'
         super().__init__(self.message)
@@ -103,21 +102,21 @@ class HTMLWrapper:
 
 
 def make_html_table(
-    values : Iterable,
-    names : Optional[Iterable[AnyStr]] = None,
+    values : Collection,
+    names : Optional[Collection[str]] = None,
     fmt_values : str = '{}',
     fmt_names : str = '{}',
-    title : Optional[AnyStr] = None,
+    title : Optional[str] = None,
 ):
     """
     Makes a HTML formatted table with names (optional) and values.
 
     Parameters
     ----------
-    values : Iterable
+    values : Collection
         the values in the table
 
-    names : Iterable, default = None
+    names : Collection[str], default = None
         the names of the values in the table. Must have the same length as `values`
 
     fmt_values : str, default = '{}'
@@ -126,7 +125,7 @@ def make_html_table(
     fmt_names : str, default = '{}'
         the format string for the names
 
-    title : Optional[AnyStr], default = None
+    title : Optional[str], default = None
         the title of the table
     """
     if title is not None:

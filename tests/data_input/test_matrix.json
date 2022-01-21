@@ -21,7 +21,7 @@
         "b",
         "c"
     ],
-    "names_latex": [
+    "latex_names": [
         "$\\mathcal{A}$",
         "$\\mathcal{B}$",
         "$\\mathcal{C}$"

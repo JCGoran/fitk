@@ -133,7 +133,7 @@
         "etaIA",
         "betaIA"
     ],
-    "names_latex": [
+    "latex_names": [
         "$\\Omega_\\mathrm{m}$",
         "$\\Omega_\\mathrm{b}$",
         "$w_0$",

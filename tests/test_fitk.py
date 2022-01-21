@@ -159,7 +159,7 @@ class TestFisherTensor:
 
         # get the LaTeX names right
         assert np.all(
-            FisherTensor(np.diag([1, 2, 3]), names=['a', 'b', 'c']).names_latex == ['a', 'b', 'c']
+            FisherTensor(np.diag([1, 2, 3]), names=['a', 'b', 'c']).latex_names == ['a', 'b', 'c']
         )
 
 
@@ -167,7 +167,7 @@ class TestFisherTensor:
         names = 'Omegam Omegab w0 wa h ns sigma8 aIA etaIA betaIA'.split(' ')
         # taken from v2 of https://arxiv.org/abs/1910.09273, table 1, and page 23
         fiducial = [0.32, 0.05, -1, 0, 0.67, 0.96, 0.816, 1.72, -0.41, 2.17]
-        names_latex = [
+        latex_names = [
             r'$\Omega_\mathrm{m}$',
             r'$\Omega_\mathrm{b}$',
             '$w_0$',
@@ -182,7 +182,7 @@ class TestFisherTensor:
         fm = FisherTensor(
             np.loadtxt(os.path.join(DATADIR_INPUT, 'test_numpy_matrix.dat'), comments='#'),
             names=names,
-            names_latex=names_latex,
+            latex_names=latex_names,
             fiducial=fiducial,
         )
         fm.to_file(
@@ -203,7 +203,7 @@ class TestFisherTensor:
         assert fm == FisherTensor(
             np.diag([2, 1, 3]),
             names=list('bac'),
-            names_latex=[r'\mathcal{B}', r'\mathcal{A}', r'\mathcal{C}'],
+            latex_names=[r'\mathcal{B}', r'\mathcal{A}', r'\mathcal{C}'],
             fiducial=[5, 4, 6],
         )
 
@@ -215,7 +215,7 @@ class TestFisherTensor:
         assert m2 == FisherTensor(
             m1.values,
             names=list('xbc'),
-            names_latex=list('xbc'),
+            latex_names=list('xbc'),
             fiducial=[1, 0, 0],
         )
 
@@ -245,7 +245,7 @@ class TestFisherTensor:
             m1.values,
             names=['a', 'b', 'p3'],
             fiducial=[0, 2, 0],
-            names_latex=['a', '$b$', 'p3'],
+            latex_names=['a', '$b$', 'p3'],
         )
 
 
@@ -327,7 +327,7 @@ class TestFisherTensor:
             [23, 21, 22]],
             fiducial=[1, -1, 0],
             names=['p1', 'p2', 'p3'],
-            names_latex=['p1', 'p2', 'p3'],
+            latex_names=['p1', 'p2', 'p3'],
         )
 
         assert m.sort(key=[2, 1, 0]) == FisherTensor([
@@ -432,7 +432,7 @@ class TestFisherTensor:
                 np.linalg.inv(values)[size_marg:, size_marg:]
             ),
             names=m.names[size_marg:],
-            names_latex=m.names_latex[size_marg:],
+            latex_names=m.latex_names[size_marg:],
             fiducial=m.fiducial[size_marg:],
         )
 
@@ -441,13 +441,13 @@ class TestFisherTensor:
 class TestFisherPlotter:
     def test_init(self):
         names = list('abcde')
-        names_latex = names_latex=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        latex_names = latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
         val1 = np.diag([1, 2, 3, 9.3, 3])
         val2 = np.diag([6, 7, 20, 1.5, .6])
         fid1 = [0, 0, 0, 1, 2]
         fid2 = [-1, 0.1, 5, -1, 3]
-        m1 = FisherTensor(val1, names=names, fiducial=fid1, names_latex=names_latex)
-        m2 = FisherTensor(val2, names=names, fiducial=fid2, names_latex=names_latex)
+        m1 = FisherTensor(val1, names=names, fiducial=fid1, latex_names=latex_names)
+        m2 = FisherTensor(val2, names=names, fiducial=fid2, latex_names=latex_names)
         fp = FisherPlotter(m1, m2, labels=['first', 'second'])
 
         assert fp.values[0] == m1
@@ -461,16 +461,16 @@ class TestFisherPlotter:
 
     def test_plot_1d(self):
         names = list('abcde')
-        names_latex = names_latex=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        latex_names = latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
         val1 = np.diag([1, 2, 3, 9.3, 3])
         val2 = np.diag([6, 7, 20, 1.5, .6])
         val3 = np.diag([10, 4.2, 6.4, 0.2, 0.342])
         fid1 = [0, 0, 0, 1, 2]
         fid2 = [-1, 0.1, 5, -1, 3]
         fid3 = fid1
-        m1 = FisherTensor(val1, names=names, fiducial=fid1, names_latex=names_latex)
-        m2 = FisherTensor(val2, names=names, fiducial=fid2, names_latex=names_latex)
-        m3 = FisherTensor(val3, names=names, fiducial=fid3, names_latex=names_latex)
+        m1 = FisherTensor(val1, names=names, fiducial=fid1, latex_names=latex_names)
+        m2 = FisherTensor(val2, names=names, fiducial=fid2, latex_names=latex_names)
+        m3 = FisherTensor(val3, names=names, fiducial=fid3, latex_names=latex_names)
         fp = FisherPlotter(m1, m2, m3, labels=['first', 'second', 'third'])
 
         ffigure = fp.plot_1d(

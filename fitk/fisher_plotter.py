@@ -283,13 +283,13 @@ class FisherPlotter:
             axes = gs.subplots()
 
             names = self.values[0].names
-            names_latex = self.values[0].names_latex
+            latex_names = self.values[0].latex_names
 
             ylabel1d = r'$p (\theta)$'
 
             handles = []
 
-            for (index, name), name_latex in zip(enumerate(names), names_latex):
+            for (index, name), name_latex in zip(enumerate(names), latex_names):
                 ax = axes.flat[index]
                 title_list = [
                     '{0} = ${1}^{{+{2}}}_{{-{2}}}$'.format(

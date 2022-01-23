@@ -437,6 +437,33 @@ class TestFisherTensor:
         )
 
 
+    def test_ufunc(self):
+        """
+        Test of numpy universal functions.
+        """
+        m = FisherTensor([[2, -1], [-1, 3]])
+        assert np.exp(m) == FisherTensor(np.exp(m.values))
+
+        m1 = FisherTensor([[1, -2], [-2, 4]])
+        m2 = FisherTensor([[2, 0], [0, 3]])
+
+        assert np.multiply(m1, m2) == m1 * m2
+        assert np.multiply(3, m2) == 3 * m2
+        assert np.sin(m2) == FisherTensor(np.sin(m2.values))
+
+        m3 = FisherTensor(np.diag([1]))
+
+        # we can't add Fisher matrices with mismatching length of names
+        with pytest.raises(ValueError):
+            np.add(m, m3)
+
+        m4 = FisherTensor(np.diag([1, 2]), names=['p2', 'p1'])
+
+        assert np.add(m, m4) == FisherTensor([[4, -1], [-1, 4]], names=['p1', 'p2'])
+
+        assert np.power(m, 3) == m**3
+
+
 
 class TestFisherPlotter:
     def test_init(self):

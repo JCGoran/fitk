@@ -12,6 +12,7 @@ from itertools import \
     permutations, \
     product
 import json
+from numbers import Number
 import os
 from typing import \
     Mapping, \
@@ -1052,6 +1053,55 @@ class FisherMatrix:
         # this will never be called if we subtract two FisherMatrix instances,
         # so we just need to handle floats
         return -self.__add__(-other)
+
+
+    def __array_ufunc__(
+        self,
+        ufunc,
+        method,
+        *inputs,
+        **kwargs,
+    ):
+        """
+        Handles numpy's universal functions.
+        For a complete list and explanation, see:
+        https://numpy.org/doc/stable/reference/ufuncs.html
+        """
+        if method == '__call__':
+            scalars = []
+            for i in inputs:
+                if isinstance(i, Number):
+                    scalars.append(i)
+                elif isinstance(i, self.__class__):
+                    scalars.append(i.values)
+                else:
+                    return NotImplemented
+
+            names = [_.names for _ in inputs if isinstance(_, self.__class__)]
+
+            if not np.all([set(names[0]) == set(_) for _ in names]):
+                raise ValueError(
+                    'Mismatching names'
+                )
+
+            # make sure the names have the same _ordering_
+            for index, _ in enumerate(inputs):
+                if isinstance(_, self.__class__):
+                    scalars[index] = _.sort(
+                        key=get_index_of_other_array(
+                            names[0],
+                            _.names,
+                        )
+                    ).values
+
+            return self.__class__(
+                ufunc(*scalars, **kwargs),
+                names=self.names,
+                latex_names=self.latex_names,
+                fiducial=self.fiducial,
+            )
+
+        return NotImplemented
 
 
     def __pow__(

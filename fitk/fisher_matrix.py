@@ -274,7 +274,7 @@ class FisherMatrix:
                 names_new[index] = value
                 latex_names_new[index] = value
 
-        return FisherMatrix(
+        return self.__class__(
             self.values,
             names=names_new,
             latex_names=latex_names_new,
@@ -335,7 +335,7 @@ class FisherMatrix:
             latex_names = self.latex_names[sl]
             fiducial = self.fiducial[sl]
 
-            return FisherMatrix(
+            return self.__class__(
                 values,
                 names=names,
                 latex_names=latex_names,
@@ -568,7 +568,7 @@ class FisherMatrix:
         fiducial = self.fiducial[index]
         values = reindex_array(self.values, index)
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=names,
             latex_names=latex_names,
@@ -747,7 +747,7 @@ class FisherMatrix:
         latex_names = np.delete(self.latex_names, index)
         names = np.delete(self.names, index)
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=names,
             latex_names=latex_names,
@@ -789,7 +789,7 @@ class FisherMatrix:
         """
         # inverse satisfies properties of Fisher matrix, see:
         # https://math.stackexchange.com/a/26200
-        return FisherMatrix(
+        return self.__class__(
             np.linalg.inv(self.values),
             names=self.names,
             latex_names=self.latex_names,
@@ -1005,14 +1005,14 @@ class FisherMatrix:
 
             values = self.values + reindex_array(other.values, index)
 
-            return FisherMatrix(
+            return self.__class__(
                 values,
                 names=self.names,
                 latex_names=self.latex_names,
                 fiducial=self.fiducial,
             )
 
-        return FisherMatrix(
+        return self.__class__(
             self.values + other,
             names=self.names,
             latex_names=self.latex_names,
@@ -1028,7 +1028,7 @@ class FisherMatrix:
 
 
     def __neg__(self) -> FisherMatrix:
-        return FisherMatrix(
+        return self.__class__(
             -self.values,
             names=self.names,
             latex_names=self.latex_names,
@@ -1111,7 +1111,7 @@ class FisherMatrix:
         """
         Raises the Fisher object to some power.
         """
-        return FisherMatrix(
+        return self.__class__(
             np.power(self.values, other),
             names=self.names,
             latex_names=self.latex_names,
@@ -1150,7 +1150,7 @@ class FisherMatrix:
 
         values = self.values @ reindex_array(other.values, index)
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=self.names,
             latex_names=self.latex_names,
@@ -1190,7 +1190,7 @@ class FisherMatrix:
         else:
             values = self.values / other
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=self.names,
             latex_names=self.latex_names,
@@ -1230,7 +1230,7 @@ class FisherMatrix:
         else:
             values = self.values * other
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=self.names,
             latex_names=self.latex_names,
@@ -1336,7 +1336,7 @@ class FisherMatrix:
         else:
             fiducial = copy.deepcopy(self.fiducial)
 
-        return FisherMatrix(
+        return self.__class__(
             values,
             names=names,
             latex_names=latex_names,

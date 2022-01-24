@@ -5,6 +5,7 @@ Various tests for the `fitk` module.
 import os
 
 
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 from scipy.stats import ortho_group
 import pytest
@@ -26,7 +27,7 @@ from fitk.fisher_utils import \
 from fitk.fisher_matrix import from_file
 from fitk.fisher_matrix import FisherMatrix as FisherTensor
 from fitk.fisher_matrix import FisherParameter
-from fitk.fisher_plotter import FisherPlotter
+from fitk.fisher_plotter import FisherPlotter, gaussian
 
 
 
@@ -502,6 +503,7 @@ class TestFisherPlotter:
 
         ffigure = fp.plot_1d(
             legend=True, title=True,
+            max_cols=1,
         )
 
         ffigure['a'].plot(
@@ -518,12 +520,49 @@ class TestFisherPlotter:
     def test_plot_1d_euclid(self):
         fm_optimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_optimistic.json'))
         fm_pessimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_pessimistic.json'))
-        fp = FisherPlotter(fm_optimistic, fm_pessimistic, labels=['optimistic case', 'pessimistic case'])
 
-        ffigure = fp.plot_1d(
+        fp1 = FisherPlotter(fm_optimistic, fm_pessimistic, labels=['optimistic case', 'pessimistic case'])
+
+        ff1 = fp1.plot_1d(
             legend=True,
             title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
             max_cols=5,
         )
 
-        ffigure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_1d_euclid.pdf'))
+        # accessing an element and plotting some stuff on it
+        ff1['h'].vlines(0.67, 0, gaussian(0, 0, sigma=fm_pessimistic.constraints('h', marginalized=True)), color='blue')
+
+        # non-existing parameter
+        with pytest.raises(ValueError):
+            ff1['asdf']
+
+        fp2 = FisherPlotter(
+            fm_optimistic.marginalize_over('Omegam', 'Omegab', 'h', 'ns', invert=True),
+            fm_pessimistic.marginalize_over('Omegam', 'Omegab', 'h', 'ns', invert=True),
+            labels=['optimistic case', 'pessimistic case'],
+        )
+
+        ff2 = fp2.plot_1d(
+            legend=True,
+            title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
+            max_cols=5,
+        )
+
+        # generate another figure from the same data, with different layout and title
+        ff2_2 = fp2.plot_1d(
+            legend=True,
+            title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology (take two)',
+            max_cols=2,
+        )
+
+        # add just one element
+        fp3 = FisherPlotter(
+            fm_optimistic.marginalize_over('Omegam', invert=True),
+            fm_pessimistic.marginalize_over('Omegam', invert=True),
+        )
+
+        ff3 = fp3.plot_1d()
+
+        with PdfPages(os.path.join(DATADIR_OUTPUT, 'test_plot_1d_euclid.pdf')) as pdf:
+            for ff in [ff1, ff2, ff2_2, ff3]:
+                pdf.savefig(ff.figure, bbox_inches='tight')

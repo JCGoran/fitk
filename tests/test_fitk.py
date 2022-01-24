@@ -424,7 +424,7 @@ class TestFisherTensor:
         size = 5
         size_marg = 3
         ort = ortho_group.rvs(size, random_state=12345)
-        rng = np.random.RandomState(12345)
+        rng = np.random.RandomState(12345) # pylint: disable=no-member
         values = ort.T @ rng.rand(size, size) @ ort
         m = FisherTensor(values)
         m_marg = m.marginalize_over(*[f'p{_ + 1}' for _ in range(size_marg)])

@@ -469,7 +469,7 @@ class TestFisherTensor:
 class TestFisherPlotter:
     def test_init(self):
         names = list('abcde')
-        latex_names = latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        latex_names = [r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
         val1 = np.diag([1, 2, 3, 9.3, 3])
         val2 = np.diag([6, 7, 20, 1.5, .6])
         fid1 = [0, 0, 0, 1, 2]
@@ -489,7 +489,7 @@ class TestFisherPlotter:
 
     def test_plot_1d(self):
         names = list('abcde')
-        latex_names = latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
+        latex_names = [r'$\mathcal{A}$', r'$\mathcal{B}$', r'$\mathcal{C}$', 'd', 'e']
         val1 = np.diag([1, 2, 3, 9.3, 3])
         val2 = np.diag([6, 7, 20, 1.5, .6])
         val3 = np.diag([10, 4.2, 6.4, 0.2, 0.342])

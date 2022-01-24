@@ -148,7 +148,7 @@ class FisherFigure1D(FisherBaseFigure):
         if key not in self.names:
             raise ParameterNotFoundError(key, self.names)
 
-        return self.axes[np.where(self.names == key)][0]
+        return self.axes.flat[np.where(self.names == key)][0]
 
 
 
@@ -294,7 +294,8 @@ class FisherPlotter:
         An instance of `FisherFigure1D`.
         """
         size = len(self.values[0])
-        if max_cols is not None:
+
+        if max_cols is not None and max_cols <= size:
             full = size % max_cols == 0
             layout = size // max_cols if full else size // max_cols + 1, max_cols
         else:
@@ -309,6 +310,8 @@ class FisherPlotter:
                 hspace=0.5, wspace=0.1,
             )
             axes = gs.subplots()
+            if size == 1:
+                axes = np.array([axes])
 
             names = self.values[0].names
             latex_names = self.values[0].latex_names

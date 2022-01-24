@@ -53,7 +53,7 @@ class FisherParameter:
     def __init__(
         self,
         name : str,
-        name_latex : Optional[str] = None,
+        latex_name : Optional[str] = None,
         fiducial : float = 0,
     ):
         """
@@ -64,14 +64,14 @@ class FisherParameter:
         name : str
             the name of the parameter
 
-        name_latex : Optional[str], default = None
+        latex_name : Optional[str], default = None
             the LaTeX name of the parameter. If not specified, defaults to `name`.
 
         fiducial : float, default = 0
             the fiducial value of the parameter
         """
         self.name = name
-        self.name_latex = name_latex if name_latex is not None else name
+        self.latex_name = latex_name if latex_name is not None else name
         self.fiducial = fiducial
 
 
@@ -81,7 +81,7 @@ class FisherParameter:
         """
         return \
             f"FisherParameter(name='{self.name}', " \
-            f"name_latex='{self.name_latex}', " \
+            f"latex_name='{self.latex_name}', " \
             f"fiducial={self.fiducial})"
 
 
@@ -245,7 +245,7 @@ class FisherMatrix:
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
-        >>> m.rename({'p1' : 'a', 'p2' : FisherParameter('b', name_latex='$b$', fiducial=2)})
+        >>> m.rename({'p1' : 'a', 'p2' : FisherParameter('b', latex_name='$b$', fiducial=2)})
         FisherMatrix([[1 0 0]
          [0 2 0]
          [0 0 3]], names=['a' 'b' 'p3'], latex_names=['a' '$b$' 'p3'], fiducial=[0. 2. 0.])
@@ -267,7 +267,7 @@ class FisherMatrix:
             index = np.where(names_new == name)
             # it's a mapping to a FisherParameter
             if isinstance(value, FisherParameter):
-                latex_names_new[index] = value.name_latex
+                latex_names_new[index] = value.latex_name
                 fiducial_new[index] = value.fiducial
                 names_new[index] = value.name
             else:

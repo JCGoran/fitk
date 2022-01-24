@@ -210,7 +210,7 @@ class TestFisherTensor:
 
     def test_rename(self):
         m1 = FisherTensor(np.diag([1, 2, 3]), names=list('abc'))
-        m2 = m1.rename({'a' : FisherParameter(name='x', name_latex=None, fiducial=1)})
+        m2 = m1.rename({'a' : FisherParameter(name='x', latex_name=None, fiducial=1)})
 
         assert m2 == FisherTensor(
             m1.values,
@@ -239,7 +239,7 @@ class TestFisherTensor:
         assert m.rename(
             {
                 'p1' : 'a',
-                'p2' : FisherParameter('b', name_latex='$b$', fiducial=2),
+                'p2' : FisherParameter('b', latex_name='$b$', fiducial=2),
             },
         ) == FisherTensor(
             m1.values,

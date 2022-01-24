@@ -406,7 +406,7 @@ class TestFisherTensor:
         """
         m = FisherTensor([[2, -1], [-1, 3]])
         assert m / 2 == FisherTensor(m.values / 2)
-        assert m / m == FisherTensor(np.ones((m.size, m.size)))
+        assert m / m == FisherTensor(np.ones((len(m), len(m))))
         # the other stuff should raise errors
         with pytest.raises(TypeError):
             2 / m

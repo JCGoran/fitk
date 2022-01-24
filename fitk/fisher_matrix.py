@@ -445,7 +445,7 @@ class FisherMatrix:
         """
         # TODO should only work with 2D data.
         with plt.rc_context(rc):
-            fig, ax = plt.subplots(figsize=(self.size, self.size))
+            fig, ax = plt.subplots(figsize=(len(self), len(self)))
             img = ax.imshow(
                 self.values,
                 interpolation='none',
@@ -453,8 +453,8 @@ class FisherMatrix:
                 **kwargs,
             )
 
-            ax.set_xticks(np.arange(self.size))
-            ax.set_yticks(np.arange(self.size))
+            ax.set_xticks(np.arange(len(self)))
+            ax.set_yticks(np.arange(len(self)))
             ax.set_xticklabels(self.latex_names)
             ax.set_yticklabels(self.latex_names)
 
@@ -493,8 +493,8 @@ class FisherMatrix:
             # whether or not we want to display the actual values inside the
             # matrix
             if show_values:
-                mid_coords = np.arange(self.size)
-                for index1, index2 in product(range(self.size), range(self.size)):
+                mid_coords = np.arange(len(self))
+                for index1, index2 in product(range(len(self)), range(len(self))):
                     x = mid_coords[index1]
                     y = mid_coords[index2]
                     value = self.values[index1, index2] / \
@@ -673,15 +673,6 @@ class FisherMatrix:
         array-like of floats
         """
         return np.diag(self.values, **kwargs)
-
-
-    @property
-    def size(self):
-        """
-        Returns the number of parameters in the Fisher object (same as
-        `len(object)`).
-        """
-        return self._size
 
 
     def drop(

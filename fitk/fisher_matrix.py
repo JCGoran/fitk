@@ -488,7 +488,6 @@ class FisherMatrix:
                     cax.set_xticklabels(
                         [f'${float_to_latex(_)}$' for _ in cax.get_xticks()]
                     )
-                fig.colorbar(img)
 
             # whether or not we want to display the actual values inside the
             # matrix

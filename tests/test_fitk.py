@@ -355,6 +355,20 @@ class TestFisherTensor:
         ) == FisherTensor(
             np.diag([1, 2, 3, 4]),
             names=list('abcx'),
+        ) == FisherTensor(
+            np.diag([3, 2, 4, 1]),
+            names=list('cbxa'),
+        )
+
+        assert FisherTensor(
+            np.diag([2, 3, 1]),
+            names=list('bca'),
+        ) == FisherTensor(
+            np.diag([1, 2, 3]),
+            names=list('abc'),
+        ) == FisherTensor(
+            np.diag([3, 2, 1]),
+            names=list('cba'),
         )
 
 

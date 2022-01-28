@@ -137,7 +137,7 @@ class FisherMatrix:
         latex_names : Optional[str] = None,
         fiducial : Optional[Collection[float]] = None,
     ):
-        """
+        r"""
         Constructor for Fisher object.
 
         Parameters

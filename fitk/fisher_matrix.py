@@ -179,7 +179,7 @@ class FisherMatrix:
             )
 
         # try to treat it as an array-like object
-        self._values = np.array(values)
+        self._values = np.array(values, dtype=float)
 
         self._size = np.shape(self._values)[0]
         self._ndim = np.ndim(self._values)

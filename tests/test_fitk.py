@@ -340,6 +340,24 @@ class TestFisherTensor:
         )
 
 
+    def test_eq(self):
+        assert FisherTensor(
+            np.diag([1, 2]),
+            names=list('ba'),
+        ) == FisherTensor(
+            np.diag([2, 1]),
+            names=list('ab'),
+        )
+
+        assert FisherTensor(
+            np.diag([4, 1, 2, 3]),
+            names=list('xabc'),
+        ) == FisherTensor(
+            np.diag([1, 2, 3, 4]),
+            names=list('abcx'),
+        )
+
+
     def test_drop(self):
         data = FisherTensor(np.diag([1, 2, 3]), fiducial=[-1, 0, 1])
         data_new = data.drop('p1')

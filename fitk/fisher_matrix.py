@@ -592,17 +592,17 @@ class FisherMatrix:
         # index for re-shuffling parameters
         index = get_index_of_other_array(self.names, other.names)
 
-        return isinstance(other, FisherMatrix) \
+        return isinstance(other, self.__class__) \
         and self.ndim == other.ndim \
         and len(self) == len(other) \
         and set(self.names) == set(other.names) \
         and np.allclose(
-            self.fiducial[index],
-            other.fiducial
+            self.fiducial,
+            other.fiducial[index],
         ) \
         and np.allclose(
-            reindex_array(self.values, index),
-            other.values
+            self.values,
+            reindex_array(other.values, index),
         )
 
 

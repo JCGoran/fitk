@@ -96,38 +96,69 @@ class FisherMatrix:
 
     Examples
     --------
-    >>> fm = FisherMatrix(np.diag([5, 4])) # no parameter names specified
-    >>> fm # has a friendly representation in an interactive session
-    FisherMatrix([[5 0]
-     [0 4]], names=['p1' 'p2'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
-    >>> fm.names # getting the names
+    Specify a Fisher object with default names and fiducials:
+    >>> fm = FisherMatrix(np.diag([5, 4]))
+
+    The object has a friendly representation in the interactive session:
+    >>> fm
+    FisherMatrix(array([[5., 0.],
+           [0., 4.]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducial=array([0., 0.]))
+
+    List the names:
+    >>> fm.names
     array(['p1', 'p2'], dtype=object)
-    >>> fm.values # getting the underlying numpy array of values
-    array([[5, 0],
-           [0, 4]])
-    >>> fm.fiducial # getting the values of the fiducials
+
+    List the values of the Fisher object:
+    >>> fm.values
+    array([[5., 0.],
+           [0., 4.]])
+
+    List the values of the fiducials:
+    >>> fm.fiducial
     array([0., 0.])
-    >>> fm.names = ['x', 'y'] # names can be changed (ditto for fiducial and values; dimension must of course match the original)
-    >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$'] # LaTeX names as well
-    >>> fm_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y']) # with parameter names
-    >>> fm + fm_names # we can perform arithmetic operations on objects which have the same names (not necessarily in order) and fiducials; the LaTeX names do not need to match, but the resulting LaTeX names are inherited from the left-most object
-    FisherMatrix([[6 0]
-     [0 6]], names=['x' 'y'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
-    >>> fm * fm_names # we can also do element-wise multiplication (or division with `/`)
-    FisherMatrix([[5 0]
-     [0 8]], names=['x' 'y'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
-    >>> fm @ fm_names # likewise, we can do matrix multiplication
-    FisherMatrix([[5 0]
-     [0 8]], names=['x' 'y'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
-    >>> fm.trace() # other linear algebra methods include: `eigenvalues`, `eigenvectors`, `determinant`
-    9
-    >>> fm.inverse() # can also take the matrix inverse
-    FisherMatrix([[0.2  0.  ]
-     [0.   0.25]], names=['x' 'y'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
-    >>> fm.drop('x') # we can drop parameters from the Fisher matrix
-    FisherMatrix([[4]], names=['y'], latex_names = ['p2'], fiducial=[0.])
-    >>> fm.to_file('example_matrix.json') # we can save it to a file
-    >>> fm_new = from_file('example_matrix.json') # we can of course load it as well
+
+    Names can be changed in bulk (ditto for fiducial and values; dimension must of course match the original):
+    >>> fm.names = ['x', 'y']
+    >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
+
+    Fisher object with parameter names:
+    >>> fm_with_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y'])
+
+    We can add Fisher objects (ordering of names is taken care of):
+    >>> fm + fm_with_names # doctest: +SKIP
+    FisherMatrix(array([[6., 0.],
+           [0., 6.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+
+    We can also do element-wise multiplication or division:
+    >>> fm * fm_with_names
+    FisherMatrix(array([[5., 0.],
+           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+
+    Furthermore, we can do matrix multiplication:
+    >>> fm @ fm_with_names
+    FisherMatrix(array([[5., 0.],
+           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+
+    We can also perform standard matrix operations like the trace, eigenvalues, determinant:
+    >>> fm.trace()
+    9.0
+    >>> fm.determinant()
+    19.999999999999996
+
+    We can also take the matrix inverse:
+    >>> fm.inverse()
+    FisherMatrix(array([[0.2 , 0.  ],
+           [0.  , 0.25]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+
+    We can drop parameters from the object:
+    >>> fm.drop('x')
+    FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducial=array([0.]))
+
+    We can save it to a file:
+    >>> fm.to_file('example_matrix.json', overwrite=True)
+
+    Loading is performed by a non-member function `from_file`:
+    >>> fm_new = from_file('example_matrix.json')
     """
 
     def __init__(
@@ -159,13 +190,17 @@ class FisherMatrix:
 
         Examples
         --------
-        >>> FisherMatrix(np.diag([1, 2, 3])) # no names specified
-        FisherMatrix([[1 0 0]
-         [0 2 0]
-         [0 0 3]], names=['p1' 'p2' 'p3'], latex_names = ['p1' 'p2' 'p3'], fiducial=[0. 0. 0.])
-        >>> FisherMatrix(np.diag([1, 2]), names=['alpha', 'beta'], latex_names=[r'$\alpha$', r'$\beta$'], fiducial=[-3, 2]) # with names, LaTeX names, and fiducial
-        FisherMatrix([[1 0]
-         [0 2]], names=['alpha' 'beta'], latex_names = ['$\\alpha$' '$\\beta$'], fiducial=[-3.  2.])
+        Specify a Fisher object without names:
+        >>> FisherMatrix(np.diag([1, 2, 3]))
+        FisherMatrix(array([[1., 0., 0.],
+               [0., 2., 0.],
+               [0., 0., 3.]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducial=array([0., 0., 0.]))
+
+        Specify a Fisher object with names, LaTeX names, and fiducials:
+        >>> FisherMatrix(np.diag([1, 2]), names=['alpha', 'beta'],
+        ... latex_names=[r'$\alpha$', r'$\beta$'], fiducial=[-3, 2])
+        FisherMatrix(array([[1., 0.],
+               [0., 2.]]), names=array(['alpha', 'beta'], dtype=object), latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object), fiducial=array([-3.,  2.]))
         """
 
         if np.ndim(values) != 2:
@@ -246,9 +281,9 @@ class FisherMatrix:
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
         >>> m.rename({'p1' : 'a', 'p2' : FisherParameter('b', latex_name='$b$', fiducial=2)})
-        FisherMatrix([[1 0 0]
-         [0 2 0]
-         [0 0 3]], names=['a' 'b' 'p3'], latex_names=['a' '$b$' 'p3'], fiducial=[0. 2. 0.])
+        FisherMatrix(array([[1., 0., 0.],
+               [0., 2., 0.],
+               [0., 0., 3.]]), names=array(['a', 'b', 'p3'], dtype=object), latex_names=array(['a', '$b$', 'p3'], dtype=object), fiducial=array([0., 2., 0.]))
         """
         # check uniqueness and size
         if len(set(names)) != len(names):
@@ -307,14 +342,23 @@ class FisherMatrix:
         """
         Representation of the Fisher object for non-Jupyter interfaces.
         """
-        return f'FisherMatrix({self.values}, names={self.names}, latex_names = {self.latex_names}, fiducial={self.fiducial})'
+        return 'FisherMatrix(' \
+            f'{repr(self.values)}, ' \
+            f'names={repr(self.names)}, ' \
+            f'latex_names={repr(self.latex_names)}, ' \
+            f'fiducial={repr(self.fiducial)})'
 
 
     def __str__(self):
         """
         String representation of the Fisher object.
         """
-        return self.__repr__()
+        return 'FisherMatrix(' \
+            f'{self.values}, ' \
+            f'names={self.names}, ' \
+            f'latex_names={self.latex_names}, ' \
+            f'fiducial={self.fiducial})'
+
 
 
     def __getitem__(
@@ -537,15 +581,16 @@ class FisherMatrix:
 
         Examples
         --------
-        >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'), latex_names=['hjkl', 'qwe', 'll'], fiducial=[8, 7, 3])
+        >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'),
+        ... latex_names=['hjkl', 'qwe', 'll'], fiducial=[8, 7, 3])
         >>> m.sort(key='fiducial')
-        FisherMatrix([[2 0 0]
-         [0 1 0]
-         [0 0 3]], names=['f' 'd' 's'], latex_names = ['ll' 'qwe' 'hjkl'], fiducial=[3. 7. 8.])
+        FisherMatrix(array([[2., 0., 0.],
+               [0., 1., 0.],
+               [0., 0., 3.]]), names=array(['f', 'd', 's'], dtype=object), latex_names=array(['ll', 'qwe', 'hjkl'], dtype=object), fiducial=array([3., 7., 8.]))
         >>> m.sort(key='latex_names')
-        FisherMatrix([[1 0 0]
-         [0 2 0]
-         [0 0 3]], names=['d' 'f' 's'], latex_names = ['qwe' 'll' 'hjkl'], fiducial=[7. 3. 8.])
+        FisherMatrix(array([[3., 0., 0.],
+               [0., 2., 0.],
+               [0., 0., 1.]]), names=array(['s', 'f', 'd'], dtype=object), latex_names=array(['hjkl', 'll', 'qwe'], dtype=object), fiducial=array([8., 3., 7.]))
         """
         allowed_keys = ('fiducial', 'latex_names')
         # an integer index
@@ -704,7 +749,7 @@ class FisherMatrix:
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
         >>> m.drop('p1', 'p3')
-        FisherMatrix([[2]], names=['p2'], latex_names = ['p2'], fiducial=[0.])
+        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducial=array([0.]))
         """
         if not ignore_errors and not set(names).issubset(set(self.names)):
             raise ValueError(
@@ -870,13 +915,20 @@ class FisherMatrix:
 
         Examples
         --------
+        Get (marginalized by default) constraints for all parameters:
         >>> m = FisherMatrix([[3, -2], [-2, 5]])
-        >>> m.constraints() # constraints for all parameters (marginalized)
+        >>> m.constraints()
         array([0.67419986, 0.52223297])
-        >>> m.constraints(marginalized=False) # constraints for all parameters (unmarginalized)
+
+        Get the unmarginalized constraints instead:
+        >>> m.constraints(marginalized=False)
         array([0.57735027, 0.4472136 ])
-        >>> m.constraints('p1', marginalized=False) # one parameter only
+
+        Get the unmarginalized constraints for a single parameter:
+        >>> m.constraints('p1', marginalized=False)
         array([0.57735027])
+
+        Get the marginalized constraints for a single parameter:
         >>> m.constraints('p1', p=0.682689) # p-value roughly equal to 1 sigma
         array([0.67419918])
         """
@@ -1301,8 +1353,8 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]))
         >>> jac = [[1, 4], [3, 2]]
         >>> fm.reparametrize(jac, names=['a', 'b'])
-        FisherMatrix([[33 19]
-         [19 17]], names=['a' 'b'], latex_names = ['a' 'b'], fiducial=[0. 0.])
+        FisherMatrix(array([[33., 19.],
+               [19., 17.]]), names=array(['a', 'b'], dtype=object), latex_names=array(['a', 'b'], dtype=object), fiducial=array([0., 0.]))
         """
         if self.ndim > 26:
             raise ValueError(
@@ -1444,7 +1496,7 @@ class FisherMatrix:
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
-        >>> fm.to_file('example_matrix.json') # assuming it doesn't exist
+        >>> fm.to_file('example_matrix.json', overwrite=True)
         >>> with open('example_matrix.json', 'r', encoding='utf-8') as f:
         ...     f.read() # see the raw contents
         '{\n    "values": [\n        [\n            1,\n            0\n        ],\n        [\n            0,\n            2\n        ]\n    ],\n    "names": [\n        "a",\n        "b"\n    ],\n    "latex_names": [\n        "$\\\\mathbf{A}$",\n        "$\\\\mathbf{B}$"\n    ],\n    "fiducial": [\n        0.0,\n        0.0\n    ]\n}'
@@ -1522,16 +1574,21 @@ class FisherMatrix:
 
         Examples
         --------
+        Generate a Fisher object using a random orthogonal matrix:
         >>> from scipy.stats import ortho_group
-        >>> rm = ortho_group.rvs(5, random_state=12345) # generate a random orthogonal matrix
+        >>> rm = ortho_group.rvs(5, random_state=12345)
         >>> fm = FisherMatrix(rm.T @ np.diag([1, 2, 3, 7, 6]) @ rm)
-        >>> fm.marginalize_over('p1', 'p2') # marginalize over some parameters
-        FisherMatrix([[ 1.67715591 -1.01556085  0.30020773]
-         [-1.01556085  4.92788976  0.91219831]
-         [ 0.30020773  0.91219831  3.1796454 ]], names=['p3' 'p4' 'p5'], latex_names = ['p3' 'p4' 'p5'], fiducial=[0. 0. 0.])
-        >>> fm.marginalize_over('p1', 'p2', invert=True) # marginalizes over all parameters which are NOT 'p1' or 'p2'
-        FisherMatrix([[ 5.04480062 -0.04490453]
-         [-0.04490453  1.61599083]], names=['p1' 'p2'], latex_names = ['p1' 'p2'], fiducial=[0. 0.])
+
+        Marginalize over some parameters:
+        >>> fm.marginalize_over('p1', 'p2')
+        FisherMatrix(array([[ 1.67715591, -1.01556085,  0.30020773],
+               [-1.01556085,  4.92788976,  0.91219831],
+               [ 0.30020773,  0.91219831,  3.1796454 ]]), names=array(['p3', 'p4', 'p5'], dtype=object), latex_names=array(['p3', 'p4', 'p5'], dtype=object), fiducial=array([0., 0., 0.]))
+
+        Marginalize over all parameters which are NOT `p1` or `p2`:
+        >>> fm.marginalize_over('p1', 'p2', invert=True)
+        FisherMatrix(array([[ 5.04480062, -0.04490453],
+               [-0.04490453,  1.61599083]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducial=array([0., 0.]))
         """
         inv = self.inverse()
         if invert is True:

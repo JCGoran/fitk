@@ -769,6 +769,20 @@ class FisherMatrix:
         return np.linalg.eigh(self.values)[-1]
 
 
+    def condition_number(self):
+        """
+        Returns the condition number of the matrix with respect to the $L^2$ norm.
+
+        Examples
+        --------
+        >>> fm = FisherMatrix(np.diag([1, 2, 3]))
+        >>> fm.condition_number()
+        3.0
+        """
+        values = np.abs(self.eigenvalues())
+        return np.max(values) / np.min(values)
+
+
     def inverse(self) -> FisherMatrix:
         """
         Returns the inverse of the Fisher matrix.

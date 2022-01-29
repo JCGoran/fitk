@@ -226,3 +226,18 @@ def reindex_array(values, index):
         )
 
     return values
+
+
+
+def get_default_rcparams():
+    """
+    Returns a dictionary with default parameters used in FITK.
+
+    Returns
+    -------
+    `dict`
+    """
+    return {
+        'mathtext.fontset' : 'cm',
+        'font.family' : 'serif',
+    }

@@ -41,6 +41,7 @@ from .fisher_utils import \
     is_positive_semidefinite, \
     get_index_of_other_array, \
     reindex_array, \
+    get_default_rcparams, \
     jsonify
 
 
@@ -520,7 +521,7 @@ class FisherMatrix:
         colorbar_space : float = 0.02,
         colorbar_width : float = 0.05,
         colorbar_orientation : str = 'vertical',
-        rc : dict = {},
+        rc : dict = get_default_rcparams(),
         **kwargs,
     ):
         """

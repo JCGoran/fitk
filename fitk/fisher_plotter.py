@@ -24,27 +24,13 @@ from scipy.stats import chi2, norm
 
 # first party imports
 from .fisher_utils import \
+    get_default_rcparams, \
     MismatchingSizeError, \
     ParameterNotFoundError, \
     is_iterable, \
     get_index_of_other_array, \
     float_to_latex
 from .fisher_matrix import FisherMatrix
-
-
-
-def get_default_rcparams():
-    """
-    Returns a dictionary with default parameters used in FITK.
-
-    Returns
-    -------
-    `dict`
-    """
-    return {
-        'mathtext.fontset' : 'cm',
-        'font.family' : 'serif',
-    }
 
 
 
@@ -383,11 +369,12 @@ class FisherPlotter:
 
     def plot_2d(
         self,
+        rc : dict = get_default_rcparams(),
         **kwargs,
     ):
         """
-        Plots the 2D ellipses of the Fisher objects, and returns an instance of
-        `FisherFigure2D`.
+        Plots the 2D ellipses (and optionally 1D Gaussians) of the Fisher
+        objects, and returns an instance of `FisherFigure2D`.
         """
         pass
 

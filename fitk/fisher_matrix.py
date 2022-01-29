@@ -1250,7 +1250,7 @@ class FisherMatrix:
             if other.ndim == self.ndim:
                 values = self.values / reindex_array(other.values, index)
             else:
-                raise TypeError from err
+                raise TypeError(err) from err
         else:
             values = self.values / other
 

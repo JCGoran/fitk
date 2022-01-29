@@ -428,7 +428,7 @@ class FisherMatrix:
         try:
             _ = iter(keys)
         except TypeError as err:
-            raise TypeError from err
+            raise TypeError(err) from err
 
         # the keys can be a tuple
         if isinstance(keys, tuple):

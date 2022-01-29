@@ -451,7 +451,7 @@ class FisherMatrix:
 
             indices = (np.where(self.names == keys),)
 
-        return self._values[indices]
+        return self._values[indices][0, 0]
 
 
     def __setitem__(

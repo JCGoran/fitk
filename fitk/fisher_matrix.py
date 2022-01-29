@@ -104,6 +104,11 @@ class FisherMatrix:
     FisherMatrix(array([[5., 0.],
            [0., 4.]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducial=array([0., 0.]))
 
+    The string representation is probably more readable:
+    >>> print(fm)
+    FisherMatrix([[5. 0.]
+     [0. 4.]], names=['p1' 'p2'], latex_names=['p1' 'p2'], fiducial=[0. 0.])
+
     List the names:
     >>> fm.names
     array(['p1', 'p2'], dtype=object)
@@ -130,12 +135,18 @@ class FisherMatrix:
     >>> fm['x', 'x']
     5.0
 
-    The off-diagonal elements are automatically updated:
+    The off-diagonal elements are automatically updated when using the setter:
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
     >>> fm['x', 'y'] = -2
     >>> fm
     FisherMatrix(array([[ 5., -2.],
            [-2.,  4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['x', 'y'], dtype=object), fiducial=array([0., 0.]))
+
+    We can select submatrices by index:
+    >>> fm = FisherMatrix(np.diag([1, 2, 3]), names=['x', 'y', 'z'])
+    >>> fm[1:]
+    FisherMatrix(array([[2., 0.],
+           [0., 3.]]), names=array(['y', 'z'], dtype=object), latex_names=array(['y', 'z'], dtype=object), fiducial=array([0., 0.]))
 
     Fisher object with parameter names:
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'], latex_names=['$\\mathbf{X}$', '$\\mathbf{Y}$'])
@@ -159,6 +170,8 @@ class FisherMatrix:
     We can also perform standard matrix operations like the trace, eigenvalues, determinant:
     >>> fm.trace()
     9.0
+    >>> fm.eigenvalues()
+    array([4., 5.])
     >>> fm.determinant()
     19.999999999999996
 
@@ -204,6 +217,15 @@ class FisherMatrix:
         fiducial : array-like iterable of `float`, default = None
             The fiducial values of the parameters. If not specified, default to
             0 for all parameters.
+
+        metadata : Optional[dict], default = None
+            any metadata associated with the Fisher object
+
+        Raises
+        ------
+        * `ValueError` if the input array has the wrong dimensionality (not 2)
+        * `ValueError` if the object is not square-like
+        * `MismatchingSizeError` if the sizes of the array of names, values, LaTeX names and fiducials do not match
 
         Examples
         --------
@@ -1105,10 +1127,16 @@ class FisherMatrix:
         self,
         other : Union[FisherMatrix, float],
     ) -> FisherMatrix:
+        """
+        Addition when the Fisher object is the right operand.
+        """
         return self.__add__(other)
 
 
     def __neg__(self) -> FisherMatrix:
+        """
+        Returns the negation of the Fisher object.
+        """
         return self.__class__(
             -self.values,
             names=self.names,
@@ -1131,6 +1159,9 @@ class FisherMatrix:
         self,
         other : Union[FisherMatrix, float],
     ) -> FisherMatrix:
+        """
+        Subtraction when the Fisher object is the right operand.
+        """
         # this will never be called if we subtract two FisherMatrix instances,
         # so we just need to handle floats
         return -self.__add__(-other)
@@ -1205,7 +1236,7 @@ class FisherMatrix:
         other : FisherMatrix,
     ):
         """
-        Multiplies two Fisher objects.
+        Matrix multiplies two Fisher objects.
         """
         # make sure the dimensions match
         if other.ndim != self.ndim:
@@ -1245,7 +1276,7 @@ class FisherMatrix:
     ) -> FisherMatrix:
         """
         Returns the result of dividing a Fisher object by a number, or another
-        Fisher object.
+        Fisher object (element-wise).
         """
         # we can only divide two objects if they have the same dimensions and sizes
         try:
@@ -1285,7 +1316,7 @@ class FisherMatrix:
     ) -> FisherMatrix:
         """
         Returns the result of multiplying a Fisher object by a number, or
-        another Fisher object.
+        another Fisher object (element-wise).
         """
         # we can only multiply two objects if they have the same dimensions and sizes
         try:
@@ -1325,7 +1356,7 @@ class FisherMatrix:
     ) -> FisherMatrix:
         """
         Returns the result of multiplying a number by a Fisher object, or
-        another Fisher object.
+        another Fisher object (element-wise).
         """
         return self.__mul__(other)
 

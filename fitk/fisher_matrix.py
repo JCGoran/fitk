@@ -118,10 +118,27 @@ class FisherMatrix:
     array([0., 0.])
 
     Names can be changed in bulk (ditto for fiducial and values; dimension must of course match the original):
+    >>> fm = FisherMatrix(np.diag([5, 4]))
     >>> fm.names = ['x', 'y']
     >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
+    >>> fm
+    FisherMatrix(array([[5., 0.],
+           [0., 4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+
+    We can get and set individual elements of the matrix using dict-like notation:
+    >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
+    >>> fm['x', 'x']
+    5.0
+
+    The off-diagonal elements are automatically updated:
+    >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
+    >>> fm['x', 'y'] = -2
+    >>> fm
+    FisherMatrix(array([[ 5., -2.],
+           [-2.,  4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['x', 'y'], dtype=object), fiducial=array([0., 0.]))
 
     Fisher object with parameter names:
+    >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'], latex_names=['$\\mathbf{X}$', '$\\mathbf{Y}$'])
     >>> fm_with_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y'])
 
     We can add Fisher objects (ordering of names is taken care of):

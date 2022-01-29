@@ -552,11 +552,11 @@ class FisherMatrix:
                 if colorbar_orientation == 'vertical':
                     cax = fig.add_axes(
                         [ax.get_position().x1 + colorbar_space,
-                        ax.get_position().y0,
+                        ax.get_position().y0 * 0.997,
                         colorbar_width,
                         ax.get_position().height]
                     )
-                    fig.colorbar(img, cax=cax)
+                    fig.colorbar(img, cax=cax, orientation=colorbar_orientation)
                     cax.set_yticklabels(
                         [f'${float_to_latex(_)}$' for _ in cax.get_yticks()]
                     )
@@ -567,7 +567,7 @@ class FisherMatrix:
                         ax.get_position().width,
                         colorbar_width]
                     )
-                    fig.colorbar(img, cax=cax, orientation='horizontal')
+                    fig.colorbar(img, cax=cax, orientation=colorbar_orientation)
                     cax.xaxis.set_ticks_position('top')
                     cax.set_xticklabels(
                         [f'${float_to_latex(_)}$' for _ in cax.get_xticks()]

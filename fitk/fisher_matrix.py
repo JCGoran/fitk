@@ -790,6 +790,14 @@ class FisherMatrix:
         Returns
         -------
         Instance of `FisherMatrix`
+
+        Examples
+        --------
+        >>> fm = FisherMatrix(np.diag([1, 2, 5]))
+        >>> fm.inverse()
+        FisherMatrix(array([[1. , 0. , 0. ],
+               [0. , 0.5, 0. ],
+               [0. , 0. , 0.2]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducial=array([0., 0., 0.]))
         """
         # inverse satisfies properties of Fisher matrix, see:
         # https://math.stackexchange.com/a/26200
@@ -852,7 +860,7 @@ class FisherMatrix:
 
         Returns
         -------
-        array-like of floats
+        array-like of floats or single float
 
         Notes
         -----

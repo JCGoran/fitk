@@ -854,8 +854,8 @@ class FisherMatrix:
 
 
     def condition_number(self):
-        """
-        Returns the condition number of the matrix with respect to the $L^2$ norm.
+        r"""
+        Returns the condition number of the matrix with respect to the \(L^2\) norm.
 
         Examples
         --------

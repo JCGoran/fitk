@@ -449,7 +449,7 @@ class TestFisherTensor:
         m = FisherTensor([[2, -1], [-1, 3]])
         jacobian_m = np.array([[3, 2], [6, 7]])
         m_new = m.reparametrize(jacobian_m)
-        assert np.allclose(m_new.values, np.array([[18, 45], [45, 135]]))
+        assert np.allclose(m_new.values, np.transpose(jacobian_m) @ m.values @ jacobian_m)
 
 
     def test_marginalize_over(self):

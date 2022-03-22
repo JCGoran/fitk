@@ -1,6 +1,6 @@
 """
 Package for performing operations on Fisher objects.
-See here for documentation of `FisherMatrix`, `FisherParameter`, and `from_file`.
+See here for documentation of `FisherMatrix` and `FisherParameter`.
 """
 
 # needed for compatibility with Python 3.7
@@ -29,7 +29,7 @@ from matplotlib.patheffects import Stroke, Normal
 from matplotlib import colors
 
 # first party imports
-from .fisher_utils import \
+from fitk.fisher_utils import \
     float_to_latex, \
     ParameterNotFoundError, \
     MismatchingSizeError, \
@@ -188,8 +188,8 @@ class FisherMatrix:
     We can save it to a file:
     >>> fm.to_file('example_matrix.json', overwrite=True)
 
-    Loading is performed by a non-member function `from_file`:
-    >>> fm_new = from_file('example_matrix.json')
+    Loading is performed by a class method `from_file`:
+    >>> fm_new = FisherMatrix.from_file('example_matrix.json')
     """
 
     def __init__(
@@ -1546,10 +1546,7 @@ class FisherMatrix:
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
         >>> fm.to_file('example_matrix.json', overwrite=True)
-        >>> with open('example_matrix.json', 'r', encoding='utf-8') as f:
-        ...     f.read() # see the raw contents
-        '{\n    "values": [\n        [\n            1,\n            0\n        ],\n        [\n            0,\n            2\n        ]\n    ],\n    "names": [\n        "a",\n        "b"\n    ],\n    "latex_names": [\n        "$\\\\mathbf{A}$",\n        "$\\\\mathbf{B}$"\n    ],\n    "fiducial": [\n        0.0,\n        0.0\n    ]\n}'
-        >>> fm_read = from_file('example_matrix.json') # convenience function for reading it
+        >>> fm_read = FisherMatrix.from_file('example_matrix.json') # convenience function for reading it
         >>> fm == fm_read # verify it's the same object
         True
         """
@@ -1646,28 +1643,29 @@ class FisherMatrix:
         return fm.inverse()
 
 
+    @classmethod
+    def from_file(
+        cls,
+        path : str,
+    ):
+        """
+        Reads a Fisher object from a file.
 
-def from_file(
-    path : str,
-):
-    """
-    Reads a Fisher object from a file.
+        Parameters
+        ----------
+        path : str
+            the path to the file
 
-    Parameters
-    ----------
-    path : str
-        the path to the file
+        Returns
+        -------
+        Instance of `FisherMatrix`
+        """
+        with open(path, 'r', encoding='utf-8') as file_handle:
+            data = json.loads(file_handle.read())
 
-    Returns
-    -------
-    Instance of `FisherMatrix`
-    """
-    with open(path, 'r', encoding='utf-8') as file_handle:
-        data = json.loads(file_handle.read())
-
-    return FisherMatrix(
-        data['values'],
-        names=data['names'],
-        latex_names=data['latex_names'],
-        fiducial=data['fiducial'],
-    )
+        return cls(
+            data['values'],
+            names=data['names'],
+            latex_names=data['latex_names'],
+            fiducial=data['fiducial'],
+        )

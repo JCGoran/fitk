@@ -24,7 +24,6 @@ from fitk.fisher_utils import \
     jsonify, \
     reindex_array
 
-from fitk.fisher_matrix import from_file
 from fitk.fisher_matrix import FisherMatrix as FisherTensor
 from fitk.fisher_matrix import FisherParameter
 from fitk.fisher_plotter import FisherPlotter, gaussian
@@ -195,12 +194,12 @@ class TestFisherTensor:
                 'url_github' : 'https://github.com/euclidist-forecasting/fisher_for_public/blob/94bdfd09b26e4bed3654c0b95f4a2fb1f0cb192e/All_Results/optimistic/flat/EuclidISTF_WL_w0wa_flat_optimistic.txt',
             },
         )
-        fm_read = from_file(os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'))
+        fm_read = FisherTensor.from_file(os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'))
         assert fm == fm_read
 
 
     def test_from_file(self):
-        fm = from_file(os.path.join(DATADIR_INPUT, 'test_matrix.json'))
+        fm = FisherTensor.from_file(os.path.join(DATADIR_INPUT, 'test_matrix.json'))
         assert fm == FisherTensor(
             np.diag([2, 1, 3]),
             names=list('bac'),
@@ -550,8 +549,8 @@ class TestFisherPlotter:
 
 
     def test_plot_1d_euclid(self):
-        fm_optimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_optimistic.json'))
-        fm_pessimistic = from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_pessimistic.json'))
+        fm_optimistic = FisherTensor.from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_optimistic.json'))
+        fm_pessimistic = FisherTensor.from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_pessimistic.json'))
 
         fp1 = FisherPlotter(fm_optimistic, fm_pessimistic, labels=['optimistic case', 'pessimistic case'])
 

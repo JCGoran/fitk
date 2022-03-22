@@ -1372,9 +1372,6 @@ class FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are
         related to the old ones via the transformation `jacobian`.
-        Currently limited to rank 26 tensors (we run out of single letters in
-        the English alphabet otherwise).
-        Does not differentiate between covariant/contravariant indices.
         See the [Wikipedia article](https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization) for more information.
 
         Parameters
@@ -1402,40 +1399,17 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]))
         >>> jac = [[1, 4], [3, 2]]
         >>> fm.reparametrize(jac, names=['a', 'b'])
-        FisherMatrix(array([[33., 19.],
-               [19., 17.]]), names=array(['a', 'b'], dtype=object), latex_names=array(['a', 'b'], dtype=object), fiducial=array([0., 0.]))
+        FisherMatrix(array([[19., 16.],
+               [16., 24.]]), names=array(['a', 'b'], dtype=object), latex_names=array(['a', 'b'], dtype=object), fiducial=array([0., 0.]))
         """
-        if self.ndim > 26:
-            raise ValueError(
-                'The dimensionality of the Fisher object is > 26, which is not supported'
-            )
-
-        char_first = 'A'
-        char_second = 'a'
-
-        # makes the string 'aA,bB,cC,dD,...'
-        index_transformation = ','.join(
-            [
-                f'{chr(ord(char_first) + i)}{chr(ord(char_second) + i)}' \
-                for i in range(self.ndim)
-            ]
-        )
-        # the tensor to be transformed has just dummy indices 'ABCD...'
-        index_dummy = ''.join([chr(ord(char_second) + i) for i in range(self.ndim)])
-        # the output tensor has indices 'abcd...'
-        index_result = ''.join([chr(ord(char_first) + i) for i in range(self.ndim)])
-
-        values = np.einsum(
-            f'{index_transformation},{index_dummy}->{index_result}',
-            *([jacobian] * self.ndim), self.values
-        )
+        values = np.transpose(jacobian) @ self.values @ jacobian
 
         if names is not None:
-            if len(set(names)) != len(self.names):
-                raise MismatchingSizeError(names, self.names)
+            if len(set(names)) != np.shape(jacobian)[-1]:
+                raise MismatchingSizeError(names)
             if latex_names is not None:
-                if len(set(latex_names)) != len(self.latex_names):
-                    raise MismatchingSizeError(latex_names, self.latex_names)
+                if len(set(latex_names)) != np.shape(jacobian)[-1]:
+                    raise MismatchingSizeError(latex_names)
             else:
                 latex_names = copy.deepcopy(names)
         else:
@@ -1444,8 +1418,8 @@ class FisherMatrix:
             latex_names = copy.deepcopy(self.latex_names)
 
         if fiducial is not None:
-            if len(fiducial) != len(self.fiducial):
-                raise MismatchingSizeError(fiducial, self.fiducial)
+            if len(fiducial) != np.shape(jacobian)[-1]:
+                raise MismatchingSizeError(fiducial)
         else:
             fiducial = copy.deepcopy(self.fiducial)
 

@@ -99,7 +99,7 @@ fm = FisherMatrix(np.diag([1, 2, 3]), names=list('cba'))
 fm.drop('c').sort().to_file('the_one_with_ab.json')
 ```
 
-Initially, there was the idea to have a similar interface to [pandas](https://pandas.pydata.org/pandas-docs/stable/index.html), i.e. have a keyword argument `inplace` for many of the methods which would toggle whether we return a new instance of `FisherMatrix` or modify the original one in-place (such as [`pandas.drop`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html), however, even they would like to get rid of that behavior (see [this issue](https://github.com/pandas-dev/pandas/issues/16529)), so I just decided to preemptively not include it in the first place.
+Initially, there was the idea to have a similar interface to [pandas](https://pandas.pydata.org/pandas-docs/stable/index.html), i.e. have a keyword argument `inplace` for many of the methods which would toggle whether we return a new instance of `FisherMatrix` or modify the original one in-place (such as [`pandas.drop`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html)), however, even they would like to get rid of that behavior (see [this issue](https://github.com/pandas-dev/pandas/issues/16529)), so I just decided to preemptively not include it in the first place.
 
 #### Why does addition/subtraction of `FisherMatrix` objects seemingly return the parameter names in random order?
 

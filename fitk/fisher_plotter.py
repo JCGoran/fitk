@@ -166,7 +166,7 @@ class FisherPlotter:
         ----------
         args : FisherMatrix
             `FisherMatrix` objects which we want to plot.
-            Must have the same names, otherwise throws an error.
+            Must have the same parameter names.
             Can have different fiducial values.
             The order of plotting of the parameters and the LaTeX labels to use
             are determined by the first argument.
@@ -174,6 +174,10 @@ class FisherPlotter:
         labels : array of strings, default None
             the list of labels to put in the legend of the plots.
             If not set, defaults to `0, ..., len(args) - 1`
+
+        Raises
+        ------
+        `ValueError` if parameter names of the inputs do not match
         """
         # make sure all of the Fisher objects have the same sizes
         if not all(len(args[0]) == len(arg) for arg in args):

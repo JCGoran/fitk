@@ -197,9 +197,6 @@ class FisherMatrix:
             The fiducial values of the parameters. If not specified, default to
             0 for all parameters.
 
-        metadata : Optional[dict], default = None
-            any metadata associated with the Fisher object
-
         Raises
         ------
         * `ValueError` if the input array has the wrong dimensionality (not 2)
@@ -768,6 +765,8 @@ class FisherMatrix:
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
         >>> m.drop('p1', 'p3')
+        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducial=array([0.]))
+        >>> m.drop(*['p1', 'p3']) # same thing, but note the asterisk (*)
         FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducial=array([0.]))
         """
         if not ignore_errors and not set(names).issubset(set(self.names)):
@@ -1485,7 +1484,7 @@ class FisherMatrix:
             whatever other information about the object needs to be saved.
             Needs to be one of the following: `is_valid`, `eigenvalues`,
             `eigenvectors`, `trace`, `determinant`, or `constraints` (by
-            default, the 1$\sigma$ marginalized constraints).
+            default, the \(1\sigma\) marginalized constraints).
 
         metadata : dict, default = {}
             any metadata that should be associated to the object saved

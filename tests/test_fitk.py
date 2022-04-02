@@ -186,7 +186,6 @@ class TestFisherTensor:
         )
         fm.to_file(
             os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'),
-            overwrite=True,
             metadata={
                 'comment' : 'Fisher matrix forecast from Euclid IST:F paper',
                 'url_arxiv' : 'https://arxiv.org/abs/1910.09273',

@@ -14,7 +14,6 @@ from itertools import \
     product
 import json
 from numbers import Number
-import os
 from typing import \
     Mapping, \
     Collection, \
@@ -163,7 +162,7 @@ class FisherMatrix:
     FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducials=array([0.]))
 
     We can save it to a file (the returned value is the dictionary that was saved):
-    >>> fm.to_file('example_matrix.json', overwrite=True)
+    >>> fm.to_file('example_matrix.json')
     {'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducials': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
@@ -1467,7 +1466,6 @@ class FisherMatrix:
         path : str,
         *args : str,
         metadata : dict = {},
-        overwrite : bool = False,
     ):
         r"""
         Saves the Fisher object to a file.
@@ -1489,9 +1487,6 @@ class FisherMatrix:
         metadata : dict, default = {}
             any metadata that should be associated to the object saved
 
-        overwrite : bool, default = False
-            whether to overwrite the file if it exists
-
         Returns
         -------
         The dictionary that was saved.
@@ -1499,7 +1494,7 @@ class FisherMatrix:
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
-        >>> fm.to_file('example_matrix.json', overwrite=True)
+        >>> fm.to_file('example_matrix.json')
         {'values': [[1.0, 0.0], [0.0, 2.0]], 'names': ['a', 'b'], 'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'], 'fiducials': [0.0, 0.0]}
         >>> fm_read = FisherMatrix.from_file('example_matrix.json') # convenience function for reading it
         >>> fm == fm_read # verify it's the same object
@@ -1538,13 +1533,6 @@ class FisherMatrix:
             **{arg : jsonify(getattr(self, arg)()) for arg in args},
             **metadata,
         }
-
-        if os.path.exists(path) and not overwrite:
-            raise FileExistsError(
-                f'The file {path} already exists, please pass ' \
-                '`overwrite=True` if you wish to explicitly overwrite '
-                'the file'
-            )
 
         with open(path, 'w', encoding='utf-8') as file_handle:
             file_handle.write(json.dumps(data, indent=4))

@@ -56,6 +56,137 @@ import numpy as np
 from fitk import FisherMatrix, FisherPlotter
 ```
 
+Specify a Fisher object with default parameter names and fiducials:
+
+```python
+>>> fm = FisherMatrix(np.diag([5, 4]))
+```
+
+The object has a friendly representation in the interactive session:
+
+```python
+>>> fm
+FisherMatrix(array([[5., 0.],
+       [0., 4.]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducials=array([0., 0.]))
+```
+
+The string representation is probably more readable:
+
+```python
+>>> print(fm)
+FisherMatrix([[5. 0.]
+ [0. 4.]], names=['p1' 'p2'], latex_names=['p1' 'p2'], fiducials=[0. 0.])
+```
+
+List the parameter names:
+
+```python
+>>> fm.names
+array(['p1', 'p2'], dtype=object)
+```
+
+List the values of the Fisher object:
+
+```python
+>>> fm.values
+array([[5., 0.],
+       [0., 4.]])
+```
+
+List the values of the fiducials:
+
+```python
+>>> fm.fiducials
+array([0., 0.])
+```
+
+Names can be changed in bulk (ditto for fiducials and values; dimension must of course match the original):
+
+```python
+>>> fm = FisherMatrix(np.diag([5, 4]))
+>>> fm.names = ['x', 'y']
+>>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
+>>> fm
+FisherMatrix(array([[5., 0.],
+       [0., 4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
+```
+
+We can get individual elements of the matrix using dict-like notation:
+
+```python
+>>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
+>>> fm['x', 'x']
+5.0
+```
+
+We can also get submatrices by index:
+
+```python
+>>> fm = FisherMatrix(np.diag([1, 2, 3]), names=['x', 'y', 'z'])
+>>> fm[1:]
+FisherMatrix(array([[2., 0.],
+       [0., 3.]]), names=array(['y', 'z'], dtype=object), latex_names=array(['y', 'z'], dtype=object), fiducials=array([0., 0.]))
+```
+
+Fisher matrices with custom parameter names:
+
+```python
+>>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'], latex_names=['$\\mathbf{X}$', '$\\mathbf{Y}$'])
+>>> fm_with_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y'])
+```
+
+We can add Fisher objects (ordering of names is taken care of):
+
+```python
+>>> fm + fm_with_names
+FisherMatrix(array([[6., 0.],
+       [0., 6.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
+```
+
+We can also do element-wise multiplication or division:
+
+```python
+>>> fm * fm_with_names
+FisherMatrix(array([[5., 0.],
+       [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
+```
+
+Furthermore, we can do matrix multiplication:
+
+```python
+>>> fm @ fm_with_names
+FisherMatrix(array([[5., 0.],
+       [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
+```
+
+We can also take the matrix inverse:
+
+```python
+>>> fm.inverse()
+FisherMatrix(array([[0.2 , 0.  ],
+       [0.  , 0.25]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
+```
+
+We can drop parameters from the matrix:
+
+```python
+>>> fm.drop('x')
+FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducials=array([0.]))
+```
+
+We can save it to a file (the returned value is the dictionary that was saved):
+
+```python
+>>> fm.to_file('example_matrix.json')
+{'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducials': [0.0, 0.0]}
+```
+
+We can also load previous-saved matrices:
+
+```python
+>>> fm_new = FisherMatrix.from_file('example_matrix.json')
+```
+
 
 ### Design principles
 

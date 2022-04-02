@@ -56,6 +56,8 @@ import numpy as np
 from fitk import FisherMatrix, FisherPlotter
 ```
 
+#### `FisherMatrix` examples
+
 Specify a Fisher object with default parameter names and fiducials:
 
 ```python

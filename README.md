@@ -9,7 +9,7 @@ Fitk is a Python package for manipulating and plotting of Fisher information mat
 * OOP design
 * sane defaults
 * extensive documentation
-* many unit tests to ensure validity of results
+* many unit tests to ensure validity of results (using [pytest](https://pytest.org/))
 * future-proof and backwards compatible with Python 3.7+
 * minimal dependencies (standard lib, `numpy`, `scipy`, and `matplotlib` only)
 * simple installation
@@ -53,7 +53,7 @@ The simplest way to use it is to load the core functions and classes:
 
 ```python
 import numpy as np
-from fitk import from_file, FisherMatrix, FisherParameter, FisherPlotter
+from fitk import FisherMatrix, FisherPlotter
 ```
 
 
@@ -69,18 +69,20 @@ from fitk import from_file, FisherMatrix, FisherParameter, FisherPlotter
 
 This was considered for addition in the beginning, but was dropped for the following reasons:
 
-* lack of maintainability - codes are written in various programming languages, and since fitk was made in Python, there would either need to be many implementations in those languages with corresponding Python wrappers, or those codes would need to be ported to Python themselves. Furthermore, codes evolve, and keeping fitk up-to-date with them would be a maintenance nightmare
+* lack of maintainability - scientific codes are written in various programming languages, and since fitk was made in Python, there would either need to be many implementations in those languages with corresponding Python wrappers, or those codes would need to be ported to Python themselves. Furthermore, codes evolve, and keeping fitk up-to-date with them would be a maintenance nightmare
 * performance issues - writing a naive numerical finite-difference interface for Python-compatible codes is straightforward, but it can be quite challenging to implement it so that it's stable and performant. For instance, sometimes it's much faster to code up an analytical derivative in the original code itself. Additionally, with the rise of [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation), many codes now implement the computation of exact derivatives, circumventing the need for the use of numerical methods altogether.
+
+Therefore, fitk is only in charge of the analysis part, i.e. the algebraic manipulation and plotting of already constructed Fisher information matrices.
 
 #### Why doesn't fitk validate the Fisher matrix automatically?
 
 This was added in the initial version, but was a bit of a hassle to use; the user had to disable the automatic validation first by calling the appropriate function, then do manipulations with the Fisher matrix, and finally re-enable the validation again.
 This was especially annoying since, without disabling the validation, the user couldn't set an element of the Fisher matrix using `<instance>[name1, name2] = value`, and would constantly throw errors if one forgot to disable it.
-The current "sane" way to do it is to just call the `is_valid()` method to make sure that the result you ended up with is indeed a Fisher matrix.
+The current "sane" way to do it is to just call the `is_valid()` method to make sure that the result you ended up with is indeed a valid Fisher matrix.
 
 #### Why are some methods (like `plot_1d`) in `FisherPlotter` and not in `FisherMatrix`?
 
-It was a design choice that I stuck to while writing the package.
+It was a design decision that I stuck with while writing the package.
 
 #### Why is there no support for Python 2?
 
@@ -97,14 +99,14 @@ fm = FisherMatrix(np.diag([1, 2, 3]), names=list('cba'))
 fm.drop('c').sort().to_file('the_one_with_ab.json')
 ```
 
-Initially, there was the idea to have a similar interface to pandas, i.e. have a keyword argument `inplace` for many of the methods which would toggle whether we return a new instance of `FisherMatrix` or modify the original one in-place, however, even they would like to get rid of that behavior (see [this issue](https://github.com/pandas-dev/pandas/issues/16529)), so I just decided to preemptively not include it in the first place.
+Initially, there was the idea to have a similar interface to [pandas](https://pandas.pydata.org/pandas-docs/stable/index.html), i.e. have a keyword argument `inplace` for many of the methods which would toggle whether we return a new instance of `FisherMatrix` or modify the original one in-place (such as [`pandas.drop`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html), however, even they would like to get rid of that behavior (see [this issue](https://github.com/pandas-dev/pandas/issues/16529)), so I just decided to preemptively not include it in the first place.
 
 #### Why does addition/subtraction of `FisherMatrix` objects seemingly return the parameter names in random order?
 
 Internally, the code calls Python's `set` built-in, which doesn't preserve ordering, and consequently the names of the resulting `FisherMatrix` may appear to be sorted randomly.
 However, this is not a cause for concern, since the equality (`==`) operator is modified to not care about the ordering of the parameter names, so `m1 + m2 == m2 + m1` returns true regardless of what is the ordering of names on both sides of the equality.
 
-Note that for all of the other arithmetic operations (`*`, `/`, and `@`), the result returned will always have the parameter names sorted according to the left-most operand.
+Note that for all of the other binary operations implemented (`*`, `/`, and `@`), the result returned will always have the parameter names sorted according to the left-most operand.
 
 ##### Why does `<instance>.inverse()` return an object of type `FisherMatrix`?
 
@@ -133,7 +135,7 @@ import pytablewriter
 
 fid = pytablewriter.LatexTableWriter(
     headers=fm.latex_names.tolist(),
-    value_matrix=[fm.fiducial.tolist()],
+    value_matrix=[fm.fiducials.tolist()],
 )
 
 fid.write_table()
@@ -150,6 +152,6 @@ val.write_table()
 Not currently, but if there is enough interest I may consider implementing it.
 
 
-### License
+## LICENSE
 
 GNU GPLv3

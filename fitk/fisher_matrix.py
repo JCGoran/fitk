@@ -767,6 +767,9 @@ class FisherMatrix:
         FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducials=array([0.]))
         >>> m.drop(*['p1', 'p3']) # same thing, but note the asterisk (*)
         FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducials=array([0.]))
+        >>> m.drop('p1', 'p3', invert=True) # drop everything that's NOT `p1` or `p3`
+        FisherMatrix(array([[1., 0.],
+               [0., 3.]]), names=array(['p1', 'p3'], dtype=object), latex_names=array(['p1', 'p3'], dtype=object), fiducials=array([0., 0.]))
         """
         if not ignore_errors and not set(names).issubset(set(self.names)):
             raise ValueError(
@@ -781,7 +784,6 @@ class FisherMatrix:
         if invert is True:
             names = set(names) ^ set(self.names)
 
-        # TODO should we remove this?
         if set(names) == set(self.names):
             raise ValueError('Unable to remove all parameters')
 
@@ -951,7 +953,7 @@ class FisherMatrix:
         """
         if sigma is not None and p is not None:
             raise ValueError(
-                'Cannot specify both `p` and `sigma` simultaneously'
+                'Cannot specify both `p` and `sigma` simultaneously; please specify at most one of those'
             )
 
         if p is not None:
@@ -1003,7 +1005,7 @@ class FisherMatrix:
         try:
             self._fiducial = np.array([float(_) for _ in value])
         except TypeError as err:
-            raise TypeError(err)
+            raise TypeError(err) from err
 
 
     @property
@@ -1468,7 +1470,7 @@ class FisherMatrix:
         metadata : dict = {},
     ):
         r"""
-        Saves the Fisher object to a file.
+        Saves the Fisher object to a file (UTF-8 encoded).
         The format used is a simple JSON file, containing at least the values of the
         Fisher object, the names of the parameters, the LaTeX names, and the
         fiducial values.
@@ -1605,6 +1607,18 @@ class FisherMatrix:
         Returns
         -------
         Instance of `FisherMatrix`
+
+        Notes
+        -----
+        Any metadata is ignored when reading the file.
+        If you want to read the metadata as well, use something like the following:
+
+        >>> import json
+        >>> with open(<filename>, 'r') as f: # doctest: +SKIP
+        ...     data = json.loads(f.read()) # doctest: +SKIP
+
+        Then `data` will contain a dictionary with all of the data from the
+        file, which can be easily parsed.
         """
         with open(path, 'r', encoding='utf-8') as file_handle:
             data = json.loads(file_handle.read())

@@ -243,11 +243,11 @@ class FisherPlotter:
         sigmas = np.array(
             [_.constraints(name, marginalized=True, sigma=sigma) for _ in self.values]
         )
-        fiducial = np.array(
-            [_.fiducial[np.where(_.names == name)] for _ in self.values]
+        fiducials = np.array(
+            [_.fiducials[np.where(_.names == name)] for _ in self.values]
         )
 
-        xleft, xright = np.min(fiducial - sigmas), np.max(fiducial + sigmas)
+        xleft, xright = np.min(fiducials - sigmas), np.max(fiducials + sigmas)
 
         return xleft, xright
 
@@ -311,7 +311,7 @@ class FisherPlotter:
                 title_list = [
                     '{0} = ${1}^{{+{2}}}_{{-{2}}}$'.format(
                     name_latex,
-                    float_to_latex(float(_.fiducial[np.where(_.names == name)])),
+                    float_to_latex(float(_.fiducials[np.where(_.names == name)])),
                     float_to_latex(float(_.constraints(name, marginalized=True))),
                 ) for _ in self.values
                 ]
@@ -323,7 +323,7 @@ class FisherPlotter:
 
                 for fm in self.values:
                     handle, = add_plot_1d(
-                        fm.fiducial[np.where(fm.names == name)],
+                        fm.fiducials[np.where(fm.names == name)],
                         fm.constraints(name, marginalized=True),
                         ax,
                     )

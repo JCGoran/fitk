@@ -145,7 +145,7 @@
         "$\\eta_\\mathrm{IA}$",
         "$\\beta_\\mathrm{IA}$"
     ],
-    "fiducial": [
+    "fiducials": [
         0.32,
         0.05,
         -1.0,

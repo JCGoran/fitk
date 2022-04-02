@@ -80,12 +80,12 @@ class FisherMatrix:
     The object has a friendly representation in the interactive session:
     >>> fm
     FisherMatrix(array([[5., 0.],
-           [0., 4.]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducial=array([0., 0.]))
+           [0., 4.]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducials=array([0., 0.]))
 
     The string representation is probably more readable:
     >>> print(fm)
     FisherMatrix([[5. 0.]
-     [0. 4.]], names=['p1' 'p2'], latex_names=['p1' 'p2'], fiducial=[0. 0.])
+     [0. 4.]], names=['p1' 'p2'], latex_names=['p1' 'p2'], fiducials=[0. 0.])
 
     List the names:
     >>> fm.names
@@ -97,16 +97,16 @@ class FisherMatrix:
            [0., 4.]])
 
     List the values of the fiducials:
-    >>> fm.fiducial
+    >>> fm.fiducials
     array([0., 0.])
 
-    Names can be changed in bulk (ditto for fiducial and values; dimension must of course match the original):
+    Names can be changed in bulk (ditto for fiducials and values; dimension must of course match the original):
     >>> fm = FisherMatrix(np.diag([5, 4]))
     >>> fm.names = ['x', 'y']
     >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
     >>> fm
     FisherMatrix(array([[5., 0.],
-           [0., 4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+           [0., 4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
 
     We can get and set individual elements of the matrix using dict-like notation:
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
@@ -118,13 +118,13 @@ class FisherMatrix:
     >>> fm['x', 'y'] = -2
     >>> fm
     FisherMatrix(array([[ 5., -2.],
-           [-2.,  4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['x', 'y'], dtype=object), fiducial=array([0., 0.]))
+           [-2.,  4.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['x', 'y'], dtype=object), fiducials=array([0., 0.]))
 
     We can select submatrices by index:
     >>> fm = FisherMatrix(np.diag([1, 2, 3]), names=['x', 'y', 'z'])
     >>> fm[1:]
     FisherMatrix(array([[2., 0.],
-           [0., 3.]]), names=array(['y', 'z'], dtype=object), latex_names=array(['y', 'z'], dtype=object), fiducial=array([0., 0.]))
+           [0., 3.]]), names=array(['y', 'z'], dtype=object), latex_names=array(['y', 'z'], dtype=object), fiducials=array([0., 0.]))
 
     Fisher object with parameter names:
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'], latex_names=['$\\mathbf{X}$', '$\\mathbf{Y}$'])
@@ -133,17 +133,17 @@ class FisherMatrix:
     We can add Fisher objects (ordering of names is taken care of):
     >>> fm + fm_with_names # doctest: +SKIP
     FisherMatrix(array([[6., 0.],
-           [0., 6.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+           [0., 6.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
 
     We can also do element-wise multiplication or division:
     >>> fm * fm_with_names
     FisherMatrix(array([[5., 0.],
-           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
 
     Furthermore, we can do matrix multiplication:
     >>> fm @ fm_with_names
     FisherMatrix(array([[5., 0.],
-           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+           [0., 8.]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
 
     We can also perform standard matrix operations like the trace, eigenvalues, determinant:
     >>> fm.trace()
@@ -156,15 +156,15 @@ class FisherMatrix:
     We can also take the matrix inverse:
     >>> fm.inverse()
     FisherMatrix(array([[0.2 , 0.  ],
-           [0.  , 0.25]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducial=array([0., 0.]))
+           [0.  , 0.25]]), names=array(['x', 'y'], dtype=object), latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object), fiducials=array([0., 0.]))
 
     We can drop parameters from the object:
     >>> fm.drop('x')
-    FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducial=array([0.]))
+    FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducials=array([0.]))
 
     We can save it to a file (the returned value is the dictionary that was saved):
     >>> fm.to_file('example_matrix.json', overwrite=True)
-    {'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducial': [0.0, 0.0]}
+    {'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducials': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
     >>> fm_new = FisherMatrix.from_file('example_matrix.json')
@@ -175,7 +175,7 @@ class FisherMatrix:
         values : Collection,
         names : Optional[Collection[str]] = None,
         latex_names : Optional[str] = None,
-        fiducial : Optional[Collection[float]] = None,
+        fiducials : Optional[Collection[float]] = None,
     ):
         r"""
         Constructor for Fisher object.
@@ -193,7 +193,7 @@ class FisherMatrix:
             The LaTeX names of the parameters.
             If not specified, defaults to `names`.
 
-        fiducial : array-like iterable of `float`, default = None
+        fiducials : array-like iterable of `float`, default = None
             The fiducial values of the parameters. If not specified, default to
             0 for all parameters.
 
@@ -209,13 +209,13 @@ class FisherMatrix:
         >>> FisherMatrix(np.diag([1, 2, 3]))
         FisherMatrix(array([[1., 0., 0.],
                [0., 2., 0.],
-               [0., 0., 3.]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducial=array([0., 0., 0.]))
+               [0., 0., 3.]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducials=array([0., 0., 0.]))
 
         Specify a Fisher object with names, LaTeX names, and fiducials:
         >>> FisherMatrix(np.diag([1, 2]), names=['alpha', 'beta'],
-        ... latex_names=[r'$\alpha$', r'$\beta$'], fiducial=[-3, 2])
+        ... latex_names=[r'$\alpha$', r'$\beta$'], fiducials=[-3, 2])
         FisherMatrix(array([[1., 0.],
-               [0., 2.]]), names=array(['alpha', 'beta'], dtype=object), latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object), fiducial=array([-3.,  2.]))
+               [0., 2.]]), names=array(['alpha', 'beta'], dtype=object), latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object), fiducials=array([-3.,  2.]))
         """
 
         if np.ndim(values) != 2:
@@ -234,11 +234,11 @@ class FisherMatrix:
         self._size = np.shape(self._values)[0]
         self._ndim = np.ndim(self._values)
 
-        # setting the fiducial
-        if fiducial is None:
+        # setting the fiducials
+        if fiducials is None:
             self._fiducial = np.zeros(self._size, dtype=float)
         else:
-            self._fiducial = np.array(fiducial, dtype=float)
+            self._fiducial = np.array(fiducials, dtype=float)
 
         # setting the names
         if names is None:
@@ -297,7 +297,7 @@ class FisherMatrix:
         >>> m.rename({'p1' : 'a', 'p2' : dict(name='b', latex_name='$b$', fiducial=2)})
         FisherMatrix(array([[1., 0., 0.],
                [0., 2., 0.],
-               [0., 0., 3.]]), names=array(['a', 'b', 'p3'], dtype=object), latex_names=array(['a', '$b$', 'p3'], dtype=object), fiducial=array([0., 2., 0.]))
+               [0., 0., 3.]]), names=array(['a', 'b', 'p3'], dtype=object), latex_names=array(['a', '$b$', 'p3'], dtype=object), fiducials=array([0., 2., 0.]))
         """
         # check uniqueness and size
         if len(set(names)) != len(names):
@@ -310,7 +310,7 @@ class FisherMatrix:
 
         names_new = copy.deepcopy(self.names)
         latex_names_new = copy.deepcopy(self.latex_names)
-        fiducial_new = copy.deepcopy(self.fiducial)
+        fiducial_new = copy.deepcopy(self.fiducials)
 
         for name, value in names.items():
             index = np.where(names_new == name)
@@ -329,7 +329,7 @@ class FisherMatrix:
             self.values,
             names=names_new,
             latex_names=latex_names_new,
-            fiducial=fiducial_new,
+            fiducials=fiducial_new,
         )
 
 
@@ -362,7 +362,7 @@ class FisherMatrix:
             f'{repr(self.values)}, ' \
             f'names={repr(self.names)}, ' \
             f'latex_names={repr(self.latex_names)}, ' \
-            f'fiducial={repr(self.fiducial)})'
+            f'fiducials={repr(self.fiducials)})'
 
 
     def __str__(self):
@@ -373,7 +373,7 @@ class FisherMatrix:
             f'{self.values}, ' \
             f'names={self.names}, ' \
             f'latex_names={self.latex_names}, ' \
-            f'fiducial={self.fiducial})'
+            f'fiducials={self.fiducials})'
 
 
 
@@ -393,13 +393,13 @@ class FisherMatrix:
             values = self.values[indices]
             names = self.names[sl]
             latex_names = self.latex_names[sl]
-            fiducial = self.fiducial[sl]
+            fiducials = self.fiducials[sl]
 
             return self.__class__(
                 values,
                 names=names,
                 latex_names=latex_names,
-                fiducial=fiducial,
+                fiducials=fiducials,
             )
 
         try:
@@ -586,7 +586,7 @@ class FisherMatrix:
             all of the other keyword arguments for the Python builtin `sorted`.
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
-            either 'fiducial' or 'latex_names', it will sort according to those.
+            either 'fiducials' or 'latex_names', it will sort according to those.
             In the second special case that the value of the keyword `key` is
             set to an array of integers of equal size as the Fisher object, sorts them
             according to those instead.
@@ -598,22 +598,22 @@ class FisherMatrix:
         Examples
         --------
         >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'),
-        ... latex_names=['hjkl', 'qwe', 'll'], fiducial=[8, 7, 3])
-        >>> m.sort(key='fiducial')
+        ... latex_names=['hjkl', 'qwe', 'll'], fiducials=[8, 7, 3])
+        >>> m.sort(key='fiducials')
         FisherMatrix(array([[2., 0., 0.],
                [0., 1., 0.],
-               [0., 0., 3.]]), names=array(['f', 'd', 's'], dtype=object), latex_names=array(['ll', 'qwe', 'hjkl'], dtype=object), fiducial=array([3., 7., 8.]))
+               [0., 0., 3.]]), names=array(['f', 'd', 's'], dtype=object), latex_names=array(['ll', 'qwe', 'hjkl'], dtype=object), fiducials=array([3., 7., 8.]))
         >>> m.sort(key='latex_names')
         FisherMatrix(array([[3., 0., 0.],
                [0., 2., 0.],
-               [0., 0., 1.]]), names=array(['s', 'f', 'd'], dtype=object), latex_names=array(['hjkl', 'll', 'qwe'], dtype=object), fiducial=array([8., 3., 7.]))
+               [0., 0., 1.]]), names=array(['s', 'f', 'd'], dtype=object), latex_names=array(['hjkl', 'll', 'qwe'], dtype=object), fiducials=array([8., 3., 7.]))
         """
-        allowed_keys = ('fiducial', 'latex_names')
+        allowed_keys = ('fiducials', 'latex_names')
         # an integer index
         if 'key' in kwargs and all(hasattr(_, '__index__') for _ in kwargs['key']):
             index = np.array(kwargs['key'], dtype=int)
             names = self.names[index]
-        # either 'fiducial' or 'latex_names'
+        # either 'fiducials' or 'latex_names'
         elif 'key' in kwargs and kwargs['key'] in allowed_keys:
             index = np.argsort(getattr(self, kwargs['key']))
             if 'reversed' in kwargs and kwargs['reversed'] is True:
@@ -625,14 +625,14 @@ class FisherMatrix:
             index = get_index_of_other_array(self.names, names)
 
         latex_names = self.latex_names[index]
-        fiducial = self.fiducial[index]
+        fiducials = self.fiducials[index]
         values = reindex_array(self.values, index)
 
         return self.__class__(
             values,
             names=names,
             latex_names=latex_names,
-            fiducial=fiducial,
+            fiducials=fiducials,
         )
 
 
@@ -658,8 +658,8 @@ class FisherMatrix:
         and len(self) == len(other) \
         and set(self.names) == set(other.names) \
         and np.allclose(
-            self.fiducial,
-            other.fiducial[index],
+            self.fiducials,
+            other.fiducials[index],
         ) \
         and np.allclose(
             self.values,
@@ -765,9 +765,9 @@ class FisherMatrix:
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
         >>> m.drop('p1', 'p3')
-        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducial=array([0.]))
+        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducials=array([0.]))
         >>> m.drop(*['p1', 'p3']) # same thing, but note the asterisk (*)
-        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducial=array([0.]))
+        FisherMatrix(array([[2.]]), names=array(['p2'], dtype=object), latex_names=array(['p2'], dtype=object), fiducials=array([0.]))
         """
         if not ignore_errors and not set(names).issubset(set(self.names)):
             raise ValueError(
@@ -796,7 +796,7 @@ class FisherMatrix:
                 axis=dim,
             )
 
-        fiducial = np.delete(self.fiducial, index)
+        fiducials = np.delete(self.fiducials, index)
         latex_names = np.delete(self.latex_names, index)
         names = np.delete(self.names, index)
 
@@ -804,7 +804,7 @@ class FisherMatrix:
             values,
             names=names,
             latex_names=latex_names,
-            fiducial=fiducial,
+            fiducials=fiducials,
         )
 
 
@@ -860,7 +860,7 @@ class FisherMatrix:
         >>> fm.inverse()
         FisherMatrix(array([[1. , 0. , 0. ],
                [0. , 0.5, 0. ],
-               [0. , 0. , 0.2]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducial=array([0., 0., 0.]))
+               [0. , 0. , 0.2]]), names=array(['p1', 'p2', 'p3'], dtype=object), latex_names=array(['p1', 'p2', 'p3'], dtype=object), fiducials=array([0., 0., 0.]))
         """
         # inverse satisfies properties of Fisher matrix, see:
         # https://math.stackexchange.com/a/26200
@@ -868,7 +868,7 @@ class FisherMatrix:
             np.linalg.inv(self.values),
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -984,15 +984,15 @@ class FisherMatrix:
 
 
     @property
-    def fiducial(self):
+    def fiducials(self):
         """
         Returns the fiducial values of the Fisher object as a numpy array.
         """
         return self._fiducial
 
 
-    @fiducial.setter
-    def fiducial(
+    @fiducials.setter
+    def fiducials(
         self,
         value,
     ):
@@ -1078,11 +1078,11 @@ class FisherMatrix:
             index = get_index_of_other_array(self.names, other.names)
 
             # make sure the fiducials match
-            fiducial = other.fiducial[index]
+            fiducials = other.fiducials[index]
 
-            if not np.allclose(fiducial, self.fiducial):
+            if not np.allclose(fiducials, self.fiducials):
                 raise ValueError(
-                    f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
+                    f'Incompatible fiducial values: {fiducials} and {self.fiducials}'
                 )
 
             values = self.values + reindex_array(other.values, index)
@@ -1091,14 +1091,14 @@ class FisherMatrix:
                 values,
                 names=self.names,
                 latex_names=self.latex_names,
-                fiducial=self.fiducial,
+                fiducials=self.fiducials,
             )
 
         return self.__class__(
             self.values + other,
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1120,7 +1120,7 @@ class FisherMatrix:
             -self.values,
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1189,7 +1189,7 @@ class FisherMatrix:
                 ufunc(*scalars, **kwargs),
                 names=self.names,
                 latex_names=self.latex_names,
-                fiducial=self.fiducial,
+                fiducials=self.fiducials,
             )
 
         return NotImplemented
@@ -1206,7 +1206,7 @@ class FisherMatrix:
             np.power(self.values, other),
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1232,11 +1232,11 @@ class FisherMatrix:
         index = get_index_of_other_array(self.names, other.names)
 
         # make sure the fiducials match
-        fiducial = other.fiducial[index]
+        fiducials = other.fiducials[index]
 
-        if not np.allclose(fiducial, self.fiducial):
+        if not np.allclose(fiducials, self.fiducials):
             raise ValueError(
-                f'Incompatible fiducial values: {fiducial} and {self.fiducial}'
+                f'Incompatible fiducial values: {fiducials} and {self.fiducials}'
             )
 
         values = self.values @ reindex_array(other.values, index)
@@ -1245,7 +1245,7 @@ class FisherMatrix:
             values,
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1269,9 +1269,9 @@ class FisherMatrix:
             index = get_index_of_other_array(self.names, other.names)
 
             # make sure the fiducials match
-            fiducial = other.fiducial[index]
+            fiducials = other.fiducials[index]
 
-            if not np.allclose(fiducial, self.fiducial):
+            if not np.allclose(fiducials, self.fiducials):
                 raise ValueError
 
             if other.ndim == self.ndim:
@@ -1285,7 +1285,7 @@ class FisherMatrix:
             values,
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1309,9 +1309,9 @@ class FisherMatrix:
             index = get_index_of_other_array(self.names, other.names)
 
             # make sure the fiducials match
-            fiducial = other.fiducial[index]
+            fiducials = other.fiducials[index]
 
-            if not np.allclose(fiducial, self.fiducial):
+            if not np.allclose(fiducials, self.fiducials):
                 raise ValueError
 
             if other.ndim == self.ndim:
@@ -1325,7 +1325,7 @@ class FisherMatrix:
             values,
             names=self.names,
             latex_names=self.latex_names,
-            fiducial=self.fiducial,
+            fiducials=self.fiducials,
         )
 
 
@@ -1345,7 +1345,7 @@ class FisherMatrix:
         jacobian : Collection,
         names : Optional[Collection[str]] = None,
         latex_names : Optional[Collection[str]] = None,
-        fiducial : Optional[Collection[float]] = None,
+        fiducials : Optional[Collection[float]] = None,
     ) -> FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are
@@ -1365,8 +1365,8 @@ class FisherMatrix:
             list of new LaTeX names for the Fisher object. If None, and
             `names` is set, uses those instead, otherwise uses the old LaTeX names.
 
-        fiducial : array-like, default = None
-            the new values of the fiducial. If not set, defaults to old values.
+        fiducials : array-like, default = None
+            the new values of the fiducials. If not set, defaults to old values.
 
         Returns
         -------
@@ -1378,7 +1378,7 @@ class FisherMatrix:
         >>> jac = [[1, 4], [3, 2]]
         >>> fm.reparametrize(jac, names=['a', 'b'])
         FisherMatrix(array([[19., 16.],
-               [16., 24.]]), names=array(['a', 'b'], dtype=object), latex_names=array(['a', 'b'], dtype=object), fiducial=array([0., 0.]))
+               [16., 24.]]), names=array(['a', 'b'], dtype=object), latex_names=array(['a', 'b'], dtype=object), fiducials=array([0., 0.]))
         """
         values = np.transpose(jacobian) @ self.values @ jacobian
 
@@ -1395,17 +1395,17 @@ class FisherMatrix:
             names = copy.deepcopy(self.names)
             latex_names = copy.deepcopy(self.latex_names)
 
-        if fiducial is not None:
-            if len(fiducial) != np.shape(jacobian)[-1]:
-                raise MismatchingSizeError(fiducial)
+        if fiducials is not None:
+            if len(fiducials) != np.shape(jacobian)[-1]:
+                raise MismatchingSizeError(fiducials)
         else:
-            fiducial = copy.deepcopy(self.fiducial)
+            fiducials = copy.deepcopy(self.fiducials)
 
         return self.__class__(
             values,
             names=names,
             latex_names=latex_names,
-            fiducial=fiducial,
+            fiducials=fiducials,
         )
 
 
@@ -1455,7 +1455,7 @@ class FisherMatrix:
         fmt_values = kwargs.pop('fmt_values', '{:.3f}')
         return HTMLWrapper(
             make_html_table(
-                self.fiducial,
+                self.fiducials,
                 names=self.latex_names,
                 fmt_values=fmt_values,
             )
@@ -1500,7 +1500,7 @@ class FisherMatrix:
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
         >>> fm.to_file('example_matrix.json', overwrite=True)
-        {'values': [[1.0, 0.0], [0.0, 2.0]], 'names': ['a', 'b'], 'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'], 'fiducial': [0.0, 0.0]}
+        {'values': [[1.0, 0.0], [0.0, 2.0]], 'names': ['a', 'b'], 'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'], 'fiducials': [0.0, 0.0]}
         >>> fm_read = FisherMatrix.from_file('example_matrix.json') # convenience function for reading it
         >>> fm == fm_read # verify it's the same object
         True
@@ -1509,7 +1509,7 @@ class FisherMatrix:
             'values' : self.values.tolist(),
             'names' : self.names.tolist(),
             'latex_names' : self.latex_names.tolist(),
-            'fiducial' : self.fiducial.tolist(),
+            'fiducials' : self.fiducials.tolist(),
         }
 
         allowed_metadata = {
@@ -1587,12 +1587,12 @@ class FisherMatrix:
         >>> fm.marginalize_over('p1', 'p2')
         FisherMatrix(array([[ 1.67715591, -1.01556085,  0.30020773],
                [-1.01556085,  4.92788976,  0.91219831],
-               [ 0.30020773,  0.91219831,  3.1796454 ]]), names=array(['p3', 'p4', 'p5'], dtype=object), latex_names=array(['p3', 'p4', 'p5'], dtype=object), fiducial=array([0., 0., 0.]))
+               [ 0.30020773,  0.91219831,  3.1796454 ]]), names=array(['p3', 'p4', 'p5'], dtype=object), latex_names=array(['p3', 'p4', 'p5'], dtype=object), fiducials=array([0., 0., 0.]))
 
         Marginalize over all parameters which are NOT `p1` or `p2`:
         >>> fm.marginalize_over('p1', 'p2', invert=True)
         FisherMatrix(array([[ 5.04480062, -0.04490453],
-               [-0.04490453,  1.61599083]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducial=array([0., 0.]))
+               [-0.04490453,  1.61599083]]), names=array(['p1', 'p2'], dtype=object), latex_names=array(['p1', 'p2'], dtype=object), fiducials=array([0., 0.]))
         """
         inv = self.inverse()
         if invert is True:
@@ -1625,5 +1625,5 @@ class FisherMatrix:
             data['values'],
             names=data['names'],
             latex_names=data['latex_names'],
-            fiducial=data['fiducial'],
+            fiducials=data['fiducials'],
         )

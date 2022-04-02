@@ -165,7 +165,7 @@ class TestFisherTensor:
     def test_to_file(self):
         names = 'Omegam Omegab w0 wa h ns sigma8 aIA etaIA betaIA'.split(' ')
         # taken from v2 of https://arxiv.org/abs/1910.09273, table 1, and page 23
-        fiducial = [0.32, 0.05, -1, 0, 0.67, 0.96, 0.816, 1.72, -0.41, 2.17]
+        fiducials = [0.32, 0.05, -1, 0, 0.67, 0.96, 0.816, 1.72, -0.41, 2.17]
         latex_names = [
             r'$\Omega_\mathrm{m}$',
             r'$\Omega_\mathrm{b}$',
@@ -182,7 +182,7 @@ class TestFisherTensor:
             np.loadtxt(os.path.join(DATADIR_INPUT, 'test_numpy_matrix.dat'), comments='#'),
             names=names,
             latex_names=latex_names,
-            fiducial=fiducial,
+            fiducials=fiducials,
         )
         fm.to_file(
             os.path.join(DATADIR_OUTPUT, 'test_numpy_matrix.json'),
@@ -203,7 +203,7 @@ class TestFisherTensor:
             np.diag([2, 1, 3]),
             names=list('bac'),
             latex_names=[r'\mathcal{B}', r'\mathcal{A}', r'\mathcal{C}'],
-            fiducial=[5, 4, 6],
+            fiducials=[5, 4, 6],
         )
 
 
@@ -215,7 +215,7 @@ class TestFisherTensor:
             m1.values,
             names=list('xbc'),
             latex_names=list('xbc'),
-            fiducial=[1, 0, 0],
+            fiducials=[1, 0, 0],
         )
 
         # duplicate parameter
@@ -243,7 +243,7 @@ class TestFisherTensor:
         ) == FisherTensor(
             m1.values,
             names=['a', 'b', 'p3'],
-            fiducial=[0, 2, 0],
+            fiducials=[0, 2, 0],
             latex_names=['a', '$b$', 'p3'],
         )
 
@@ -316,7 +316,7 @@ class TestFisherTensor:
             [11, 12, 13],
             [21, 22, 23],
             [31, 32, 33]],
-            fiducial=[-1, 0, 1],
+            fiducials=[-1, 0, 1],
             names=['p3', 'p1', 'p2'],
         )
 
@@ -324,7 +324,7 @@ class TestFisherTensor:
             [33, 31, 32],
             [13, 11, 12],
             [23, 21, 22]],
-            fiducial=[1, -1, 0],
+            fiducials=[1, -1, 0],
             names=['p1', 'p2', 'p3'],
             latex_names=['p1', 'p2', 'p3'],
         )
@@ -333,7 +333,7 @@ class TestFisherTensor:
             [33, 32, 31],
             [23, 22, 21],
             [13, 12, 11]],
-            fiducial=[1, 0, -1],
+            fiducials=[1, 0, -1],
             names=['p2', 'p1', 'p3'],
         )
 
@@ -371,20 +371,20 @@ class TestFisherTensor:
 
 
     def test_drop(self):
-        data = FisherTensor(np.diag([1, 2, 3]), fiducial=[-1, 0, 1])
+        data = FisherTensor(np.diag([1, 2, 3]), fiducials=[-1, 0, 1])
         data_new = data.drop('p1')
 
         assert np.allclose(data_new.values, np.diag([2, 3]))
         for old, new in zip(data_new.names, ['p2', 'p3']):
             assert old == new
         #assert np.all(data_new.names == np.array(['p2', 'p3']))
-        assert np.allclose(data_new.fiducial, np.array([0, 1]))
+        assert np.allclose(data_new.fiducials, np.array([0, 1]))
 
         data_new = data.drop('p2', 'p1', invert=True)
         assert data_new == FisherTensor(
             np.diag([2, 1]),
             names=['p2', 'p1'],
-            fiducial=[0, -1],
+            fiducials=[0, -1],
         )
 
         with pytest.raises(ValueError):
@@ -468,7 +468,7 @@ class TestFisherTensor:
             ),
             names=m.names[size_marg:],
             latex_names=m.latex_names[size_marg:],
-            fiducial=m.fiducial[size_marg:],
+            fiducials=m.fiducials[size_marg:],
         )
 
 
@@ -508,8 +508,8 @@ class TestFisherPlotter:
         val2 = np.diag([6, 7, 20, 1.5, .6])
         fid1 = [0, 0, 0, 1, 2]
         fid2 = [-1, 0.1, 5, -1, 3]
-        m1 = FisherTensor(val1, names=names, fiducial=fid1, latex_names=latex_names)
-        m2 = FisherTensor(val2, names=names, fiducial=fid2, latex_names=latex_names)
+        m1 = FisherTensor(val1, names=names, fiducials=fid1, latex_names=latex_names)
+        m2 = FisherTensor(val2, names=names, fiducials=fid2, latex_names=latex_names)
         fp = FisherPlotter(m1, m2, labels=['first', 'second'])
 
         assert fp.values[0] == m1
@@ -530,9 +530,9 @@ class TestFisherPlotter:
         fid1 = [0, 0, 0, 1, 2]
         fid2 = [-1, 0.1, 5, -1, 3]
         fid3 = fid1
-        m1 = FisherTensor(val1, names=names, fiducial=fid1, latex_names=latex_names)
-        m2 = FisherTensor(val2, names=names, fiducial=fid2, latex_names=latex_names)
-        m3 = FisherTensor(val3, names=names, fiducial=fid3, latex_names=latex_names)
+        m1 = FisherTensor(val1, names=names, fiducials=fid1, latex_names=latex_names)
+        m2 = FisherTensor(val2, names=names, fiducials=fid2, latex_names=latex_names)
+        m3 = FisherTensor(val3, names=names, fiducials=fid3, latex_names=latex_names)
         fp = FisherPlotter(m1, m2, m3, labels=['first', 'second', 'third'])
 
         ffigure = fp.plot_1d(

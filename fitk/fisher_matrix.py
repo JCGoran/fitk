@@ -162,8 +162,9 @@ class FisherMatrix:
     >>> fm.drop('x')
     FisherMatrix(array([[4.]]), names=array(['y'], dtype=object), latex_names=array(['$\\mathbf{Y}$'], dtype=object), fiducial=array([0.]))
 
-    We can save it to a file:
+    We can save it to a file (the returned value is the dictionary that was saved):
     >>> fm.to_file('example_matrix.json', overwrite=True)
+    {'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducial': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
     >>> fm_new = FisherMatrix.from_file('example_matrix.json')
@@ -1471,7 +1472,7 @@ class FisherMatrix:
     ):
         r"""
         Saves the Fisher object to a file.
-        The format is a simple JSON file, containing at least the values of the
+        The format used is a simple JSON file, containing at least the values of the
         Fisher object, the names of the parameters, the LaTeX names, and the
         fiducial values.
 
@@ -1482,7 +1483,9 @@ class FisherMatrix:
 
         args : str
             whatever other information about the object needs to be saved.
-            Needs to be a name of one of the methods of the class.
+            Needs to be one of the following: `is_valid`, `eigenvalues`,
+            `eigenvectors`, `trace`, `determinant`, or `constraints` (by
+            default, the 1$\sigma$ marginalized constraints).
 
         metadata : dict, default = {}
             any metadata that should be associated to the object saved
@@ -1492,12 +1495,13 @@ class FisherMatrix:
 
         Returns
         -------
-        None
+        The dictionary that was saved.
 
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]), names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
         >>> fm.to_file('example_matrix.json', overwrite=True)
+        {'values': [[1.0, 0.0], [0.0, 2.0]], 'names': ['a', 'b'], 'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'], 'fiducial': [0.0, 0.0]}
         >>> fm_read = FisherMatrix.from_file('example_matrix.json') # convenience function for reading it
         >>> fm == fm_read # verify it's the same object
         True
@@ -1515,6 +1519,7 @@ class FisherMatrix:
             'eigenvectors' : np.array,
             'trace' : float,
             'determinant' : float,
+            'constraints' : np.array,
         }
 
         for arg in args:
@@ -1544,6 +1549,8 @@ class FisherMatrix:
 
         with open(path, 'w', encoding='utf-8') as file_handle:
             file_handle.write(json.dumps(data, indent=4))
+
+        return data
 
 
     def marginalize_over(

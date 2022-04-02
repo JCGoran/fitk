@@ -9,7 +9,7 @@ Througout the documentation, it is assumed that the modules are imported in the
 following way:
 
 >>> import numpy as np
->>> from fitk import FisherMatrix, FisherParameter, FisherPlotter
+>>> from fitk import FisherMatrix, FisherPlotter
 """
 
 from fitk.fisher_utils import \
@@ -20,8 +20,7 @@ from fitk.fisher_utils import \
     is_symmetric, \
     reindex_array
 from fitk.fisher_matrix import \
-    FisherMatrix, \
-    FisherParameter
+    FisherMatrix
 from fitk.fisher_plotter import \
     FisherPlotter, \
     FisherFigure1D, \

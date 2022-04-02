@@ -1,12 +1,13 @@
 """
 Package for performing operations on Fisher objects.
-See here for documentation of `FisherMatrix` and `FisherParameter`.
+See here for documentation of `FisherMatrix`.
 """
 
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 
 # standard library imports
+from collections import abc
 import copy
 from itertools import \
     permutations, \
@@ -46,48 +47,24 @@ from fitk.fisher_utils import \
 
 
 
-class FisherParameter:
+def _process_fisher_mapping(value : abc.Mapping):
     """
-    Simple container for specifying the name, the LaTeX name, and the fiducial
-    of a parameter.
+    Processes a mapping/dict and returns the sanitized output.
     """
-    def __init__(
-        self,
-        name : str,
-        latex_name : Optional[str] = None,
-        fiducial : float = 0,
-    ):
-        """
-        Constructor.
+    if 'name' not in value:
+        raise ValueError(
+            'The mapping/dict must contain at least the key `name`'
+        )
 
-        Parameters
-        ----------
-        name : str
-            the name of the parameter
+    name = value['name']
+    latex_name = value.get('latex_name', name)
+    fiducial = value.get('fiducial', 0)
 
-        latex_name : Optional[str], default = None
-            the LaTeX name of the parameter. If not specified, defaults to `name`.
-
-        fiducial : float, default = 0
-            the fiducial value of the parameter
-        """
-        self.name = name
-        self.latex_name = latex_name if latex_name is not None else name
-        self.fiducial = fiducial
-
-
-    def __repr__(self):
-        """
-        Representation of the FisherParameter
-        """
-        return \
-            f"FisherParameter(name='{self.name}', " \
-            f"latex_name='{self.latex_name}', " \
-            f"fiducial={self.fiducial})"
-
-
-    def __str__(self):
-        return self.__repr__()
+    return dict(
+        name=name,
+        latex_name=latex_name,
+        fiducial=fiducial,
+    )
 
 
 
@@ -296,7 +273,7 @@ class FisherMatrix:
 
     def rename(
         self,
-        names : Mapping[str, Union[str, FisherParameter]],
+        names : Mapping[str, Union[str, abc.Mapping]],
         ignore_errors : bool = False,
     ) -> FisherMatrix:
         """
@@ -304,11 +281,10 @@ class FisherMatrix:
 
         Parameters
         ----------
-        names : Mapping[str, Union[str, FisherParameter]]
+        names : Mapping[str, Union[str, abc.Mapping]]
             a mapping (dictionary-like object) between the old names and the
-            new ones. The values it maps to can either be a string (the new name), or an
-            instance of `FisherParameter`, which takes a name, a LaTeX name, and a fiducial as
-            its arguments.
+            new ones. The values it maps to can either be a string (the new name), or a dict
+            with keys `name`, `latex_name`, and `fiducial` (only `name` is mandatory).
 
         ignore_errors : bool, default = False
             if set to True, will not raise an error if a parameter doesn't exist
@@ -320,7 +296,7 @@ class FisherMatrix:
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
-        >>> m.rename({'p1' : 'a', 'p2' : FisherParameter('b', latex_name='$b$', fiducial=2)})
+        >>> m.rename({'p1' : 'a', 'p2' : dict(name='b', latex_name='$b$', fiducial=2)})
         FisherMatrix(array([[1., 0., 0.],
                [0., 2., 0.],
                [0., 0., 3.]]), names=array(['a', 'b', 'p3'], dtype=object), latex_names=array(['a', '$b$', 'p3'], dtype=object), fiducial=array([0., 2., 0.]))
@@ -340,11 +316,13 @@ class FisherMatrix:
 
         for name, value in names.items():
             index = np.where(names_new == name)
-            # it's a mapping to a FisherParameter
-            if isinstance(value, FisherParameter):
-                latex_names_new[index] = value.latex_name
-                fiducial_new[index] = value.fiducial
-                names_new[index] = value.name
+            # it's a mapping
+            if isinstance(value, abc.Mapping):
+                value = _process_fisher_mapping(value)
+                latex_names_new[index] = value['latex_name']
+                fiducial_new[index] = value['fiducial']
+                names_new[index] = value['name']
+            # otherwise, it's a string
             else:
                 names_new[index] = value
                 latex_names_new[index] = value

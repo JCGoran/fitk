@@ -376,6 +376,13 @@ class FisherPlotter:
                 ax.set_yticks([])
 
             if kwargs.get("legend") is True:
+                # remove any axes which are not drawn
+                if not full:
+                    for index in range(
+                        (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
+                    ):
+                        axes.flat[index].remove()
+
                 fig.legend(
                     np.array(handles, dtype=object),
                     self.labels,

@@ -19,6 +19,15 @@ from matplotlib.patches import Ellipse
 from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
 
+from matplotlib.ticker import (
+    MaxNLocator,
+    LinearLocator,
+    ScalarFormatter,
+    StrMethodFormatter,
+)
+from scipy.stats import chi2, norm
+
+# first party imports
 from fitk.fisher_matrix import FisherMatrix
 
 # first party imports
@@ -245,6 +254,7 @@ class FisherPlotter:
 
     def plot_1d(
         self,
+        scale: float = 1.0,
         max_cols: Optional[int] = None,
         rc: dict = get_default_rcparams(),
         **kwargs,
@@ -281,7 +291,10 @@ class FisherPlotter:
 
         with plt.rc_context(rc):
             # general figure setup
-            fig = plt.figure(clear=True, figsize=(2 * layout[1], 2 * layout[0]))
+            fig = plt.figure(
+                clear=True,
+                figsize=(scale * 2 * layout[1], scale * 2 * layout[0]),
+            )
             gs = fig.add_gridspec(
                 nrows=layout[0],
                 ncols=layout[1],
@@ -326,6 +339,25 @@ class FisherPlotter:
                         fm.fiducials[np.where(fm.names == name)],
                         fm.constraints(name, marginalized=True),
                         ax,
+                    )
+
+                    add_shading_1d(
+                        fm.fiducials[np.where(fm.names == name)],
+                        fm.constraints(name, marginalized=True),
+                        ax,
+                        color=handle.get_color(),
+                        alpha=0.3,
+                        ec=None,
+                    )
+
+                    add_shading_1d(
+                        fm.fiducials[np.where(fm.names == name)],
+                        fm.constraints(name, marginalized=True),
+                        ax,
+                        level=2,
+                        color=handle.get_color(),
+                        alpha=0.1,
+                        ec=None,
                     )
 
                     if index == 0:

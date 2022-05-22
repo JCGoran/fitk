@@ -404,26 +404,145 @@ class FisherPlotter:
 
         return FisherFigure1D(fig, axes, names)
 
-    def plot_2d(
-        self,
-        rc: dict = get_default_rcparams(),
-        **kwargs,
-    ):
-        """
-        Plots the 2D ellipses (and optionally 1D Gaussians) of the Fisher
-        objects, and returns an instance of `FisherFigure2D`.
-        """
-        pass
-
     def plot_triangle(
         self,
+        rc: dict = get_default_rcparams(),
+        plot_gaussians: bool = True,
         **kwargs,
     ):
         """
-        Plots the 2D ellipses and 1D Gaussians of the Fisher objects, and
+        Plots the 2D ellipses (and optionally 1D Gaussians) of the Fisher objects, and
         returns an instance of `FisherFigure2D`.
         """
-        pass
+        size = len(self.values[0])
+
+        if size < 2:
+            raise ValueError("Unable to make a 2D plot with < 2 parameters")
+
+        with plt.rc_context(rc):
+            # general figure setup
+            fig = plt.figure(figsize=(2 * size, 2 * size), clear=True)
+            gs = fig.add_gridspec(nrows=size, ncols=size, hspace=0.5, wspace=0.5)
+            # TODO make it work with a shared xcol
+            ax = gs.subplots(sharex=False, sharey=False)
+
+            names = self.values[0].names
+            latex_names = self.values[0].latex_names
+
+            for i in range(len(ax)):
+                for j in range(len(ax)):
+                    # TODO is this the right order?
+                    namex, namey = (
+                        names[np.where(names == names[i])],
+                        names[np.where(names == names[j])],
+                    )
+                    # labels for 2D contours (increasing y)
+                    if i > 0 and j == 0:
+                        ax[i, j].set_ylabel(latex_names[i])
+
+                    # labels for 2D contours (increasing x)
+                    if i == len(ax) - 1:
+                        ax[i, j].set_xlabel(latex_names[j])
+
+                    # removing any unnecessary axes from the gridspec
+                    # TODO should they be removed, or somehow just made invisible?
+                    if i < j:
+                        ax[i, j].remove()
+                        # ax[i, j].axis('off')
+                    # plotting the 2D contours
+                    elif i > j:
+                        for fm in self.values:
+                            # get parameters of the ellipse
+                            width, height, angle = get_ellipse(fm, namex, namey)
+                            fidx, fidy = (
+                                fm.fiducials[np.where(fm.names == namex)],
+                                fm.fiducials[np.where(fm.names == namey)],
+                            )
+                            alpha = np.sqrt(get_chisq())
+                            add_plot_2d(
+                                (fidx, fidy),
+                                width=width * alpha,
+                                height=height * alpha,
+                                angle=angle,
+                                ax=ax[i, j],
+                                alpha=0.3,
+                                fill=True,
+                                color="red",
+                            )
+
+                            add_plot_2d(
+                                (fidx, fidy),
+                                width=width * alpha * 2,
+                                height=height * alpha * 2,
+                                angle=angle,
+                                ax=ax[i, j],
+                                alpha=0.1,
+                                fill=True,
+                                color="red",
+                            )
+
+                            # ax[i, j].set_ylim(*self.find_limits_1d(namex, sigma=1))
+                            # ax[i, j].relim()
+
+                        # remove ticks from any plots that aren't on the edges
+                    #                        if j > 0:
+                    #                            ax[i, j].set_yticks([])
+                    #                            ax[i, j].set_xticklabels([])
+                    #                            ax[i, j].set_yticklabels([])
+                    #
+                    #                        if i < len(ax) - 1:
+                    #                            ax[i, j].set_xticks([])
+                    #                            ax[i, j].set_xticklabels([])
+                    #                            ax[i, j].set_yticklabels([])
+
+                    # plotting the 1D Gaussians
+                    elif plot_gaussians is True:
+                        for fm in self.values:
+                            (handle,) = add_plot_1d(
+                                fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                sigma=fm.constraints(namex, marginalized=True),
+                                ax=ax[i, i],
+                            )
+                            # 1 and 2 sigma shading
+                            add_shading_1d(
+                                fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                sigma=fm.constraints(namex, marginalized=True),
+                                ax=ax[i, i],
+                                level=1,
+                                alpha=0.3,
+                                color=handle.get_color(),
+                                ec=None,
+                            )
+                            add_shading_1d(
+                                fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                sigma=fm.constraints(namex, marginalized=True),
+                                ax=ax[i, i],
+                                level=2,
+                                alpha=0.1,
+                                color=handle.get_color(),
+                                ec=None,
+                            )
+
+                    else:
+                        ax[i, i].remove()
+
+            #                        ax[i, i].set_yticks([])
+
+            # set automatic limits
+            for i in range(len(ax)):
+                for j in range(len(ax)):
+                    try:
+                        ax[i, j].relim()
+                        ax[i, j].autoscale_view()
+                        if i == j:
+                            ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
+                        set_xticks(ax[i, j])
+                        set_yticks(ax[i, j])
+                    except AttributeError:
+                        pass
+        #                ax[i, i].set_xlim(*self.find_limits_1d(names[i]))
+
+        return FisherFigure2D(fig, ax, names)
 
 
 def gaussian(
@@ -486,3 +605,134 @@ def add_plot_1d(
     )
 
     return temp
+
+
+def add_shading_1d(
+    fiducial: float,
+    sigma: float,
+    ax: Axes,
+    level: float = 1,
+    **kwargs,
+):
+    """
+    Add shading to a 1D axes.
+    """
+    fiducial = fiducial.flatten()[0]
+    sigma = sigma.flatten()[0]
+
+    x = np.linspace(
+        fiducial - level * sigma,
+        fiducial + level * sigma,
+        100,
+    )
+
+    temp = ax.fill_between(
+        x,
+        [gaussian(_, mu=fiducial, sigma=sigma) for _ in x],
+        **kwargs,
+    )
+
+    return temp
+
+
+def add_plot_2d(
+    fiducials: Collection[float],
+    width: float,
+    height: float,
+    angle: float,
+    ax,
+    **kwargs,
+):
+    """
+    Adds a 2D ellipse with parameters `width`, `height`, and `angle`, centered
+    at fiducial values `fiducial` to axis `ax`.
+    """
+    fidy, fidx = fiducials
+    patch = ax.add_patch(
+        Ellipse(
+            xy=(fidx, fidy),
+            width=width,
+            height=height,
+            angle=angle,
+            **kwargs,
+        )
+    )
+
+    return patch
+
+
+def get_ellipse(
+    fm: FisherMatrix,
+    name1: str,
+    name2: str,
+):
+    """
+    Constructs parameters for an ellipse from the names.
+    """
+    if name1 == name2:
+        return None
+
+    # the inverse
+    inv = fm.inverse()
+
+    sigmax2 = inv[name1, name1]
+    sigmay2 = inv[name2, name2]
+    sigmaxy = inv[name1, name2]
+
+    # basically the eigenvalues of the submatrix
+    a = np.sqrt(
+        (sigmax2 + sigmay2) / 2 + np.sqrt((sigmax2 - sigmay2) ** 2 / 4 + sigmaxy**2)
+    )
+
+    b = np.sqrt(
+        (sigmax2 + sigmay2) / 2 - np.sqrt((sigmax2 - sigmay2) ** 2 / 4 + sigmaxy**2)
+    )
+
+    if sigmax2 < sigmay2:
+        a, b = b, a
+
+    angle = np.rad2deg(
+        np.arctan2(
+            2 * sigmaxy,
+            sigmax2 - sigmay2,
+        )
+        / 2
+    )
+
+    return a, b, angle
+
+
+def set_xticks(
+    ax,
+):
+    locator = LinearLocator(3)
+    formatter = StrMethodFormatter("{x:.2f}")
+    ax.xaxis.set_major_locator(locator)
+    ax.xaxis.set_major_formatter(formatter)
+    ax.set_xticks(locator())
+    ax.set_xticklabels(
+        formatter.format_ticks(locator()),
+        rotation=45,
+        rotation_mode="anchor",
+        fontdict={
+            "verticalalignment": "top",
+            "horizontalalignment": "right",
+        },
+    )
+
+
+def set_yticks(
+    ax,
+):
+    locator = LinearLocator(3)
+    formatter = StrMethodFormatter("{x:.2f}")
+    ax.yaxis.set_major_locator(locator)
+    ax.yaxis.set_major_formatter(formatter)
+    ax.set_yticks(locator())
+    ax.set_yticklabels(
+        formatter.format_ticks(locator()),
+        fontdict={
+            "verticalalignment": "top",
+            "horizontalalignment": "right",
+        },
+    )

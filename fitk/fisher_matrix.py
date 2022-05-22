@@ -11,32 +11,25 @@ import json
 
 # standard library imports
 from collections import abc
-from itertools import permutations, product
+from itertools import permutations
 from numbers import Number
 from typing import Collection, Mapping, Optional, Tuple, Union
 
-import matplotlib.pyplot as plt
-
 # third party imports
 import numpy as np
-from matplotlib import colors
-from matplotlib.patheffects import Normal, Stroke
 from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
 from fitk.fisher_utils import (
-    HTMLWrapper,
     MismatchingSizeError,
+    MismatchingValuesError,
     ParameterNotFoundError,
-    float_to_latex,
-    get_default_rcparams,
     get_index_of_other_array,
     is_positive_semidefinite,
     is_square,
     is_symmetric,
     jsonify,
     make_default_names,
-    make_html_table,
     reindex_array,
 )
 
@@ -208,7 +201,6 @@ class FisherMatrix:
         FisherMatrix(array([[1., 0.],
                [0., 2.]]), names=array(['alpha', 'beta'], dtype=object), latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object), fiducials=array([-3.,  2.]))
         """
-
         if np.ndim(values) != 2:
             raise ValueError(f"The object {values} is not 2-dimensional")
 
@@ -429,7 +421,7 @@ class FisherMatrix:
         try:
             _ = iter(keys)
         except TypeError as err:
-            raise err
+            raise TypeError(err) from err
 
         if len(keys) != self.ndim:
             raise ValueError(f"Got length {len(keys)}")
@@ -470,99 +462,6 @@ class FisherMatrix:
         False
         """
         return is_symmetric(self.values) and is_positive_semidefinite(self.values)
-
-    def imshow(
-        self,
-        colorbar: bool = False,
-        show_values: bool = False,
-        normalized: bool = False,
-        colorbar_space: float = 0.02,
-        colorbar_width: float = 0.05,
-        colorbar_orientation: str = "vertical",
-        rc: dict = get_default_rcparams(),
-        **kwargs,
-    ):
-        """
-        Returns the image of the Fisher object.
-        """
-        # TODO should only work with 2D data.
-        with plt.rc_context(rc):
-            fig, ax = plt.subplots(figsize=(len(self), len(self)))
-            img = ax.imshow(
-                self.values,
-                interpolation="none",
-                norm=colors.CenteredNorm(),
-                **kwargs,
-            )
-
-            ax.set_xticks(np.arange(len(self)))
-            ax.set_yticks(np.arange(len(self)))
-            ax.set_xticklabels(self.latex_names)
-            ax.set_yticklabels(self.latex_names)
-
-            if colorbar:
-                allowed_orientations = ("vertical", "horizontal")
-                if colorbar_orientation not in allowed_orientations:
-                    raise ValueError(
-                        f"'{colorbar_orientation}' is not one of: {allowed_orientations}"
-                    )
-
-                if colorbar_orientation == "vertical":
-                    cax = fig.add_axes(
-                        [
-                            ax.get_position().x1 + colorbar_space,
-                            ax.get_position().y0 * 0.997,
-                            colorbar_width,
-                            ax.get_position().height,
-                        ]
-                    )
-                    fig.colorbar(img, cax=cax, orientation=colorbar_orientation)
-                    cax.set_yticklabels(
-                        [f"${float_to_latex(_)}$" for _ in cax.get_yticks()]
-                    )
-                else:
-                    cax = fig.add_axes(
-                        [
-                            ax.get_position().x0,
-                            ax.get_position().y1 + colorbar_space,
-                            ax.get_position().width,
-                            colorbar_width,
-                        ]
-                    )
-                    fig.colorbar(img, cax=cax, orientation=colorbar_orientation)
-                    cax.xaxis.set_ticks_position("top")
-                    cax.set_xticklabels(
-                        [f"${float_to_latex(_)}$" for _ in cax.get_xticks()]
-                    )
-
-            # whether or not we want to display the actual values inside the
-            # matrix
-            if show_values:
-                mid_coords = np.arange(len(self))
-                for index1, index2 in product(range(len(self)), range(len(self))):
-                    x = mid_coords[index1]
-                    y = mid_coords[index2]
-                    value = (
-                        self.values[index1, index2]
-                        / np.sqrt(
-                            self.values[index1, index1] * self.values[index2, index2]
-                        )
-                        if normalized
-                        else self.values[index1, index2]
-                    )
-                    text = ax.text(
-                        x,
-                        y,
-                        f"${float_to_latex(value)}$",
-                        ha="center",
-                        va="center",
-                        color="white",
-                    )
-                    text.set_path_effects(
-                        [Stroke(linewidth=1, foreground="black"), Normal()]
-                    )
-
-        return fig
 
     def sort(
         self,
@@ -686,10 +585,6 @@ class FisherMatrix:
         """
         Setter for the values of the Fisher object.
         """
-        if self.ndim != np.ndim(value):
-            raise ValueError(
-                f"The dimensionality of the matrices do not match: {self.ndim} and {np.ndim(value)}"
-            )
         if len(self) != len(value):
             raise MismatchingSizeError(self, value)
 
@@ -970,7 +865,7 @@ class FisherMatrix:
     @fiducials.setter
     def fiducials(
         self,
-        value : Collection[Number],
+        value: Collection[Number],
     ):
         """
         The setter for the fiducial values of the Fisher object.
@@ -992,7 +887,7 @@ class FisherMatrix:
     @names.setter
     def names(
         self,
-        value : Collection[str],
+        value: Collection[str],
     ):
         """
         The bulk setter for the names.
@@ -1013,7 +908,7 @@ class FisherMatrix:
     @latex_names.setter
     def latex_names(
         self,
-        value : Collection[str],
+        value: Collection[str],
     ):
         """
         The bulk setter for the LaTeX names.
@@ -1033,18 +928,10 @@ class FisherMatrix:
         """
         try:
             other = float(other)
-        except TypeError as err:
-            # make sure the dimensions match
-            if other.ndim != self.ndim:
-                raise ValueError(
-                    f"The dimensions of the objects do not match: {other.ndim} and {self.ndim}"
-                )
-
+        except TypeError:
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
-                raise ValueError(
-                    f"Incompatible parameter names: {other.names} and {self.names}"
-                )
+                raise MismatchingValuesError("parameter name", other.names, self.names)
 
             index = get_index_of_other_array(self.names, other.names)
 
@@ -1052,8 +939,8 @@ class FisherMatrix:
             fiducials = other.fiducials[index]
 
             if not np.allclose(fiducials, self.fiducials):
-                raise ValueError(
-                    f"Incompatible fiducial values: {fiducials} and {self.fiducials}"
+                raise MismatchingValuesError(
+                    "fiducial value", fiducials, self.fiducials
                 )
 
             values = self.values + reindex_array(other.values, index)
@@ -1179,17 +1066,9 @@ class FisherMatrix:
         """
         Matrix multiplies two Fisher objects.
         """
-        # make sure the dimensions match
-        if other.ndim != self.ndim:
-            raise ValueError(
-                f"The dimensions of the objects do not match: {other.ndim} and {self.ndim}"
-            )
-
         # make sure they have the right parameters
         if set(other.names) != set(self.names):
-            raise ValueError(
-                f"Incompatible parameter names: {other.names} and {self.names}"
-            )
+            raise MismatchingValuesError("parameter name", other.names, self.names)
 
         index = get_index_of_other_array(self.names, other.names)
 
@@ -1197,9 +1076,7 @@ class FisherMatrix:
         fiducials = other.fiducials[index]
 
         if not np.allclose(fiducials, self.fiducials):
-            raise ValueError(
-                f"Incompatible fiducial values: {fiducials} and {self.fiducials}"
-            )
+            raise MismatchingValuesError("fiducial value", fiducials, self.fiducials)
 
         values = self.values @ reindex_array(other.values, index)
 
@@ -1225,7 +1102,7 @@ class FisherMatrix:
             # maybe it's a FisherMatrix
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
-                raise ValueError
+                raise MismatchingValuesError("parameter name", other.names, self.names)
 
             index = get_index_of_other_array(self.names, other.names)
 
@@ -1233,7 +1110,9 @@ class FisherMatrix:
             fiducials = other.fiducials[index]
 
             if not np.allclose(fiducials, self.fiducials):
-                raise ValueError
+                raise MismatchingValuesError(
+                    "fiducial value", fiducials, self.fiducials
+                )
 
             if other.ndim == self.ndim:
                 values = self.values / reindex_array(other.values, index)
@@ -1264,7 +1143,7 @@ class FisherMatrix:
             # maybe it's a FisherMatrix
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
-                raise ValueError
+                raise MismatchingValuesError("parameter name", other.names, self.names)
 
             index = get_index_of_other_array(self.names, other.names)
 
@@ -1272,7 +1151,9 @@ class FisherMatrix:
             fiducials = other.fiducials[index]
 
             if not np.allclose(fiducials, self.fiducials):
-                raise ValueError
+                raise MismatchingValuesError(
+                    "fiducial value", fiducials, self.fiducials
+                )
 
             if other.ndim == self.ndim:
                 values = self.values * reindex_array(other.values, index)
@@ -1366,61 +1247,8 @@ class FisherMatrix:
             fiducials=fiducials,
         )
 
-    def pprint_eigenvalues(
-        self,
-        orientation: str = "horizontal",
-        **kwargs,
-    ):
-        """
-        Shotcut for pretty printing eigenvalues.
-        """
-        fmt_values = kwargs.pop("fmt_values", "{:.3f}")
-        return HTMLWrapper(
-            make_html_table(
-                self.eigenvalues(),
-                fmt_values=fmt_values,
-            )
-        )
-
-    def pprint_constraints(
-        self,
-        orientation: str = "horizontal",
-        **kwargs,
-    ):
-        """
-        Shortcut for pretty printing constraints.
-        """
-        fmt_values = kwargs.pop("fmt_values", "{:.3f}")
-        return HTMLWrapper(
-            make_html_table(
-                self.constraints(**kwargs),
-                names=self.latex_names,
-                fmt_values=fmt_values,
-            )
-        )
-
-    def pprint_fiducial(
-        self,
-        orientation: str = "horizontal",
-        **kwargs,
-    ):
-        """
-        Shortcut for pretty printing the fiducial values.
-        """
-        fmt_values = kwargs.pop("fmt_values", "{:.3f}")
-        return HTMLWrapper(
-            make_html_table(
-                self.fiducials,
-                names=self.latex_names,
-                fmt_values=fmt_values,
-            )
-        )
-
     def to_file(
-        self,
-        path: str,
-        *args: str,
-        metadata: Optional[Mapping[str, str]] = None
+        self, path: str, *args: str, metadata: Optional[Mapping[str, str]] = None
     ):
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
@@ -1439,7 +1267,7 @@ class FisherMatrix:
             `eigenvectors`, `trace`, `determinant`, or `constraints` (by
             default, the \(1\sigma\) marginalized constraints).
 
-        metadata : Optional[Mapping[str, str]] = None
+        metadata : Optional[Mapping[str, str]], default = None
             any metadata that should be associated to the object saved
 
         Returns
@@ -1477,15 +1305,22 @@ class FisherMatrix:
                     f"name {arg} is not one of {list(allowed_metadata.keys())}"
                 )
 
-        for arg in metadata:
-            if arg in data:
-                raise ValueError(f"name {arg} cannot be one of {list(data.keys())}")
+        if metadata is not None:
+            for arg in metadata:
+                if arg in data:
+                    raise ValueError(f"name {arg} cannot be one of {list(data.keys())}")
 
-        data = {
-            **data,
-            **{arg: jsonify(getattr(self, arg)()) for arg in args},
-            **metadata,
-        }
+            data = {
+                **data,
+                **{arg: jsonify(getattr(self, arg)()) for arg in args},
+                **metadata,
+            }
+
+        else:
+            data = {
+                **data,
+                **{arg: jsonify(getattr(self, arg)()) for arg in args},
+            }
 
         with open(path, "w", encoding="utf-8") as file_handle:
             file_handle.write(json.dumps(data, indent=4))
@@ -1537,8 +1372,8 @@ class FisherMatrix:
         inv = self.inverse()
         if invert is True:
             names = set(names) ^ set(self.names)
-        fm = inv.drop(*names, ignore_errors=ignore_errors)
-        return fm.inverse()
+        fisher = inv.drop(*names, ignore_errors=ignore_errors)
+        return fisher.inverse()
 
     @classmethod
     def from_file(

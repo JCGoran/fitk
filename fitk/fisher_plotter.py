@@ -7,39 +7,37 @@ from __future__ import annotations
 
 # standard library imports
 from abc import ABC, abstractmethod
-from typing import \
-    Collection, \
-    Optional, \
-    Tuple, \
-    Union
+from typing import Collection, Optional, Tuple, Union
+
+import matplotlib.pyplot as plt
 
 # third party imports
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.transforms import Bbox
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
+from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
 
-# first party imports
-from fitk.fisher_utils import \
-    get_default_rcparams, \
-    MismatchingSizeError, \
-    ParameterNotFoundError, \
-    is_iterable, \
-    get_index_of_other_array, \
-    float_to_latex
 from fitk.fisher_matrix import FisherMatrix
 
+# first party imports
+from fitk.fisher_utils import (
+    MismatchingSizeError,
+    ParameterNotFoundError,
+    float_to_latex,
+    get_default_rcparams,
+    get_index_of_other_array,
+    is_iterable,
+)
 
 
 class FisherBaseFigure(ABC):
     def __init__(
         self,
-        figure : Figure,
-        axes : Collection[Axes],
-        names : Collection[str],
+        figure: Figure,
+        axes: Collection[Axes],
+        names: Collection[str],
     ):
         """
         Constructor.
@@ -59,14 +57,12 @@ class FisherBaseFigure(ABC):
         self._axes = axes
         self._names = names
 
-
     @abstractmethod
     def __getitem__(self, key):
         """
         Implements element access.
         """
         pass
-
 
     @property
     def figure(self):
@@ -75,14 +71,12 @@ class FisherBaseFigure(ABC):
         """
         return self._figure
 
-
     @property
     def axes(self):
         """
         Returns the axes of the figure as a numpy array.
         """
         return self._axes
-
 
     @property
     def names(self):
@@ -91,12 +85,11 @@ class FisherBaseFigure(ABC):
         """
         return self._names
 
-
     def savefig(
         self,
-        path : str,
-        dpi : float = 300,
-        bbox_inches : Union[str, Bbox] = 'tight',
+        path: str,
+        dpi: float = 300,
+        bbox_inches: Union[str, Bbox] = "tight",
         **kwargs,
     ):
         """
@@ -119,14 +112,14 @@ class FisherBaseFigure(ABC):
         return self.figure.savefig(path, dpi=dpi, bbox_inches=bbox_inches, **kwargs)
 
 
-
 class FisherFigure1D(FisherBaseFigure):
     """
     Container for easy access to elements in the 1D plot.
     """
+
     def __getitem__(
         self,
-        key : str,
+        key: str,
     ):
         """
         Returns the axis associated to the name `key`.
@@ -137,27 +130,27 @@ class FisherFigure1D(FisherBaseFigure):
         return self.axes.flat[np.where(self.names == key)][0]
 
 
-
 class FisherFigure2D(FisherBaseFigure):
     """
     Container for easy access to elements in the 2D plot.
     """
+
     def __getitem__(
         self,
-        key : Tuple[str],
+        key: Tuple[str],
     ):
         pass
-
 
 
 class FisherPlotter:
     """
     Class for plotting FisherMatrix objects.
     """
+
     def __init__(
         self,
-        *args : FisherMatrix,
-        labels : Optional[Collection[str]] = None,
+        *args: FisherMatrix,
+        labels: Optional[Collection[str]] = None,
     ):
         """
         Constructor.
@@ -185,9 +178,7 @@ class FisherPlotter:
 
         # check names
         if not all(set(args[0].names) == set(arg.names) for arg in args):
-            raise ValueError(
-                'The names of the inputs do not match'
-            )
+            raise ValueError("The names of the inputs do not match")
 
         if labels is not None:
             if len(labels) != len(args):
@@ -206,14 +197,12 @@ class FisherPlotter:
 
         self._labels = np.array(labels, dtype=object)
 
-
     @property
     def values(self):
         """
         Returns the input array of Fisher objects.
         """
         return self._values
-
 
     @property
     def labels(self):
@@ -222,11 +211,10 @@ class FisherPlotter:
         """
         return self._labels
 
-
     def find_limits_1d(
         self,
-        name : str,
-        sigma : float = 3,
+        name: str,
+        sigma: float = 3,
     ):
         """
         Finds "nice" 1D limits for a given parameter taking into account fiducials
@@ -255,11 +243,10 @@ class FisherPlotter:
 
         return xleft, xright
 
-
     def plot_1d(
         self,
-        max_cols : Optional[int] = None,
-        rc : dict = get_default_rcparams(),
+        max_cols: Optional[int] = None,
+        rc: dict = get_default_rcparams(),
         **kwargs,
     ):
         """
@@ -296,8 +283,10 @@ class FisherPlotter:
             # general figure setup
             fig = plt.figure(clear=True, figsize=(2 * layout[1], 2 * layout[0]))
             gs = fig.add_gridspec(
-                nrows=layout[0], ncols=layout[1],
-                hspace=0.5, wspace=0.1,
+                nrows=layout[0],
+                ncols=layout[1],
+                hspace=0.5,
+                wspace=0.1,
             )
             axes = gs.subplots()
             if size == 1:
@@ -306,27 +295,34 @@ class FisherPlotter:
             names = self.values[0].names
             latex_names = self.values[0].latex_names
 
-            ylabel1d = r'$p (\theta)$'
+            ylabel1d = r"$p (\theta)$"
 
             handles = []
 
             for (index, name), name_latex in zip(enumerate(names), latex_names):
                 ax = axes.flat[index]
                 title_list = [
-                    '{0} = ${1}^{{+{2}}}_{{-{2}}}$'.format(
-                    name_latex,
-                    float_to_latex(float(_.fiducials[np.where(_.names == name)])),
-                    float_to_latex(float(_.constraints(name, marginalized=True))),
-                ) for _ in self.values
+                    "{0} = ${1}^{{+{2}}}_{{-{2}}}$".format(
+                        name_latex,
+                        float_to_latex(float(_.fiducials[np.where(_.names == name)])),
+                        float_to_latex(float(_.constraints(name, marginalized=True))),
+                    )
+                    for _ in self.values
                 ]
 
                 # the scaling factor here is so that we don't cutoff the peak
-                ymax = np.max(
-                    [gaussian(0, 0, _.constraints(name, marginalized=True)) for _ in self.values]
-                ) * 1.03
+                ymax = (
+                    np.max(
+                        [
+                            gaussian(0, 0, _.constraints(name, marginalized=True))
+                            for _ in self.values
+                        ]
+                    )
+                    * 1.03
+                )
 
                 for fm in self.values:
-                    handle, = add_plot_1d(
+                    (handle,) = add_plot_1d(
                         fm.fiducials[np.where(fm.names == name)],
                         fm.constraints(name, marginalized=True),
                         ax,
@@ -339,41 +335,39 @@ class FisherPlotter:
                 ax.set_xlim(*self.find_limits_1d(name))
                 ax.set_ylim(0, ymax)
 
-                if kwargs.get('title') is True:
-                    ax.set_title('\n'.join(title_list))
+                if kwargs.get("title") is True:
+                    ax.set_title("\n".join(title_list))
 
                 if index == 0:
                     ax.set_ylabel(ylabel1d)
 
                 ax.set_yticks([])
 
-            if kwargs.get('legend') is True:
+            if kwargs.get("legend") is True:
                 fig.legend(
                     np.array(handles, dtype=object),
                     self.labels,
                     frameon=False,
-                    loc='upper center',
+                    loc="upper center",
                     bbox_to_anchor=(0.5, -0.15),
                     ncol=len(self.values),
                 )
 
-            if isinstance(kwargs.get('title'), str):
-                fig.suptitle(kwargs.get('title'))
+            if isinstance(kwargs.get("title"), str):
+                fig.suptitle(kwargs.get("title"))
 
             # remove any axes which are not drawn
             if not full:
                 for index in range(
-                    (layout[0] - 1) * layout[1] + 1,
-                    layout[0] * layout[1]
+                    (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
                 ):
                     axes.flat[index].remove()
 
         return FisherFigure1D(fig, axes, names)
 
-
     def plot_2d(
         self,
-        rc : dict = get_default_rcparams(),
+        rc: dict = get_default_rcparams(),
         **kwargs,
     ):
         """
@@ -381,7 +375,6 @@ class FisherPlotter:
         objects, and returns an instance of `FisherFigure2D`.
         """
         pass
-
 
     def plot_triangle(
         self,
@@ -394,27 +387,23 @@ class FisherPlotter:
         pass
 
 
-
 def gaussian(
-    x : float,
-    mu : float = 0,
-    sigma : float = 1,
+    x: float,
+    mu: float = 0,
+    sigma: float = 1,
 ):
     """
     Returns a normalized Gaussian.
     """
     if sigma <= 0:
-        raise ValueError(
-            f'Invalid parameter: sigma = {sigma}'
-        )
+        raise ValueError(f"Invalid parameter: sigma = {sigma}")
 
-    return np.exp(-(x - mu)**2 / 2 / sigma**2) / sigma / np.sqrt(2 * np.pi)
-
+    return np.exp(-((x - mu) ** 2) / 2 / sigma**2) / sigma / np.sqrt(2 * np.pi)
 
 
 def get_chisq(
-    sigma : float = 1,
-    df : int = 2,
+    sigma: float = 1,
+    df: int = 2,
 ):
     r"""
     Returns \(\Delta \chi^2\).
@@ -435,11 +424,10 @@ def get_chisq(
     return chi2.ppf(norm.cdf(sigma) - norm.cdf(-sigma), df=df)
 
 
-
 def add_plot_1d(
-    fiducial : float,
-    sigma : float,
-    ax : Axes,
+    fiducial: float,
+    sigma: float,
+    ax: Axes,
     **kwargs,
 ):
     """

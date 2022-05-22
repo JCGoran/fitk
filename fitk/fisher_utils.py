@@ -5,12 +5,9 @@ Various helper utilities for Fisher objects.
 
 from __future__ import annotations
 
-from typing import \
-    Collection, \
-    Optional
+from typing import Collection, Optional
 
 import numpy as np
-
 
 
 def is_iterable(value):
@@ -24,12 +21,11 @@ def is_iterable(value):
         return False
 
 
-
 # TODO make sure that the representation doesn't exceed some fixed number of digits
 def float_to_latex(
-    value : float,
-    sigdigits : int = 3,
-    ):
+    value: float,
+    sigdigits: int = 3,
+):
     """
     Format a float into a useful LaTeX representation.
 
@@ -41,43 +37,58 @@ def float_to_latex(
 
     # annoying case of small exponents
     if 1e-4 <= np.abs(value) < 1e-2:
-        specifier = 'e'
+        specifier = "e"
     else:
-        specifier = 'g'
+        specifier = "g"
 
-    fmt_string = f'{{:.{sigdigits}{specifier}}}'
+    fmt_string = f"{{:.{sigdigits}{specifier}}}"
     float_str = fmt_string.format(value)
 
-    if 'e' in float_str:
-        base, exponent = float_str.split('e')
+    if "e" in float_str:
+        base, exponent = float_str.split("e")
         if np.isclose(float(base), 1):
-            return f'10^{{{int(exponent)}}}'
+            return f"10^{{{int(exponent)}}}"
         # remove any trailing zeros and decimal points
-        base = base.rstrip('0.')
-        return f'{base} \\times 10^{{{int(exponent)}}}'
+        base = base.rstrip("0.")
+        return f"{base} \\times 10^{{{int(exponent)}}}"
 
     return float_str
-
 
 
 class ParameterNotFoundError(ValueError):
     """
     Error raised when a parameter is not found in the Fisher object.
     """
+
     def __init__(
         self,
-        name : str,
-        names : Collection[str],
+        name: str,
+        names: Collection[str],
     ):
-        self.message = f'Parameter \'{name}\' not found in array {names}'
+        self.message = f"Parameter '{name}' not found in array {names}"
         super().__init__(self.message)
 
+
+class MismatchingValuesError(ValueError):
+    """
+    Error raised when values of either fiducials or names do not match.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        values1,
+        values2,
+    ):
+        self.message = f"Incompatible {name}(s): {values1} and {values2}"
+        super().__init__(self.message)
 
 
 class MismatchingSizeError(ValueError):
     """
     Error for handling a list of arrays that have mismatching sizes.
     """
+
     def __init__(
         self,
         *args,
@@ -87,26 +98,24 @@ class MismatchingSizeError(ValueError):
         super().__init__(self.message)
 
 
-
 class HTMLWrapper:
     """
     A wrapper class for pretty printing objects in a Jupyter notebook.
     """
+
     def __init__(self, string):
         self._string = string
-
 
     def _repr_html_(self):
         return self._string
 
 
-
 def make_html_table(
-    values : Collection,
-    names : Optional[Collection[str]] = None,
-    fmt_values : str = '{}',
-    fmt_names : str = '{}',
-    title : Optional[str] = None,
+    values: Collection,
+    names: Optional[Collection[str]] = None,
+    fmt_values: str = "{}",
+    fmt_names: str = "{}",
+    title: Optional[str] = None,
 ):
     """
     Makes a HTML formatted table with names (optional) and values.
@@ -131,33 +140,35 @@ def make_html_table(
     if title is not None:
         title = f'<tr><th align="left">{title}</th></tr>'
     else:
-        title = ''
+        title = ""
 
     temp = (
-        '<tr>' + (f'<th>{fmt_names}</th>' * len(names)).format(*names) + '</tr>'
-    ) if names is not None else ''
+        ("<tr>" + (f"<th>{fmt_names}</th>" * len(names)).format(*names) + "</tr>")
+        if names is not None
+        else ""
+    )
 
-    header = f'<thead>{title}{temp}</thead>'
+    header = f"<thead>{title}{temp}</thead>"
 
-    body = '<tbody>' + (
-        f'<td>{fmt_values}</td>' * len(values)
-    ).format(*values) + '</tbody>'
+    body = (
+        "<tbody>"
+        + (f"<td>{fmt_values}</td>" * len(values)).format(*values)
+        + "</tbody>"
+    )
 
-    return f'<table>{header}{body}</table>'
-
+    return f"<table>{header}{body}</table>"
 
 
 def make_default_names(
-    size : int,
-    character : str = 'p',
+    size: int,
+    character: str = "p",
 ):
     """
     Returns the array with default names `p1, ..., pn`
     """
     if size < 0:
         raise ValueError
-    return np.array([f'{character}{_ + 1}' for _ in range(size)], dtype=object)
-
+    return np.array([f"{character}{_ + 1}" for _ in range(size)], dtype=object)
 
 
 def is_square(values):
@@ -173,16 +184,11 @@ def is_square(values):
     return all(shape[0] == _ for _ in shape)
 
 
-
 def is_symmetric(values):
     """
     Checks whether a numpy array-able object is symmetric.
     """
-    return np.allclose(
-        np.transpose(values),
-        values
-    )
-
+    return np.allclose(np.transpose(values), values)
 
 
 def is_positive_semidefinite(values):
@@ -190,7 +196,6 @@ def is_positive_semidefinite(values):
     Checks whether a numpy array-able object is positive semi-definite.
     """
     return np.all(np.linalg.eigvalsh(values) >= 0)
-
 
 
 def get_index_of_other_array(A, B):
@@ -203,7 +208,6 @@ def get_index_of_other_array(A, B):
     return xsorted[np.searchsorted(B[xsorted], A)]
 
 
-
 def jsonify(data):
     """
     Converts arbitrary data into a JSON-compatible format.
@@ -214,19 +218,14 @@ def jsonify(data):
         return data
 
 
-
 def reindex_array(values, index):
     """
     Returns the array sorted according to (1D) index `index`.
     """
     for dim in range(np.ndim(values)):
-        values = np.swapaxes(
-            np.swapaxes(values, 0, dim)[index],
-            dim, 0
-        )
+        values = np.swapaxes(np.swapaxes(values, 0, dim)[index], dim, 0)
 
     return values
-
 
 
 def get_default_rcparams():
@@ -238,6 +237,6 @@ def get_default_rcparams():
     `dict`
     """
     return {
-        'mathtext.fontset' : 'cm',
-        'font.family' : 'serif',
+        "mathtext.fontset": "cm",
+        "font.family": "serif",
     }

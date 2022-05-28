@@ -257,12 +257,11 @@ class FisherPlotter:
         self,
         scale: float = 1.0,
         max_cols: Optional[int] = None,
-        rc: dict = get_default_rcparams(),
+        rc: Optional[dict] = None,
         **kwargs,
     ):
         """
-        Makes a 1D plot (Gaussians) of the Fisher objects and returns a
-        `FisherFigure1D`.
+        Makes a 1D plot (Gaussians) of the Fisher objects
 
         Parameters
         ----------
@@ -272,8 +271,9 @@ class FisherPlotter:
             need to spread it over `max_cols`, pass a non-negative integer
             here.
 
-        rc : dict = get_default_rcparams()
-            any parameters meant for `matplotlib.rcParams`.
+        rc : Optional[dict], default = None
+            any parameters meant for `matplotlib.rcParams`. By default, only
+            sets default font to cm serif.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
             for more information.
 
@@ -289,6 +289,9 @@ class FisherPlotter:
         else:
             layout = 1, size
             full = True
+
+        if not rc:
+            rc = get_default_rcparams()
 
         with plt.rc_context(rc):
             # general figure setup
@@ -407,18 +410,34 @@ class FisherPlotter:
 
     def plot_triangle(
         self,
-        rc: dict = get_default_rcparams(),
+        rc: Optional[dict] = None,
         plot_gaussians: bool = True,
         **kwargs,
     ):
         """
-        Plots the 2D ellipses (and optionally 1D Gaussians) of the Fisher objects, and
-        returns an instance of `FisherFigure2D`.
+        Plots the contours (and optionally 1D Gaussians) of the Fisher objects.
+
+        Parameters
+        ----------
+        rc : Optional[dict], default = None
+            any parameters meant for `matplotlib.rcParams`. By default, only
+            sets default font to cm serif.
+            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
+            for more information.
+        plot_gaussians : bool, default = True
+            whether or not the Gaussians should be plotted
+
+        Returns
+        -------
+        An instance of `FisherFigure2D`.
         """
         size = len(self.values[0])
 
         if size < 2:
             raise ValueError("Unable to make a 2D plot with < 2 parameters")
+
+        if not rc:
+            rc = get_default_rcparams()
 
         with plt.rc_context(rc):
             # general figure setup

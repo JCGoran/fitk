@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 # third party imports
 import numpy as np
+from cycler import cycler
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
@@ -736,3 +737,7 @@ def set_yticks(
             "horizontalalignment": "right",
         },
     )
+
+
+def get_default_cycler():
+    return cycler(color=["C0", "C3", "C2"])

@@ -331,7 +331,7 @@ class FisherPlotter:
                 ymax = (
                     np.max(
                         [
-                            gaussian(0, 0, _.constraints(name, marginalized=True))
+                            norm.pdf(0, 0, _.constraints(name, marginalized=True))
                             for _ in self.values
                         ]
                     )
@@ -565,20 +565,6 @@ class FisherPlotter:
         return FisherFigure2D(fig, ax, names)
 
 
-def gaussian(
-    x: float,
-    mu: float = 0,
-    sigma: float = 1,
-):
-    """
-    Returns a normalized Gaussian.
-    """
-    if sigma <= 0:
-        raise ValueError(f"Invalid parameter: sigma = {sigma}")
-
-    return np.exp(-((x - mu) ** 2) / 2 / sigma**2) / sigma / np.sqrt(2 * np.pi)
-
-
 def get_chisq(
     sigma: float = 1,
     df: int = 2,
@@ -620,7 +606,7 @@ def add_plot_1d(
 
     temp = ax.plot(
         x,
-        [gaussian(_, mu=fiducial, sigma=sigma) for _ in x],
+        [norm.pdf(_, loc=fiducial, scale=sigma) for _ in x],
         **kwargs,
     )
 
@@ -648,7 +634,7 @@ def add_shading_1d(
 
     temp = ax.fill_between(
         x,
-        [gaussian(_, mu=fiducial, sigma=sigma) for _ in x],
+        [norm.pdf(_, loc=fiducial, scale=sigma) for _ in x],
         **kwargs,
     )
 

@@ -26,10 +26,6 @@ from fitk.fisher_utils import (
     reindex_array,
 )
 
-from fitk.fisher_plotter import gaussian
-
-
-
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
 
@@ -550,7 +546,9 @@ class TestFisherPlotter:
         ff1["h"].vlines(
             0.67,
             0,
-            gaussian(0, 0, sigma=fm_pessimistic.constraints("h", marginalized=True)),
+            norm.pdf(
+                0, loc=0, scale=fm_pessimistic.constraints("h", marginalized=True)
+            ),
             color="blue",
         )
 

@@ -519,6 +519,8 @@ class FisherMatrix:
             names = self.names[index]
         # something that can be passed to `sorted`
         else:
+            if "key" in kwargs and not callable(kwargs["key"]):
+                raise TypeError(f"`key={kwargs['key']}` is not callable")
             names = sorted(self.names, **kwargs)
             index = get_index_of_other_array(self.names, names)
 

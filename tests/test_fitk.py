@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
+from cosmicfish_pylib.fisher_operations import marginalise
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
     MismatchingSizeError,
@@ -284,6 +285,11 @@ class TestFisherTensor:
             FisherMatrix(np.diag([1, 2, 3])).constraints(marginalized=False),
         )
 
+        data_cf = CFFisherMatrix(data.values)
+        assert np.allclose(
+            data_cf.get_confidence_bounds(), data.constraints(), rtol=1e-2
+        )
+
         with pytest.raises(ValueError):
             data.constraints(sigma=-1)
 
@@ -433,15 +439,25 @@ class TestFisherTensor:
         size_marg = 3
         ort = ortho_group.rvs(size, random_state=12345)
         rng = np.random.RandomState(12345)  # pylint: disable=no-member
-        values = ort.T @ rng.rand(size, size) @ ort
+        values = ort.T @ np.diag(rng.rand(size)) @ ort
         m = FisherMatrix(values)
-        m_marg = m.marginalize_over(*[f"p{_ + 1}" for _ in range(size_marg)])
+        names_to_marginalize_over = [f"p{_ + 1}" for _ in range(size_marg)]
+        m_marg = m.marginalize_over(*names_to_marginalize_over)
         assert m_marg == FisherMatrix(
             np.linalg.inv(np.linalg.inv(values)[size_marg:, size_marg:]),
             names=m.names[size_marg:],
             latex_names=m.latex_names[size_marg:],
             fiducials=m.fiducials[size_marg:],
         )
+
+        m_cf = CFFisherMatrix(values)
+
+        assert np.allclose(m.inverse().values, m_cf.get_fisher_inverse())
+
+        m_marg = m.marginalize_over(*names_to_marginalize_over, invert=True)
+        m_cf_marginalized = marginalise(m_cf, names_to_marginalize_over)
+
+        assert np.allclose(m_cf_marginalized.get_fisher_matrix(), m_marg.values)
 
     def test_ufunc(self):
         """

@@ -480,6 +480,10 @@ class FisherMatrix:
             In the second special case that the value of the keyword `key` is
             set to an array of integers of equal size as the Fisher object, sorts them
             according to those instead.
+            In the third (and final) special case that the value of the keyword
+            `key` is set to an array strings matching those of parameter names
+            of the FisherMatrix, the items are sorted according to those
+            values.
 
         Returns
         -------
@@ -508,6 +512,10 @@ class FisherMatrix:
             index = np.argsort(getattr(self, kwargs["key"]))
             if "reversed" in kwargs and kwargs["reversed"] is True:
                 index = np.flip(index)
+            names = self.names[index]
+        # the names themselves, in any order
+        elif "key" in kwargs and set(kwargs["key"]) == set(self.names):
+            index = get_index_of_other_array(self.names, kwargs["key"])
             names = self.names[index]
         # something that can be passed to `sorted`
         else:

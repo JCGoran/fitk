@@ -7,7 +7,7 @@ import os
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
-from cosmicfish_pylib.fisher_operations import marginalise
+from cosmicfish_pylib.fisher_operations import marginalise, marginalise_over
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
     MismatchingSizeError,
@@ -454,10 +454,13 @@ class TestFisherTensor:
 
         assert np.allclose(m.inverse().values, m_cf.get_fisher_inverse())
 
-        m_marg = m.marginalize_over(*names_to_marginalize_over, invert=True)
-        m_cf_marginalized = marginalise(m_cf, names_to_marginalize_over)
+        m_marg1 = m.marginalize_over(*names_to_marginalize_over, invert=True)
+        m_marg2 = m.marginalize_over(*names_to_marginalize_over)
+        m_cf_marginalized1 = marginalise(m_cf, names_to_marginalize_over)
+        m_cf_marginalized2 = marginalise_over(m_cf, names_to_marginalize_over)
 
-        assert np.allclose(m_cf_marginalized.get_fisher_matrix(), m_marg.values)
+        assert np.allclose(m_cf_marginalized1.get_fisher_matrix(), m_marg1.values)
+        assert np.allclose(m_cf_marginalized2.get_fisher_matrix(), m_marg2.values)
 
     def test_ufunc(self):
         """

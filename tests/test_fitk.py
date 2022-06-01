@@ -11,6 +11,7 @@ from cosmicfish_pylib.fisher_operations import (
     eliminate_parameters,
     marginalise,
     marginalise_over,
+    reshuffle,
 )
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
@@ -323,6 +324,19 @@ class TestFisherTensor:
             names=["p2", "p1", "p3"],
         )
 
+        m = FisherMatrix(
+            [[1, 0, 0], [0, 3, 0], [0, 0, 5]],
+            fiducials=[-1, 0, 1],
+            names=["p3", "p1", "p2"],
+        )
+
+        assert np.allclose(
+            m.sort(key=get_index_of_other_array(m.names, ["p1", "p3", "p2"])).values,
+            reshuffle(
+                CFFisherMatrix(m.values, param_names=m.names), ["p1", "p3", "p2"]
+            ).get_fisher_matrix(),
+        )
+
     def test_eq(self):
         assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(
             np.diag([2, 1]),
@@ -379,6 +393,10 @@ class TestFisherTensor:
             np.diag([2, 1]),
             names=["p2", "p1"],
             fiducials=[0, -1],
+        )
+        fm_cf = CFFisherMatrix(data.values)
+        assert np.allclose(
+            eliminate_parameters(fm_cf, ["p3"]).get_fisher_matrix(), data_new.values
         )
 
         with pytest.raises(ValueError):

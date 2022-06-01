@@ -7,7 +7,11 @@ import os
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
-from cosmicfish_pylib.fisher_operations import marginalise, marginalise_over
+from cosmicfish_pylib.fisher_operations import (
+    eliminate_parameters,
+    marginalise,
+    marginalise_over,
+)
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
     MismatchingSizeError,
@@ -364,6 +368,11 @@ class TestFisherTensor:
             assert old == new
         # assert np.all(data_new.names == np.array(['p2', 'p3']))
         assert np.allclose(data_new.fiducials, np.array([0, 1]))
+
+        fm_cf = CFFisherMatrix(data.values)
+        assert np.allclose(
+            eliminate_parameters(fm_cf, ["p1"]).get_fisher_matrix(), data_new.values
+        )
 
         data_new = data.drop("p2", "p1", invert=True)
         assert data_new == FisherMatrix(

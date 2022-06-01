@@ -601,14 +601,21 @@ class TestFisherPlotter:
             for ff in [ff1, ff2, ff2_2, ff3]:
                 pdf.savefig(ff.figure, bbox_inches="tight")
 
-
     def test_plot_2d_euclid(self):
-        fm_optimistic = FisherMatrix.from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_optimistic.json'))
-        fm_pessimistic = FisherMatrix.from_file(os.path.join(DATADIR_INPUT, 'EuclidISTF_WL_w0wa_flat_pessimistic.json'))
-        fm_optimistic = fm_optimistic.drop('Omegam', 'Omegab', 'h', 'ns', invert=True)
-        fm_pessimistic = fm_pessimistic.drop('Omegam', 'Omegab', 'h', 'ns', invert=True)
+        fm_optimistic = FisherMatrix.from_file(
+            os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_optimistic.json")
+        )
+        fm_pessimistic = FisherMatrix.from_file(
+            os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
+        )
+        fm_optimistic = fm_optimistic.drop("Omegam", "Omegab", invert=True)
+        fm_pessimistic = fm_pessimistic.drop("Omegam", "Omegab", invert=True)
 
-        fp = FisherPlotter(fm_optimistic, labels=['optimistic case'])
+        fp = FisherPlotter(
+            fm_pessimistic,
+            fm_optimistic,
+            labels=["pessimistic case", "optimistic case"],
+        )
 
         ffigure = fp.plot_triangle(
             #legend=True,
@@ -616,4 +623,16 @@ class TestFisherPlotter:
             plot_gaussians=True,
         )
 
-        ffigure.savefig(os.path.join(DATADIR_OUTPUT, 'test_plot_triangle_euclid.pdf'))
+        ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_euclid.pdf"))
+
+    def test_plot_2d(self):
+        fm1 = FisherMatrix([[0.3, -0.5], [-0.5, 0.9]])
+        fp = FisherPlotter(fm1)
+
+        ffigure = fp.plot_triangle(
+            # legend=True,
+            # title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
+            plot_gaussians=True,
+        )
+
+        ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle.pdf"))

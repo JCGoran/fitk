@@ -17,7 +17,6 @@ from typing import Collection, Mapping, Optional, Tuple, Union
 
 # third party imports
 import numpy as np
-from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
 from fitk.fisher_utils import (
@@ -32,6 +31,7 @@ from fitk.fisher_utils import (
     make_default_names,
     reindex_array,
 )
+from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 
 def _process_fisher_mapping(value: abc.Mapping):

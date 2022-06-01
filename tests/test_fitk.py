@@ -4,27 +4,25 @@ Various tests for the `fitk` module.
 
 import os
 
-
-from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
-from scipy.stats import ortho_group
 import pytest
-
-
+from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
-    ParameterNotFoundError,
     MismatchingSizeError,
-    is_iterable,
+    ParameterNotFoundError,
     float_to_latex,
-    make_default_names,
+    get_index_of_other_array,
+    is_iterable,
+    is_positive_semidefinite,
     is_square,
     is_symmetric,
-    is_positive_semidefinite,
-    get_index_of_other_array,
     jsonify,
+    make_default_names,
     reindex_array,
 )
+from matplotlib.backends.backend_pdf import PdfPages
+from scipy.stats import norm, ortho_group
 
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")

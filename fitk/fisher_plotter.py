@@ -14,19 +14,6 @@ import matplotlib.pyplot as plt
 # third party imports
 import numpy as np
 from cycler import cycler
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
-from matplotlib.patches import Ellipse
-from matplotlib.transforms import Bbox
-from scipy.stats import chi2, norm
-
-from matplotlib.ticker import (
-    MaxNLocator,
-    LinearLocator,
-    ScalarFormatter,
-    StrMethodFormatter,
-)
-from scipy.stats import chi2, norm
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
@@ -38,8 +25,13 @@ from fitk.fisher_utils import (
     float_to_latex,
     get_default_rcparams,
     get_index_of_other_array,
-    is_iterable,
 )
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from matplotlib.patches import Ellipse
+from matplotlib.ticker import LinearLocator, StrMethodFormatter
+from matplotlib.transforms import Bbox
+from scipy.stats import chi2, norm
 
 
 class FisherBaseFigure(ABC):

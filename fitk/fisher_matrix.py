@@ -20,6 +20,7 @@ import numpy as np
 
 # first party imports
 from fitk.fisher_utils import (
+    FisherEncoder,
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
@@ -27,7 +28,6 @@ from fitk.fisher_utils import (
     is_positive_semidefinite,
     is_square,
     is_symmetric,
-    jsonify,
     make_default_names,
     reindex_array,
 )
@@ -1397,18 +1397,18 @@ class FisherMatrix:
 
             data = {
                 **data,
-                **{arg: jsonify(getattr(self, arg)()) for arg in args},
+                **{arg: getattr(self, arg)() for arg in args},
                 **metadata,
             }
 
         else:
             data = {
                 **data,
-                **{arg: jsonify(getattr(self, arg)()) for arg in args},
+                **{arg: getattr(self, arg)() for arg in args},
             }
 
         with open(path, "w", encoding="utf-8") as file_handle:
-            file_handle.write(json.dumps(data, indent=4))
+            file_handle.write(json.dumps(data, indent=4, cls=FisherEncoder))
 
         return data
 

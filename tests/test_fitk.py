@@ -23,7 +23,6 @@ from fitk.fisher_utils import (
     is_positive_semidefinite,
     is_square,
     is_symmetric,
-    jsonify,
     make_default_names,
     reindex_array,
 )

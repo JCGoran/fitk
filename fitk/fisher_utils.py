@@ -5,9 +5,21 @@ Various helper utilities for Fisher objects.
 
 from __future__ import annotations
 
+import json
 from typing import Collection, Optional
 
 import numpy as np
+
+
+class FisherEncoder(json.JSONEncoder):
+    """
+    Class for custom conversion of numpy objects as JSON
+    """
+
+    def default(self, o):
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        return json.JSONEncoder.default(self, o)
 
 
 def is_iterable(value):

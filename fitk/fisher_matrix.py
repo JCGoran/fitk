@@ -189,8 +189,8 @@ class FisherMatrix:
         self,
         values: Collection,
         names: Optional[Collection[str]] = None,
-        latex_names: Optional[str] = None,
-        fiducials: Optional[Collection[Number]] = None,
+        latex_names: Optional[Collection[str]] = None,
+        fiducials: Optional[Collection[float]] = None,
     ):
         r"""
         Constructor for Fisher object.
@@ -456,7 +456,7 @@ class FisherMatrix:
     def __setitem__(
         self,
         keys: Tuple[str],
-        value: Number,
+        value: float,
     ):
         """
         Implements setting of elements in the Fisher object.
@@ -828,8 +828,8 @@ class FisherMatrix:
         self,
         name: Optional[str] = None,
         marginalized: bool = True,
-        sigma: Optional[Number] = None,
-        p: Optional[Number] = None,
+        sigma: Optional[float] = None,
+        p: Optional[float] = None,
     ):
         r"""
         Returns the constraints on a parameter as a float, or on all of them
@@ -938,7 +938,7 @@ class FisherMatrix:
     @fiducials.setter
     def fiducials(
         self,
-        value: Collection[Number],
+        value: Collection[float],
     ):
         """
         The setter for the fiducial values of the Fisher object.
@@ -1120,7 +1120,7 @@ class FisherMatrix:
 
     def __pow__(
         self,
-        other: Number,
+        other: Union[float, int],
     ) -> FisherMatrix:
         """
         Raises the Fisher object to some power.
@@ -1162,7 +1162,7 @@ class FisherMatrix:
 
     def __truediv__(
         self,
-        other: Union[FisherMatrix, Number],
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Returns the result of dividing a Fisher object by a number, or another
@@ -1203,7 +1203,7 @@ class FisherMatrix:
 
     def __mul__(
         self,
-        other: Union[FisherMatrix, Number],
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Returns the result of multiplying a Fisher object by a number, or
@@ -1244,7 +1244,7 @@ class FisherMatrix:
 
     def __rmul__(
         self,
-        other: Union[FisherMatrix, Number],
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Returns the result of multiplying a number by a Fisher object, or
@@ -1257,7 +1257,7 @@ class FisherMatrix:
         jacobian: Collection,
         names: Optional[Collection[str]] = None,
         latex_names: Optional[Collection[str]] = None,
-        fiducials: Optional[Collection[Number]] = None,
+        fiducials: Optional[Collection[float]] = None,
     ) -> FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are

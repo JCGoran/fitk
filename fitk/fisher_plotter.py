@@ -102,10 +102,10 @@ class FisherBaseFigure(ABC):
         path : str
             the path where to save the figure
 
-        dpi : float, default = 300
+        dpi : float = 300
             the resolution of the saved figure
 
-        bbox_inches : Union[str, Bbox], default = 'tight'
+        bbox_inches : Union[str, Bbox] = 'tight'
             what is the bounding box for the figure
 
         kwargs
@@ -172,7 +172,7 @@ class FisherPlotter:
             The order of plotting of the parameters and the LaTeX labels to use
             are determined by the first argument.
 
-        labels : array of strings, default None
+        labels : Optional[Collection[str]] = None
             the list of labels to put in the legend of the plots.
             If not set, defaults to `0, ..., len(args) - 1`
 
@@ -242,7 +242,7 @@ class FisherPlotter:
         name : str
             the name of the parameter
 
-        sigma : float, default = 3
+        sigma : float = 3
             how many sigmas away to plot
 
         Returns
@@ -272,13 +272,13 @@ class FisherPlotter:
 
         Parameters
         ----------
-        max_cols : Optional[int], default = None
+        max_cols : Optional[int] = None
             the maximum number of columns to force the plot into.
             By default, the parameters are always plotted horizontally; if you
             need to spread it over `max_cols`, pass a non-negative integer
             here.
 
-        rc : Optional[dict], default = None
+        rc : Optional[dict] = None
             any parameters meant for `matplotlib.rcParams`. By default, only
             sets default font to cm serif.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
@@ -422,12 +422,12 @@ class FisherPlotter:
 
         Parameters
         ----------
-        rc : Optional[dict], default = None
+        rc : Optional[dict] = None
             any parameters meant for `matplotlib.rcParams`. By default, only
             sets default font to cm serif.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
             for more information.
-        plot_gaussians : bool, default = True
+        plot_gaussians : bool = True
             whether or not the Gaussians should be plotted
 
         Returns
@@ -588,10 +588,10 @@ def get_chisq(
 
     Parameters
     ----------
-    sigma : float, default = 1
+    sigma : float = 1
         the error on the parameter
 
-    df : int, default = 2
+    df : int = 2
         the number of degrees of freedom
 
     Returns

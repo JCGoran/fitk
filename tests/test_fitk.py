@@ -15,7 +15,6 @@ from cosmicfish_pylib.fisher_operations import (
 )
 from fitk import FisherMatrix, FisherPlotter
 from fitk.fisher_utils import (
-    MismatchingSizeError,
     ParameterNotFoundError,
     float_to_latex,
     get_index_of_other_array,
@@ -330,7 +329,7 @@ class TestFisherTensor:
         )
 
         assert np.allclose(
-            m.sort(key=get_index_of_other_array(m.names, ["p1", "p3", "p2"])).values,
+            m.sort(key=["p1", "p3", "p2"]).values,
             reshuffle(
                 CFFisherMatrix(m.values, param_names=m.names), ["p1", "p3", "p2"]
             ).get_fisher_matrix(),

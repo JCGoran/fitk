@@ -141,7 +141,14 @@ class FisherFigure2D(FisherBaseFigure):
         self,
         key: Tuple[str],
     ):
-        pass
+        if not isinstance(key, tuple):
+            raise TypeError(
+                f"Incompatible type for element access: expected {type(tuple)}, got {type(key)}"
+            )
+
+        name1, name2 = key
+
+        return self.axes[np.where(self.names == name1), np.where(self.names == name2)]
 
 
 class FisherPlotter:
@@ -161,7 +168,6 @@ class FisherPlotter:
         ----------
         args : FisherMatrix
             `FisherMatrix` objects which we want to plot.
-            Must have the same parameter names.
             Can have different fiducial values.
             The order of plotting of the parameters and the LaTeX labels to use
             are determined by the first argument.
@@ -172,7 +178,15 @@ class FisherPlotter:
 
         Raises
         ------
-        `ValueError` if parameter names of the inputs do not match
+        * `MismatchingSizeError` if the sizes of the inputs are not equal
+        * `ValueError` if the names of the inputs do not match
+
+        Examples
+        --------
+        Create a Fisher plotter with two objects:
+        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=list('abc'))
+        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=list('abc'))
+        >>> fp = FisherPlotter(fm1, fm2, labels=['first', 'second'])
         """
         # make sure all of the Fisher objects have the same sizes
         if not all(len(args[0]) == len(arg) for arg in args):
@@ -185,6 +199,7 @@ class FisherPlotter:
         if labels is not None:
             if len(labels) != len(args):
                 raise MismatchingSizeError(labels, args)
+        # default labels are 0, ..., n - 1
         else:
             labels = list(map(str, np.arange(len(args))))
 
@@ -311,11 +326,7 @@ class FisherPlotter:
             for (index, name), name_latex in zip(enumerate(names), latex_names):
                 ax = axes.flat[index]
                 title_list = [
-                    "{0} = ${1}^{{+{2}}}_{{-{2}}}$".format(
-                        name_latex,
-                        float_to_latex(float(_.fiducials[np.where(_.names == name)])),
-                        float_to_latex(float(_.constraints(name, marginalized=True))),
-                    )
+                    f"{name_latex} = ${float_to_latex(float(_.fiducials[np.where(_.names == name)]))}^{{+{float_to_latex(float(_.constraints(name, marginalized=True)))}}}_{{-{float_to_latex(float(_.constraints(name, marginalized=True)))}}}$"
                     for _ in self.values
                 ]
 
@@ -436,7 +447,7 @@ class FisherPlotter:
             fig = plt.figure(figsize=(2 * size, 2 * size), clear=True)
             gs = fig.add_gridspec(nrows=size, ncols=size, hspace=0.5, wspace=0.5)
             # TODO make it work with a shared xcol
-            ax = gs.subplots(sharex=False, sharey=False)
+            ax = gs.subplots(sharex="col", sharey=False)
 
             names = self.values[0].names
             latex_names = self.values[0].latex_names
@@ -463,7 +474,7 @@ class FisherPlotter:
                         # ax[i, j].axis('off')
                     # plotting the 2D contours
                     elif i > j:
-                        for fm in self.values:
+                        for c, fm in zip(get_default_cycler(), self.values):
                             # get parameters of the ellipse
                             width, height, angle = get_ellipse(fm, namex, namey)
                             fidx, fidy = (
@@ -477,24 +488,33 @@ class FisherPlotter:
                                 height=height * alpha,
                                 angle=angle,
                                 ax=ax[i, j],
-                                alpha=0.3,
-                                fill=True,
-                                color="red",
+                                fill=False,
+                                color=c["color"],
+                                zorder=20,
                             )
 
                             add_plot_2d(
                                 (fidx, fidy),
-                                width=width * alpha * 2,
-                                height=height * alpha * 2,
+                                width=width * alpha,
+                                height=height * alpha,
                                 angle=angle,
                                 ax=ax[i, j],
-                                alpha=0.1,
-                                fill=True,
-                                color="red",
+                                fill=False,
+                                color=c["color"],
+                                zorder=20,
                             )
 
-                            # ax[i, j].set_ylim(*self.find_limits_1d(namex, sigma=1))
-                            # ax[i, j].relim()
+                            add_plot_2d(
+                                (fidx, fidy),
+                                width=width * alpha,
+                                height=height * alpha,
+                                angle=angle,
+                                ax=ax[i, j],
+                                alpha=0.2,
+                                ec=None,
+                                fill=True,
+                                color=c["color"],
+                            )
 
                         # remove ticks from any plots that aren't on the edges
                     #                        if j > 0:
@@ -509,11 +529,12 @@ class FisherPlotter:
 
                     # plotting the 1D Gaussians
                     elif plot_gaussians is True:
-                        for fm in self.values:
-                            (handle,) = add_plot_1d(
+                        for c, fm in zip(get_default_cycler(), self.values):
+                            add_plot_1d(
                                 fiducial=fm.fiducials[np.where(fm.names == namex)],
                                 sigma=fm.constraints(namex, marginalized=True),
                                 ax=ax[i, i],
+                                color=c["color"],
                             )
                             # 1 and 2 sigma shading
                             add_shading_1d(
@@ -521,8 +542,8 @@ class FisherPlotter:
                                 sigma=fm.constraints(namex, marginalized=True),
                                 ax=ax[i, i],
                                 level=1,
-                                alpha=0.3,
-                                color=handle.get_color(),
+                                alpha=0.2,
+                                color=c["color"],
                                 ec=None,
                             )
                             add_shading_1d(
@@ -531,7 +552,7 @@ class FisherPlotter:
                                 ax=ax[i, i],
                                 level=2,
                                 alpha=0.1,
-                                color=handle.get_color(),
+                                color=c["color"],
                                 ec=None,
                             )
 
@@ -540,18 +561,18 @@ class FisherPlotter:
 
             #                        ax[i, i].set_yticks([])
 
-            # set automatic limits
-            for i in range(len(ax)):
-                for j in range(len(ax)):
-                    try:
-                        ax[i, j].relim()
-                        ax[i, j].autoscale_view()
-                        if i == j:
-                            ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
-                        set_xticks(ax[i, j])
-                        set_yticks(ax[i, j])
-                    except AttributeError:
-                        pass
+        # set automatic limits
+        for i in range(len(ax)):
+            for j in range(len(ax)):
+                try:
+                    ax[i, j].relim()
+                    ax[i, j].autoscale_view()
+                    if i == j:
+                        ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
+                    set_xticks(ax[i, j])
+                    set_yticks(ax[i, j])
+                except AttributeError:
+                    pass
         #                ax[i, i].set_xlim(*self.find_limits_1d(names[i]))
 
         return FisherFigure2D(fig, ax, names)
@@ -642,15 +663,31 @@ def add_plot_2d(
     **kwargs,
 ):
     """
-    Adds a 2D ellipse with parameters `width`, `height`, and `angle`, centered
-    at fiducial values `fiducial` to axis `ax`.
+    Adds a 2D ellipse to a plot.
+
+    Parameters
+    ----------
+    width : float
+        size of second axis of the ellipse (from center)
+
+    height : float
+        size of second axis of the ellipse (from center)
+
+    angle : float
+        the angle w.r.t. the x-axis of the ellipse (the tilt)
+
+    ax
+        the axis to plot the ellipse onto
+
+    **kwargs
+        any additional arguments passed to `matplotlib.patches.Ellipse`
     """
     fidy, fidx = fiducials
     patch = ax.add_patch(
         Ellipse(
             xy=(fidx, fidy),
-            width=width,
-            height=height,
+            width=width * 2,
+            height=height * 2,
             angle=angle,
             **kwargs,
         )
@@ -663,7 +700,7 @@ def get_ellipse(
     fm: FisherMatrix,
     name1: str,
     name2: str,
-):
+) -> Tuple[float, float, float]:
     """
     Constructs parameters for an ellipse from the names.
     """

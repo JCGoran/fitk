@@ -488,7 +488,7 @@ class TestFisherTensor:
 
         m_cf = CFFisherMatrix(values)
 
-        assert np.allclose(m.inverse().values, m_cf.get_fisher_inverse())
+        assert np.allclose(m.inverse(), m_cf.get_fisher_inverse())
 
         m_marg1 = m.marginalize_over(*names_to_marginalize_over, invert=True)
         m_marg2 = m.marginalize_over(*names_to_marginalize_over)

@@ -161,14 +161,10 @@ class FisherMatrix:
     >>> fm.determinant()
     19.999999999999996
 
-    We can also take the matrix inverse:
+    We can also get the inverse (the covariance matrix):
     >>> fm.inverse()
-    FisherMatrix(
-        array([[0.2 , 0.  ],
-           [0.  , 0.25]]),
-        names=array(['x', 'y'], dtype=object),
-        latex_names=array(['$\\mathbf{X}$', '$\\mathbf{Y}$'], dtype=object),
-        fiducials=array([0., 0.]))
+    array([[0.2 , 0.  ],
+           [0.  , 0.25]])
 
     We can drop parameters from the object:
     >>> fm.drop('x')
@@ -796,34 +792,23 @@ class FisherMatrix:
         values = np.abs(self.eigenvalues())
         return np.max(values) / np.min(values)
 
-    def inverse(self) -> FisherMatrix:
+    def inverse(self):
         """
         Returns the inverse of the Fisher matrix.
 
         Returns
         -------
-        Instance of `FisherMatrix`
+        array containing the covariance matrix
 
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2, 5]))
         >>> fm.inverse()
-        FisherMatrix(
-            array([[1. , 0. , 0. ],
+        array([[1. , 0. , 0. ],
                [0. , 0.5, 0. ],
-               [0. , 0. , 0.2]]),
-            names=array(['p1', 'p2', 'p3'], dtype=object),
-            latex_names=array(['p1', 'p2', 'p3'], dtype=object),
-            fiducials=array([0., 0., 0.]))
+               [0. , 0. , 0.2]])
         """
-        # inverse satisfies properties of Fisher matrix, see:
-        # https://math.stackexchange.com/a/26200
-        return self.__class__(
-            np.linalg.inv(self.values),
-            names=self.names,
-            latex_names=self.latex_names,
-            fiducials=self.fiducials,
-        )
+        return np.linalg.inv(self.values)
 
     def determinant(self):
         """
@@ -922,7 +907,12 @@ class FisherMatrix:
             )
 
         if marginalized:
-            inv = self.inverse()
+            inv = self.__class__(
+                self.inverse(),
+                names=self.names,
+                latex_names=self.latex_names,
+                fiducials=self.fiducials,
+            )
             result = np.sqrt(np.diag(inv.values)) * sigma
         else:
             result = 1.0 / np.sqrt(np.diag(self.values)) * sigma
@@ -1463,11 +1453,21 @@ class FisherMatrix:
             latex_names=array(['p1', 'p2'], dtype=object),
             fiducials=array([0., 0.]))
         """
-        inv = self.inverse()
+        inv = self.__class__(
+            self.inverse(),
+            names=self.names,
+            latex_names=self.latex_names,
+            fiducials=self.fiducials,
+        )
         if invert is True:
             names = set(names) ^ set(self.names)
         fisher = inv.drop(*names, ignore_errors=ignore_errors)
-        return fisher.inverse()
+        return self.__class__(
+            fisher.inverse(),
+            names=fisher.names,
+            latex_names=fisher.latex_names,
+            fiducials=fisher.fiducials,
+        )
 
     @classmethod
     def from_file(

@@ -1,2 +1,27 @@
+[tool.poetry]
+name = "fitk"
+version = "0.1.0"
+description = "The Fisher Information ToolKit"
+authors = ["JCGoran <goran.jelic-cizmek@unige.ch>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+matplotlib = "^3.3"
+numpy = "^1.16.0"
+scipy = "^1.2.0"
+cosmicfish = {git = "https://github.com/jcgoran/cosmicfish", rev = "feature/pip-install"}
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+pytest = "^7.1.2"
+pylint = "^2.13.9"
+setuptools = "^62.3.2"
+wheel = "^0.37.1"
+mypy = "^0.960"
+vegas = "^5.1.1"
+jupyterlab = "^3.4.2"
+
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

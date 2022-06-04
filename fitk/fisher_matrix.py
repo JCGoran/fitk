@@ -13,7 +13,7 @@ import json
 from collections import abc
 from itertools import permutations
 from numbers import Number
-from typing import Collection, Mapping, Optional, Tuple, Union
+from typing import Any, Collection, Mapping, Optional, Tuple, Union
 
 # third party imports
 import numpy as np
@@ -1331,7 +1331,7 @@ class FisherMatrix:
         )
 
     def to_file(
-        self, path: str, *args: str, metadata: Optional[Mapping[str, str]] = None
+        self, path: str, *args: str, metadata: Optional[Mapping[str, Any]] = None
     ):
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
@@ -1350,8 +1350,9 @@ class FisherMatrix:
             `eigenvectors`, `trace`, `determinant`, or `constraints` (by
             default, the \(1\sigma\) marginalized constraints).
 
-        metadata : Optional[Mapping[str, str]] = None
-            any metadata that should be associated to the object saved
+        metadata : Optional[Mapping[str, Any]] = None
+            any metadata that should be associated to the object saved, in the
+            form of a dictionary-like object
 
         Returns
         -------

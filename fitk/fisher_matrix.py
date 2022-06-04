@@ -175,8 +175,11 @@ class FisherMatrix:
         fiducials=array([0.]))
 
     We can save it to a file (the returned value is the dictionary that was saved):
-    >>> fm.to_file('example_matrix.json')
-    {'values': [[5.0, 0.0], [0.0, 4.0]], 'names': ['x', 'y'], 'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'], 'fiducials': [0.0, 0.0]}
+    >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False) # doctest: +SKIP
+    {'values': [[5.0, 0.0], [0.0, 4.0]],
+     'names': ['x', 'y'],
+     'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'],
+     'fiducials': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
     >>> fm_new = FisherMatrix.from_file('example_matrix.json')
@@ -289,7 +292,8 @@ class FisherMatrix:
         ignore_errors: bool = False,
     ) -> FisherMatrix:
         """
-        Returns a Fisher object with new names.
+        Returns a Fisher object with new names. This is primarily useful for
+        renaming individual parameters.
 
         Parameters
         ----------
@@ -516,7 +520,7 @@ class FisherMatrix:
             all of the other keyword arguments for the Python builtin `sorted`.
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
-            either 'fiducials' or 'latex_names', it will sort according to those.
+            either `'fiducials'` or `'latex_names'`, it will sort according to those.
             In the second special case that the value of the keyword `key` is
             set to an array of integers of equal size as the Fisher object, sorts them
             according to those instead.
@@ -1352,8 +1356,11 @@ class FisherMatrix:
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
-        >>> fm.to_file('example_matrix.json')
-        {'values': [[1.0, 0.0], [0.0, 2.0]], 'names': ['a', 'b'], 'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'], 'fiducials': [0.0, 0.0]}
+        >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False) # doctest: +SKIP
+        {'values': [[1.0, 0.0], [0.0, 2.0]],
+         'names': ['a', 'b'],
+         'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'],
+         'fiducials': [0.0, 0.0]}
         >>> # convenience function for reading it
         >>> fm_read = FisherMatrix.from_file('example_matrix.json')
         >>> fm == fm_read # verify it's the same object
@@ -1417,10 +1424,10 @@ class FisherMatrix:
         names : str
             the names of the parameters to marginalize over
 
-        invert : bool, default = False
+        invert : bool = False
             whether to marginalize over all the parameters NOT in names (the complement)
 
-        ignore_errors : bool, default = False
+        ignore_errors : bool = False
             should non-existing parameters be ignored
 
         Returns

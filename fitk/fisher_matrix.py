@@ -198,18 +198,18 @@ class FisherMatrix:
 
         Parameters
         ----------
-        values : array-like
+        values : Collection
             The values of the Fisher object.
 
-        names : array-like iterable of `str`, default = None
+        names : Optional[Collection[str]] = None
             The names of the parameters.
             If not specified, defaults to `p1, ..., pn`.
 
-        latex_names : array-like iterable of `str`, default = None
+        latex_names : Optional[Collection[str]] = None
             The LaTeX names of the parameters.
             If not specified, defaults to `names`.
 
-        fiducials : array-like iterable of `float`, default = None
+        fiducials : Optional[Collection[float]] = None
             The fiducial values of the parameters. If not specified, default to
             0 for all parameters.
 
@@ -302,7 +302,7 @@ class FisherMatrix:
             new ones. The values it maps to can either be a string (the new name), or a dict
             with keys `name`, `latex_name`, and `fiducial` (only `name` is mandatory).
 
-        ignore_errors : bool, default = False
+        ignore_errors : bool = False
             if set to True, will not raise an error if a parameter doesn't exist
 
         Returns
@@ -691,10 +691,10 @@ class FisherMatrix:
             If passing a list or a tuple, make sure to unpack it using the
             asterisk (*).
 
-        invert : bool, default = False
+        invert : bool = False
             whether to drop all the parameters NOT in names (the complement)
 
-        ignore_errors : bool, default = False
+        ignore_errors : bool = False
             should non-existing parameters be ignored
 
         Returns
@@ -851,14 +851,14 @@ class FisherMatrix:
         name : Optional[str] = None
             the name of the parameter for which we we want the constraints
 
-        marginalized : bool, default = True
+        marginalized : bool = True
             whether we want the marginalized or the unmarginalized
             constraints.
 
-        sigma : Optional[float], default = None
+        sigma : Optional[float] = None
             how many sigmas away.
 
-        p : Optional[float], default = None
+        p : Optional[float] = None
             the confidence interval (p-value).
             The relationship between `p` and `sigma` is defined via:
             \[
@@ -1275,15 +1275,15 @@ class FisherMatrix:
         transformation : array-like
             the Jacobian of the transformation
 
-        names : array-like, default = None
+        names : array-like = None
             list of new names for the Fisher object. If None, uses the old
             names.
 
-        latex_names: array-like, default = None
+        latex_names: array-like = None
             list of new LaTeX names for the Fisher object. If None, and
             `names` is set, uses those instead, otherwise uses the old LaTeX names.
 
-        fiducials : array-like, default = None
+        fiducials : array-like = None
             the new values of the fiducials. If not set, defaults to old values.
 
         Returns
@@ -1350,7 +1350,7 @@ class FisherMatrix:
             `eigenvectors`, `trace`, `determinant`, or `constraints` (by
             default, the \(1\sigma\) marginalized constraints).
 
-        metadata : Optional[Mapping[str, str]], default = None
+        metadata : Optional[Mapping[str, str]] = None
             any metadata that should be associated to the object saved
 
         Returns

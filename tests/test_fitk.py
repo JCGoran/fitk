@@ -288,9 +288,20 @@ class TestFisherTensor:
             FisherMatrix(np.diag([1, 2, 3])).constraints(marginalized=False),
         )
 
+        assert np.allclose(
+            data.constraints(p=0.682689),
+            data.constraints(sigma=1),
+        )
+
         data_cf = CFFisherMatrix(data.values)
         assert np.allclose(
-            data_cf.get_confidence_bounds(), data.constraints(), rtol=1e-2
+            data_cf.get_confidence_bounds(confidence_level=0.682689),
+            data.constraints(p=0.682689),
+        )
+
+        assert np.allclose(
+            data_cf.get_confidence_bounds(confidence_level=0.95),
+            data.constraints(p=0.95),
         )
 
         with pytest.raises(ValueError):

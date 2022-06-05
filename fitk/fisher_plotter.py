@@ -10,28 +10,26 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Collection, Optional, Tuple, Union
 
-import matplotlib.pyplot as plt
 
 # third party imports
 import numpy as np
 from cycler import cycler
-
-# first party imports
-from fitk.fisher_matrix import FisherMatrix
-
-# first party imports
-from fitk.fisher_utils import (
-    MismatchingSizeError,
-    ParameterNotFoundError,
-    get_default_rcparams,
-    get_index_of_other_array,
-)
+import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import LinearLocator, StrMethodFormatter
 from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
+
+# first party imports
+from fitk.fisher_matrix import FisherMatrix
+from fitk.fisher_utils import (
+    MismatchingSizeError,
+    ParameterNotFoundError,
+    get_default_rcparams,
+    get_index_of_other_array,
+)
 
 
 class FisherBaseFigure(ABC):
@@ -99,7 +97,7 @@ class FisherBaseFigure(ABC):
             f"    axes={repr(self.axes)})>"
         )
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the figure
         """
@@ -753,7 +751,7 @@ def get_ellipse(
     Constructs parameters for a Gaussian ellipse from the names.
     """
     if name1 == name2:
-        raise ValueError(f"Names must be different")
+        raise ValueError("Names must be different")
 
     # the inverse
     inv = FisherMatrix(fm.inverse(), names=fm.names)

@@ -178,7 +178,6 @@ def kl_divergence(
 
     f1_and_prior = (fisher1 + fisher_prior).sort().values
     f2_and_prior = (fisher2 + fisher_prior).sort().values
-    f1 = fisher1.sort().values
     f2 = fisher2.sort().values
 
     factor = process_units(units)

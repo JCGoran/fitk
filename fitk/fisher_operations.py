@@ -123,10 +123,10 @@ def kl_divergence(
     units: str = "b",
 ) -> Tuple[float, float, float]:
     r"""
-    Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_1 ||
-    P_2)\), its expectation value, \(\langle D \rangle\), and the square roots
+    Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_2 ||
+    P_1)\), its expectation value, \(\langle D \rangle\), and the square roots
     of the variance, \(\sqrt{\sigma^2(D)}\), between two Gaussian probability
-    distributions. For more details, see
+    distributions, \(P_1\) and \(P_2\). For more details, see
     [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
 
     Parameters

@@ -167,7 +167,7 @@ class FisherFigure2D(FisherBaseFigure):
     ):
         if not isinstance(key, tuple):
             raise TypeError(
-                f"Incompatible type for element access: expected {type(tuple)}, got {type(key)}"
+                f"Incompatible type for element access: expected `tuple`, got `{type(key)}`"
             )
 
         name1, name2 = key

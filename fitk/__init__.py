@@ -19,11 +19,19 @@ __all__ = [
     "FisherPlotter",
     "bayes_factor",
     "kl_divergence",
+    "plot_curve_1d",
+    "plot_curve_2d",
 ]
 
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_operations import bayes_factor, kl_divergence
-from fitk.fisher_plotter import FisherFigure1D, FisherFigure2D, FisherPlotter
+from fitk.fisher_plotter import (
+    FisherFigure1D,
+    FisherFigure2D,
+    FisherPlotter,
+    plot_curve_1d,
+    plot_curve_2d,
+)
 from fitk.fisher_utils import (
     float_to_latex,
     get_index_of_other_array,

@@ -82,7 +82,8 @@ def bayes_factor(
     """
     if not set(fisher_base.names).issubset(set(fisher_extended.names)):
         raise ValueError(
-            "The extended Fisher matrix must contain at least the parameters of the base Fisher matrix"
+            "The extended Fisher matrix must contain at least "
+            "the parameters of the base Fisher matrix"
         )
 
     # check dimensions
@@ -92,12 +93,14 @@ def bayes_factor(
 
     if len(priors) != n_extra:
         raise ValueError(
-            f"The number of elements in the prior array ({len(priors)}) does not match the number of extra parameters from the extended model ({n_extra})"
+            f"The number of elements in the prior array ({len(priors)}) "
+            f"does not match the number of extra parameters from the extended model ({n_extra})"
         )
 
     if len(offsets) != n_base:
         raise ValueError(
-            f"The number of elements in the offset array ({len(offsets)}) does not match the number of parameters in the base model ({n_base})"
+            f"The number of elements in the offset array ({len(offsets)}) "
+            f"does not match the number of parameters in the base model ({n_base})"
         )
 
     if np.any(np.array(offsets) / fisher_base.constraints() >= 1):

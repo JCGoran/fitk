@@ -83,7 +83,8 @@ class FisherMatrix:
     >>> fm.fiducials
     array([0., 0.])
 
-    Names can be changed in bulk (ditto for fiducials and values; dimension must of course match the original):
+    Names can be changed in bulk (ditto for fiducials and values; dimension
+    must of course match the original):
     >>> fm = FisherMatrix(np.diag([5, 4]))
     >>> fm.names = ['x', 'y']
     >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
@@ -216,7 +217,8 @@ class FisherMatrix:
         ------
         * `ValueError` if the input array has the wrong dimensionality (not 2)
         * `ValueError` if the object is not square-like
-        * `MismatchingSizeError` if the sizes of the array of names, values, LaTeX names and fiducials do not match
+        * `MismatchingSizeError` if the sizes of the array of names, values,
+        LaTeX names and fiducials do not match
 
         Examples
         --------
@@ -893,7 +895,8 @@ class FisherMatrix:
         """
         if sigma is not None and p is not None:
             raise ValueError(
-                "Cannot specify both `p` and `sigma` simultaneously; please specify at most one of those"
+                "Cannot specify both `p` and `sigma` simultaneously; "
+                "please specify at most one of those"
             )
 
         if p is not None:
@@ -1262,7 +1265,9 @@ class FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are
         related to the old ones via the transformation `jacobian`.
-        See the [Wikipedia article](https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization) for more information.
+        See the [Wikipedia
+        article](https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization)
+        for more information.
 
         Parameters
         ----------

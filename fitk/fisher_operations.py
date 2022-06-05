@@ -121,7 +121,6 @@ def kl_divergence(
     fisher2: FisherMatrix,
     fisher_prior: Optional[FisherMatrix] = None,
     units: str = "b",
-    symmetric: bool = False,
 ) -> Tuple[float, float, float]:
     r"""
     Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_1 ||
@@ -148,13 +147,6 @@ def kl_divergence(
         at the [Wikipedia article](https://en.wikipedia.org/wiki/Binary_prefix)
         for more details.
 
-    symmetric : bool = False
-        whether to compute the symmetrized version of the K-L divergence
-        instead, that is:
-        \[
-            \frac{1}{2} [ D(P_2 || P_1) + D(P_1 || P_2) ]
-        \]
-
     Returns
     -------
     the result as a tuple of 3 `float`s in the requested information units
@@ -164,14 +156,6 @@ def kl_divergence(
     * `MismatchingValueError` if the parameter names of the Fisher matrices do not match
     * `ValueError` if the value of `units` cannot be parsed
     """
-    if symmetric:
-        return (
-            kl_divergence(fisher1, fisher2, fisher_prior, units=units, symmetric=False)
-            + kl_divergence(
-                fisher2, fisher1, fisher_prior, units=units, symmetric=False
-            )
-        ) / 2
-
     if set(fisher1.names) != set(fisher2.names):
         raise MismatchingValuesError("parameter name", fisher1.names, fisher2.names)
 

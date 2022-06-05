@@ -21,7 +21,7 @@ def bayes_factor(
     fisher_extended: FisherMatrix,
     priors: Collection[float],
     offsets: Collection[float],
-):
+) -> float:
     r"""
     Returns the Bayes factor for a nested model, defined as:
     \[

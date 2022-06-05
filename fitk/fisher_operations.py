@@ -9,11 +9,7 @@ from typing import Collection, Optional, Tuple
 # third party imports
 import numpy as np
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
-    MismatchingSizeError,
-    MismatchingValuesError,
-    process_units,
-)
+from fitk.fisher_utils import MismatchingValuesError, process_units
 
 
 def bayes_factor(

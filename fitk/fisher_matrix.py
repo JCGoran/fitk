@@ -34,7 +34,7 @@ from fitk.fisher_utils import (
 )
 
 
-def _process_fisher_mapping(value: abc.Mapping):
+def _process_fisher_mapping(value: abc.Mapping) -> Dict[str, Union[str, float]]:
     """
     Processes a mapping/dict and returns the sanitized output.
     """
@@ -188,7 +188,7 @@ class FisherMatrix:
 
     def __init__(
         self,
-        values: Collection,
+        values,
         names: Optional[Collection[str]] = None,
         latex_names: Optional[Collection[str]] = None,
         fiducials: Optional[Collection[float]] = None,
@@ -1002,9 +1002,7 @@ class FisherMatrix:
         """
         Returns the result of adding two Fisher objects.
         """
-        try:
-            other = float(other)
-        except TypeError:
+        if isinstance(other, self.__class__):
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
                 raise MismatchingValuesError("parameter name", other.names, self.names)
@@ -1021,15 +1019,11 @@ class FisherMatrix:
 
             values = self.values + reindex_array(other.values, index)
 
-            return self.__class__(
-                values,
-                names=self.names,
-                latex_names=self.latex_names,
-                fiducials=self.fiducials,
-            )
+        else:
+            values = self.values + other
 
         return self.__class__(
-            self.values + other,
+            values,
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,
@@ -1172,9 +1166,7 @@ class FisherMatrix:
         Fisher object (element-wise).
         """
         # we can only divide two objects if they have the same dimensions and sizes
-        try:
-            other = float(other)
-        except TypeError as err:
+        if isinstance(other, self.__class__):
             # maybe it's a FisherMatrix
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
@@ -1192,8 +1184,6 @@ class FisherMatrix:
 
             if other.ndim == self.ndim:
                 values = self.values / reindex_array(other.values, index)
-            else:
-                raise TypeError(err) from err
         else:
             values = self.values / other
 
@@ -1213,9 +1203,7 @@ class FisherMatrix:
         another Fisher object (element-wise).
         """
         # we can only multiply two objects if they have the same dimensions and sizes
-        try:
-            other = float(other)
-        except TypeError as err:
+        if isinstance(other, self.__class__):
             # maybe it's a FisherMatrix
             # make sure they have the right parameters
             if set(other.names) != set(self.names):
@@ -1233,8 +1221,6 @@ class FisherMatrix:
 
             if other.ndim == self.ndim:
                 values = self.values * reindex_array(other.values, index)
-            else:
-                raise TypeError(err) from err
         else:
             values = self.values * other
 
@@ -1257,7 +1243,7 @@ class FisherMatrix:
 
     def reparametrize(
         self,
-        jacobian: Collection,
+        jacobian,
         names: Optional[Collection[str]] = None,
         latex_names: Optional[Collection[str]] = None,
         fiducials: Optional[Collection[float]] = None,

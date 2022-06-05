@@ -1,3 +1,7 @@
+"""
+Functions which act upon Fisher objects.
+"""
+
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 

@@ -9,11 +9,12 @@ import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
 from cosmicfish_pylib.fisher_operations import (
     eliminate_parameters,
+    information_gain,
     marginalise,
     marginalise_over,
     reshuffle,
 )
-from fitk import FisherMatrix, FisherPlotter
+from fitk import FisherMatrix, FisherPlotter, bayes_factor, kl_divergence
 from fitk.fisher_utils import (
     ParameterNotFoundError,
     float_to_latex,
@@ -23,6 +24,7 @@ from fitk.fisher_utils import (
     is_square,
     is_symmetric,
     make_default_names,
+    process_units,
     reindex_array,
 )
 from matplotlib.backends.backend_pdf import PdfPages
@@ -110,6 +112,44 @@ class TestFisherUtils:
         assert np.all(reindex_array(C, get_index_of_other_array(A, C)) == A)
 
         assert np.all(reindex_array(A, get_index_of_other_array(C, A)) == C)
+
+    def test_process_units(self):
+        units = ["MiB", "kb", "GB", "Mib"]
+        benchmarks = [1 / 8388608, 1 / 1000, 1 / 8e09, 1 / 1048576]
+
+        for unit, benchmark in zip(units, benchmarks):
+            assert np.allclose(benchmark, process_units(unit))
+
+
+class TestFisherOperations:
+    """
+    Tests for any functions operating on multiple Fisher objects
+    """
+
+    def test_bayes_factor(self):
+        fisher_base = FisherMatrix(np.diag([1, 2, 3]))
+        fisher_extended = FisherMatrix(np.diag([1, 2, 3, 4, 5]))
+        priors = [1, 1]
+        offsets = [0, 0, 0]
+
+        assert np.allclose(
+            0.03558812717085886,
+            bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=offsets),
+        )
+
+    def test_kl_divergence(self):
+        fisher1 = FisherMatrix(np.diag([1, 2, 3]))
+        fisher2 = FisherMatrix(np.diag([4, 5, 6]))
+        fisher_prior = FisherMatrix(np.diag([1, 1, 1]))
+
+        cf1 = CFFisherMatrix(fisher1.values)
+        cf2 = CFFisherMatrix(fisher2.values)
+        cf_prior = CFFisherMatrix(fisher_prior.values)
+
+        assert np.allclose(
+            information_gain(cf1, cf2, cf_prior, stat=False),
+            kl_divergence(fisher1, fisher2, fisher_prior),
+        )
 
 
 class TestFisherTensor:

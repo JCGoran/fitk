@@ -12,9 +12,17 @@ following way:
 >>> from fitk import FisherMatrix, FisherPlotter
 """
 
-__all__ = ["FisherMatrix", "FisherFigure1D", "FisherFigure2D", "FisherPlotter"]
+__all__ = [
+    "FisherMatrix",
+    "FisherFigure1D",
+    "FisherFigure2D",
+    "FisherPlotter",
+    "bayes_factor",
+    "kl_divergence",
+]
 
 from fitk.fisher_matrix import FisherMatrix
+from fitk.fisher_operations import bayes_factor, kl_divergence
 from fitk.fisher_plotter import FisherFigure1D, FisherFigure2D, FisherPlotter
 from fitk.fisher_utils import (
     float_to_latex,

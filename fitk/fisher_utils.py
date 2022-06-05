@@ -252,3 +252,44 @@ def get_default_rcparams():
         "mathtext.fontset": "cm",
         "font.family": "serif",
     }
+
+
+def process_units(arg: str) -> float:
+    """
+    Processes unit arguments
+
+    Returns
+    -------
+    float
+    """
+    # we only accept bits and bytes
+    allowed_units = ["b", "B"]
+
+    allowed_units_multiples = [1, 8]
+
+    allowed_units_dict = dict(zip(allowed_units, allowed_units_multiples))
+
+    # standard SI convention
+    allowed_prefixes = ["k", "M", "G", "T", "P", "E", "Z", "Y"]
+
+    allowed_prefixes += [f"{prefix}i" for prefix in allowed_prefixes]
+
+    # taken from:
+    # https://en.wikipedia.org/wiki/Units_of_information#Systematic_multiples
+    allowed_prefixes_powers = [10**power for power in range(3, 25, 3)]
+    allowed_prefixes_powers += [2**power for power in range(10, 61, 10)]
+
+    allowed_prefixes_dict = dict(zip(allowed_prefixes, allowed_prefixes_powers))
+
+    if arg in allowed_units:
+        return allowed_units_dict[arg]
+
+    prefix, unit = arg[:-1], arg[-1]
+
+    if unit not in allowed_units:
+        raise ValueError(f"The unit must be one of {allowed_units}")
+
+    if prefix not in allowed_prefixes:
+        raise ValueError(f"The prefix must be one of {allowed_prefixes}")
+
+    return 1 / allowed_prefixes_dict[prefix] / allowed_units_dict[unit]

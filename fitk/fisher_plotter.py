@@ -148,7 +148,18 @@ class FisherFigure2D(FisherBaseFigure):
 
         name1, name2 = key
 
-        return self.axes[np.where(self.names == name1), np.where(self.names == name2)]
+        if name1 not in self.names:
+            raise ParameterNotFoundError(name1, self.names)
+        if name2 not in self.names:
+            raise ParameterNotFoundError(name2, self.names)
+
+        index1 = np.where(self.names == name1)
+        index2 = np.where(self.names == name2)
+
+        if index1 < index2:
+            index1, index2 = index2, index1
+
+        return self.axes[index1, index2][0, 0]
 
 
 class FisherPlotter:

@@ -121,10 +121,12 @@ def kl_divergence(
     fisher2: FisherMatrix,
     fisher_prior: Optional[FisherMatrix] = None,
     units: str = "b",
+    symmetric: bool = False,
 ):
-    """
-    Computes the Kullback-Leibler divergence (or relative entropy) between two
-    Gaussian probability distributions.
+    r"""
+    Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_1 ||
+    P_2)\), between two Gaussian probability distributions. For more details,
+    see [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
 
     Parameters
     ----------
@@ -139,11 +141,39 @@ def kl_divergence(
 
     units : str = 'b'
         the information units in which to output the result (default in bits).
-        Can be either `'b'` or `'B'`, with an optional SI (such as `'MB'`) or
-        binary (such as `'MiB'`) prefix.
+        Can be either `'b'` (bits) or `'B'` (bytes), with an optional SI (such
+        as `'MB'`) or binary (such as `'MiB'`) prefix. Please consult the table
+        at the [Wikipedia article](https://en.wikipedia.org/wiki/Binary_prefix)
+        for more details.
+
+    symmetric : bool = False
+        whether to compute the symmetrized version of the K-L divergence
+        instead, that is:
+        \[
+            \frac{1}{2} [ D(P_2 || P_1) + D(P_1 || P_2) ]
+        \]
+
+    Returns
+    -------
+    the result as a `float` in the requested information units
+
+    Raises
+    ------
+    * `MismatchingValueError` if the parameter names of the Fisher matrices do not match
+    * `ValueError` if the value of `units` cannot be parsed
     """
+    if symmetric:
+        return (
+            kl_divergence(fisher1, fisher2, fisher_prior, units=units, symmetric=False)
+            + kl_divergence(
+                fisher2, fisher1, fisher_prior, units=units, symmetric=False
+            )
+        ) / 2
+
     if set(fisher1.names) != set(fisher2.names):
         raise MismatchingValuesError("parameter name", fisher1.names, fisher2.names)
+
+    dimension = len(fisher1)
 
     if fisher_prior is not None and set(fisher1.names) != set(fisher_prior.names):
         raise MismatchingValuesError(
@@ -152,12 +182,11 @@ def kl_divergence(
 
     if fisher_prior is None:
         fisher_prior = FisherMatrix(
-            np.diag(np.zeros(len(fisher1))),
+            np.diag(np.zeros(dimension)),
             names=fisher1.names,
             fiducials=fisher1.fiducials,
         )
 
-    dimension = len(fisher1)
     f1_and_prior = (fisher1 + fisher_prior).sort()
     f2_and_prior = (fisher2 + fisher_prior).sort()
 

@@ -146,9 +146,15 @@ class TestFisherOperations:
         cf2 = CFFisherMatrix(fisher2.values)
         cf_prior = CFFisherMatrix(fisher_prior.values)
 
+        result, expectation, _ = kl_divergence(fisher1, fisher2, fisher_prior)
         assert np.allclose(
             information_gain(cf1, cf2, cf_prior, stat=False),
-            kl_divergence(fisher1, fisher2, fisher_prior),
+            result,
+        )
+
+        assert np.allclose(
+            information_gain(cf1, cf2, cf_prior, stat=True),
+            expectation,
         )
 
 

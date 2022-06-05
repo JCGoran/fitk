@@ -4,7 +4,7 @@ from __future__ import annotations
 import warnings
 
 # standard library imports
-from typing import Collection, Optional
+from typing import Collection, Optional, Tuple
 
 # third party imports
 import numpy as np
@@ -122,11 +122,13 @@ def kl_divergence(
     fisher_prior: Optional[FisherMatrix] = None,
     units: str = "b",
     symmetric: bool = False,
-):
+) -> Tuple[float, float, float]:
     r"""
     Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_1 ||
-    P_2)\), between two Gaussian probability distributions. For more details,
-    see [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
+    P_2)\), its expectation value, \(\langle D \rangle\), and the square roots
+    of the variance, \(\sqrt{\sigma^2(D)}\), between two Gaussian probability
+    distributions. For more details, see
+    [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
 
     Parameters
     ----------
@@ -155,7 +157,7 @@ def kl_divergence(
 
     Returns
     -------
-    the result as a `float` in the requested information units
+    the result as a tuple of 3 `float`s in the requested information units
 
     Raises
     ------
@@ -187,19 +189,35 @@ def kl_divergence(
             fiducials=fisher1.fiducials,
         )
 
-    f1_and_prior = (fisher1 + fisher_prior).sort()
-    f2_and_prior = (fisher2 + fisher_prior).sort()
+    f1_and_prior = (fisher1 + fisher_prior).sort().values
+    f2_and_prior = (fisher2 + fisher_prior).sort().values
+    f1 = fisher1.sort().values
+    f2 = fisher2.sort().values
 
     factor = process_units(units)
 
-    return (
+    result = (
         (
-            -np.linalg.slogdet(f1_and_prior.values)[-1]
-            + np.linalg.slogdet(f2_and_prior.values)[-1]
+            -np.linalg.slogdet(f1_and_prior)[-1]
+            + np.linalg.slogdet(f2_and_prior)[-1]
             - dimension
-            + np.trace(f2_and_prior.inverse() @ f1_and_prior.values)
+            + np.trace(np.linalg.inv(f2_and_prior) @ f1_and_prior)
         )
         / 2
         / np.log(2)
         * factor
     )
+
+    argument = (
+        f2
+        @ np.linalg.inv(f2_and_prior)
+        @ f1_and_prior
+        @ np.linalg.inv(f2_and_prior)
+        @ (1 + f2 @ np.linalg.inv(f1_and_prior))
+    )
+
+    expectation = result + np.trace(argument) / 2 / np.log(2) * factor
+
+    variance = np.sqrt(np.trace(argument @ argument) / 2 / np.log(2)) * factor
+
+    return (result, expectation, variance)

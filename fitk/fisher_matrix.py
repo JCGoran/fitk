@@ -13,7 +13,7 @@ import json
 from collections import abc
 from itertools import permutations
 from numbers import Number
-from typing import Any, Collection, Mapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, Mapping, Optional, Tuple, Union
 
 # third party imports
 import numpy as np
@@ -1325,8 +1325,8 @@ class FisherMatrix:
         )
 
     def to_file(
-        self, path: str, *args: str, metadata: Optional[Mapping[str, Any]] = None
-    ):
+        self, path: str, metadata: Optional[Mapping[str, Any]] = None
+    ) -> Dict[str, Any]:
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
         The format used is a simple JSON file, containing at least the values of the
@@ -1337,12 +1337,6 @@ class FisherMatrix:
         ----------
         path : str
             the path to save the data to.
-
-        args : str
-            whatever other information about the object needs to be saved.
-            Needs to be one of the following: `is_valid`, `eigenvalues`,
-            `eigenvectors`, `trace`, `determinant`, or `constraints` (by
-            default, the \(1\sigma\) marginalized constraints).
 
         metadata : Optional[Mapping[str, Any]] = None
             any metadata that should be associated to the object saved, in the
@@ -1367,42 +1361,16 @@ class FisherMatrix:
         True
         """
         data = {
-            "values": self.values.tolist(),
-            "names": self.names.tolist(),
-            "latex_names": self.latex_names.tolist(),
-            "fiducials": self.fiducials.tolist(),
+            "values": self.values,
+            "names": self.names,
+            "latex_names": self.latex_names,
+            "fiducials": self.fiducials,
         }
-
-        allowed_metadata = {
-            "is_valid": bool,
-            "eigenvalues": np.array,
-            "eigenvectors": np.array,
-            "trace": float,
-            "determinant": float,
-            "constraints": np.array,
-        }
-
-        for arg in args:
-            if arg not in allowed_metadata:
-                raise ValueError(
-                    f"name {arg} is not one of {list(allowed_metadata.keys())}"
-                )
 
         if metadata is not None:
-            for arg in metadata:
-                if arg in data:
-                    raise ValueError(f"name {arg} cannot be one of {list(data.keys())}")
-
             data = {
                 **data,
-                **{arg: getattr(self, arg)() for arg in args},
-                **metadata,
-            }
-
-        else:
-            data = {
-                **data,
-                **{arg: getattr(self, arg)() for arg in args},
+                **{"metadata": metadata},
             }
 
         with open(path, "w", encoding="utf-8") as file_handle:

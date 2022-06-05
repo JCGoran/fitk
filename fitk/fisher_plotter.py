@@ -23,7 +23,6 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import (
     MismatchingSizeError,
     ParameterNotFoundError,
-    float_to_latex,
     get_default_rcparams,
     get_index_of_other_array,
 )

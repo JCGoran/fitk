@@ -220,16 +220,6 @@ def get_index_of_other_array(A, B):
     return xsorted[np.searchsorted(B[xsorted], A)]
 
 
-def jsonify(data):
-    """
-    Converts arbitrary data into a JSON-compatible format.
-    """
-    try:
-        return data.tolist()
-    except AttributeError:
-        return data
-
-
 def reindex_array(values, index):
     """
     Returns the array sorted according to (1D) index `index`.

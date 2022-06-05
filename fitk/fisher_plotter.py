@@ -705,10 +705,10 @@ def get_ellipse(
     Constructs parameters for an ellipse from the names.
     """
     if name1 == name2:
-        return None
+        raise ValueError(f"Names must be different")
 
     # the inverse
-    inv = fm.inverse()
+    inv = FisherMatrix(fm.inverse(), names=fm.names)
 
     sigmax2 = inv[name1, name1]
     sigmay2 = inv[name2, name2]
@@ -722,9 +722,6 @@ def get_ellipse(
     b = np.sqrt(
         (sigmax2 + sigmay2) / 2 - np.sqrt((sigmax2 - sigmay2) ** 2 / 4 + sigmaxy**2)
     )
-
-    if sigmax2 < sigmay2:
-        a, b = b, a
 
     angle = np.rad2deg(
         np.arctan2(

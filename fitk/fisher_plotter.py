@@ -7,6 +7,7 @@ from __future__ import annotations
 
 # standard library imports
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Collection, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -89,7 +90,7 @@ class FisherBaseFigure(ABC):
 
     def savefig(
         self,
-        path: str,
+        path: Path,
         dpi: float = 300,
         bbox_inches: Union[str, Bbox] = "tight",
         **kwargs,
@@ -99,7 +100,7 @@ class FisherBaseFigure(ABC):
 
         Parameters
         ----------
-        path : str
+        path : Path
             the path where to save the figure
 
         dpi : float = 300
@@ -109,7 +110,8 @@ class FisherBaseFigure(ABC):
             what is the bounding box for the figure
 
         kwargs
-            any other keyword arguments that should be passed to `figure.savefig`
+            any other keyword arguments that should be passed to
+            `figure.savefig`
         """
         return self.figure.savefig(path, dpi=dpi, bbox_inches=bbox_inches, **kwargs)
 

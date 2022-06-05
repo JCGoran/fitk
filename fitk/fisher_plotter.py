@@ -88,6 +88,28 @@ class FisherBaseFigure(ABC):
         """
         return self._names
 
+    def __repr__(self):
+        """
+        Returns the representation of the figure
+        """
+        return (
+            f"<FisherFigure(\n"
+            f"    names={repr(self.names)},\n"
+            f"    figure={repr(self.figure)},\n"
+            f"    axes={repr(self.axes)})>"
+        )
+
+    def __repr__(self):
+        """
+        Returns the string representation of the figure
+        """
+        return (
+            f"FisherFigure(\n"
+            f"    names={str(self.names)},\n"
+            f"    figure={str(self.figure)},\n"
+            f"    axes={str(self.axes)})"
+        )
+
     def savefig(
         self,
         path: Path,

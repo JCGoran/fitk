@@ -4,6 +4,7 @@ Various tests for the `fitk` module.
 
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
@@ -14,7 +15,12 @@ from cosmicfish_pylib.fisher_operations import (
     marginalise_over,
     reshuffle,
 )
+from cosmicfish_pylib.fisher_plot import CosmicFishPlotter as CFFisherPlotter
+from cosmicfish_pylib.fisher_plot_analysis import (
+    CosmicFish_FisherAnalysis as CFFisherAnalysis,
+)
 from fitk import FisherMatrix, FisherPlotter, bayes_factor, kl_divergence
+from fitk.fisher_plotter import plot_curve_1d, plot_curve_2d
 from fitk.fisher_utils import (
     ParameterNotFoundError,
     float_to_latex,
@@ -703,21 +709,54 @@ class TestFisherPlotter:
         )
 
         ffigure = fp.plot_triangle(
-            #legend=True,
-            #title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
-            plot_gaussians=True,
+            # legend=True,
+            # title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
+            plot_1d_curves=True,
         )
 
         ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_euclid.pdf"))
 
     def test_plot_2d(self):
-        fm1 = FisherMatrix([[0.3, -0.5], [-0.5, 0.9]])
-        fp = FisherPlotter(fm1)
+        fm = FisherMatrix([[0.3, -0.5], [-0.5, 0.9]])
+        fp = FisherPlotter(fm)
 
-        ffigure = fp.plot_triangle(
-            # legend=True,
-            # title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
-            plot_gaussians=True,
+        fm_cf = CFFisherMatrix(fm.values)
+        fl_cf = CFFisherAnalysis()
+
+        fl_cf.add_fisher_matrix(fm_cf)
+
+        fp_cf = CFFisherPlotter(fishers=fl_cf)
+
+        fp_cf.new_plot()
+        fp_cf.plot_tri(D2_alphas=[0.1, 0], D2_filled=[True, False], D1_norm_prob=True)
+        ffigure = fp_cf.figure
+
+        ax = fp_cf.figure.axes[0]
+        ffigure, _ = plot_curve_1d(fm, fm.names[0], ax=ax)
+        ax.set_ylim(0, 0.1)
+
+        ax = fp_cf.figure.axes[2]
+        ffigure, _ = plot_curve_1d(fm, fm.names[1], ax=ax)
+        ax.set_ylim(0, 0.2)
+
+        ax = fp_cf.figure.axes[1]
+
+        ffigure, _ = plot_curve_2d(fm, fm.names[0], fm.names[-1], ax=ax)
+        ffigure, _ = plot_curve_2d(
+            fm,
+            fm.names[0],
+            fm.names[-1],
+            ax=_,
+            scaling_factor=2,
         )
+
+        fp = FisherPlotter(fm)
+
+        ffigure_my = fp.plot_triangle()
+        ffigure_my.axes.flat[0].set_xlim(-14, 14)
+        ffigure_my.axes.flat[2].set_ylim(-8, 8)
+        ffigure_my.axes.flat[-1].set_xlim(-8, 8)
+
+        ffigure_my.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_mine.pdf"))
 
         ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle.pdf"))

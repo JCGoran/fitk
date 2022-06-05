@@ -105,7 +105,7 @@ class FisherBaseFigure(ABC):
         dpi : float = 300
             the resolution of the saved figure
 
-        bbox_inches : Union[str, Bbox] = 'tight'
+        bbox_inches : Union[str, Bbox] = "tight"
             what is the bounding box for the figure
 
         kwargs
@@ -139,7 +139,7 @@ class FisherFigure2D(FisherBaseFigure):
 
     def __getitem__(
         self,
-        key: Tuple[str],
+        key: Tuple[str, str],
     ):
         if not isinstance(key, tuple):
             raise TypeError(
@@ -160,6 +160,7 @@ class FisherPlotter:
         self,
         *args: FisherMatrix,
         labels: Optional[Collection[str]] = None,
+        ylabel1d: str = r"$p (\theta)$",
     ):
         """
         Constructor.
@@ -214,6 +215,8 @@ class FisherPlotter:
 
         self._labels = np.array(labels, dtype=object)
 
+        self._ylabel1d = ylabel1d
+
     @property
     def values(self):
         """
@@ -228,43 +231,24 @@ class FisherPlotter:
         """
         return self._labels
 
-    def find_limits_1d(
-        self,
-        name: str,
-        sigma: float = 3,
-    ):
+    @property
+    def ylabel1d(self):
         """
-        Finds "nice" 1D limits for a given parameter taking into account fiducials
-        and constraints.
-
-        Parameters
-        ----------
-        name : str
-            the name of the parameter
-
-        sigma : float = 3
-            how many sigmas away to plot
-
-        Returns
-        -------
-        `tuple` with lower and upper limits
+        Returns the y-label used for labelling the 1D curves.
         """
-        sigmas = np.array(
-            [_.constraints(name, marginalized=True, sigma=sigma) for _ in self.values]
-        )
-        fiducials = np.array(
-            [_.fiducials[np.where(_.names == name)] for _ in self.values]
-        )
+        return self._ylabel1d
 
-        xleft, xright = np.min(fiducials - sigmas), np.max(fiducials + sigmas)
-
-        return xleft, xright
+    @ylabel1d.setter
+    def ylabel1d(self, value):
+        if not isinstance(value, str):
+            raise TypeError(f"Expected `str` for `ylabel1d`, got {type(value)}")
+        self._ylabel1d = value
 
     def plot_1d(
         self,
         scale: float = 1.0,
         max_cols: Optional[int] = None,
-        rc: Optional[dict] = None,
+        mpl_options: Optional[dict] = None,
         **kwargs,
     ):
         """
@@ -278,7 +262,7 @@ class FisherPlotter:
             need to spread it over `max_cols`, pass a non-negative integer
             here.
 
-        rc : Optional[dict] = None
+        mpl_options : Optional[dict] = None
             any parameters meant for `matplotlib.rcParams`. By default, only
             sets default font to cm serif.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
@@ -297,10 +281,10 @@ class FisherPlotter:
             layout = 1, size
             full = True
 
-        if not rc:
-            rc = get_default_rcparams()
+        if not mpl_options:
+            mpl_options = get_default_rcparams()
 
-        with plt.rc_context(rc):
+        with plt.rc_context(mpl_options):
             # general figure setup
             fig = plt.figure(
                 clear=True,
@@ -319,40 +303,17 @@ class FisherPlotter:
             names = self.values[0].names
             latex_names = self.values[0].latex_names
 
-            ylabel1d = r"$p (\theta)$"
-
-            handles = []
-
-            for (index, name), name_latex in zip(enumerate(names), latex_names):
+            for (index, name), latex_name in zip(enumerate(names), latex_names):
                 ax = axes.flat[index]
-                title_list = [
-                    f"{name_latex} = ${float_to_latex(float(_.fiducials[np.where(_.names == name)]))}^{{+{float_to_latex(float(_.constraints(name, marginalized=True)))}}}_{{-{float_to_latex(float(_.constraints(name, marginalized=True)))}}}$"
-                    for _ in self.values
-                ]
 
-                # the scaling factor here is so that we don't cutoff the peak
-                ymax = (
-                    np.max(
-                        [
-                            norm.pdf(0, 0, _.constraints(name, marginalized=True))
-                            for _ in self.values
-                        ]
-                    )
-                    * 1.03
-                )
-
-                for fm in self.values:
-                    (handle,) = add_plot_1d(
-                        fm.fiducials[np.where(fm.names == name)],
-                        fm.constraints(name, marginalized=True),
-                        ax,
-                    )
+                for c, fm in zip(get_default_cycler(), self.values):
+                    plot_curve_1d(fm, name, ax)
 
                     add_shading_1d(
                         fm.fiducials[np.where(fm.names == name)],
                         fm.constraints(name, marginalized=True),
                         ax,
-                        color=handle.get_color(),
+                        color=c["color"],
                         alpha=0.3,
                         ec=None,
                     )
@@ -362,23 +323,20 @@ class FisherPlotter:
                         fm.constraints(name, marginalized=True),
                         ax,
                         level=2,
-                        color=handle.get_color(),
+                        color=c["color"],
                         alpha=0.1,
                         ec=None,
                     )
 
-                    if index == 0:
-                        handles.append(handle)
+                ax.set_xlabel(latex_name)
+                ax.relim()
+                ax.autoscale_view()
 
-                ax.set_xlabel(name_latex)
-                ax.set_xlim(*self.find_limits_1d(name))
-                ax.set_ylim(0, ymax)
-
-                if kwargs.get("title") is True:
-                    ax.set_title("\n".join(title_list))
+                # the y axis should start at 0 since we're plotting a PDF
+                ax.set_ylim(0, ax.get_ylim()[-1])
 
                 if index == 0:
-                    ax.set_ylabel(ylabel1d)
+                    ax.set_ylabel(self.ylabel1d)
 
                 ax.set_yticks([])
 
@@ -389,18 +347,6 @@ class FisherPlotter:
                         (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
                     ):
                         axes.flat[index].remove()
-
-                fig.legend(
-                    np.array(handles, dtype=object),
-                    self.labels,
-                    frameon=False,
-                    loc="upper center",
-                    bbox_to_anchor=(0.5, -0.15),
-                    ncol=len(self.values),
-                )
-
-            if isinstance(kwargs.get("title"), str):
-                fig.suptitle(kwargs.get("title"))
 
             # remove any axes which are not drawn
             if not full:
@@ -413,22 +359,22 @@ class FisherPlotter:
 
     def plot_triangle(
         self,
-        rc: Optional[dict] = None,
-        plot_gaussians: bool = True,
+        mpl_options: Optional[dict] = None,
+        plot_1d_curves: bool = True,
         **kwargs,
     ):
         """
-        Plots the contours (and optionally 1D Gaussians) of the Fisher objects.
+        Plots the 2D contours (and optionally 1D curves) of the Fisher objects.
 
         Parameters
         ----------
-        rc : Optional[dict] = None
+        mpl_options : Optional[dict] = None
             any parameters meant for `matplotlib.rcParams`. By default, only
             sets default font to cm serif.
             See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
             for more information.
-        plot_gaussians : bool = True
-            whether or not the Gaussians should be plotted
+        plot_1d_curves : bool = True
+            whether or not the 1D (marginalized) curves should be plotted
 
         Returns
         -------
@@ -439,33 +385,38 @@ class FisherPlotter:
         if size < 2:
             raise ValueError("Unable to make a 2D plot with < 2 parameters")
 
-        if not rc:
-            rc = get_default_rcparams()
+        if not mpl_options:
+            mpl_options = get_default_rcparams()
 
-        with plt.rc_context(rc):
+        with plt.rc_context(mpl_options):
             # general figure setup
             fig = plt.figure(figsize=(2 * size, 2 * size), clear=True)
-            gs = fig.add_gridspec(nrows=size, ncols=size, hspace=0.5, wspace=0.5)
+            gs = fig.add_gridspec(nrows=size, ncols=size, hspace=0.2, wspace=0.2)
             # TODO make it work with a shared xcol
             ax = gs.subplots(sharex="col", sharey=False)
 
             names = self.values[0].names
             latex_names = self.values[0].latex_names
 
-            for i in range(len(ax)):
-                for j in range(len(ax)):
-                    # TODO is this the right order?
-                    namex, namey = (
-                        names[np.where(names == names[i])],
-                        names[np.where(names == names[j])],
-                    )
+            # set automatic limits
+            for i in range(size):
+                for j in range(size):
+                    if i == j:
+                        ax[i, i].set_yticks([])
+                        ax[i, i].set_yticklabels([])
+                    if i > 0 and 0 < j < size - 1:
+                        ax[i, j].set_yticks([])
+                        ax[i, j].set_yticklabels([])
+
+            for (i, namey), latex_namey in zip(enumerate(names), latex_names):
+                for (j, namex), latex_namex in zip(enumerate(names), latex_names):
                     # labels for 2D contours (increasing y)
                     if i > 0 and j == 0:
-                        ax[i, j].set_ylabel(latex_names[i])
+                        ax[i, j].set_ylabel(latex_namey)
 
                     # labels for 2D contours (increasing x)
-                    if i == len(ax) - 1:
-                        ax[i, j].set_xlabel(latex_names[j])
+                    if i == size - 1:
+                        ax[i, j].set_xlabel(latex_namex)
 
                     # removing any unnecessary axes from the gridspec
                     # TODO should they be removed, or somehow just made invisible?
@@ -475,105 +426,78 @@ class FisherPlotter:
                     # plotting the 2D contours
                     elif i > j:
                         for c, fm in zip(get_default_cycler(), self.values):
-                            # get parameters of the ellipse
-                            width, height, angle = get_ellipse(fm, namex, namey)
-                            fidx, fidy = (
-                                fm.fiducials[np.where(fm.names == namex)],
-                                fm.fiducials[np.where(fm.names == namey)],
-                            )
-                            alpha = np.sqrt(get_chisq())
-                            add_plot_2d(
-                                (fidx, fidy),
-                                width=width * alpha,
-                                height=height * alpha,
-                                angle=angle,
+                            # plot 1-sigma 2D curves
+                            # NOTE this is the "68% of the probability of a
+                            # single parameter lying within the bounds projected
+                            # onto a parameter axis"
+                            plot_curve_2d(
+                                fm,
+                                namex,
+                                namey,
                                 ax=ax[i, j],
                                 fill=False,
                                 color=c["color"],
                                 zorder=20,
                             )
 
-                            add_plot_2d(
-                                (fidx, fidy),
-                                width=width * alpha,
-                                height=height * alpha,
-                                angle=angle,
+                            # the 2-sigma
+                            plot_curve_2d(
+                                fm,
+                                namex,
+                                namey,
                                 ax=ax[i, j],
+                                scaling_factor=2,
                                 fill=False,
                                 color=c["color"],
                                 zorder=20,
-                            )
-
-                            add_plot_2d(
-                                (fidx, fidy),
-                                width=width * alpha,
-                                height=height * alpha,
-                                angle=angle,
-                                ax=ax[i, j],
-                                alpha=0.2,
-                                ec=None,
-                                fill=True,
-                                color=c["color"],
-                            )
-
-                        # remove ticks from any plots that aren't on the edges
-                    #                        if j > 0:
-                    #                            ax[i, j].set_yticks([])
-                    #                            ax[i, j].set_xticklabels([])
-                    #                            ax[i, j].set_yticklabels([])
-                    #
-                    #                        if i < len(ax) - 1:
-                    #                            ax[i, j].set_xticks([])
-                    #                            ax[i, j].set_xticklabels([])
-                    #                            ax[i, j].set_yticklabels([])
-
-                    # plotting the 1D Gaussians
-                    elif plot_gaussians is True:
-                        for c, fm in zip(get_default_cycler(), self.values):
-                            add_plot_1d(
-                                fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                sigma=fm.constraints(namex, marginalized=True),
-                                ax=ax[i, i],
-                                color=c["color"],
-                            )
-                            # 1 and 2 sigma shading
-                            add_shading_1d(
-                                fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                sigma=fm.constraints(namex, marginalized=True),
-                                ax=ax[i, i],
-                                level=1,
-                                alpha=0.2,
-                                color=c["color"],
-                                ec=None,
-                            )
-                            add_shading_1d(
-                                fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                sigma=fm.constraints(namex, marginalized=True),
-                                ax=ax[i, i],
-                                level=2,
-                                alpha=0.1,
-                                color=c["color"],
-                                ec=None,
                             )
 
                     else:
-                        ax[i, i].remove()
+                        # plotting the 1D Gaussians
+                        if plot_1d_curves is True:
+                            for c, fm in zip(get_default_cycler(), self.values):
+                                plot_curve_1d(
+                                    fm,
+                                    namex,
+                                    ax=ax[i, i],
+                                    color=c["color"],
+                                )
 
-            #                        ax[i, i].set_yticks([])
+                                # 1 and 2 sigma shading
+                                add_shading_1d(
+                                    fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                    sigma=fm.constraints(namex, marginalized=True),
+                                    ax=ax[i, i],
+                                    level=1,
+                                    alpha=0.2,
+                                    color=c["color"],
+                                    ec=None,
+                                )
+                                add_shading_1d(
+                                    fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                    sigma=fm.constraints(namex, marginalized=True),
+                                    ax=ax[i, i],
+                                    level=2,
+                                    alpha=0.1,
+                                    color=c["color"],
+                                    ec=None,
+                                )
 
-        # set automatic limits
-        for i in range(len(ax)):
-            for j in range(len(ax)):
-                try:
-                    ax[i, j].relim()
-                    ax[i, j].autoscale_view()
-                    if i == j:
-                        ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
-                    set_xticks(ax[i, j])
-                    set_yticks(ax[i, j])
-                except AttributeError:
-                    pass
-        #                ax[i, i].set_xlim(*self.find_limits_1d(names[i]))
+                        else:
+                            ax[i, i].remove()
+
+            # set automatic limits
+            for i in range(size):
+                for j in range(size):
+                    try:
+                        ax[i, j].relim()
+                        ax[i, j].autoscale_view()
+                        if i == j:
+                            ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
+                            ax[i, i].set_yticks([])
+                            ax[i, i].set_yticklabels([])
+                    except AttributeError:
+                        pass
 
         return FisherFigure2D(fig, ax, names)
 
@@ -584,7 +508,8 @@ def get_chisq(
 ):
     r"""
     Returns \(\Delta \chi^2\).
-    To obtain the scaling coefficient \(\alpha\), just take the square root of the output.
+    To obtain the scaling coefficient \(\alpha\), just take the square root of
+    the output.
 
     Parameters
     ----------
@@ -604,96 +529,184 @@ def get_chisq(
 def add_plot_1d(
     fiducial: float,
     sigma: float,
-    ax: Axes,
+    ax: Optional[Axes] = None,
     **kwargs,
-):
+) -> Tuple[Figure, Axes]:
     """
     Adds a 1D Gaussian with marginalized constraints `sigma` close to fiducial
     value `fiducial` to axis `ax`.
     """
+    if ax is None:
+        _, ax = plt.subplots()
+
     x = np.linspace(
         fiducial - 4 * sigma,
         fiducial + 4 * sigma,
         100,
     )
 
-    temp = ax.plot(
+    ax.plot(
         x,
         [norm.pdf(_, loc=fiducial, scale=sigma) for _ in x],
         **kwargs,
     )
 
-    return temp
+    return (ax.get_figure(), ax)
 
 
 def add_shading_1d(
     fiducial: float,
     sigma: float,
-    ax: Axes,
+    ax: Optional[Axes] = None,
     level: float = 1,
     **kwargs,
-):
+) -> Tuple[Figure, Axes]:
     """
     Add shading to a 1D axes.
     """
-    fiducial = fiducial.flatten()[0]
-    sigma = sigma.flatten()[0]
+    if ax is None:
+        _, ax = plt.subplots()
 
-    x = np.linspace(
-        fiducial - level * sigma,
-        fiducial + level * sigma,
-        100,
-    )
-
-    temp = ax.fill_between(
-        x,
-        [norm.pdf(_, loc=fiducial, scale=sigma) for _ in x],
-        **kwargs,
-    )
-
-    return temp
-
-
-def add_plot_2d(
-    fiducials: Collection[float],
-    width: float,
-    height: float,
-    angle: float,
-    ax,
-    **kwargs,
-):
-    """
-    Adds a 2D ellipse to a plot.
-
-    Parameters
-    ----------
-    width : float
-        size of second axis of the ellipse (from center)
-
-    height : float
-        size of second axis of the ellipse (from center)
-
-    angle : float
-        the angle w.r.t. the x-axis of the ellipse (the tilt)
-
-    ax
-        the axis to plot the ellipse onto
-
-    **kwargs
-        any additional arguments passed to `matplotlib.patches.Ellipse`
-    """
-    fidy, fidx = fiducials
-    patch = ax.add_patch(
-        Ellipse(
-            xy=(fidx, fidy),
-            width=width * 2,
-            height=height * 2,
-            angle=angle,
-            **kwargs,
+    x = np.ndarray.flatten(
+        np.linspace(
+            fiducial - level * sigma,
+            fiducial + level * sigma,
+            100,
         )
     )
 
-    return patch
+    ax.fill_between(
+        x,
+        np.ndarray.flatten(
+            np.array([norm.pdf(_, loc=fiducial, scale=sigma) for _ in x])
+        ),
+        **kwargs,
+    )
+
+    return (ax.get_figure(), ax)
+
+
+def plot_curve_1d(
+    fisher: FisherMatrix,
+    name: str,
+    ax: Optional[Axes] = None,
+    **kwargs,
+):
+    """
+    Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.
+
+    Parameters
+    --------
+    fisher : FisherMatrix
+        the Fisher matrix which we want to plot
+
+    name : str
+        the name of the parameter which we want to plot
+
+    ax : Optional[matplotlib.axes.Axes] = None
+        the axis on which we want to plot the contour. By default, plots to a
+        new figure.
+
+    Returns
+    -------
+    A 2-tuple `(Figure, Axes)`
+    """
+    if ax is None:
+        _, ax = plt.subplots()
+
+    fid = fisher.fiducials[np.where(fisher.names == name)]
+    sigma = fisher.constraints(name, marginalized=True)
+
+    add_plot_1d(fid, sigma, ax=ax, **kwargs)
+
+    return (ax.get_figure(), ax)
+
+
+def plot_shading_1d(
+    fisher: FisherMatrix,
+    name: str,
+    p: float = 0.68,
+    ax: Optional[Axes] = None,
+    **kwargs,
+):
+    r"""
+    Plots shading at some confidence interval.
+
+    Parameters
+    ----------
+    fisher : FisherMatrix
+        the Fisher matrix which we want to plot
+
+    name : str
+        the name of the parameter to plot
+
+    p : float = 0.68
+        the confidence interval around the fiducial value for which we want to
+        plot the shading. The intervals are computed as:
+        \[
+            p = \int\limits_a^b p(x)\, \mathrm{d}x
+        \]
+        where \((a, b)\) contains the fiducial value, and \(p(x)\) is the PDF
+        (not necessarily Gaussian) of the distribution
+
+    ax : Optional[Axes] = None
+        the axis on which to plot the shading
+    """
+    if ax is None:
+        _, ax = plt.subplots()
+
+    sigma = fisher.constraints(name, marginalized=True)
+
+
+def plot_curve_2d(
+    fisher: FisherMatrix,
+    name1: str,
+    name2: str,
+    ax: Optional[Axes] = None,
+    scaling_factor: float = 1,
+    **kwargs,
+) -> Tuple[Union[None, Figure], Axes]:
+    """
+    Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.
+
+    Parameters
+    ----------
+    fisher : FisherMatrix
+        the Fisher matrix which we want to plot
+
+    name1 : str
+        the name of the first parameter which we want to plot
+
+    name2 : str
+        the name of the second parameter which we want to plot
+
+    ax : Optional[matplotlib.axes.Axes] = None
+        the axis on which we want to plot the contour. By default, plots to a
+        new figure.
+
+    Returns
+    -------
+    A 2-tuple `(Figure, Axes)`
+    """
+    if ax is None:
+        _, ax = plt.subplots()
+
+    fidx = fisher.fiducials[np.where(fisher.names == name1)]
+    fidy = fisher.fiducials[np.where(fisher.names == name2)]
+
+    a, b, angle = get_ellipse(fisher, name1, name2)
+
+    ax.add_patch(
+        Ellipse(
+            xy=(fidx, fidy),
+            width=2 * a * scaling_factor,
+            height=2 * b * scaling_factor,
+            angle=angle,
+            **kwargs,
+        ),
+    )
+
+    return (ax.get_figure(), ax)
 
 
 def get_ellipse(
@@ -702,7 +715,7 @@ def get_ellipse(
     name2: str,
 ) -> Tuple[float, float, float]:
     """
-    Constructs parameters for an ellipse from the names.
+    Constructs parameters for a Gaussian ellipse from the names.
     """
     if name1 == name2:
         raise ValueError(f"Names must be different")
@@ -735,7 +748,7 @@ def get_ellipse(
 
 
 def set_xticks(
-    ax,
+    ax: Axes,
 ):
     locator = LinearLocator(3)
     formatter = StrMethodFormatter("{x:.2f}")
@@ -754,7 +767,7 @@ def set_xticks(
 
 
 def set_yticks(
-    ax,
+    ax: Axes,
 ):
     locator = LinearLocator(3)
     formatter = StrMethodFormatter("{x:.2f}")

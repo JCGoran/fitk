@@ -6,7 +6,7 @@ Various helper utilities for Fisher objects.
 from __future__ import annotations
 
 import json
-from typing import Collection, Optional
+from typing import Callable, Collection, Optional, Tuple
 
 import numpy as np
 

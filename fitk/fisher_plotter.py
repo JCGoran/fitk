@@ -69,7 +69,8 @@ class FisherBaseFigure(ABC):
     @property
     def figure(self):
         """
-        Returns the underlying figure, an instance of `matplotlib.figure.Figure`.
+        Returns the underlying figure, an instance of
+        `matplotlib.figure.Figure`.
         """
         return self._figure
 
@@ -83,7 +84,7 @@ class FisherBaseFigure(ABC):
     @property
     def names(self):
         """
-        Returns the names of the parameters plotted.
+        Returns the names of the original parameters plotted.
         """
         return self._names
 

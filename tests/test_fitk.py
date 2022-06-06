@@ -355,6 +355,14 @@ class TestFisherMatrix:
         assert data["p3", "p3"] == 3
         assert np.all(np.array(["p1", "p2", "p3"]) == data.names)
 
+        # check slicing works
+        assert data[:2] == data.drop(data.names[-1])
+        assert data[:1] == data.drop(data.names[0], invert=True)
+
+        # check we aren't passing too many values
+        with pytest.raises(ValueError):
+            data["p1", "p2", "p3"]
+
         # same type, keys don't exist
         with pytest.raises(ParameterNotFoundError):
             data["p0", "p0"]

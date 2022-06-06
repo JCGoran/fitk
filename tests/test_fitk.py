@@ -28,6 +28,7 @@ from fitk import (
     plot_curve_2d,
 )
 from fitk.fisher_utils import (
+    MismatchingValuesError,
     ParameterNotFoundError,
     float_to_latex,
     get_index_of_other_array,
@@ -184,6 +185,22 @@ class TestFisherOperations:
         assert np.allclose(
             information_gain(cf1, cf2, cf_prior, stat=True),
             expectation,
+        )
+
+        # the matrices have incompatible parameters
+        with pytest.raises(MismatchingValuesError):
+            kl_divergence(fisher1, fisher2.drop(fisher2.names[-1]), fisher_prior)
+
+        # prior has incompatible parameters
+        with pytest.raises(MismatchingValuesError):
+            kl_divergence(fisher1, fisher2, fisher_prior.drop(fisher_prior.names[-1]))
+
+        # testing whether we really set a zero prior
+        assert np.allclose(
+            kl_divergence(fisher1, fisher2),
+            kl_divergence(
+                fisher1, fisher2, FisherMatrix(np.diag(np.zeros(len(fisher1))))
+            ),
         )
 
 

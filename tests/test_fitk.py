@@ -7,6 +7,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
+from cosmicfish_pylib.fisher_derived import fisher_derived as CFFisherDerived
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
 from cosmicfish_pylib.fisher_operations import (
     eliminate_parameters,
@@ -604,6 +605,26 @@ class TestFisherMatrix:
         jac = [[1, 4], [3, 2]]
         m2_new = m2.reparametrize(jac, names=["a", "b"])
         assert np.allclose(m2_new.values, np.transpose(jac) @ m2.values @ jac)
+
+    @pytest.mark.xfail(reason="CosmicFish fails for some reason")
+    def test_reparametrize_cf(self):
+        m2 = FisherMatrix(np.diag([1, 2]))
+        jac = [[1, 4], [3, 2]]
+        m2_new = m2.reparametrize(jac, names=["a", "b"])
+
+        m_cf = CFFisherMatrix(fisher_matrix=m2.values, param_names=m2.names)
+
+        m_cf_derived = CFFisherDerived(
+            jac, param_names=m2.names, derived_param_names=["a", "b"]
+        )
+        m_cf_new = m_cf_derived.add_derived(m_cf)
+
+        assert np.allclose(
+            m_cf_new.get_fisher_matrix(),
+            np.transpose(jac) @ m_cf.get_fisher_matrix() @ jac,
+        )
+
+        assert np.allclose(m2_new.values, m_cf_new.get_fisher_matrix())
 
     def test_marginalize_over(self):
         size = 5

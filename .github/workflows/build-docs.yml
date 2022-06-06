@@ -30,7 +30,7 @@ jobs:
     # Build the site
     - name: Build the site
       run: |
-        poetry run pdoc --math -o docs/build/html/ fitk
+        poetry run pdoc --math -o ./docs/ fitk
 
     # If we've pushed to master, push the book's HTML to github-pages
     - if: ${{ github.ref == 'refs/heads/master' }}
@@ -38,4 +38,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/build/html
+        publish_dir: ./docs

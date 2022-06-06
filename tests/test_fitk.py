@@ -27,7 +27,9 @@ from fitk import (
     plot_curve_1d,
     plot_curve_2d,
 )
+from fitk.fisher_matrix import _process_fisher_mapping
 from fitk.fisher_utils import (
+    MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
     float_to_latex,
@@ -204,10 +206,18 @@ class TestFisherOperations:
         )
 
 
-class TestFisherTensor:
+class TestFisherMatrix:
     """
     Tests for the Fisher object.
     """
+
+    def test_process_fisher_mapping(self):
+        value = dict(name="p", latex_name="$p$", fiducial=-1)
+        _process_fisher_mapping(value) == value
+
+        value = dict(latex_name="$p$", fiducial=-1)
+        with pytest.raises(ValueError):
+            _process_fisher_mapping(value)
 
     def test_init(self):
         # a file
@@ -242,6 +252,10 @@ class TestFisherTensor:
             FisherMatrix(np.diag([1, 2, 3]), names=["a", "b", "c"]).latex_names
             == ["a", "b", "c"]
         )
+
+        # mismatching sizes
+        with pytest.raises(MismatchingSizeError):
+            FisherMatrix(np.diag([1, 2]), names=["a", "b", "c"])
 
     def test_to_file(self):
         names = "Omegam Omegab w0 wa h ns sigma8 aIA etaIA betaIA".split(" ")
@@ -299,6 +313,10 @@ class TestFisherTensor:
             latex_names=list("xbc"),
             fiducials=[1, 0, 0],
         )
+
+        # the new names are not unique
+        with pytest.raises(MismatchingSizeError):
+            m1.rename({"a": "q", "b": "q"})
 
         # duplicate parameter
         with pytest.raises(ValueError):

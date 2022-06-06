@@ -24,16 +24,16 @@ def bayes_factor(
 ) -> float:
     r"""
     Returns the Bayes factor for a nested model, defined as:
-    \[
+    $$
         (2 \pi)^{-p / 2} \frac{\sqrt{\mathrm{det} \mathsf{F}_B}}{\sqrt{\mathrm{det} \mathsf{F}_E}}
         \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_B \delta \theta_\beta\right]}
         \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
-    \]
-    where \(\mathsf{F}_B\) is the Fisher matrix of the base model (size \(n
-    \times n\)), \(\mathsf{F}_E\) is the Fisher matrix of the extended model
-    (size \(n' \times n'\), with \(n' = n + p\)), \(\delta \theta_\alpha\) is
-    the offset array (size \(n\)), and \(\Delta \theta_\alpha\) is the prior
-    volume (size \(p\)). For more details, see
+    $$
+    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n
+    \times n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model
+    (size $n' \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is
+    the offset array (size $n$), and $\Delta \theta_\alpha$ is the prior
+    volume (size $p$). For more details, see
     [arXiv:astro-ph/0703191](https://arxiv.org/abs/astro-ph/0703191), eq. (14).
 
     Parameters
@@ -69,7 +69,7 @@ def bayes_factor(
     numerical over- and underflow, and returns the exponential of that result.
 
     Furthermore, a warning is printed if the value of any of the offsets is
-    larger than the \(1\sigma\) marginalized constraints.
+    larger than the $1\sigma$ marginalized constraints.
 
     Examples
     --------
@@ -129,10 +129,10 @@ def kl_divergence(
     units: str = "b",
 ) -> Tuple[float, float, float]:
     r"""
-    Computes the Kullback-Leibler divergence (or relative entropy), \(D(P_2 ||
-    P_1)\), its expectation value, \(\langle D \rangle\), and the square roots
-    of the variance, \(\sqrt{\sigma^2(D)}\), between two Gaussian probability
-    distributions, \(P_1\) and \(P_2\). For more details, see
+    Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
+    P_1)$, its expectation value, $\langle D \rangle$, and the square roots
+    of the variance, $\sqrt{\sigma^2(D)}$, between two Gaussian probability
+    distributions, $P_1$ and $P_2$. For more details, see
     [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
 
     Parameters

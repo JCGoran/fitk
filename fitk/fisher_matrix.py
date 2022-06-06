@@ -787,7 +787,7 @@ class FisherMatrix:
 
     def condition_number(self):
         r"""
-        Returns the condition number of the matrix with respect to the \(L^2\) norm.
+        Returns the condition number of the matrix with respect to the $L^2$ norm.
 
         Examples
         --------
@@ -852,15 +852,15 @@ class FisherMatrix:
         p : Optional[float] = None
             the confidence interval (p-value).
             The relationship between `p` and `sigma` is defined via:
-            \[
+            $$
                 p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
                             f(x, \mu, 1)\, \mathrm{d}x
                           = \mathrm{Erf}(\sigma / \sqrt{2})
-            \]
+            $$
             and therefore the inverse is simply:
-            \[
+            $$
                 \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
-            \]
+            $$
             The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
             0.683, 0.954, and 0.997, respectively.
 

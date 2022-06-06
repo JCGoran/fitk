@@ -540,8 +540,8 @@ def get_chisq(
     df: int = 2,
 ):
     r"""
-    Returns \(\Delta \chi^2\).
-    To obtain the scaling coefficient \(\alpha\), just take the square root of
+    Returns $\Delta \chi^2$.
+    To obtain the scaling coefficient $\alpha$, just take the square root of
     the output.
 
     Parameters
@@ -676,10 +676,10 @@ def plot_shading_1d(
     p : float = 0.68
         the confidence interval around the fiducial value for which we want to
         plot the shading. The intervals are computed as:
-        \[
+        $$
             p = \int\limits_a^b p(x)\, \mathrm{d}x
-        \]
-        where \((a, b)\) contains the fiducial value, and \(p(x)\) is the PDF
+        $$
+        where $(a, b)$ contains the fiducial value, and $p(x)$ is the PDF
         (not necessarily Gaussian) of the distribution
 
     ax : Optional[Axes] = None

@@ -149,6 +149,23 @@ class TestFisherOperations:
             bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=offsets),
         )
 
+        with pytest.raises(ValueError):
+            bayes_factor(
+                fisher_base, fisher_extended.drop("p1"), priors=priors, offsets=offsets
+            )
+
+        # not a nested model
+        with pytest.raises(ValueError):
+            bayes_factor(fisher_base, fisher_base, priors=priors, offsets=offsets)
+
+        with pytest.raises(ValueError):
+            bayes_factor(fisher_base, fisher_extended, priors=[1], offsets=offsets)
+        with pytest.raises(ValueError):
+            bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=[0, 0])
+
+        with pytest.warns(UserWarning):
+            bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=[5, 5, 5])
+
     def test_kl_divergence(self):
         fisher1 = FisherMatrix(np.diag([1, 2, 3]))
         fisher2 = FisherMatrix(np.diag([4, 5, 6]))

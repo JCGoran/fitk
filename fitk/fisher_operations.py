@@ -91,6 +91,9 @@ def bayes_factor(
     n_extended = len(fisher_extended)
     n_extra = n_extended - n_base
 
+    if not n_extra:
+        raise ValueError("Unable to compute the Bayes factor for a non-nested model")
+
     if len(priors) != n_extra:
         raise ValueError(
             f"The number of elements in the prior array ({len(priors)}) "

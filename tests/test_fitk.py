@@ -397,6 +397,23 @@ class TestFisherMatrix:
         with pytest.raises(ParameterNotFoundError):
             data["p0", "p0"] = 1
 
+    def test_values(self):
+        data = FisherMatrix(np.diag([1, 2, 3]))
+        data.values = [[1, 0, -1], [0, 2, 0], [-1, 0, 4]]
+
+        # wrong dimensions
+        with pytest.raises(MismatchingSizeError):
+            data.values = np.diag([1, 2])
+
+        # not square matrix
+        # TODO maybe this should raise some other error?
+        with pytest.raises(ValueError):
+            data.values = [1, 2]
+
+    def test_is_diagonal(self):
+        assert not FisherMatrix([[1, -1], [-1, 5]]).is_diagonal()
+        assert FisherMatrix(np.diag([1, 2])).is_diagonal()
+
     def test_constraints(self):
         data = FisherMatrix([[1, -1], [-1, 1.2]])
         assert np.all(data.constraints(marginalized=True, sigma=2) >= 0)

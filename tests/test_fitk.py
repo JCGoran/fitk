@@ -835,6 +835,9 @@ class TestFisherPlotter:
 
         fp = FisherPlotter(fm)
 
+        with pytest.raises(TypeError):
+            fp.ylabel1d = {"a": "b"}
+
         ffigure_my = fp.plot_triangle()
         ffigure_my.axes.flat[0].set_xlim(-14, 14)
         ffigure_my.axes.flat[2].set_ylim(-8, 8)
@@ -855,3 +858,10 @@ class TestFisherPlotter:
         ffigure_my.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_mine.pdf"))
 
         ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle.pdf"))
+
+    def test_plot_2d_continuation(self):
+        fm = FisherMatrix(np.diag([1]))
+        fp = FisherPlotter(fm)
+
+        with pytest.raises(ValueError):
+            fp.plot_triangle()

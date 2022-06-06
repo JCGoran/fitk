@@ -62,7 +62,7 @@ class FisherBaseFigure(ABC):
         """
         Implements element access.
         """
-        pass
+        return NotImplemented
 
     @property
     def figure(self):

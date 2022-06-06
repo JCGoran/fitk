@@ -840,6 +840,18 @@ class TestFisherPlotter:
         ffigure_my.axes.flat[2].set_ylim(-8, 8)
         ffigure_my.axes.flat[-1].set_xlim(-8, 8)
 
+        # both should return the same thing
+        assert (
+            ffigure_my[ffigure_my.names[1], ffigure_my.names[0]]
+            == ffigure_my[ffigure_my.names[0], ffigure_my.names[1]]
+        )
+
+        # non-existing parameters
+        with pytest.raises(ParameterNotFoundError):
+            ffigure_my["asdf", "qwerty"]
+        with pytest.raises(ParameterNotFoundError):
+            ffigure_my[ffigure_my.names[0], "qwerty"]
+
         ffigure_my.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_mine.pdf"))
 
         ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle.pdf"))

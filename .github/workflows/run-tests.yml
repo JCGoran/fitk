@@ -70,31 +70,20 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
-      # install dependencies if cache does not exist
-      #----------------------------------------------
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-      #----------------------------------------------
-      # install your root project, if required
-      #----------------------------------------------
-      - name: Install library
-        run: poetry install --no-interaction
-      #----------------------------------------------
       #    add matrix specifics and run test suite
       #----------------------------------------------
       - name: Install numpy ${{ matrix.numpy-version }}
         run: |
           source .venv/bin/activate
-          pip install "numpy==${{ matrix.numpy-version }}"
+          python -m pip install "numpy==${{ matrix.numpy-version }}"
       - name: Install scipy ${{ matrix.scipy-version }}
         run: |
           source .venv/bin/activate
-          pip install "scipy==${{ matrix.scipy-version }}"
+          python -m pip install "scipy==${{ matrix.scipy-version }}"
       - name: Install matplotlib ${{ matrix.matplotlib-version }}
         run: |
           source .venv/bin/activate
-          pip install "matplotlib==${{ matrix.matplotlib-version }}"
+          python -m pip install "matplotlib==${{ matrix.matplotlib-version }}"
       - name: Run tests
         run: |
           source .venv/bin/activate

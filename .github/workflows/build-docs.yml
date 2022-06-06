@@ -30,7 +30,7 @@ jobs:
     # Build the site
     - name: Build the site
       run: |
-        python -m pdoc --math -o docs/build/html/ fitk
+        poetry run pdoc --math -o docs/build/html/ fitk
 
     # If we've pushed to master, push the book's HTML to github-pages
     - if: ${{ github.ref == 'refs/heads/master' }}

@@ -1,0 +1,12 @@
+env
+venv
+.env
+.venv
+__pycache__
+.coverage
+coverage.xml
+dist/
+*.swp
+.ipynb_checkpoints/
+tests/data_output/
+tags

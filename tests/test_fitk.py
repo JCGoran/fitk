@@ -19,8 +19,14 @@ from cosmicfish_pylib.fisher_plot import CosmicFishPlotter as CFFisherPlotter
 from cosmicfish_pylib.fisher_plot_analysis import (
     CosmicFish_FisherAnalysis as CFFisherAnalysis,
 )
-from fitk import FisherMatrix, FisherPlotter, bayes_factor, kl_divergence
-from fitk.fisher_plotter import plot_curve_1d, plot_curve_2d
+from fitk import (
+    FisherMatrix,
+    FisherPlotter,
+    bayes_factor,
+    kl_divergence,
+    plot_curve_1d,
+    plot_curve_2d,
+)
 from fitk.fisher_utils import (
     ParameterNotFoundError,
     float_to_latex,

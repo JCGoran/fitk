@@ -32,11 +32,3 @@ from fitk.fisher_plotter import (
     plot_curve_1d,
     plot_curve_2d,
 )
-from fitk.fisher_utils import (
-    float_to_latex,
-    get_index_of_other_array,
-    is_positive_semidefinite,
-    is_square,
-    is_symmetric,
-    reindex_array,
-)

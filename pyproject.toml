@@ -22,6 +22,7 @@ vegas = "^5.1.1"
 jupyterlab = "^3.4.2"
 cosmicfish = {git = "https://github.com/jcgoran/cosmicfish", rev = "feature/pip-install"}
 vermin = "^1.3.3"
+coverage = "^6.4.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

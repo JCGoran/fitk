@@ -482,6 +482,10 @@ class TestFisherMatrix:
             ).get_fisher_matrix(),
         )
 
+        # not one of special options, nor a callable
+        with pytest.raises(TypeError):
+            m.sort(key="not callable")
+
     def test_eq(self):
         assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(
             np.diag([2, 1]),
@@ -518,9 +522,28 @@ class TestFisherMatrix:
             )
         )
 
+    def test_trace(self):
+        data = FisherMatrix(np.diag([1, 2, 3]))
+
+        assert np.allclose(data.trace(), np.trace(data.values))
+
+    def test_condition_number(self):
+        data = FisherMatrix(np.diag([1, 2, 3]))
+
+        assert np.allclose(data.condition_number(), 3)
+
     def test_drop(self):
         data = FisherMatrix(np.diag([1, 2, 3]), fiducials=[-1, 0, 1])
         data_new = data.drop("p1")
+
+        # names to drop don't exist
+        with pytest.raises(ValueError):
+            data.drop("p1", "a", ignore_errors=False)
+
+        # ignoring errors, we get the correct thing
+        assert data.drop("p1", ignore_errors=False) == data.drop(
+            "p1", "a", ignore_errors=True
+        )
 
         assert np.allclose(data_new.values, np.diag([2, 3]))
         for old, new in zip(data_new.names, ["p2", "p3"]):
@@ -803,8 +826,6 @@ class TestFisherPlotter:
         fm_pessimistic = FisherMatrix.from_file(
             os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
         )
-        # fm_optimistic = fm_optimistic.drop("Omegam", "Omegab", invert=True)
-        # fm_pessimistic = fm_pessimistic.drop("Omegam", "Omegab", invert=True)
 
         fp = FisherPlotter(
             fm_pessimistic,
@@ -812,11 +833,7 @@ class TestFisherPlotter:
             labels=["pessimistic case", "optimistic case"],
         )
 
-        ffigure = fp.plot_triangle(
-            # legend=True,
-            # title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
-            plot_1d_curves=True,
-        )
+        ffigure = fp.plot_triangle(plot_1d_curves=True)
 
         ffigure.set_label_params(fontsize=30)
 

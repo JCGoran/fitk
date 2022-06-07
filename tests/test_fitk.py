@@ -146,29 +146,38 @@ class TestFisherOperations:
         fisher_base = FisherMatrix(np.diag([1, 2, 3]))
         fisher_extended = FisherMatrix(np.diag([1, 2, 3, 4, 5]))
         priors = [1, 1]
-        offsets = [0, 0, 0]
+        offsets = [0, 0, 0, 0, 0]
 
         assert np.allclose(
-            0.03558812717085886,
+            0.7117625434171772,
             bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=offsets),
         )
 
+        # mismatching sizes
         with pytest.raises(ValueError):
             bayes_factor(
-                fisher_base, fisher_extended.drop("p1"), priors=priors, offsets=offsets
+                fisher_base,
+                fisher_extended.drop(fisher_extended.names[0]),
+                priors=priors,
+                offsets=offsets,
             )
 
         # not a nested model
         with pytest.raises(ValueError):
             bayes_factor(fisher_base, fisher_base, priors=priors, offsets=offsets)
 
+        # wrong length of prior array
         with pytest.raises(ValueError):
             bayes_factor(fisher_base, fisher_extended, priors=[1], offsets=offsets)
+        # wrong length of offset array
         with pytest.raises(ValueError):
             bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=[0, 0])
 
+        # emit warning if offsets are larger than 1-sigma marg. errors
         with pytest.warns(UserWarning):
-            bayes_factor(fisher_base, fisher_extended, priors=priors, offsets=[5, 5, 5])
+            bayes_factor(
+                fisher_base, fisher_extended, priors=priors, offsets=[5, 5, 5, 5, 5]
+            )
 
     def test_kl_divergence(self):
         fisher1 = FisherMatrix(np.diag([1, 2, 3]))

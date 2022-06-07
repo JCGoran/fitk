@@ -23,17 +23,18 @@ def bayes_factor(
     offsets: Collection[float],
 ) -> float:
     r"""
-    Returns the Bayes factor for a nested model, defined as:
+    Returns the expected Bayes factor for a nested model (base model $M_B$ and
+    extended model $M_E$), defined as:
     $$
-        (2 \pi)^{-p / 2} \frac{\sqrt{\mathrm{det} \mathsf{F}_B}}{\sqrt{\mathrm{det} \mathsf{F}_E}}
-        \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_B \delta \theta_\beta\right]}
+        \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2} \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}{\sqrt{\mathrm{det} \mathsf{F}_B}}
+        \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
         \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
     $$
-    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n
-    \times n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model
-    (size $n' \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is
-    the offset array (size $n$), and $\Delta \theta_\alpha$ is the prior
-    volume (size $p$). For more details, see
+    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n \times
+    n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
+    \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
+    (size $n'$), and $\Delta \theta_\alpha$ is the array of priors on the extra
+    parameters in the extended model (size $p$). For more details, see
     [arXiv:astro-ph/0703191](https://arxiv.org/abs/astro-ph/0703191), eq. (14).
 
     Parameters
@@ -76,9 +77,7 @@ def bayes_factor(
     >>> fisher_base = FisherMatrix(np.diag([1, 2, 3]))
     >>> fisher_extended = FisherMatrix(np.diag([1, 2, 3, 4, 5]))
     >>> bayes_factor(fisher_base, fisher_extended,
-    ... priors=[1, 1], offsets=[0, 0, 0])
-    0.035588127170858866
-
+    ... priors=[1, 1], offsets=[0, 0, 0, 0, 0])
     """
     if not set(fisher_base.names).issubset(set(fisher_extended.names)):
         raise ValueError(
@@ -100,24 +99,24 @@ def bayes_factor(
             f"does not match the number of extra parameters from the extended model ({n_extra})"
         )
 
-    if len(offsets) != n_base:
+    if len(offsets) != n_extended:
         raise ValueError(
             f"The number of elements in the offset array ({len(offsets)}) "
-            f"does not match the number of parameters in the base model ({n_base})"
+            f"does not match the number of parameters in the extended model ({n_extended})"
         )
 
-    if np.any(np.array(offsets) / fisher_base.constraints() >= 1):
+    if np.any(np.array(offsets) / fisher_extended.constraints(marginalized=True) >= 1):
         warnings.warn(
-            "The Fisher matrix of the base model has offsets "
+            "The Fisher matrix of the extended model has offsets "
             "larger than the 1 sigma marginalized error, "
             "the obtained result may not be reliable"
         )
 
     return np.exp(
         -np.log(2 * np.pi) * n_extra / 2
-        + np.linalg.slogdet(fisher_base.values)[-1] / 2
-        - np.linalg.slogdet(fisher_extended.values)[-1] / 2
-        - np.array(offsets) @ fisher_base.values @ np.array(offsets) / 2
+        + np.linalg.slogdet(fisher_extended.values)[-1] / 2
+        - np.linalg.slogdet(fisher_base.values)[-1] / 2
+        - np.array(offsets) @ fisher_extended.values @ np.array(offsets) / 2
         + np.sum(np.log(np.array(priors)))
     )
 

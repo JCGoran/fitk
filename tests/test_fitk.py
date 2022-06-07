@@ -803,8 +803,8 @@ class TestFisherPlotter:
         fm_pessimistic = FisherMatrix.from_file(
             os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
         )
-        fm_optimistic = fm_optimistic.drop("Omegam", "Omegab", invert=True)
-        fm_pessimistic = fm_pessimistic.drop("Omegam", "Omegab", invert=True)
+        # fm_optimistic = fm_optimistic.drop("Omegam", "Omegab", invert=True)
+        # fm_pessimistic = fm_pessimistic.drop("Omegam", "Omegab", invert=True)
 
         fp = FisherPlotter(
             fm_pessimistic,
@@ -817,6 +817,8 @@ class TestFisherPlotter:
             # title=r'Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology',
             plot_1d_curves=True,
         )
+
+        ffigure.set_label_params(fontsize=30)
 
         ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_euclid.pdf"))
 

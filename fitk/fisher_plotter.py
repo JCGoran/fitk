@@ -7,6 +7,7 @@ from __future__ import annotations
 
 # standard library imports
 from abc import ABC, abstractmethod
+from itertools import product
 from pathlib import Path
 from typing import Collection, Optional, Tuple, Union
 
@@ -134,6 +135,39 @@ class FisherBaseFigure(ABC):
             `figure.savefig`
         """
         return self.figure.savefig(path, dpi=dpi, bbox_inches=bbox_inches, **kwargs)
+
+    def set_label_params(
+        self,
+        **kwargs,
+    ):
+        """
+        Collectively sets both x and y label parameters.
+
+        Parameters
+        ----------
+        kwargs
+            any keyword arguments that are also valid for
+            `matplotlib.text.Text`, see [the
+            documentation](https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text)
+            for details
+
+        Returns
+        -------
+        None
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            # only set the parameters which are not empty (should this be done
+            # for all of them instead?)
+            if self[nameiter].get_xlabel():
+                self[nameiter].set_xlabel(
+                    self[nameiter].get_xlabel(),
+                    **kwargs,
+                )
+            if self[nameiter].get_ylabel():
+                self[nameiter].set_ylabel(
+                    self[nameiter].get_ylabel(),
+                    **kwargs,
+                )
 
 
 class FisherFigure1D(FisherBaseFigure):

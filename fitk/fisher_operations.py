@@ -62,7 +62,7 @@ def bayes_factor(
     * `fisher_extended` does not have at least the same parameter names as `fisher_base`
     * the size of `priors` is not equal to the difference between the sizes of
     `fisher_extended` and `fisher_base`
-    * the size of `offsets` is not equal to the size of `fisher_base`
+    * the size of `offsets` is not equal to the size of `fisher_extended`
 
     Notes
     -----

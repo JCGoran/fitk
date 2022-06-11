@@ -466,105 +466,133 @@ class FisherPlotter:
             latex_names = self.values[0].latex_names
 
             # set automatic limits
-            for i in range(size):
-                for j in range(size):
-                    if i == j:
-                        ax[i, i].set_yticks([])
-                        ax[i, i].set_yticklabels([])
-                    if i > 0 and 0 < j < size - 1:
-                        ax[i, j].set_yticks([])
-                        ax[i, j].set_yticklabels([])
+            for i, j in product(range(size), repeat=2):
+                if i == j:
+                    ax[i, i].set_yticks([])
+                    ax[i, i].set_yticklabels([])
+                if i > 0 and 0 < j < size - 1:
+                    ax[i, j].set_yticks([])
+                    ax[i, j].set_yticklabels([])
 
-            for (i, namey), latex_namey in zip(enumerate(names), latex_names):
-                for (j, namex), latex_namex in zip(enumerate(names), latex_names):
-                    # labels for 2D contours (increasing y)
-                    if i > 0 and j == 0:
-                        ax[i, j].set_ylabel(latex_namey)
+            for i, j in product(range(len(names)), repeat=2):
+                namey, latex_namey, namex, latex_namex = (
+                    names[i],
+                    latex_names[i],
+                    names[j],
+                    latex_names[j],
+                )
+                # labels for 2D contours (increasing y)
+                if i > 0 and j == 0:
+                    ax[i, j].set_ylabel(latex_namey)
 
-                    # labels for 2D contours (increasing x)
-                    if i == size - 1:
-                        ax[i, j].set_xlabel(latex_namex)
+                # labels for 2D contours (increasing x)
+                if i == size - 1:
+                    ax[i, j].set_xlabel(latex_namex)
 
-                    # removing any unnecessary axes from the gridspec
-                    # TODO should they be removed, or somehow just made invisible?
-                    if i < j:
-                        ax[i, j].remove()
-                        # ax[i, j].axis('off')
-                    # plotting the 2D contours
-                    elif i > j:
+                # removing any unnecessary axes from the gridspec
+                # TODO should they be removed, or somehow just made invisible?
+                if i < j:
+                    ax[i, j].remove()
+                    # ax[i, j].axis('off')
+                # plotting the 2D contours
+                elif i > j:
+                    for c, fm in zip(get_default_cycler(), self.values):
+                        # plot 1-sigma 2D curves
+                        # NOTE this is the "68% of the probability of a
+                        # single parameter lying within the bounds projected
+                        # onto a parameter axis"
+                        plot_curve_2d(
+                            fm,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            fill=False,
+                            color=c["color"],
+                            zorder=20,
+                        )
+                        # same thing, but shaded
+                        plot_curve_2d(
+                            fm,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            fill=True,
+                            alpha=0.2,
+                            ec=None,
+                            color=c["color"],
+                            zorder=20,
+                        )
+
+                        # the 2-sigma
+                        plot_curve_2d(
+                            fm,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=2,
+                            fill=False,
+                            color=c["color"],
+                            zorder=20,
+                        )
+                        # same thing, but shaded
+                        plot_curve_2d(
+                            fm,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=2,
+                            fill=True,
+                            alpha=0.1,
+                            ec=None,
+                            color=c["color"],
+                            zorder=20,
+                        )
+
+                else:
+                    # plotting the 1D Gaussians
+                    if plot_1d_curves is True:
                         for c, fm in zip(get_default_cycler(), self.values):
-                            # plot 1-sigma 2D curves
-                            # NOTE this is the "68% of the probability of a
-                            # single parameter lying within the bounds projected
-                            # onto a parameter axis"
-                            plot_curve_2d(
+                            plot_curve_1d(
                                 fm,
                                 namex,
-                                namey,
-                                ax=ax[i, j],
-                                fill=False,
+                                ax=ax[i, i],
                                 color=c["color"],
-                                zorder=20,
                             )
 
-                            # the 2-sigma
-                            plot_curve_2d(
-                                fm,
-                                namex,
-                                namey,
-                                ax=ax[i, j],
-                                scaling_factor=2,
-                                fill=False,
+                            # 1 and 2 sigma shading
+                            add_shading_1d(
+                                fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                sigma=fm.constraints(namex, marginalized=True),
+                                ax=ax[i, i],
+                                level=1,
+                                alpha=0.2,
                                 color=c["color"],
-                                zorder=20,
+                                ec=None,
+                            )
+                            add_shading_1d(
+                                fiducial=fm.fiducials[np.where(fm.names == namex)],
+                                sigma=fm.constraints(namex, marginalized=True),
+                                ax=ax[i, i],
+                                level=2,
+                                alpha=0.1,
+                                color=c["color"],
+                                ec=None,
                             )
 
                     else:
-                        # plotting the 1D Gaussians
-                        if plot_1d_curves is True:
-                            for c, fm in zip(get_default_cycler(), self.values):
-                                plot_curve_1d(
-                                    fm,
-                                    namex,
-                                    ax=ax[i, i],
-                                    color=c["color"],
-                                )
-
-                                # 1 and 2 sigma shading
-                                add_shading_1d(
-                                    fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                    sigma=fm.constraints(namex, marginalized=True),
-                                    ax=ax[i, i],
-                                    level=1,
-                                    alpha=0.2,
-                                    color=c["color"],
-                                    ec=None,
-                                )
-                                add_shading_1d(
-                                    fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                    sigma=fm.constraints(namex, marginalized=True),
-                                    ax=ax[i, i],
-                                    level=2,
-                                    alpha=0.1,
-                                    color=c["color"],
-                                    ec=None,
-                                )
-
-                        else:
-                            ax[i, i].remove()
+                        ax[i, i].remove()
 
             # set automatic limits
-            for i in range(size):
-                for j in range(size):
-                    try:
-                        ax[i, j].relim()
-                        ax[i, j].autoscale_view()
-                        if i == j:
-                            ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
-                            ax[i, i].set_yticks([])
-                            ax[i, i].set_yticklabels([])
-                    except AttributeError:
-                        pass
+            for i, j in product(range(size), repeat=2):
+                try:
+                    ax[i, j].relim()
+                    ax[i, j].autoscale_view()
+                    if i == j:
+                        ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
+                        ax[i, i].set_yticks([])
+                        ax[i, i].set_yticklabels([])
+                except AttributeError:
+                    pass
 
         return FisherFigure2D(fig, ax, names)
 

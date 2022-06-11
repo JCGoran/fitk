@@ -34,8 +34,7 @@ def bayes_factor(
     n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
     \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
     (size $n'$), and $\Delta \theta_\alpha$ is the array of priors on the extra
-    parameters in the extended model (size $p$). For more details, see
-    [arXiv:astro-ph/0703191](https://arxiv.org/abs/astro-ph/0703191), eq. (14).
+    parameters in the extended model (size $p$).
 
     Parameters
     ----------
@@ -66,6 +65,9 @@ def bayes_factor(
 
     Notes
     -----
+    For more details, see
+    [arXiv:astro-ph/0703191](https://arxiv.org/abs/astro-ph/0703191), eq. (14).
+
     Internally, the method first computes the logarithm of the Bayes factor to prevent
     numerical over- and underflow, and returns the exponential of that result.
 
@@ -131,8 +133,7 @@ def kl_divergence(
     Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
     P_1)$, its expectation value, $\langle D \rangle$, and the square roots
     of the variance, $\sqrt{\sigma^2(D)}$, between two Gaussian probability
-    distributions, $P_1$ and $P_2$. For more details, see
-    [arXiv:1402.3593](https://arxiv.org/abs/1402.3593), section 3.
+    distributions, $P_1$ and $P_2$.
 
     Parameters
     ----------
@@ -158,8 +159,14 @@ def kl_divergence(
 
     Raises
     ------
-    * `MismatchingValueError` if the parameter names of the Fisher matrices do not match
+    * `MismatchingValueError` if the parameter names of the Fisher matrices do
+    not match
     * `ValueError` if the value of `units` cannot be parsed
+
+    Notes
+    -----
+    For more details, see [arXiv:1402.3593](https://arxiv.org/abs/1402.3593),
+    section 3.
     """
     if set(fisher1.names) != set(fisher2.names):
         raise MismatchingValuesError("parameter name", fisher1.names, fisher2.names)

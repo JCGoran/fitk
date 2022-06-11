@@ -406,7 +406,7 @@ class FisherMatrix:
 
     def __getitem__(
         self,
-        keys: Union[Tuple[str], slice],
+        keys: Union[Tuple[str, ...], slice],
     ):
         """
         Implements access to elements in the Fisher object.

@@ -1514,3 +1514,29 @@ class FisherMatrix:
         float
         """
         return self.__class__(self.correlation_matrix(), names=self.names)[name1, name2]
+
+    def figure_of_merit(self) -> float:
+        r"""
+        Computes the figure of merit (FoM), defined here as:
+        $$
+            \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
+        $$
+        where $\mathsf{F}$ denotes the Fisher matrix.
+
+        Returns
+        -------
+        float
+
+        Notes
+        -----
+        Occasionally, the FoM (also sometimes called the signal-to-noise,
+        $\mathrm{SNR}$), is defined as:
+        $$
+            \mathrm{SNR} = \sqrt{\det \mathsf{F}}
+        $$
+        The two are related by a simple transformation:
+        $$
+            \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}
+        $$
+        """
+        return np.linalg.slogdet(self.values)[-1] / 2

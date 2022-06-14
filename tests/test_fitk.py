@@ -753,6 +753,14 @@ class TestFisherMatrix:
             fisher1.figure_of_merit(), np.log(np.sqrt(np.linalg.det(fisher1.values)))
         )
 
+    def test_figure_of_correlation(self):
+        fisher1 = FisherMatrix([[1, 1 / 2], [1 / 2, 1]])
+
+        assert np.allclose(
+            fisher1.figure_of_correlation(),
+            -np.log(np.sqrt(np.linalg.det(fisher1.correlation_matrix()))),
+        )
+
 
 class TestFisherPlotter:
     def test_init(self):

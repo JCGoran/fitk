@@ -1540,3 +1540,18 @@ class FisherMatrix:
         $$
         """
         return np.linalg.slogdet(self.values)[-1] / 2
+
+    def figure_of_correlation(self) -> float:
+        r"""
+        Computes the figure of correlation (FoC), defined here as:
+        $$
+            \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
+        $$
+        where $\mathsf{P}$ denotes the correlation matrix (see
+        `correlation_matrix` for definition of $\mathsf{P}$).
+
+        Returns
+        -------
+        float
+        """
+        return -np.linalg.slogdet(self.correlation_matrix())[-1] / 2

@@ -735,6 +735,17 @@ class TestFisherMatrix:
         assert np.allclose(corr2[1, 0], -1 / 2)
         assert np.allclose(corr2[1, 1], 1)
 
+    def test_correlation_coefficient(self):
+        fisher1 = FisherMatrix([[1, 1 / 2], [1 / 2, 1]])
+
+        assert np.allclose(
+            fisher1.correlation_coefficient(fisher1.names[0], fisher1.names[0]), 1
+        )
+
+        assert np.allclose(
+            fisher1.correlation_coefficient(fisher1.names[0], fisher1.names[1]), -1 / 2
+        )
+
 
 class TestFisherPlotter:
     def test_init(self):

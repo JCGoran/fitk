@@ -1492,3 +1492,25 @@ class FisherMatrix:
         diag = np.diag(inv)
 
         return inv / np.sqrt(np.outer(diag, diag))
+
+    def correlation_coefficient(
+        self,
+        name1: str,
+        name2: str,
+    ) -> float:
+        r"""
+        Returns the correlation coefficient between two parameters.
+
+        Parameters
+        ----------
+        name1
+            the name of the first parameter
+
+        name2
+            the name of the second parameter
+
+        Returns
+        -------
+        float
+        """
+        return self.__class__(self.correlation_matrix(), names=self.names)[name1, name2]

@@ -123,6 +123,12 @@
                         <li>
                                 <a class="function" href="#FisherMatrix.correlation_coefficient">correlation_coefficient</a>
                         </li>
+                        <li>
+                                <a class="function" href="#FisherMatrix.figure_of_merit">figure_of_merit</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FisherMatrix.figure_of_correlation">figure_of_correlation</a>
+                        </li>
                 </ul>
 
             </li>
@@ -1719,6 +1725,47 @@ following way:</p>
 </span><span id="FisherMatrix-1515"><a href="#FisherMatrix-1515"><span class="linenos">1515</span></a><span class="sd">        float</span>
 </span><span id="FisherMatrix-1516"><a href="#FisherMatrix-1516"><span class="linenos">1516</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherMatrix-1517"><a href="#FisherMatrix-1517"><span class="linenos">1517</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="p">(),</span> <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)[</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">]</span>
+</span><span id="FisherMatrix-1518"><a href="#FisherMatrix-1518"><span class="linenos">1518</span></a>
+</span><span id="FisherMatrix-1519"><a href="#FisherMatrix-1519"><span class="linenos">1519</span></a>    <span class="k">def</span> <span class="nf">figure_of_merit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix-1520"><a href="#FisherMatrix-1520"><span class="linenos">1520</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1521"><a href="#FisherMatrix-1521"><span class="linenos">1521</span></a><span class="sd">        Computes the figure of merit (FoM), defined here as:</span>
+</span><span id="FisherMatrix-1522"><a href="#FisherMatrix-1522"><span class="linenos">1522</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1523"><a href="#FisherMatrix-1523"><span class="linenos">1523</span></a><span class="sd">            \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]</span>
+</span><span id="FisherMatrix-1524"><a href="#FisherMatrix-1524"><span class="linenos">1524</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1525"><a href="#FisherMatrix-1525"><span class="linenos">1525</span></a><span class="sd">        where $\mathsf{F}$ denotes the Fisher matrix.</span>
+</span><span id="FisherMatrix-1526"><a href="#FisherMatrix-1526"><span class="linenos">1526</span></a>
+</span><span id="FisherMatrix-1527"><a href="#FisherMatrix-1527"><span class="linenos">1527</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix-1528"><a href="#FisherMatrix-1528"><span class="linenos">1528</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix-1529"><a href="#FisherMatrix-1529"><span class="linenos">1529</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix-1530"><a href="#FisherMatrix-1530"><span class="linenos">1530</span></a>
+</span><span id="FisherMatrix-1531"><a href="#FisherMatrix-1531"><span class="linenos">1531</span></a><span class="sd">        Notes</span>
+</span><span id="FisherMatrix-1532"><a href="#FisherMatrix-1532"><span class="linenos">1532</span></a><span class="sd">        -----</span>
+</span><span id="FisherMatrix-1533"><a href="#FisherMatrix-1533"><span class="linenos">1533</span></a><span class="sd">        Occasionally, the FoM (also sometimes called the signal-to-noise,</span>
+</span><span id="FisherMatrix-1534"><a href="#FisherMatrix-1534"><span class="linenos">1534</span></a><span class="sd">        $\mathrm{SNR}$), is defined as:</span>
+</span><span id="FisherMatrix-1535"><a href="#FisherMatrix-1535"><span class="linenos">1535</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1536"><a href="#FisherMatrix-1536"><span class="linenos">1536</span></a><span class="sd">            \mathrm{SNR} = \sqrt{\det \mathsf{F}}</span>
+</span><span id="FisherMatrix-1537"><a href="#FisherMatrix-1537"><span class="linenos">1537</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1538"><a href="#FisherMatrix-1538"><span class="linenos">1538</span></a><span class="sd">        The two are related by a simple transformation:</span>
+</span><span id="FisherMatrix-1539"><a href="#FisherMatrix-1539"><span class="linenos">1539</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1540"><a href="#FisherMatrix-1540"><span class="linenos">1540</span></a><span class="sd">            \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}</span>
+</span><span id="FisherMatrix-1541"><a href="#FisherMatrix-1541"><span class="linenos">1541</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1542"><a href="#FisherMatrix-1542"><span class="linenos">1542</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1543"><a href="#FisherMatrix-1543"><span class="linenos">1543</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+</span><span id="FisherMatrix-1544"><a href="#FisherMatrix-1544"><span class="linenos">1544</span></a>
+</span><span id="FisherMatrix-1545"><a href="#FisherMatrix-1545"><span class="linenos">1545</span></a>    <span class="k">def</span> <span class="nf">figure_of_correlation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix-1546"><a href="#FisherMatrix-1546"><span class="linenos">1546</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1547"><a href="#FisherMatrix-1547"><span class="linenos">1547</span></a><span class="sd">        Computes the figure of correlation (FoC), defined here as:</span>
+</span><span id="FisherMatrix-1548"><a href="#FisherMatrix-1548"><span class="linenos">1548</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1549"><a href="#FisherMatrix-1549"><span class="linenos">1549</span></a><span class="sd">            \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]</span>
+</span><span id="FisherMatrix-1550"><a href="#FisherMatrix-1550"><span class="linenos">1550</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix-1551"><a href="#FisherMatrix-1551"><span class="linenos">1551</span></a><span class="sd">        where $\mathsf{P}$ denotes the correlation matrix (see</span>
+</span><span id="FisherMatrix-1552"><a href="#FisherMatrix-1552"><span class="linenos">1552</span></a><span class="sd">        `correlation_matrix` for definition of $\mathsf{P}$).</span>
+</span><span id="FisherMatrix-1553"><a href="#FisherMatrix-1553"><span class="linenos">1553</span></a>
+</span><span id="FisherMatrix-1554"><a href="#FisherMatrix-1554"><span class="linenos">1554</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix-1555"><a href="#FisherMatrix-1555"><span class="linenos">1555</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix-1556"><a href="#FisherMatrix-1556"><span class="linenos">1556</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix-1557"><a href="#FisherMatrix-1557"><span class="linenos">1557</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1558"><a href="#FisherMatrix-1558"><span class="linenos">1558</span></a>        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
 </span></pre></div>
 
 
@@ -3568,6 +3615,112 @@ matrix (the inverse of the Fisher matrix).</p>
 
 <p>name2
     the name of the second parameter</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>float</p>
+</div>
+
+
+                            </div>
+                            <div id="FisherMatrix.figure_of_merit" class="classattr">
+                                        <input id="FisherMatrix.figure_of_merit-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">figure_of_merit</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+                <label class="view-source-button" for="FisherMatrix.figure_of_merit-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FisherMatrix.figure_of_merit"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FisherMatrix.figure_of_merit-1519"><a href="#FisherMatrix.figure_of_merit-1519"><span class="linenos">1519</span></a>    <span class="k">def</span> <span class="nf">figure_of_merit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix.figure_of_merit-1520"><a href="#FisherMatrix.figure_of_merit-1520"><span class="linenos">1520</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.figure_of_merit-1521"><a href="#FisherMatrix.figure_of_merit-1521"><span class="linenos">1521</span></a><span class="sd">        Computes the figure of merit (FoM), defined here as:</span>
+</span><span id="FisherMatrix.figure_of_merit-1522"><a href="#FisherMatrix.figure_of_merit-1522"><span class="linenos">1522</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1523"><a href="#FisherMatrix.figure_of_merit-1523"><span class="linenos">1523</span></a><span class="sd">            \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]</span>
+</span><span id="FisherMatrix.figure_of_merit-1524"><a href="#FisherMatrix.figure_of_merit-1524"><span class="linenos">1524</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1525"><a href="#FisherMatrix.figure_of_merit-1525"><span class="linenos">1525</span></a><span class="sd">        where $\mathsf{F}$ denotes the Fisher matrix.</span>
+</span><span id="FisherMatrix.figure_of_merit-1526"><a href="#FisherMatrix.figure_of_merit-1526"><span class="linenos">1526</span></a>
+</span><span id="FisherMatrix.figure_of_merit-1527"><a href="#FisherMatrix.figure_of_merit-1527"><span class="linenos">1527</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix.figure_of_merit-1528"><a href="#FisherMatrix.figure_of_merit-1528"><span class="linenos">1528</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix.figure_of_merit-1529"><a href="#FisherMatrix.figure_of_merit-1529"><span class="linenos">1529</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix.figure_of_merit-1530"><a href="#FisherMatrix.figure_of_merit-1530"><span class="linenos">1530</span></a>
+</span><span id="FisherMatrix.figure_of_merit-1531"><a href="#FisherMatrix.figure_of_merit-1531"><span class="linenos">1531</span></a><span class="sd">        Notes</span>
+</span><span id="FisherMatrix.figure_of_merit-1532"><a href="#FisherMatrix.figure_of_merit-1532"><span class="linenos">1532</span></a><span class="sd">        -----</span>
+</span><span id="FisherMatrix.figure_of_merit-1533"><a href="#FisherMatrix.figure_of_merit-1533"><span class="linenos">1533</span></a><span class="sd">        Occasionally, the FoM (also sometimes called the signal-to-noise,</span>
+</span><span id="FisherMatrix.figure_of_merit-1534"><a href="#FisherMatrix.figure_of_merit-1534"><span class="linenos">1534</span></a><span class="sd">        $\mathrm{SNR}$), is defined as:</span>
+</span><span id="FisherMatrix.figure_of_merit-1535"><a href="#FisherMatrix.figure_of_merit-1535"><span class="linenos">1535</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1536"><a href="#FisherMatrix.figure_of_merit-1536"><span class="linenos">1536</span></a><span class="sd">            \mathrm{SNR} = \sqrt{\det \mathsf{F}}</span>
+</span><span id="FisherMatrix.figure_of_merit-1537"><a href="#FisherMatrix.figure_of_merit-1537"><span class="linenos">1537</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1538"><a href="#FisherMatrix.figure_of_merit-1538"><span class="linenos">1538</span></a><span class="sd">        The two are related by a simple transformation:</span>
+</span><span id="FisherMatrix.figure_of_merit-1539"><a href="#FisherMatrix.figure_of_merit-1539"><span class="linenos">1539</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1540"><a href="#FisherMatrix.figure_of_merit-1540"><span class="linenos">1540</span></a><span class="sd">            \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}</span>
+</span><span id="FisherMatrix.figure_of_merit-1541"><a href="#FisherMatrix.figure_of_merit-1541"><span class="linenos">1541</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_merit-1542"><a href="#FisherMatrix.figure_of_merit-1542"><span class="linenos">1542</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.figure_of_merit-1543"><a href="#FisherMatrix.figure_of_merit-1543"><span class="linenos">1543</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Computes the figure of merit (FoM), defined here as:
+$$
+    \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
+$$
+where $\mathsf{F}$ denotes the Fisher matrix.</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>float</p>
+
+<h2 id="notes">Notes</h2>
+
+<p>Occasionally, the FoM (also sometimes called the signal-to-noise,
+$\mathrm{SNR}$), is defined as:
+$$
+    \mathrm{SNR} = \sqrt{\det \mathsf{F}}
+$$
+The two are related by a simple transformation:
+$$
+    \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}
+$$</p>
+</div>
+
+
+                            </div>
+                            <div id="FisherMatrix.figure_of_correlation" class="classattr">
+                                        <input id="FisherMatrix.figure_of_correlation-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">figure_of_correlation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+                <label class="view-source-button" for="FisherMatrix.figure_of_correlation-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FisherMatrix.figure_of_correlation"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FisherMatrix.figure_of_correlation-1545"><a href="#FisherMatrix.figure_of_correlation-1545"><span class="linenos">1545</span></a>    <span class="k">def</span> <span class="nf">figure_of_correlation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix.figure_of_correlation-1546"><a href="#FisherMatrix.figure_of_correlation-1546"><span class="linenos">1546</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.figure_of_correlation-1547"><a href="#FisherMatrix.figure_of_correlation-1547"><span class="linenos">1547</span></a><span class="sd">        Computes the figure of correlation (FoC), defined here as:</span>
+</span><span id="FisherMatrix.figure_of_correlation-1548"><a href="#FisherMatrix.figure_of_correlation-1548"><span class="linenos">1548</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_correlation-1549"><a href="#FisherMatrix.figure_of_correlation-1549"><span class="linenos">1549</span></a><span class="sd">            \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]</span>
+</span><span id="FisherMatrix.figure_of_correlation-1550"><a href="#FisherMatrix.figure_of_correlation-1550"><span class="linenos">1550</span></a><span class="sd">        $$</span>
+</span><span id="FisherMatrix.figure_of_correlation-1551"><a href="#FisherMatrix.figure_of_correlation-1551"><span class="linenos">1551</span></a><span class="sd">        where $\mathsf{P}$ denotes the correlation matrix (see</span>
+</span><span id="FisherMatrix.figure_of_correlation-1552"><a href="#FisherMatrix.figure_of_correlation-1552"><span class="linenos">1552</span></a><span class="sd">        `correlation_matrix` for definition of $\mathsf{P}$).</span>
+</span><span id="FisherMatrix.figure_of_correlation-1553"><a href="#FisherMatrix.figure_of_correlation-1553"><span class="linenos">1553</span></a>
+</span><span id="FisherMatrix.figure_of_correlation-1554"><a href="#FisherMatrix.figure_of_correlation-1554"><span class="linenos">1554</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix.figure_of_correlation-1555"><a href="#FisherMatrix.figure_of_correlation-1555"><span class="linenos">1555</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix.figure_of_correlation-1556"><a href="#FisherMatrix.figure_of_correlation-1556"><span class="linenos">1556</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix.figure_of_correlation-1557"><a href="#FisherMatrix.figure_of_correlation-1557"><span class="linenos">1557</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.figure_of_correlation-1558"><a href="#FisherMatrix.figure_of_correlation-1558"><span class="linenos">1558</span></a>        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Computes the figure of correlation (FoC), defined here as:
+$$
+    \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
+$$
+where $\mathsf{P}$ denotes the correlation matrix (see
+<code><a href="#FisherMatrix.correlation_matrix">correlation_matrix</a></code> for definition of $\mathsf{P}$).</p>
 
 <h2 id="returns">Returns</h2>
 

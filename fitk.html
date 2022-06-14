@@ -120,6 +120,9 @@
                         <li>
                                 <a class="function" href="#FisherMatrix.correlation_matrix">correlation_matrix</a>
                         </li>
+                        <li>
+                                <a class="function" href="#FisherMatrix.correlation_coefficient">correlation_coefficient</a>
+                        </li>
                 </ul>
 
             </li>
@@ -1694,6 +1697,28 @@ following way:</p>
 </span><span id="FisherMatrix-1493"><a href="#FisherMatrix-1493"><span class="linenos">1493</span></a>        <span class="n">diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">inv</span><span class="p">)</span>
 </span><span id="FisherMatrix-1494"><a href="#FisherMatrix-1494"><span class="linenos">1494</span></a>
 </span><span id="FisherMatrix-1495"><a href="#FisherMatrix-1495"><span class="linenos">1495</span></a>        <span class="k">return</span> <span class="n">inv</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">diag</span><span class="p">,</span> <span class="n">diag</span><span class="p">))</span>
+</span><span id="FisherMatrix-1496"><a href="#FisherMatrix-1496"><span class="linenos">1496</span></a>
+</span><span id="FisherMatrix-1497"><a href="#FisherMatrix-1497"><span class="linenos">1497</span></a>    <span class="k">def</span> <span class="nf">correlation_coefficient</span><span class="p">(</span>
+</span><span id="FisherMatrix-1498"><a href="#FisherMatrix-1498"><span class="linenos">1498</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="FisherMatrix-1499"><a href="#FisherMatrix-1499"><span class="linenos">1499</span></a>        <span class="n">name1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FisherMatrix-1500"><a href="#FisherMatrix-1500"><span class="linenos">1500</span></a>        <span class="n">name2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FisherMatrix-1501"><a href="#FisherMatrix-1501"><span class="linenos">1501</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix-1502"><a href="#FisherMatrix-1502"><span class="linenos">1502</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1503"><a href="#FisherMatrix-1503"><span class="linenos">1503</span></a><span class="sd">        Returns the correlation coefficient between two parameters.</span>
+</span><span id="FisherMatrix-1504"><a href="#FisherMatrix-1504"><span class="linenos">1504</span></a>
+</span><span id="FisherMatrix-1505"><a href="#FisherMatrix-1505"><span class="linenos">1505</span></a><span class="sd">        Parameters</span>
+</span><span id="FisherMatrix-1506"><a href="#FisherMatrix-1506"><span class="linenos">1506</span></a><span class="sd">        ----------</span>
+</span><span id="FisherMatrix-1507"><a href="#FisherMatrix-1507"><span class="linenos">1507</span></a><span class="sd">        name1</span>
+</span><span id="FisherMatrix-1508"><a href="#FisherMatrix-1508"><span class="linenos">1508</span></a><span class="sd">            the name of the first parameter</span>
+</span><span id="FisherMatrix-1509"><a href="#FisherMatrix-1509"><span class="linenos">1509</span></a>
+</span><span id="FisherMatrix-1510"><a href="#FisherMatrix-1510"><span class="linenos">1510</span></a><span class="sd">        name2</span>
+</span><span id="FisherMatrix-1511"><a href="#FisherMatrix-1511"><span class="linenos">1511</span></a><span class="sd">            the name of the second parameter</span>
+</span><span id="FisherMatrix-1512"><a href="#FisherMatrix-1512"><span class="linenos">1512</span></a>
+</span><span id="FisherMatrix-1513"><a href="#FisherMatrix-1513"><span class="linenos">1513</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix-1514"><a href="#FisherMatrix-1514"><span class="linenos">1514</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix-1515"><a href="#FisherMatrix-1515"><span class="linenos">1515</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix-1516"><a href="#FisherMatrix-1516"><span class="linenos">1516</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix-1517"><a href="#FisherMatrix-1517"><span class="linenos">1517</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="p">(),</span> <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)[</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -3495,6 +3520,58 @@ matrix (the inverse of the Fisher matrix).</p>
 <h2 id="returns">Returns</h2>
 
 <p>array-like matrix of floats</p>
+</div>
+
+
+                            </div>
+                            <div id="FisherMatrix.correlation_coefficient" class="classattr">
+                                        <input id="FisherMatrix.correlation_coefficient-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">correlation_coefficient</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">name1</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">name2</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+                <label class="view-source-button" for="FisherMatrix.correlation_coefficient-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FisherMatrix.correlation_coefficient"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FisherMatrix.correlation_coefficient-1497"><a href="#FisherMatrix.correlation_coefficient-1497"><span class="linenos">1497</span></a>    <span class="k">def</span> <span class="nf">correlation_coefficient</span><span class="p">(</span>
+</span><span id="FisherMatrix.correlation_coefficient-1498"><a href="#FisherMatrix.correlation_coefficient-1498"><span class="linenos">1498</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="FisherMatrix.correlation_coefficient-1499"><a href="#FisherMatrix.correlation_coefficient-1499"><span class="linenos">1499</span></a>        <span class="n">name1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FisherMatrix.correlation_coefficient-1500"><a href="#FisherMatrix.correlation_coefficient-1500"><span class="linenos">1500</span></a>        <span class="n">name2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FisherMatrix.correlation_coefficient-1501"><a href="#FisherMatrix.correlation_coefficient-1501"><span class="linenos">1501</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="FisherMatrix.correlation_coefficient-1502"><a href="#FisherMatrix.correlation_coefficient-1502"><span class="linenos">1502</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.correlation_coefficient-1503"><a href="#FisherMatrix.correlation_coefficient-1503"><span class="linenos">1503</span></a><span class="sd">        Returns the correlation coefficient between two parameters.</span>
+</span><span id="FisherMatrix.correlation_coefficient-1504"><a href="#FisherMatrix.correlation_coefficient-1504"><span class="linenos">1504</span></a>
+</span><span id="FisherMatrix.correlation_coefficient-1505"><a href="#FisherMatrix.correlation_coefficient-1505"><span class="linenos">1505</span></a><span class="sd">        Parameters</span>
+</span><span id="FisherMatrix.correlation_coefficient-1506"><a href="#FisherMatrix.correlation_coefficient-1506"><span class="linenos">1506</span></a><span class="sd">        ----------</span>
+</span><span id="FisherMatrix.correlation_coefficient-1507"><a href="#FisherMatrix.correlation_coefficient-1507"><span class="linenos">1507</span></a><span class="sd">        name1</span>
+</span><span id="FisherMatrix.correlation_coefficient-1508"><a href="#FisherMatrix.correlation_coefficient-1508"><span class="linenos">1508</span></a><span class="sd">            the name of the first parameter</span>
+</span><span id="FisherMatrix.correlation_coefficient-1509"><a href="#FisherMatrix.correlation_coefficient-1509"><span class="linenos">1509</span></a>
+</span><span id="FisherMatrix.correlation_coefficient-1510"><a href="#FisherMatrix.correlation_coefficient-1510"><span class="linenos">1510</span></a><span class="sd">        name2</span>
+</span><span id="FisherMatrix.correlation_coefficient-1511"><a href="#FisherMatrix.correlation_coefficient-1511"><span class="linenos">1511</span></a><span class="sd">            the name of the second parameter</span>
+</span><span id="FisherMatrix.correlation_coefficient-1512"><a href="#FisherMatrix.correlation_coefficient-1512"><span class="linenos">1512</span></a>
+</span><span id="FisherMatrix.correlation_coefficient-1513"><a href="#FisherMatrix.correlation_coefficient-1513"><span class="linenos">1513</span></a><span class="sd">        Returns</span>
+</span><span id="FisherMatrix.correlation_coefficient-1514"><a href="#FisherMatrix.correlation_coefficient-1514"><span class="linenos">1514</span></a><span class="sd">        -------</span>
+</span><span id="FisherMatrix.correlation_coefficient-1515"><a href="#FisherMatrix.correlation_coefficient-1515"><span class="linenos">1515</span></a><span class="sd">        float</span>
+</span><span id="FisherMatrix.correlation_coefficient-1516"><a href="#FisherMatrix.correlation_coefficient-1516"><span class="linenos">1516</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FisherMatrix.correlation_coefficient-1517"><a href="#FisherMatrix.correlation_coefficient-1517"><span class="linenos">1517</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="p">(),</span> <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)[</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Returns the correlation coefficient between two parameters.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>name1
+    the name of the first parameter</p>
+
+<p>name2
+    the name of the second parameter</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>float</p>
 </div>
 
 

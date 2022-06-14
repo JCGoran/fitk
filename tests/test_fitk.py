@@ -20,15 +20,9 @@ from cosmicfish_pylib.fisher_plot import CosmicFishPlotter as CFFisherPlotter
 from cosmicfish_pylib.fisher_plot_analysis import (
     CosmicFish_FisherAnalysis as CFFisherAnalysis,
 )
-from fitk import (
-    FisherMatrix,
-    FisherPlotter,
-    bayes_factor,
-    kl_divergence,
-    plot_curve_1d,
-    plot_curve_2d,
-)
-from fitk.fisher_matrix import _process_fisher_mapping
+from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
+from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
+from fitk.fisher_plotter import FisherPlotter, plot_curve_1d, plot_curve_2d
 from fitk.fisher_utils import (
     MismatchingSizeError,
     MismatchingValuesError,
@@ -214,6 +208,18 @@ class TestFisherOperations:
                 fisher1, fisher2, FisherMatrix(np.diag(np.zeros(len(fisher1))))
             ),
         )
+
+    def test_kl_matrix(self):
+        fisher1 = FisherMatrix(np.diag([1, 2, 3]))
+        fisher2 = FisherMatrix(np.diag([4, 5, 6]))
+        fisher3 = FisherMatrix(np.diag([8, 3, 4]))
+
+        klm = kl_matrix(fisher1, fisher2, fisher3)
+
+        assert np.allclose(klm[0, 0], kl_divergence(fisher1, fisher1)[0])
+        assert np.allclose(klm[0, 1], kl_divergence(fisher1, fisher2)[0])
+        assert np.allclose(klm[1, 0], kl_divergence(fisher2, fisher1)[0])
+        assert np.allclose(klm[1, 1], kl_divergence(fisher2, fisher2)[0])
 
 
 class TestFisherMatrix:

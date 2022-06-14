@@ -6,6 +6,7 @@ Functions which act upon Fisher objects.
 from __future__ import annotations
 
 import warnings
+from itertools import product
 
 # standard library imports
 from typing import Collection, Optional, Tuple
@@ -216,3 +217,42 @@ def kl_divergence(
     variance = np.sqrt(np.trace(argument @ argument) / 2 / np.log(2)) * factor
 
     return (result, expectation, variance)
+
+
+def kl_matrix(
+    *args: FisherMatrix,
+    **kwargs,
+):
+    r"""
+    Returns the Kullback-Leibler matrix of different sets of observables. The
+    matrix has elements defined by:
+    $$
+        \mathcal{K}_{ij} \equiv D(P_j || P_i)
+    $$
+    where $D(P_j || P_i)$ is the Kullback-Leibler divergence (see also
+    `kl_divergence`) of the pair of observables $(i, j)$.
+
+    Parameters
+    ----------
+    args
+        the Fisher matrices of the different sets of observables
+
+    kwargs
+        any keyword arguments that are passed to `kl_divergence`
+
+    Raises
+    ------
+    * `MismatchingValueError` if the parameter names of the Fisher matrices do
+    not match
+
+    Notes
+    -----
+    For more details, see
+    [arXiv:1703.01271](https://arxiv.org/abs/1703.01271), section 4.
+    """
+    shape = np.repeat(len(args), 2)
+    result = np.zeros(shape)
+    for (i, arg1), (j, arg2) in product(enumerate(args), repeat=2):
+        result[i, j] = kl_divergence(arg1, arg2, **kwargs)[0]
+
+    return result

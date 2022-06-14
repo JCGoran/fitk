@@ -1473,3 +1473,22 @@ class FisherMatrix:
             latex_names=data["latex_names"],
             fiducials=data["fiducials"],
         )
+
+    def correlation_matrix(self):
+        r"""
+        Computes the correlation matrix from the Fisher matrix, whose entries
+        are given by:
+        $$
+            \mathsf{P}_{ij} \equiv \frac{\mathsf{C}_{ij}}{\sqrt{\mathsf{C}_{ii} \mathsf{C}_{jj}}}
+        $$
+        where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
+        matrix (the inverse of the Fisher matrix).
+
+        Returns
+        -------
+        array-like matrix of floats
+        """
+        inv = self.inverse()
+        diag = np.diag(inv)
+
+        return inv / np.sqrt(np.outer(diag, diag))

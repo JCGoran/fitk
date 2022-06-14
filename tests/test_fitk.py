@@ -718,6 +718,23 @@ class TestFisherMatrix:
 
         assert np.power(m, 3) == m**3
 
+    def test_correlation_matrix(self):
+        fisher1 = FisherMatrix(np.diag([1, 2]))
+        corr1 = fisher1.correlation_matrix()
+
+        assert np.allclose(corr1[0, 0], 1)
+        assert np.allclose(corr1[0, 1], 0)
+        assert np.allclose(corr1[1, 0], 0)
+        assert np.allclose(corr1[1, 1], 1)
+
+        fisher2 = FisherMatrix([[1, 1 / 2], [1 / 2, 1]])
+        corr2 = fisher2.correlation_matrix()
+
+        assert np.allclose(corr2[0, 0], 1)
+        assert np.allclose(corr2[0, 1], -1 / 2)
+        assert np.allclose(corr2[1, 0], -1 / 2)
+        assert np.allclose(corr2[1, 1], 1)
+
 
 class TestFisherPlotter:
     def test_init(self):

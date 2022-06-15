@@ -499,8 +499,8 @@ class TestFisherMatrix:
         )
 
         m = FisherMatrix(
-            [[1, 0, 0], [0, 3, 0], [0, 0, 5]],
-            fiducials=[-1, 0, 1],
+            np.diag([1, 3, 5]),
+            fiducials=[2, 0, 1],
             names=["p3", "p1", "p2"],
         )
 
@@ -514,6 +514,14 @@ class TestFisherMatrix:
         # not one of special options, nor a callable
         with pytest.raises(TypeError):
             m.sort(key="not callable")
+
+        assert m.sort(key="fiducials") == FisherMatrix(
+            np.diag([3, 5, 1]), names=["p1", "p2", "p3"], fiducials=[0, 1, 2]
+        )
+
+        assert m.sort(key="fiducials", reversed=True) == FisherMatrix(
+            np.diag([1, 5, 3]), names=["p3", "p2", "p1"], fiducials=[2, 1, 0]
+        )
 
     def test_eq(self):
         assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(

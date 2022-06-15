@@ -290,7 +290,7 @@ class FisherDerivative(ABC):
 
     def fisher_tensor(
         self,
-        *args: Tuple[str, float, float],
+        *args: D,
         constant_covariance: bool = True,
     ):
         r"""
@@ -299,8 +299,8 @@ class FisherDerivative(ABC):
         Parameters
         ----------
         args
-            the names, fiducials, and (optional) absolute step for which we
-            want to compute the derivatives
+            the derivatives (see description of `D`) for which we want to
+            compute the derivatives
 
         constant_covariance
             whether or not to treat the covariance as constant (default: true)
@@ -308,16 +308,31 @@ class FisherDerivative(ABC):
         Returns
         -------
         instance of `FisherMatrix` with corresponding names and fiducials
+
+        Notes
+        -----
+        The derivative order is automatically set to 1 for each parameter, and
+        is ignored if passed to `D`.
         """
         signal_derivative = {}
 
+        names = np.array([_.name for _ in args])
+        values = np.array([_.value for _ in args])
+
         # TODO parallelize
-        for name, value, abs_step in args:
-            signal_derivative[name] = self(
-                "signal", D(name=name, value=value, abs_step=abs_step)
+        for arg in args:
+            signal_derivative[arg.name] = self(
+                "signal",
+                D(
+                    name=arg.name,
+                    value=arg.value,
+                    abs_step=arg.abs_step,
+                    kind=arg.kind,
+                ),
             )
 
-        names, values, _ = np.transpose(np.array(args))
+        names = np.array([_.name for _ in args])
+        values = np.array([_.value for _ in args])
 
         covariance_matrix = self.covariance(*zip(names, values))
         if len(covariance_matrix) == 1:
@@ -330,14 +345,19 @@ class FisherDerivative(ABC):
         covariance_derivative = {}
 
         # TODO parallelize
-        for name, value, abs_step in args:
+        for arg in args:
             if not constant_covariance:
-                covariance_derivative[name] = self(
-                    "covariance", D(name=name, value=value, abs_step=abs_step)
+                covariance_derivative[arg.name] = self(
+                    "covariance",
+                    D(
+                        name=arg.name,
+                        value=arg.value,
+                        abs_step=arg.abs_step,
+                        kind=arg.kind,
+                    ),
                 )
-
             else:
-                covariance_derivative[name] = np.zeros(covariance_shape)
+                covariance_derivative[arg.name] = np.zeros(covariance_shape)
 
         fisher_matrix = np.zeros([len(args)] * 2)
 

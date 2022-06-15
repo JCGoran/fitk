@@ -1221,11 +1221,11 @@ class TestFisherDerivative:
         assert np.allclose(g("covariance", D(name="mu", value=1, abs_step=1e-3)), 0)
 
         assert g.fisher_tensor(
-            ("mu", 1, 1e-3),
-            ("sigma", 0.5, 1e-3),
+            D(name="mu", value=1, abs_step=1e-3),
+            D(name="sigma", value=0.5, abs_step=1e-3),
             constant_covariance=True,
         ) == g.fisher_tensor(
-            ("mu", 1, 1e-3),
-            ("sigma", 0.5, 1e-3),
+            D(name="mu", value=1, abs_step=1e-3),
+            D(name="sigma", value=0.5, abs_step=1e-3),
             constant_covariance=False,
         )

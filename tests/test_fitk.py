@@ -3,6 +3,8 @@ Various tests for the `fitk` module.
 """
 
 import os
+from itertools import product
+from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,6 +22,7 @@ from cosmicfish_pylib.fisher_plot import CosmicFishPlotter as CFFisherPlotter
 from cosmicfish_pylib.fisher_plot_analysis import (
     CosmicFish_FisherAnalysis as CFFisherAnalysis,
 )
+from fitk.fisher_derivative import D, FisherDerivative
 from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
 from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
 from fitk.fisher_plotter import FisherPlotter, plot_curve_1d, plot_curve_2d
@@ -1033,3 +1036,181 @@ class TestFisherPlotter:
 
         with pytest.raises(ValueError):
             fp.plot_triangle()
+
+
+class GaussianDerivative(FisherDerivative):
+    def __init__(self, config=None):
+        self.config = config if config is not None else {"mu": 1.0, "sigma": 1.0}
+
+    def signal(
+        self,
+        *args: Tuple[str, float],
+        **kwargs,
+    ):
+        mu = self.config["mu"]
+        sigma = self.config["sigma"]
+
+        for name, value in args:
+            if name == "mu":
+                mu = value
+            elif name == "sigma":
+                sigma = value
+            else:
+                raise ValueError
+
+        result = np.exp(-(mu**2 / 2 / sigma**2)) / sigma / np.sqrt(2 * np.pi)
+
+        return np.array([result])
+
+    def covariance(
+        self,
+        *args: Tuple[str, float],
+        **kwargs,
+    ):
+        mu = self.config["mu"]
+        sigma = self.config["sigma"]
+
+        for name, value in args:
+            if name == "mu":
+                mu = value
+            elif name == "sigma":
+                sigma = value
+            else:
+                raise ValueError
+
+        result = np.ones(1)
+
+        return result
+
+    def first_derivative_wrt_mu(
+        self,
+        mu: float,
+        sigma: float,
+    ):
+        return -self.signal(("mu", mu), ("sigma", sigma)) * mu / sigma**2
+
+    def second_derivative_wrt_mu(
+        self,
+        mu: float,
+        sigma: float,
+    ):
+        return (
+            self.signal(("mu", mu), ("sigma", sigma))
+            * (mu**2 - sigma**2)
+            / sigma**4
+        )
+
+    def first_derivative_wrt_sigma(
+        self,
+        mu: float,
+        sigma: float,
+    ):
+        return (
+            self.signal(("mu", mu), ("sigma", sigma))
+            * (mu**2 - sigma**2)
+            / sigma**3
+        )
+
+    def mixed_derivative(
+        self,
+        mu: float,
+        sigma: float,
+    ):
+        return (
+            -self.signal(("mu", mu), ("sigma", sigma))
+            * mu
+            * (mu**2 - 3 * sigma**2)
+            / sigma**5
+        )
+
+
+class TestFisherDerivative:
+    """
+    Tests for Fisher derivative
+    """
+
+    def test_first_derivative(self):
+        g = GaussianDerivative({"mu": 1, "sigma": 1})
+
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g("signal", D(name="mu", value=value, abs_step=1e-4)),
+                g.first_derivative_wrt_mu(value, 1),
+            )
+
+        # forward method
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g("signal", D(name="mu", value=value, abs_step=1e-4, kind="forward")),
+                g.first_derivative_wrt_mu(value, 1),
+            )
+
+        # backward method
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(name="mu", value=value, abs_step=1e-4, kind="backward"),
+                ),
+                g.first_derivative_wrt_mu(value, 1),
+            )
+
+        # forward method
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(name="sigma", value=value, abs_step=1e-4, kind="forward"),
+                ),
+                g.first_derivative_wrt_sigma(1, value),
+            )
+
+        # backward method
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(name="sigma", value=value, abs_step=1e-4, kind="backward"),
+                ),
+                g.first_derivative_wrt_sigma(1, value),
+            )
+
+    def test_second_derivative(self):
+        g = GaussianDerivative({"mu": 1, "sigma": 1})
+
+        for value in np.linspace(-3, 3, 100):
+            assert np.allclose(
+                g("signal", D(name="mu", value=value, abs_step=1e-4, order=2)),
+                g.second_derivative_wrt_mu(value, 1),
+            )
+
+        for mu, sigma in product(np.linspace(-3, 3, 100), repeat=2):
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(name="mu", value=mu, abs_step=1e-5, order=1),
+                    D(name="sigma", value=sigma, abs_step=1e-5, order=1),
+                ),
+                g.mixed_derivative(mu, sigma),
+                rtol=1e-3,
+            )
+
+        for mu, sigma in product(np.linspace(-3, 3, 30), repeat=2):
+            # if the value is mu is very close to sqrt(3) sigma, there may be
+            # issues since the derivative there iz zero
+            if not np.allclose(mu, np.sqrt(3) * sigma, rtol=1e-1):
+                assert np.allclose(
+                    g(
+                        "signal",
+                        D(name="mu", value=mu, abs_step=1e-5, order=1, kind="forward"),
+                        D(
+                            name="sigma",
+                            value=sigma,
+                            abs_step=1e-5,
+                            order=1,
+                            kind="center",
+                        ),
+                    ),
+                    g.mixed_derivative(mu, sigma),
+                    rtol=1e-3,
+                )

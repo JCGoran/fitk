@@ -457,20 +457,40 @@ class FisherMatrix:
 
     def __setitem__(
         self,
-        keys: Tuple[str],
+        keys: Tuple[str, ...],
         value: float,
     ):
         """
         Implements setting of elements in the Fisher object.
         Does not support slicing.
+
+        Raises
+        ------
+        * `TypeError` if keys are not a tuple, or if `value` is not a number
+        * `MismatchingSizeError` if the size of keys are not equal to the
+        dimensionality of the Fisher object
+        * `ParameterNotFoundError` if any of the keys is not in the parameter
+        names
         """
         try:
             _ = iter(keys)
         except TypeError as err:
             raise TypeError(err) from err
 
+        # the above fails for strings (since they are iterable), so we do an
+        # explicit check here
+        if isinstance(keys, str):
+            raise MismatchingSizeError(keys)
+
         if len(keys) != self.ndim:
-            raise ValueError(f"Got length {len(keys)}")
+            raise MismatchingSizeError(keys)
+
+        if not isinstance(value, Number):
+            raise TypeError(f"{value} is not a number")
+
+        for key in keys:
+            if key not in self.names:
+                raise ParameterNotFoundError(key, self.names)
 
         # automatically raises a value error
         indices = tuple(np.where(self.names == key) for key in keys)

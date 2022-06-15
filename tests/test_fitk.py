@@ -409,7 +409,6 @@ class TestFisherMatrix:
         with pytest.raises(ParameterNotFoundError):
             data[1, 1]
 
-    @pytest.mark.skip(reason="Implementation needs to be fixed")
     def test_setitem(self):
         data = FisherMatrix(np.diag([1, 2, 3]))
 
@@ -426,6 +425,18 @@ class TestFisherMatrix:
         # trying to set a nonexisting element
         with pytest.raises(ParameterNotFoundError):
             data["p0", "p0"] = 1
+
+        # wrong type of value to assign
+        with pytest.raises(TypeError):
+            data["p1", "p1"] = np.array([1, 2])
+
+        # wrong number of keys (specific for strings)
+        with pytest.raises(MismatchingSizeError):
+            data["p1"] = 1
+
+        # wrong number of keys
+        with pytest.raises(MismatchingSizeError):
+            data["p1", "p2", "p3"] = 1
 
     def test_values(self):
         data = FisherMatrix(np.diag([1, 2, 3]))

@@ -136,6 +136,12 @@ class TestFisherUtils:
         with pytest.raises(ValueError):
             process_units("BiB")
 
+    def test_make_default_names(self):
+        assert np.all(make_default_names(2, "p") == ["p1", "p2"])
+
+        with pytest.raises(ValueError):
+            make_default_names(-1)
+
 
 class TestFisherOperations:
     """

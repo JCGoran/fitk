@@ -192,6 +192,9 @@ def is_square(values):
     except ValueError:
         return False
 
+    if np.ndim(values) <= 1:
+        return False
+
     shape = np.shape(values)
     return all(shape[0] == _ for _ in shape)
 

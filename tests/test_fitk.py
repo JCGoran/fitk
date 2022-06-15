@@ -70,8 +70,10 @@ class TestFisherUtils:
 
     def test_is_square(self):
         assert is_square([[1, 0], [1, 1]])
-        # 1D arrays pass the check as well
-        assert is_square([1, 2])
+
+        # 1D arrays do not pass the check
+        assert not is_square([1, 2])
+
         assert is_square(
             [
                 [[1, 2], [3, 4]],
@@ -436,7 +438,7 @@ class TestFisherMatrix:
         # not square matrix
         # TODO maybe this should raise some other error?
         with pytest.raises(ValueError):
-            data.values = [1, 2]
+            data.values = [1, 2, 3]
 
     def test_is_diagonal(self):
         assert not FisherMatrix([[1, -1], [-1, 5]]).is_diagonal()

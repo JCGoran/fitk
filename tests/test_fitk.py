@@ -130,6 +130,12 @@ class TestFisherUtils:
         for unit, benchmark in zip(units, benchmarks):
             assert np.allclose(benchmark, process_units(unit))
 
+        with pytest.raises(ValueError):
+            process_units("asdf")
+
+        with pytest.raises(ValueError):
+            process_units("BiB")
+
 
 class TestFisherOperations:
     """

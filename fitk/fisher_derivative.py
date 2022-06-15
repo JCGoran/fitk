@@ -8,7 +8,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from itertools import product
-from typing import Tuple, Union
+from typing import Tuple
 
 import numpy as np
 
@@ -287,3 +287,70 @@ class FisherDerivative(ABC):
                 axis=0,
             )
         )
+
+    def fisher_tensor(
+        self,
+        *args: Tuple[str, float, float],
+        constant_covariance: bool = True,
+    ):
+        r"""
+        Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
+
+        Parameters
+        ----------
+        args
+            the names, fiducials, and (optional) absolute step for which we
+            want to compute the derivatives
+
+        constant_covariance
+            whether or not to treat the covariance as constant (default: true)
+
+        Returns
+        -------
+        instance of `FisherMatrix` with corresponding names and fiducials
+        """
+        signal_derivative = {}
+
+        # TODO parallelize
+        for name, value, abs_step in args:
+            signal_derivative[name] = self(
+                "signal", D(name=name, value=value, abs_step=abs_step)
+            )
+
+        names, values, _ = np.transpose(np.array(args))
+
+        covariance_matrix = self.covariance(*zip(names, values))
+        if len(covariance_matrix) == 1:
+            inverse_covariance_matrix = np.array([covariance_matrix])
+        else:
+            inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+
+        covariance_shape = np.shape(inverse_covariance_matrix)
+
+        covariance_derivative = {}
+
+        # TODO parallelize
+        for name, value, abs_step in args:
+            if not constant_covariance:
+                covariance_derivative[name] = self(
+                    "covariance", D(name=name, value=value, abs_step=abs_step)
+                )
+
+            else:
+                covariance_derivative[name] = np.zeros(covariance_shape)
+
+        fisher_matrix = np.zeros([len(args)] * 2)
+
+        for (i, name1), (j, name2) in product(enumerate(names), repeat=2):
+            fisher_matrix[i, j] = (
+                signal_derivative[name1]
+                @ inverse_covariance_matrix
+                @ signal_derivative[name2]
+                + inverse_covariance_matrix
+                @ covariance_derivative[name1]
+                @ inverse_covariance_matrix
+                @ covariance_derivative[name2]
+                / 2
+            )
+
+        return FisherMatrix(fisher_matrix, names=names, fiducials=values)

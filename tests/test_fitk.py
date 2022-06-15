@@ -1214,3 +1214,18 @@ class TestFisherDerivative:
                     g.mixed_derivative(mu, sigma),
                     rtol=1e-3,
                 )
+
+    def test_fisher_matrix(self):
+        g = GaussianDerivative({"mu": 1, "sigma": 1})
+
+        assert np.allclose(g("covariance", D(name="mu", value=1, abs_step=1e-3)), 0)
+
+        assert g.fisher_tensor(
+            ("mu", 1, 1e-3),
+            ("sigma", 0.5, 1e-3),
+            constant_covariance=True,
+        ) == g.fisher_tensor(
+            ("mu", 1, 1e-3),
+            ("sigma", 0.5, 1e-3),
+            constant_covariance=False,
+        )

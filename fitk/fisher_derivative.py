@@ -316,9 +316,6 @@ class FisherDerivative(ABC):
         """
         signal_derivative = {}
 
-        names = np.array([_.name for _ in args])
-        values = np.array([_.value for _ in args])
-
         # TODO parallelize
         for arg in args:
             signal_derivative[arg.name] = self(
@@ -361,15 +358,15 @@ class FisherDerivative(ABC):
 
         fisher_matrix = np.zeros([len(args)] * 2)
 
-        for (i, name1), (j, name2) in product(enumerate(names), repeat=2):
+        for (i, arg1), (j, arg2) in product(enumerate(args), repeat=2):
             fisher_matrix[i, j] = (
-                signal_derivative[name1]
+                signal_derivative[arg1.name]
                 @ inverse_covariance_matrix
-                @ signal_derivative[name2]
+                @ signal_derivative[arg2.name]
                 + inverse_covariance_matrix
-                @ covariance_derivative[name1]
+                @ covariance_derivative[arg1.name]
                 @ inverse_covariance_matrix
-                @ covariance_derivative[name2]
+                @ covariance_derivative[arg2.name]
                 / 2
             )
 

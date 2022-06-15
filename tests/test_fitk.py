@@ -27,6 +27,7 @@ from fitk.fisher_utils import (
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
+    find_diff_weights,
     float_to_latex,
     get_index_of_other_array,
     is_iterable,
@@ -143,6 +144,34 @@ class TestFisherUtils:
 
         with pytest.raises(ValueError):
             make_default_names(-1)
+
+    def test_find_diff_weights(self):
+        stencil = [-3, -2, -1, 0, 1]
+        benchmark = [1, -4, 6, -4, 1]
+        assert np.allclose(
+            benchmark,
+            find_diff_weights(stencil, 4),
+        )
+
+        stencil_d1_a3_forward = [0, 1, 2, 3]
+        benchmark = [-11 / 6, 3, -3 / 2, 1 / 3]
+
+        assert np.allclose(benchmark, find_diff_weights(stencil_d1_a3_forward, 1))
+
+        stencil_d1_a4_center = [-2, -1, 0, 1, 2]
+        benchmark = np.array([1, -8, 0, 8, -1]) / 12
+
+        assert np.allclose(benchmark, find_diff_weights(stencil_d1_a4_center, 1))
+
+        stencil_d1_a3_backward = [-3, -2, -1, 0]
+        benchmark = np.array([-1 / 3, 3 / 2, -3, 11 / 6])
+
+        assert np.allclose(benchmark, find_diff_weights(stencil_d1_a3_backward))
+
+        # number of stencil points smaller than the order of the derivative
+        # requested
+        with pytest.raises(ValueError):
+            find_diff_weights([-1, 1], order=2)
 
 
 class TestFisherOperations:

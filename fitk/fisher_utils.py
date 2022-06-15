@@ -6,6 +6,7 @@ Various helper utilities for Fisher objects.
 from __future__ import annotations
 
 import json
+import math
 from typing import Callable, Collection, Optional, Tuple
 
 import numpy as np
@@ -286,3 +287,37 @@ def process_units(arg: str) -> float:
         raise ValueError(f"The prefix must be one of {allowed_prefixes}")
 
     return 1 / allowed_prefixes_dict[prefix] / allowed_units_dict[unit]
+
+
+def find_diff_weights(
+    stencil: Collection[float],
+    order: int = 1,
+):
+    """
+    Finds the weights for computing derivatives using finite differences.
+
+    Parameters
+    ----------
+    stencil
+        the points where the derivative should be evaluated
+
+    order
+        the order of the derivative (default: 1)
+
+    Raises
+    ------
+    * `ValueError` if `order >= len(stencil)`
+
+    Returns
+    -------
+    array-like of floats
+    """
+    if order >= len(stencil):
+        raise ValueError(
+            "The number of points in the stencil must be larger than the derivative order"
+        )
+    matrix = np.vstack([np.array(stencil) ** n for n in range(len(stencil))])
+    vector = np.zeros(len(stencil))
+    vector[order] = math.factorial(order)
+
+    return np.linalg.inv(matrix) @ vector

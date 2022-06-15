@@ -16,93 +16,6 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import find_diff_weights
 
 
-def validate_derivatives(
-    *args: D,
-):
-    """
-    Checks whether we are able to compute the requested derivatives
-
-    Raises
-    ------
-    * `ValueError` if we are unable to compute the requested derivatives
-    * `ValueError` if there are duplicate derivatives (such as `D('a',
-    abs_step=1e-2), D('a', abs_step=1e-3)`)
-    """
-    upper_limit = 2
-
-    if np.sum([arg.order for arg in args]) > upper_limit:
-        raise ValueError
-
-    if len(set(arg.name for arg in args)) != len([arg.name for arg in args]):
-        raise ValueError
-
-
-def find_diff_weights_mixed(
-    *args: D,
-):
-    """
-    Finds weights for mixed partial derivatives (max order: 2)
-
-    Parameters
-    ----------
-    args
-        the derivatives which we want to compute
-
-    Returns
-    -------
-    array-like of floats
-    """
-    # all possible combinations of d^2f / dx / dy
-    # the missing ones (say, `center_forward`) can be obtained by just swapping
-    # elements of the `points` array
-    points_center_center = np.array([[-1, -1], [-1, 1], [1, -1], [1, 1]])
-    weights_center_center = np.array([1, -1, -1, 1]) / 4
-
-    points_backward_center = np.array([[0, -1], [0, 1], [-1, -1], [1, 1]])
-    weights_backward_center = np.array([-1, 1, 1, -1]) / 2
-
-    points_backward_backward = np.array([[0, 0], [0, -1], [-1, 0], [-1, -1]])
-    weights_backward_backward = np.array([1, -1, -1, 1])
-
-    points_forward_center = np.array([[0, -1], [0, 1], [1, -1], [1, 1]])
-    weights_forward_center = np.array([1, -1, -1, 1]) / 2
-
-    points_forward_forward = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-    weights_forward_forward = np.array([1, -1, -1, 1])
-
-    points_forward_backward = np.array([[0, 0], [0, -1], [1, 0], [1, -1]])
-    weights_forward_backward = np.array([-1, 1, 1, -1])
-
-    mapping = {
-        (2, "center", "center"): (points_center_center, weights_center_center),
-        (2, "backward", "center"): (points_backward_center, weights_backward_center),
-        (2, "center", "backward"): (
-            np.flip(points_backward_center, axis=1),
-            weights_backward_center,
-        ),
-        (2, "backward", "backward"): (
-            points_backward_backward,
-            weights_backward_backward,
-        ),
-        (2, "backward", "forward"): (
-            np.flip(points_forward_backward, axis=1),
-            weights_forward_backward,
-        ),
-        (2, "forward", "backward"): (points_forward_backward, weights_forward_backward),
-        (2, "forward", "center"): (points_forward_center, weights_forward_center),
-        (2, "center", "forward"): (
-            np.flip(points_forward_center, axis=1),
-            weights_forward_center,
-        ),
-        (2, "forward", "forward"): (points_forward_forward, weights_forward_forward),
-    }
-
-    order = np.sum([arg.order for arg in args], dtype=int)
-    kinds = np.array([arg.kind for arg in args], dtype=str)
-
-    return mapping[(order, *kinds)]
-
-
 @dataclass
 class D:
     """
@@ -123,6 +36,9 @@ class D:
     order
         the order of the derivative (default: 1)
 
+    accuracy
+        the accuracy requested for the derivative (default: 4)
+
     kind
         the kind of difference to use (default: 'center'). Available options
         are 'center', 'forward', 'backward'.
@@ -132,16 +48,11 @@ class D:
     value: float
     abs_step: float
     order: int = 1
+    accuracy: int = 4
     kind: str = "center"
 
     def __post_init__(self):
-        allowed_orders = [1, 2, 3]
         allowed_kinds = ["center", "forward", "backward"]
-
-        if self.order not in allowed_orders:
-            raise ValueError(
-                f"Only the following derivative orders are allowed: {allowed_orders}"
-            )
 
         if self.kind not in allowed_kinds:
             raise ValueError(
@@ -150,6 +61,9 @@ class D:
 
         if self.abs_step <= 0:
             raise ValueError("The value of `abs_step` must be positive")
+
+        if self.accuracy < 1:
+            raise ValueError("The accuracy must be at least first-order")
 
 
 class FisherDerivative(ABC):
@@ -225,51 +139,31 @@ class FisherDerivative(ABC):
 
         arg: D
             the derivative
-
-        Notes
-        -----
-        For mixed derivatives (such as $\partial_x \partial_y f(x, y)$), the
-        accuracy is always set to $\mathcal{O(h^n)}$, where $n$ is the order of
-        the derivative.
         """
-        validate_derivatives(*args)
+        weights_arr = []
+        points_arr = []
 
-        if len(args) == 1:
-            arg = args[0]
-            # we keep the accuracy for single derivatives fixed
-            single_derivative_accuracy = 4
-
+        for arg in args:
             if arg.kind == "center":
-                npoints = (
-                    2 * np.floor((arg.order + 1) / 2) - 2 + single_derivative_accuracy
-                ) // 2
+                npoints = (2 * np.floor((arg.order + 1) / 2) - 2 + arg.accuracy) // 2
                 stencil = np.arange(-npoints, npoints + 1, 1)
             elif arg.kind == "forward":
-                npoints = single_derivative_accuracy + arg.order
+                npoints = arg.accuracy + arg.order
                 stencil = np.arange(0, npoints + 1)
             else:
-                npoints = single_derivative_accuracy + arg.order
+                npoints = arg.accuracy + arg.order
                 stencil = np.arange(-npoints, 1)
 
-            weights = find_diff_weights(stencil, order=arg.order)
-
-            return np.array(
-                np.sum(
-                    [
-                        getattr(self, method)(
-                            (arg.name, arg.value + arg.abs_step * point)
-                        )
-                        * weight
-                        / arg.abs_step**arg.order
-                        for point, weight in zip(stencil, weights)
-                    ],
-                    axis=0,
-                )
-            )
-
-        stencil, weights = find_diff_weights_mixed(*args)
+            points_arr.append(stencil)
+            weights_arr.append(find_diff_weights(stencil, order=arg.order))
 
         denominator = np.prod([arg.abs_step**arg.order for arg in args])
+
+        stencils = np.array(list(product(*points_arr)))
+        weights = np.array([np.prod(_) for _ in product(*weights_arr)])
+
+        # remove any zero-like elements
+        weights = np.array([_ if np.abs(_) > 1e-10 else 0 for _ in weights])
 
         return np.array(
             np.sum(
@@ -282,7 +176,7 @@ class FisherDerivative(ABC):
                     )
                     * weight
                     / denominator
-                    for point, weight in zip(stencil, weights)
+                    for point, weight in zip(stencils, weights)
                 ],
                 axis=0,
             )
@@ -325,6 +219,7 @@ class FisherDerivative(ABC):
                     value=arg.value,
                     abs_step=arg.abs_step,
                     kind=arg.kind,
+                    accuracy=arg.accuracy,
                 ),
             )
 
@@ -351,6 +246,7 @@ class FisherDerivative(ABC):
                         value=arg.value,
                         abs_step=arg.abs_step,
                         kind=arg.kind,
+                        accuracy=arg.accuracy,
                     ),
                 )
             else:

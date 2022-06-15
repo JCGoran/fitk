@@ -1188,32 +1188,37 @@ class TestFisherDerivative:
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="mu", value=mu, abs_step=1e-5, order=1),
-                    D(name="sigma", value=sigma, abs_step=1e-5, order=1),
+                    D(name="mu", value=mu, abs_step=1e-5, order=1, accuracy=2),
+                    D(name="sigma", value=sigma, abs_step=1e-5, order=1, accuracy=2),
                 ),
                 g.mixed_derivative(mu, sigma),
                 rtol=1e-3,
             )
 
-        for mu, sigma in product(np.linspace(-3, 3, 30), repeat=2):
-            # if the value is mu is very close to sqrt(3) sigma, there may be
-            # issues since the derivative there iz zero
-            if not np.allclose(mu, np.sqrt(3) * sigma, rtol=1e-1):
-                assert np.allclose(
-                    g(
-                        "signal",
-                        D(name="mu", value=mu, abs_step=1e-5, order=1, kind="forward"),
-                        D(
-                            name="sigma",
-                            value=sigma,
-                            abs_step=1e-5,
-                            order=1,
-                            kind="center",
-                        ),
+        for mu, sigma in product(np.linspace(-3, 3, 50), repeat=2):
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(
+                        name="mu",
+                        value=mu,
+                        abs_step=1e-5,
+                        order=1,
+                        kind="forward",
+                        accuracy=2,
                     ),
-                    g.mixed_derivative(mu, sigma),
-                    rtol=1e-3,
-                )
+                    D(
+                        name="sigma",
+                        value=sigma,
+                        abs_step=1e-5,
+                        accuracy=2,
+                        order=1,
+                        kind="center",
+                    ),
+                ),
+                g.mixed_derivative(mu, sigma),
+                rtol=1e-3,
+            )
 
     def test_fisher_matrix(self):
         g = GaussianDerivative({"mu": 1, "sigma": 1})

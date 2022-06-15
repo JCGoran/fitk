@@ -444,6 +444,14 @@ class TestFisherMatrix:
         assert not FisherMatrix([[1, -1], [-1, 5]]).is_diagonal()
         assert FisherMatrix(np.diag([1, 2])).is_diagonal()
 
+    def test_diagonal(self):
+        fisher = FisherMatrix(np.diag([1, 2, 3]))
+        assert np.allclose([1, 2, 3], fisher.diagonal())
+
+    def test_determinant(self):
+        fisher = FisherMatrix(np.diag([1, 2, 3]))
+        assert np.allclose(fisher.determinant(), 6)
+
     def test_constraints(self):
         data = FisherMatrix([[1, -1], [-1, 1.2]])
         assert np.all(data.constraints(marginalized=True, sigma=2) >= 0)

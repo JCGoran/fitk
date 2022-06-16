@@ -1042,6 +1042,20 @@ class TestFisherPlotter:
             fp.plot_triangle()
 
 
+class LinearDerivative(FisherDerivative):
+    def signal(
+        self,
+        *args: Tuple[str, float],
+        **kwargs,
+    ):
+        for arg in args:
+            name, value = arg
+            if name == "x":
+                x = value
+
+        return x
+
+
 class GaussianDerivative(FisherDerivative):
     def __init__(self, config=None):
         self.config = config if config is not None else {"mu": 1.0, "sigma": 1.0}
@@ -1132,6 +1146,24 @@ class TestFisherDerivative:
     """
     Tests for Fisher derivative
     """
+
+    def test_D(self):
+        # unknown kind of difference
+        with pytest.raises(ValueError):
+            D("a", 1, 1e-3, kind="asdf")
+
+        # abs_step < 0
+        with pytest.raises(ValueError):
+            D("a", 1, -1e-3)
+
+        # accuracy not at least first order
+        with pytest.raises(ValueError):
+            D("a", 1, 1e-3, accuracy=0)
+
+    def test_abc(self):
+        # we cannot instantiate the abstract `FisherDerivative` class
+        with pytest.raises(TypeError):
+            fd = FisherDerivative()
 
     def test_first_derivative(self):
         g = GaussianDerivative({"mu": 1, "sigma": 1})
@@ -1224,7 +1256,17 @@ class TestFisherDerivative:
                 rtol=1e-3,
             )
 
+        # order of the combined derivative requested is too high
+        with pytest.raises(ValueError):
+            g("signal", D(name="mu", value=2, abs_step=1e-5, order=11))
+
     def test_fisher_matrix(self):
+        lin = LinearDerivative()
+
+        # cannot compute the Fisher matrix if covariance is not implemented
+        with pytest.raises(NotImplementedError):
+            lin.fisher_tensor(D("x", 1, 1e-3))
+
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         assert np.allclose(g("covariance", D(name="mu", value=1, abs_step=1e-3)), 0)

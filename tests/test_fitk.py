@@ -1166,6 +1166,10 @@ class TestFisherDerivative:
             fd = FisherDerivative()
 
     def test_first_derivative(self):
+        lin = LinearDerivative()
+
+        lin("signal", D("x", 1, 1e-3))
+
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         for value in np.linspace(-3, 3, 100):
@@ -1210,6 +1214,14 @@ class TestFisherDerivative:
                 ),
                 g.first_derivative_wrt_sigma(1, value),
             )
+
+        # non-existing parameter (implementation dependent!)
+        with pytest.raises(ValueError):
+            g("signal", D("a", 1, 1e-2))
+
+        # same as above, but for covariance
+        with pytest.raises(ValueError):
+            g("covariance", D("a", 1, 1e-2))
 
     def test_second_derivative(self):
         g = GaussianDerivative({"mu": 1, "sigma": 1})

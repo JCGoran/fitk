@@ -75,6 +75,10 @@ class TestFisherUtils:
 
     def test_make_default_names(self):
         assert np.all(make_default_names(3) == np.array(["p1", "p2", "p3"]))
+        assert np.all(make_default_names(2, "p") == ["p1", "p2"])
+
+        with pytest.raises(ValueError):
+            make_default_names(-1)
 
     def test_is_square(self):
         assert is_square([[1, 0], [1, 1]])
@@ -145,12 +149,6 @@ class TestFisherUtils:
 
         with pytest.raises(ValueError):
             process_units("BiB")
-
-    def test_make_default_names(self):
-        assert np.all(make_default_names(2, "p") == ["p1", "p2"])
-
-        with pytest.raises(ValueError):
-            make_default_names(-1)
 
     def test_find_diff_weights(self):
         stencil = [-3, -2, -1, 0, 1]

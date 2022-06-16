@@ -5,11 +5,13 @@ Module for computing derivatives using finite differences
 # for compatibility with Python 3.7
 from __future__ import annotations
 
+# standard library imports
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from itertools import product
 from typing import Tuple
 
+# third party imports
 import numpy as np
 
 from fitk.fisher_matrix import FisherMatrix
@@ -25,16 +27,13 @@ def validate_derivatives(
     Raises
     ------
     * `ValueError` if we are unable to compute the requested derivatives
-    * `ValueError` if there are duplicate derivatives (such as `D('a',
-    abs_step=1e-2), D('a', abs_step=1e-3)`)
     """
-    upper_limit = 2
+    upper_limit = 10
 
     if np.sum([arg.order for arg in args]) > upper_limit:
-        raise ValueError
-
-    if len(set(arg.name for arg in args)) != len([arg.name for arg in args]):
-        raise ValueError
+        raise ValueError(
+            f"Unable to compute derivatives with combined order > {upper_limit}"
+        )
 
 
 @dataclass
@@ -161,6 +160,8 @@ class FisherDerivative(ABC):
         arg: D
             the derivative
         """
+        validate_derivatives(*args)
+
         weights_arr = []
         points_arr = []
 

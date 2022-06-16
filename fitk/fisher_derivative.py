@@ -16,6 +16,27 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import find_diff_weights
 
 
+def validate_derivatives(
+    *args: D,
+):
+    """
+    Checks whether we are able to compute the requested derivatives
+
+    Raises
+    ------
+    * `ValueError` if we are unable to compute the requested derivatives
+    * `ValueError` if there are duplicate derivatives (such as `D('a',
+    abs_step=1e-2), D('a', abs_step=1e-3)`)
+    """
+    upper_limit = 2
+
+    if np.sum([arg.order for arg in args]) > upper_limit:
+        raise ValueError
+
+    if len(set(arg.name for arg in args)) != len([arg.name for arg in args]):
+        raise ValueError
+
+
 @dataclass
 class D:
     """

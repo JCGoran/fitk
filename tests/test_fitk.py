@@ -2,10 +2,13 @@
 Various tests for the `fitk` module.
 """
 
+# standard library imports
 import os
 from itertools import product
 from typing import Tuple
 
+# third party imports
+from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -22,6 +25,9 @@ from cosmicfish_pylib.fisher_plot import CosmicFishPlotter as CFFisherPlotter
 from cosmicfish_pylib.fisher_plot_analysis import (
     CosmicFish_FisherAnalysis as CFFisherAnalysis,
 )
+from scipy.stats import norm, ortho_group
+
+# first party imports
 from fitk.fisher_derivative import D, FisherDerivative
 from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
 from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
@@ -41,8 +47,6 @@ from fitk.fisher_utils import (
     process_units,
     reindex_array,
 )
-from matplotlib.backends.backend_pdf import PdfPages
-from scipy.stats import norm, ortho_group
 
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")

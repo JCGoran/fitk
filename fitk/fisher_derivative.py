@@ -244,7 +244,7 @@ class FisherDerivative(ABC):
 
         covariance_matrix = self.covariance(*zip(names, values))
         if len(covariance_matrix) == 1:
-            inverse_covariance_matrix = np.array([covariance_matrix])
+            inverse_covariance_matrix = 1 / np.array([covariance_matrix])
         else:
             inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 

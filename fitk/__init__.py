@@ -32,3 +32,5 @@ from fitk.fisher_plotter import (
     plot_curve_1d,
     plot_curve_2d,
 )
+
+from fitk import interfaces

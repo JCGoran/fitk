@@ -140,8 +140,15 @@ class FisherDerivative(ABC):
         Returns
         -------
         array-like of floats with a square shape
+
+        Raises
+        ------
+        * `NotImplementedError` if the user has not explicitly overridden the
+        method
         """
-        return NotImplemented
+        raise NotImplementedError(
+            "The `covariance` method must be implemented first in order to be used"
+        )
 
     def __call__(
         self,
@@ -230,6 +237,19 @@ class FisherDerivative(ABC):
         The derivative order is automatically set to 1 for each parameter, and
         is ignored if passed to `D`.
         """
+        # first we attempt to compute the covariance; if that fails, it means
+        # it hasn't been implemented, so we fail fast and early
+        names = np.array([_.name for _ in args])
+        values = np.array([_.value for _ in args])
+
+        covariance_matrix = self.covariance(*zip(names, values))
+        if len(covariance_matrix) == 1:
+            inverse_covariance_matrix = np.array([covariance_matrix])
+        else:
+            inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+
+        covariance_shape = np.shape(inverse_covariance_matrix)
+
         signal_derivative = {}
 
         # TODO parallelize
@@ -244,17 +264,6 @@ class FisherDerivative(ABC):
                     accuracy=arg.accuracy,
                 ),
             )
-
-        names = np.array([_.name for _ in args])
-        values = np.array([_.value for _ in args])
-
-        covariance_matrix = self.covariance(*zip(names, values))
-        if len(covariance_matrix) == 1:
-            inverse_covariance_matrix = np.array([covariance_matrix])
-        else:
-            inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
-
-        covariance_shape = np.shape(inverse_covariance_matrix)
 
         covariance_derivative = {}
 

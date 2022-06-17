@@ -298,6 +298,7 @@ class FisherDerivative(ABC):
                     abs_step=arg.abs_step,
                     kind=arg.kind,
                     accuracy=arg.accuracy,
+                    stencil=arg.stencil,
                 ),
             )
 
@@ -314,6 +315,7 @@ class FisherDerivative(ABC):
                         abs_step=arg.abs_step,
                         kind=arg.kind,
                         accuracy=arg.accuracy,
+                        stencil=arg.stencil,
                     ),
                 )
             else:

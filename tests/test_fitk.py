@@ -1166,6 +1166,9 @@ class TestFisherDerivative:
         with pytest.raises(ValueError):
             D("a", 1, 1e-3, stencil=[0, -1, 3, 4])
 
+        # valid stencil
+        D("a", 1, 1e-3, stencil=[-3, -1, 0, 2])
+
     def test_abc(self):
         # we cannot instantiate the abstract `FisherDerivative` class
         with pytest.raises(TypeError):

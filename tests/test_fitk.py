@@ -1158,6 +1158,14 @@ class TestFisherDerivative:
         with pytest.raises(ValueError):
             D("a", 1, 1e-3, accuracy=0)
 
+        # stencil is not an iterable
+        with pytest.raises(TypeError):
+            D("a", 1, 1e-3, stencil=1)
+
+        # stencil is not in increasing order
+        with pytest.raises(ValueError):
+            D("a", 1, 1e-3, stencil=[0, -1, 3, 4])
+
     def test_abc(self):
         # we cannot instantiate the abstract `FisherDerivative` class
         with pytest.raises(TypeError):

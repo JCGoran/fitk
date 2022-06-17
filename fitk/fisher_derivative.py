@@ -9,13 +9,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from itertools import product
-from typing import Tuple
+from typing import Collection, Optional, Tuple
 
 # third party imports
 import numpy as np
 
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import find_diff_weights
+from fitk.fisher_utils import find_diff_weights, is_iterable
 
 
 def validate_derivatives(
@@ -62,6 +62,20 @@ class D:
     kind
         the kind of difference to use (default: 'center'). Available options
         are 'center', 'forward', 'backward'.
+
+    stencil
+        the custom stencil used for computing the derivative (default: None).
+        If specified, the arguments `accuracy` and `kind` are ignored.
+
+    Raises
+    ------
+    * `ValueError` if the value of `abs_step` is not positive
+    * `TypeError` if the value of `stencil` is not an iterable
+    * `ValueError` if the value of `stencil` is not strictly monotonically
+    increasing
+    * `ValueError` if the value of `accuracy` is not at least 1
+    * `ValueError` if the value of `kind` is not one of: 'center', 'forward',
+    'backward'
     """
 
     name: str
@@ -70,8 +84,28 @@ class D:
     order: int = 1
     accuracy: int = 4
     kind: str = "center"
+    stencil: Optional[Collection[float]] = None
 
     def __post_init__(self):
+        if self.abs_step <= 0:
+            raise ValueError("The value of `abs_step` must be positive")
+
+        # if we specify a stencil, we don't bother checking `kind` and
+        # `accuracy`
+        if self.stencil is not None:
+            if not is_iterable(self.stencil):
+                raise TypeError(
+                    f"The value of the argument `stencil` ({self.stencil}) is not an iterable"
+                )
+
+            if not np.allclose(sorted(self.stencil), self.stencil):
+                raise ValueError(
+                    f"The value of the argument `stencil` ({self.stencil}) "
+                    "should be an increasing list of numbers"
+                )
+
+            return
+
         allowed_kinds = ["center", "forward", "backward"]
 
         if self.kind not in allowed_kinds:
@@ -79,11 +113,18 @@ class D:
                 f"Only the following derivative kinds are allowed: {allowed_kinds}"
             )
 
-        if self.abs_step <= 0:
-            raise ValueError("The value of `abs_step` must be positive")
-
         if self.accuracy < 1:
             raise ValueError("The accuracy must be at least first-order")
+
+        if self.kind == "center":
+            npoints = (2 * np.floor((self.order + 1) / 2) - 2 + self.accuracy) // 2
+            self.stencil = np.arange(-npoints, npoints + 1, 1)
+        elif self.kind == "forward":
+            npoints = self.accuracy + self.order
+            self.stencil = np.arange(0, npoints + 1)
+        else:
+            npoints = self.accuracy + self.order
+            self.stencil = np.arange(-npoints, 1)
 
 
 class FisherDerivative(ABC):
@@ -173,18 +214,8 @@ class FisherDerivative(ABC):
         points_arr = []
 
         for arg in args:
-            if arg.kind == "center":
-                npoints = (2 * np.floor((arg.order + 1) / 2) - 2 + arg.accuracy) // 2
-                stencil = np.arange(-npoints, npoints + 1, 1)
-            elif arg.kind == "forward":
-                npoints = arg.accuracy + arg.order
-                stencil = np.arange(0, npoints + 1)
-            else:
-                npoints = arg.accuracy + arg.order
-                stencil = np.arange(-npoints, 1)
-
-            points_arr.append(stencil)
-            weights_arr.append(find_diff_weights(stencil, order=arg.order))
+            points_arr.append(arg.stencil)
+            weights_arr.append(find_diff_weights(arg.stencil, order=arg.order))
 
         denominator = np.prod([arg.abs_step**arg.order for arg in args])
 

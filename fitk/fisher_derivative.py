@@ -195,6 +195,7 @@ class FisherDerivative(ABC):
         self,
         method: str,
         *args: D,
+        **kwargs,
     ):
         r"""
         Evaluates the derivative.
@@ -207,6 +208,9 @@ class FisherDerivative(ABC):
 
         arg: D
             the derivative
+
+        kwargs
+            any keyword arguments passed to the method
         """
         validate_derivatives(*args)
 
@@ -232,7 +236,8 @@ class FisherDerivative(ABC):
                         *[
                             (arg.name, arg.value + arg.abs_step * p)
                             for arg, p in zip(args, point)
-                        ]
+                        ],
+                        **kwargs,
                     )
                     * weight
                     / denominator

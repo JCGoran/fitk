@@ -8,7 +8,6 @@ outlines the steps to create an interface of your own using a minimal amount
 of code:
 
 ```python
-from typing import Tuple # for supporting type hints
 import numpy as np
 from fitk.fisher_derivative import FisherDerivative
 
@@ -18,7 +17,7 @@ import mycode
 class MyFisher(FisherDerivative):
     def signal(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         for name, value in args:
@@ -34,7 +33,7 @@ class MyFisher(FisherDerivative):
     # derivatives w.r.t. the covariance as well
     def covariance(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         for name, value in args:

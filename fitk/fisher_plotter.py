@@ -9,7 +9,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from itertools import product
 from pathlib import Path
-from typing import Collection, Optional, Tuple, Union
+from typing import Collection, Optional, Union
 
 
 # third party imports
@@ -195,7 +195,7 @@ class FisherFigure2D(FisherBaseFigure):
 
     def __getitem__(
         self,
-        key: Tuple[str, str],
+        key: tuple[str, str],
     ):
         if not isinstance(key, tuple):
             raise TypeError(
@@ -626,7 +626,7 @@ def add_plot_1d(
     sigma: float,
     ax: Optional[Axes] = None,
     **kwargs,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """
     Adds a 1D Gaussian with marginalized constraints `sigma` close to fiducial
     value `fiducial` to axis `ax`.
@@ -655,7 +655,7 @@ def add_shading_1d(
     ax: Optional[Axes] = None,
     level: float = 1,
     **kwargs,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """
     Add shading to a 1D axes.
     """
@@ -760,7 +760,7 @@ def plot_curve_2d(
     ax: Optional[Axes] = None,
     scaling_factor: float = 1,
     **kwargs,
-) -> Tuple[Union[None, Figure], Axes]:
+) -> tuple[Union[None, Figure], Axes]:
     """
     Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.
 
@@ -808,7 +808,7 @@ def get_ellipse(
     fm: FisherMatrix,
     name1: str,
     name2: str,
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     """
     Constructs parameters for a Gaussian ellipse from the names.
     """

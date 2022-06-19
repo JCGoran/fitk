@@ -9,7 +9,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from itertools import product
-from typing import Collection, Optional, Tuple
+from typing import Collection, Optional
 
 # third party imports
 import numpy as np
@@ -142,7 +142,7 @@ class FisherDerivative(ABC):
     @abstractmethod
     def signal(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         """
@@ -164,7 +164,7 @@ class FisherDerivative(ABC):
 
     def covariance(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         """

@@ -6,14 +6,12 @@ See here for documentation of `FisherMatrix`.
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 
+# standard library imports
 import copy
 import json
-
-# standard library imports
-from collections import abc
 from itertools import permutations
 from numbers import Number
-from typing import Any, Collection, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Collection, Mapping, Optional, Union
 
 # third party imports
 import numpy as np
@@ -34,7 +32,7 @@ from fitk.fisher_utils import (
 )
 
 
-def _process_fisher_mapping(value: abc.Mapping) -> Dict[str, Union[str, float]]:
+def _process_fisher_mapping(value: Mapping) -> dict[str, Union[str, float]]:
     """
     Processes a mapping/dict and returns the sanitized output.
     """
@@ -290,7 +288,7 @@ class FisherMatrix:
 
     def rename(
         self,
-        names: Mapping[str, Union[str, abc.Mapping]],
+        names: Mapping[str, Union[str, Mapping]],
         ignore_errors: bool = False,
     ) -> FisherMatrix:
         """
@@ -339,7 +337,7 @@ class FisherMatrix:
         for name, value in names.items():
             index = np.where(names_new == name)
             # it's a mapping
-            if isinstance(value, abc.Mapping):
+            if isinstance(value, Mapping):
                 value = _process_fisher_mapping(value)
                 latex_names_new[index] = value["latex_name"]
                 fiducial_new[index] = value["fiducial"]
@@ -406,7 +404,7 @@ class FisherMatrix:
 
     def __getitem__(
         self,
-        keys: Union[Tuple[str, ...], slice],
+        keys: Union[tuple[str, ...], slice],
     ):
         """
         Implements access to elements in the Fisher object.
@@ -457,7 +455,7 @@ class FisherMatrix:
 
     def __setitem__(
         self,
-        keys: Tuple[str, ...],
+        keys: tuple[str, ...],
         value: float,
     ):
         """
@@ -1337,7 +1335,7 @@ class FisherMatrix:
 
     def to_file(
         self, path: str, metadata: Optional[Mapping[str, Any]] = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
         The format used is a simple JSON file, containing at least the values of the

@@ -9,10 +9,11 @@ import warnings
 from itertools import product
 
 # standard library imports
-from typing import Collection, Optional, Tuple
+from typing import Collection, Optional
 
 # third party imports
 import numpy as np
+
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import MismatchingValuesError, process_units
 
@@ -129,7 +130,7 @@ def kl_divergence(
     fisher2: FisherMatrix,
     fisher_prior: Optional[FisherMatrix] = None,
     units: str = "b",
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     r"""
     Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
     P_1)$, its expectation value, $\langle D \rangle$, and the square roots

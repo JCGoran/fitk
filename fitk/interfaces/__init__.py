@@ -8,6 +8,7 @@ outlines the steps to create an interface of your own using a minimal amount
 of code:
 
 ```python
+from __future__ import annotations # required for Python 3.7
 import numpy as np
 from fitk.fisher_derivative import FisherDerivative
 

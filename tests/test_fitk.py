@@ -2,6 +2,8 @@
 Various tests for the `fitk` module.
 """
 
+from __future__ import annotations
+
 # standard library imports
 import os
 from itertools import product

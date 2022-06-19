@@ -5,7 +5,6 @@ Various tests for the `fitk` module.
 # standard library imports
 import os
 from itertools import product
-from typing import Tuple
 
 # third party imports
 from matplotlib.backends.backend_pdf import PdfPages
@@ -1043,7 +1042,7 @@ class TestFisherPlotter:
 class LinearDerivative(FisherDerivative):
     def signal(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         for arg in args:
@@ -1060,7 +1059,7 @@ class GaussianDerivative(FisherDerivative):
 
     def signal(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         mu = self.config["mu"]
@@ -1080,7 +1079,7 @@ class GaussianDerivative(FisherDerivative):
 
     def covariance(
         self,
-        *args: Tuple[str, float],
+        *args: tuple[str, float],
         **kwargs,
     ):
         mu = self.config["mu"]

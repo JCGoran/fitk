@@ -297,7 +297,7 @@ class FisherMatrix:
 
         Parameters
         ----------
-        names : Mapping[str, Union[str, abc.Mapping]]
+        names : Mapping[str, Union[str, Mapping]]
             a mapping (dictionary-like object) between the old names and the
             new ones. The values it maps to can either be a string (the new name), or a dict
             with keys `name`, `latex_name`, and `fiducial` (only `name` is mandatory).

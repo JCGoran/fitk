@@ -7,7 +7,8 @@ from __future__ import annotations
 
 import json
 import math
-from typing import Collection, Optional
+from collections.abc import Collection, Sequence
+from typing import Optional
 
 import numpy as np
 

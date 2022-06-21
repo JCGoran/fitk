@@ -9,9 +9,10 @@ from __future__ import annotations
 # standard library imports
 import copy
 import json
+from collections.abc import Collection, Mapping
 from itertools import permutations
 from numbers import Number
-from typing import Any, Collection, Mapping, Optional, Union
+from typing import Any, Optional, Union
 
 # third party imports
 import numpy as np

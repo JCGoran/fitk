@@ -6,10 +6,11 @@ Functions which act upon Fisher objects.
 from __future__ import annotations
 
 import warnings
+from collections.abc import Collection
 from itertools import product
 
 # standard library imports
-from typing import Collection, Optional
+from typing import Optional
 
 # third party imports
 import numpy as np

@@ -7,9 +7,10 @@ from __future__ import annotations
 
 # standard library imports
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from dataclasses import dataclass
 from itertools import product
-from typing import Collection, Optional
+from typing import Optional
 
 # third party imports
 import numpy as np

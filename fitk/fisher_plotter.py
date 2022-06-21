@@ -7,9 +7,10 @@ from __future__ import annotations
 
 # standard library imports
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from itertools import product
 from pathlib import Path
-from typing import Collection, Optional, Union
+from typing import Optional, Union
 
 
 # third party imports

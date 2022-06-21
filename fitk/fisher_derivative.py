@@ -15,6 +15,7 @@ from typing import Optional
 # third party imports
 import numpy as np
 
+# first party imports
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import find_diff_weights, is_iterable
 
@@ -129,7 +130,7 @@ class D:
 
 
 class FisherDerivative(ABC):
-    """
+    r"""
     Abstract class for computing derivatives using finite differences.
 
     Notes
@@ -215,20 +216,21 @@ class FisherDerivative(ABC):
         """
         validate_derivatives(*args)
 
-        weights_arr = []
-        points_arr = []
-
-        for arg in args:
-            points_arr.append(arg.stencil)
-            weights_arr.append(find_diff_weights(arg.stencil, order=arg.order))
+        weights_arr = [find_diff_weights(arg.stencil, order=arg.order) for arg in args]
+        points_arr = [arg.stencil for arg in args]
 
         denominator = np.prod([arg.abs_step**arg.order for arg in args])
 
         stencils = np.array(list(product(*points_arr)))
         weights = np.array([np.prod(_) for _ in product(*weights_arr)])
 
-        # remove any zero-like elements
+        # zero-out elements which are close to zero (they are non-zero due to
+        # floating-point math)
         weights = np.array([_ if np.abs(_) > 1e-10 else 0 for _ in weights])
+
+        # remove them from the stencil
+        stencils = stencils[np.nonzero(weights)]
+        weights = weights[np.nonzero(weights)]
 
         return np.array(
             np.sum(
@@ -280,10 +282,7 @@ class FisherDerivative(ABC):
         values = np.array([_.value for _ in args])
 
         covariance_matrix = self.covariance(*zip(names, values))
-        if len(covariance_matrix) == 1:
-            inverse_covariance_matrix = 1 / np.array([covariance_matrix])
-        else:
-            inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+        inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
 
@@ -329,10 +328,12 @@ class FisherDerivative(ABC):
                 signal_derivative[arg1.name]
                 @ inverse_covariance_matrix
                 @ signal_derivative[arg2.name]
-                + inverse_covariance_matrix
-                @ covariance_derivative[arg1.name]
-                @ inverse_covariance_matrix
-                @ covariance_derivative[arg2.name]
+                + np.trace(
+                    inverse_covariance_matrix
+                    @ covariance_derivative[arg1.name]
+                    @ inverse_covariance_matrix
+                    @ covariance_derivative[arg2.name]
+                )
                 / 2
             )
 

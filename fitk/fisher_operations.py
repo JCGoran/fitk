@@ -5,16 +5,16 @@ Functions which act upon Fisher objects.
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 
+# standard library imports
 import warnings
 from collections.abc import Collection
 from itertools import product
-
-# standard library imports
 from typing import Optional
 
 # third party imports
 import numpy as np
 
+# first party imports
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import MismatchingValuesError, process_units
 

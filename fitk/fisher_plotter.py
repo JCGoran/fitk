@@ -3,6 +3,7 @@ Package for plotting of Fisher objects.
 See here for documentation of `FisherPlotter`, `FisherFigure1D`, and `FisherFigure2D`.
 """
 
+# needed for compatibility with Python 3.7
 from __future__ import annotations
 
 # standard library imports
@@ -12,11 +13,10 @@ from itertools import product
 from pathlib import Path
 from typing import Optional, Union
 
-
 # third party imports
+import matplotlib.pyplot as plt
 import numpy as np
 from cycler import cycler
-import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse

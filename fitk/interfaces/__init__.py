@@ -1,7 +1,14 @@
 """
-This module defines interfaces to various software with which one can compute
-Fisher matrices using finite differences.
+This module defines interfaces to various third-party software with which one
+can compute Fisher matrices using finite differences.
 
+### Important notice
+Due to the complexities involved in distributing software that is not under
+direct control of the developers/maintainers of `fitk`, any third-party
+software (such as cosmological codes) is _not_ bundled with `fitk` (i.e.
+installed automatically), and must be installed separately by the user.
+
+### Computation of custom derivatives
 To define a new interface, one should define a class that inherits from
 `FisherDerivative`, and implements at least the `signal` method; below
 outlines the steps to create an interface of your own using a minimal amount

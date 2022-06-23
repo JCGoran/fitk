@@ -48,6 +48,7 @@ from fitk.fisher_utils import (
     process_units,
     reindex_array,
 )
+from fitk.interfaces.misc_interfaces import SupernovaDerivative
 
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
@@ -1302,3 +1303,18 @@ class TestFisherDerivative:
             D(name="sigma", value=0.5, abs_step=1e-3),
             constant_covariance=False,
         )
+
+
+class TestMiscDerivatives:
+    def test_supernova_derivative(self):
+        sn = SupernovaDerivative(config=dict(omega_m=0.3))
+        sn.config = dict(z=[0.5, 1, 1.5], sigma=[1, 1, 1])
+        fm = sn.fisher_matrix(
+            D("omega_m", 0.32, 1e-3),
+        )
+
+        with pytest.raises(KeyError):
+            sn.config = dict(q="asdf")
+
+        with pytest.raises(ValueError):
+            sn.config = dict(z=[1], sigma=[1, 2])

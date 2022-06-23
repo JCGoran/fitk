@@ -1,18 +1,21 @@
 """
-Functions which act upon Fisher objects.
+Submodule containing functions which act upon Fisher objects.
+See here for documentation of `bayes_factor`, `kl_divergence`, and `kl_matrix`.
 """
 
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 
-import warnings
-from itertools import product
-
 # standard library imports
-from typing import Collection, Optional, Tuple
+import warnings
+from collections.abc import Collection
+from itertools import product
+from typing import Optional
 
 # third party imports
 import numpy as np
+
+# first party imports
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import MismatchingValuesError, process_units
 
@@ -81,6 +84,7 @@ def bayes_factor(
     >>> fisher_extended = FisherMatrix(np.diag([1, 2, 3, 4, 5]))
     >>> bayes_factor(fisher_base, fisher_extended,
     ... priors=[1, 1], offsets=[0, 0, 0, 0, 0])
+    0.7117625434171772
     """
     if not set(fisher_base.names).issubset(set(fisher_extended.names)):
         raise ValueError(
@@ -129,7 +133,7 @@ def kl_divergence(
     fisher2: FisherMatrix,
     fisher_prior: Optional[FisherMatrix] = None,
     units: str = "b",
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     r"""
     Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
     P_1)$, its expectation value, $\langle D \rangle$, and the square roots

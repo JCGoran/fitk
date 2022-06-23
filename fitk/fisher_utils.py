@@ -2,13 +2,16 @@
 Various helper utilities for Fisher objects.
 """
 
-
+# needed for compatibility with Python 3.7
 from __future__ import annotations
 
+# standard library imports
 import json
 import math
-from typing import Callable, Collection, Optional, Tuple
+from collections.abc import Collection, Sequence
+from typing import Optional
 
+# third party imports
 import numpy as np
 
 

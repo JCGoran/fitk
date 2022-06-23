@@ -251,7 +251,7 @@ class FisherDerivative(ABC):
             )
         )
 
-    def fisher_tensor(
+    def fisher_matrix(
         self,
         *args: D,
         constant_covariance: bool = True,

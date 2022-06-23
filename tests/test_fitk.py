@@ -1282,22 +1282,22 @@ class TestFisherDerivative:
         with pytest.raises(ValueError):
             g("signal", D(name="mu", value=2, abs_step=1e-5, order=11))
 
-    def test_fisher_tensor(self):
+    def test_fisher_matrix(self):
         lin = LinearDerivative()
 
         # cannot compute the Fisher matrix if covariance is not implemented
         with pytest.raises(NotImplementedError):
-            lin.fisher_tensor(D("x", 1, 1e-3))
+            lin.fisher_matrix(D("x", 1, 1e-3))
 
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         assert np.allclose(g("covariance", D(name="mu", value=1, abs_step=1e-3)), 0)
 
-        assert g.fisher_tensor(
+        assert g.fisher_matrix(
             D(name="mu", value=1, abs_step=1e-3),
             D(name="sigma", value=0.5, abs_step=1e-3),
             constant_covariance=True,
-        ) == g.fisher_tensor(
+        ) == g.fisher_matrix(
             D(name="mu", value=1, abs_step=1e-3),
             D(name="sigma", value=0.5, abs_step=1e-3),
             constant_covariance=False,

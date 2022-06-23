@@ -21,7 +21,6 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import find_diff_weights, is_iterable
 
 
-
 def _validate_derivatives(
     *args: D,
 ):

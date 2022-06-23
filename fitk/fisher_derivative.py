@@ -1,5 +1,6 @@
 """
-Module for computing derivatives using finite differences
+Submodule for computing derivatives using finite differences.
+See here for documentation of `D` and `FisherDerivative`.
 """
 
 # for compatibility with Python 3.7
@@ -20,7 +21,8 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import find_diff_weights, is_iterable
 
 
-def validate_derivatives(
+
+def _validate_derivatives(
     *args: D,
 ):
     """
@@ -214,7 +216,7 @@ class FisherDerivative(ABC):
         kwargs
             any keyword arguments passed to the method
         """
-        validate_derivatives(*args)
+        _validate_derivatives(*args)
 
         weights_arr = [find_diff_weights(arg.stencil, order=arg.order) for arg in args]
         points_arr = [arg.stencil for arg in args]
@@ -272,6 +274,10 @@ class FisherDerivative(ABC):
         latex_names
             the LaTeX names of the parameters that will be passed to the
             `FisherMatrix`
+
+        kwargs
+            any other keyword arguments that should be passed to `signal` and
+            `covariance`
 
         Returns
         -------

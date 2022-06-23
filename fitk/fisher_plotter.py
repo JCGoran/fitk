@@ -1,5 +1,5 @@
 """
-Package for plotting of Fisher objects.
+Submodule for plotting of Fisher objects.
 See here for documentation of `FisherPlotter`, `FisherFigure1D`, and `FisherFigure2D`.
 """
 

@@ -1,23 +1,24 @@
 """
-This module defines interfaces to various third-party software with which one
-can compute Fisher matrices using finite differences.
+This module defines interfaces to various third-party software with which
+one can compute Fisher matrices using finite differences.
 
 ### Important notice
-Due to the complexities involved in distributing software that is not under
-direct control of the developers/maintainers of `fitk`, any third-party
-software (such as cosmological codes) is _not_ bundled with `fitk` (i.e.
-installed automatically), and must be installed separately by the user.
+Due to the complexities involved in distributing software that is not
+under direct control of the developers/maintainers of `fitk` (version,
+installation, license issues, etc.), any third-party software (such as
+cosmological codes) is _not_ bundled with `fitk` (i.e. installed
+automatically), and must be installed separately by the user.
 
 ### Computation of custom derivatives
 To define a new interface, one should define a class that inherits from
-`FisherDerivative`, and implements at least the `signal` method; below
+`fitk.fisher_derivative.FisherDerivative`, and implements at least the `signal` method; below
 outlines the steps to create an interface of your own using a minimal amount
 of code:
 
 ```python
 from __future__ import annotations # required for Python 3.7
 import numpy as np
-from fitk.fisher_derivative import FisherDerivative
+from fitk import FisherDerivative
 
 # optional: if your code has a Python interface, it would be beneficial to use it here
 import mycode
@@ -60,4 +61,7 @@ stored in the constructor (i.e. `__init__` method), to prevent forgetting to
 pass them when computing the derivatives.
 Additionally, any extra information (members and methods) should be documented
 accordingly.
+Finally, if the external module could not be loaded, importing the module
+should raise an `ImportError` if the user attempts to instantiate a class
+with the module missing.
 """

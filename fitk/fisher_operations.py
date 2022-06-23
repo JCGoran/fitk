@@ -1,5 +1,6 @@
 """
-Functions which act upon Fisher objects.
+Submodule containing functions which act upon Fisher objects.
+See here for documentation of `bayes_factor`, `kl_divergence`, and `kl_matrix`.
 """
 
 # needed for compatibility with Python 3.7
@@ -83,6 +84,7 @@ def bayes_factor(
     >>> fisher_extended = FisherMatrix(np.diag([1, 2, 3, 4, 5]))
     >>> bayes_factor(fisher_base, fisher_extended,
     ... priors=[1, 1], offsets=[0, 0, 0, 0, 0])
+    0.7117625434171772
     """
     if not set(fisher_base.names).issubset(set(fisher_extended.names)):
         raise ValueError(

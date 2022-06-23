@@ -1,5 +1,5 @@
 """
-Package for performing operations on Fisher objects.
+Submodule for performing operations on Fisher objects.
 See here for documentation of `FisherMatrix`.
 """
 

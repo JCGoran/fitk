@@ -222,6 +222,36 @@ class FisherFigure2D(FisherBaseFigure):
 class FisherPlotter:
     """
     Class for plotting FisherMatrix objects.
+
+    Examples
+    --------
+    Create a Fisher plotter:
+    >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=('a', 'b', 'c'))
+    >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=('a', 'b', 'c'))
+    >>> fp = FisherPlotter(fm1, fm2)
+
+    Make a marginalized 1D plot:
+    >>> plot1d = fp.plot_1d()
+    >>> plot1d # doctest: +SKIP
+    <FisherFigure(
+        names=array(['a', 'b', 'c'], dtype=object),
+        figure=<Figure size 600x200 with 3 Axes>,
+        axes=array([<AxesSubplot:xlabel='a', ylabel='$p (\\theta)$'>,
+           <AxesSubplot:xlabel='b'>, <AxesSubplot:xlabel='c'>], dtype=object))>
+
+    Make a triangle plot:
+    >>> plot2d = fp.plot_triangle()
+    >>> plot2d
+    <FisherFigure(
+        names=array(['a', 'b', 'c'], dtype=object),
+        figure=<Figure size 600x600 with 6 Axes>,
+        axes=array([[<AxesSubplot:>, <AxesSubplot:>, <AxesSubplot:>],
+           [<AxesSubplot:ylabel='b'>, <AxesSubplot:>, <AxesSubplot:>],
+           [<AxesSubplot:xlabel='a', ylabel='c'>, <AxesSubplot:xlabel='b'>,
+            <AxesSubplot:xlabel='c'>]], dtype=object))>
+
+    They can be saved easily:
+    >>> plot1d.savefig('example_plot_1d.pdf') # doctest: +SKIP
     """
 
     def __init__(
@@ -253,9 +283,9 @@ class FisherPlotter:
         Examples
         --------
         Create a Fisher plotter with two objects:
-        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=list('abc'))
-        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=list('abc'))
-        >>> fp = FisherPlotter(fm1, fm2, labels=['first', 'second'])
+        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=('a', 'b', 'c'))
+        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=('a', 'b', 'c'))
+        >>> fp = FisherPlotter(fm1, fm2)
         """
         # make sure all of the Fisher objects have the same sizes
         if not all(len(args[0]) == len(arg) for arg in args):

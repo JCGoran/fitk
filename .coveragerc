@@ -1,2 +1,3 @@
 [run]
 source=fitk
+omit = fitk/interfaces/coffe_interfaces.py

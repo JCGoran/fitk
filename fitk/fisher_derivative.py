@@ -254,6 +254,8 @@ class FisherDerivative(ABC):
         self,
         *args: D,
         constant_covariance: bool = True,
+        latex_names: Optional[Collection[str]] = None,
+        **kwargs,
     ):
         r"""
         Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
@@ -266,6 +268,10 @@ class FisherDerivative(ABC):
 
         constant_covariance
             whether or not to treat the covariance as constant (default: true)
+
+        latex_names
+            the LaTeX names of the parameters that will be passed to the
+            `FisherMatrix`
 
         Returns
         -------
@@ -299,6 +305,7 @@ class FisherDerivative(ABC):
                     kind=arg.kind,
                     accuracy=arg.accuracy,
                     stencil=arg.stencil,
+                    **kwargs,
                 ),
             )
 
@@ -316,6 +323,7 @@ class FisherDerivative(ABC):
                         kind=arg.kind,
                         accuracy=arg.accuracy,
                         stencil=arg.stencil,
+                        **kwargs,
                     ),
                 )
             else:
@@ -337,4 +345,9 @@ class FisherDerivative(ABC):
                 / 2
             )
 
-        return FisherMatrix(fisher_matrix, names=names, fiducials=values)
+        return FisherMatrix(
+            fisher_matrix,
+            names=names,
+            fiducials=values,
+            latex_names=latex_names,
+        )

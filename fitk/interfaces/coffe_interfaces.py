@@ -56,16 +56,23 @@ def _parse_and_set_args(
 
 
 class CoffeMultipolesDerivative(FisherDerivative):
-    """
+    r"""
     Computes the derivative of the multipoles of the 2PCF w.r.t. parameters
 
     Examples
     --------
-    >>> # set some cosmology
+    Set some cosmology:
     >>> cosmo = CoffeMultipolesDerivative(config=dict(omega_m=0.32)) # doctest: +SKIP
-    >>> # compute the Fisher matrix
+
+    Compute the derivative of the signal (multipoles of 2PCF) w.r.t. $h$ with a
+    fiducial value of $0.67$ and an absolute step size $10^{-3}$:
+    >>> cosmo('signal', D('h', 0.67, 1e-3)) # doctest: +SKIP
+
+    Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
+    parameters:
     >>> fm = cosmo.fisher_matrix( # doctest: +SKIP
-    ... D('omega_m', 0.32, 1e-3), D('n_s', 0.96, 1e-3))
+    ... D(name='omega_m', value=0.32, abs_step=1e-3),
+    ... D(name='n_s', value=0.96, abs_step=1e-3))
     """
 
     __software_name__ = "coffe"

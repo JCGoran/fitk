@@ -27,7 +27,7 @@ The simplest way to use it is to load the core functions and classes:
 
 ```python
 import numpy as np
-from fitk import FisherMatrix, FisherPlotter
+from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D
 ```
 
 For the (extensive) documentation, refer to [this website](https://jcgoran.github.io/fisher-information/fitk.html).

@@ -10,7 +10,7 @@ Througout the documentation, it is assumed that the modules are imported
 in the following way:
 
 >>> import numpy as np
->>> from fitk import FisherMatrix, FisherPlotter, D, FisherDerivative
+>>> from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, D, FisherDerivative
 """
 
 from fitk import fisher_operations, fisher_utils, interfaces

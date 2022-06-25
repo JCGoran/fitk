@@ -142,6 +142,12 @@ class FisherDerivative(ABC):
     array that is shape-compatible with the output of the `signal` method.
     """
 
+    def __init__(self, *args, **kwargs):
+        """
+        Placeholder constructor that currently does nothing.
+        """
+        ...
+
     @abstractmethod
     def signal(
         self,

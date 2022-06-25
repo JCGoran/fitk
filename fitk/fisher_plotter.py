@@ -627,17 +627,27 @@ class FisherFigure2D(FisherBaseFigure):
                     **options,
                 }
                 # we need to reset the color cycler
-                self.cycler = plt.style.library[style]["axes.prop_cycle"].by_key()[
-                    "color"
-                ]
+                self.cycler = (
+                    plt.style.library[style]
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
                 self.current_color = iter(self.cycler)
 
             # maybe it's a file
             else:
                 # we need to reset the color cycler
-                self.cycler = plt.style.core.rc_params_from_file(style)[
-                    "axes.prop_cycle"
-                ].by_key()["color"]
+                self.cycler = (
+                    plt.style.core.rc_params_from_file(style)
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
                 self.current_color = iter(self.cycler)
 
                 self._options = {

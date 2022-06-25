@@ -598,12 +598,26 @@ class FisherFigure2D(FisherBaseFigure):
         handles: Optional[Collection[Artist]] = None,
         names: Optional[Collection[str]] = None,
         labels: Optional[Collection[str]] = None,
-        options: Optional[dict] = get_default_rcparams(),
+        options: Optional[dict[str, Any]] = get_default_rcparams(),
         show_1d_curves: bool = False,
         show_joint_dist: bool = False,
     ):
         """
         Constructor.
+
+        Parameters
+        ----------
+        options
+            the dictionary containing the options for plotting. If the special
+            key 'style' is present, it attempts to use that plotting style (can
+            be one of the outputs of `matplotlib.pyplot.style.available`, or a
+            path to a file. If using a file, does not use the default rc
+            parameters).
+
+        Notes
+        -----
+        For the style sheet reference, please consult [the matplotlib
+        documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
         self._figure = figure
         self._axes = axes
@@ -614,6 +628,34 @@ class FisherFigure2D(FisherBaseFigure):
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
         super().__init__()
+
+        if options and "style" in options:
+            style = options.pop("style")
+            # maybe it's one of the built-in styles
+            if style in plt.style.available:
+                self._options = {
+                    **plt.style.library[style],
+                    **get_default_rcparams(),
+                    **options,
+                }
+                # we need to reset the color cycler
+                self.cycler = plt.style.library[style]["axes.prop_cycle"].by_key()[
+                    "color"
+                ]
+                self.current_color = iter(self.cycler)
+
+            # maybe it's a file
+            else:
+                # we need to reset the color cycler
+                self.cycler = plt.style.core.rc_params_from_file(style)[
+                    "axes.prop_cycle"
+                ].by_key()["color"]
+                self.current_color = iter(self.cycler)
+
+                self._options = {
+                    **plt.style.core.rc_params_from_file(style),
+                    **options,
+                }
 
     def __getitem__(
         self,

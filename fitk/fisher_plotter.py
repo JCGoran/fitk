@@ -722,7 +722,7 @@ class FisherFigure2D(FisherBaseFigure):
 
             else:
                 ax.legend(
-                    args,
+                    *args,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,
                     **kwargs,
@@ -1098,7 +1098,7 @@ def plot_curve_1d(
     Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.
 
     Parameters
-    --------
+    ----------
     fisher : FisherMatrix
         the Fisher matrix which we want to plot
 
@@ -1111,7 +1111,7 @@ def plot_curve_1d(
 
     Returns
     -------
-    A 2-tuple `(Figure, Axes)`
+    A 3-tuple `(Figure, Axes, Artist)`
     """
     if ax is None:
         _, ax = plt.subplots()
@@ -1128,7 +1128,7 @@ def plot_shading_1d(
     p: float = 0.68,
     ax: Optional[Axes] = None,
     **kwargs,
-):
+) -> tuple[Figure, Axes]:
     r"""
     Plots shading at some confidence interval.
 
@@ -1186,7 +1186,7 @@ def plot_curve_2d(
 
     Returns
     -------
-    A 2-tuple `(Figure, Axes)`
+    A 3-tuple `(Figure, Axes, Artist)`
     """
     if ax is None:
         _, ax = plt.subplots()

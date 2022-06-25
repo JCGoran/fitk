@@ -348,6 +348,18 @@ class FisherBaseFigure(ABC):
             if self[nameiter] and which in ["both", "y"]:
                 self[nameiter].yaxis.set_minor_formatter(formatter)
 
+    def set_title(
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Thin wrapper for setting the title of the figure with the correct
+        options.
+        """
+        with plt.rc_context(self._options):
+            self.figure.suptitle(*args, **kwargs)
+
 
 class FisherFigure1D(FisherBaseFigure):
     """

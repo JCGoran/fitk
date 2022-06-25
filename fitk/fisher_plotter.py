@@ -697,6 +697,8 @@ class FisherFigure2D(FisherBaseFigure):
         Creates a legend on the figure.
         """
         with plt.rc_context(self.options):
+            # this will always exist since we can't plot < 2 parameters
+            ax = self[self.names[0], self.names[1]]
             if not overwrite:
                 if self.show_1d_curves:
                     i, j = 0, -1
@@ -707,16 +709,21 @@ class FisherFigure2D(FisherBaseFigure):
                     self.axes[0, j].get_position().xmax,
                     self.axes[i, 0].get_position().ymax,
                 )
-                self.figure.legend(
+
+                if ax.get_legend():
+                    ax.get_legend().remove()
+
+                ax.legend(
                     self.handles,
                     self.labels,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,
+                    bbox_transform=self.figure.transFigure,
                     **kwargs,
                 )
 
             else:
-                self.figure.legend(
+                ax.legend(
                     args,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,

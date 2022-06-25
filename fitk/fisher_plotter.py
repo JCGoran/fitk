@@ -348,18 +348,6 @@ class FisherBaseFigure(ABC):
             if self[nameiter] and which in ["both", "y"]:
                 self[nameiter].yaxis.set_minor_formatter(formatter)
 
-    def set_title(
-        self,
-        *args,
-        **kwargs,
-    ):
-        """
-        Thin wrapper for setting the title of the figure with the correct
-        options.
-        """
-        with plt.rc_context(self._options):
-            self.figure.suptitle(*args, **kwargs)
-
 
 class FisherFigure1D(FisherBaseFigure):
     """
@@ -729,6 +717,40 @@ class FisherFigure2D(FisherBaseFigure):
                     bbox_to_anchor=bbox_to_anchor,
                     **kwargs,
                 )
+
+    def set_title(
+        self,
+        *args,
+        overwrite: bool = False,
+        xscale: float = 0.5,
+        yscale: float = 1.08,
+        **kwargs,
+    ):
+        """
+        Thin wrapper for setting the title of the figure with the correct
+        options.
+        """
+        with plt.rc_context(self._options):
+            if not overwrite:
+                if self.show_1d_curves:
+                    i, j = 0, -1
+                else:
+                    i, j = 1, -2
+
+                x, y = (
+                    self.axes[0, j].get_position().xmax,
+                    self.axes[i, 0].get_position().ymax,
+                )
+
+                self.figure.suptitle(
+                    *args,
+                    x=x * xscale,
+                    y=y * yscale,
+                    **kwargs,
+                )
+
+            else:
+                self.figure.suptitle(*args, **kwargs)
 
     def draw(
         self,

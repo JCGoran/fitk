@@ -491,7 +491,7 @@ class FisherFigure1D(FisherBaseFigure):
                     self.labels.append(kwargs["label"])
                     added = True
 
-                add_shading_1d(
+                _add_shading_1d(
                     fisher.fiducials[np.where(fisher.names == name)],
                     fisher.constraints(name, marginalized=True),
                     ax,
@@ -500,7 +500,7 @@ class FisherFigure1D(FisherBaseFigure):
                     **kwargs,
                 )
 
-                add_shading_1d(
+                _add_shading_1d(
                     fisher.fiducials[np.where(fisher.names == name)],
                     fisher.constraints(name, marginalized=True),
                     ax,
@@ -906,7 +906,7 @@ class FisherFigure2D(FisherBaseFigure):
                         ax=ax[i, j],
                         scaling_factor=1
                         if not self.show_joint_dist
-                        else np.sqrt(get_chisq(1)),
+                        else np.sqrt(_get_chisq(1)),
                         fill=False,
                         zorder=20,
                         **kwargs,
@@ -925,7 +925,7 @@ class FisherFigure2D(FisherBaseFigure):
                         ax=ax[i, j],
                         scaling_factor=1
                         if not self.show_joint_dist
-                        else np.sqrt(get_chisq(1)),
+                        else np.sqrt(_get_chisq(1)),
                         fill=True,
                         alpha=0.2,
                         ec=None,
@@ -941,7 +941,7 @@ class FisherFigure2D(FisherBaseFigure):
                         ax=ax[i, j],
                         scaling_factor=2
                         if not self.show_joint_dist
-                        else np.sqrt(get_chisq(2)),
+                        else np.sqrt(_get_chisq(2)),
                         fill=False,
                         zorder=20,
                         **kwargs,
@@ -954,7 +954,7 @@ class FisherFigure2D(FisherBaseFigure):
                         ax=ax[i, j],
                         scaling_factor=2
                         if not self.show_joint_dist
-                        else np.sqrt(get_chisq(2)),
+                        else np.sqrt(_get_chisq(2)),
                         fill=True,
                         alpha=0.1,
                         ec=None,
@@ -1004,7 +1004,7 @@ class FisherFigure2D(FisherBaseFigure):
         )
 
 
-def get_chisq(
+def _get_chisq(
     sigma: float = 1,
     df: int = 2,
 ):
@@ -1028,7 +1028,7 @@ def get_chisq(
     return chi2.ppf(norm.cdf(sigma) - norm.cdf(-sigma), df=df)
 
 
-def add_plot_1d(
+def _add_plot_1d(
     fiducial: float,
     sigma: float,
     ax: Optional[Axes] = None,
@@ -1056,7 +1056,7 @@ def add_plot_1d(
     return (ax.get_figure(), ax, handle)
 
 
-def add_shading_1d(
+def _add_shading_1d(
     fiducial: float,
     sigma: float,
     ax: Optional[Axes] = None,
@@ -1119,7 +1119,7 @@ def plot_curve_1d(
     fid = fisher.fiducials[np.where(fisher.names == name)]
     sigma = fisher.constraints(name, marginalized=True)
 
-    return add_plot_1d(fid, sigma, ax=ax, **kwargs)
+    return _add_plot_1d(fid, sigma, ax=ax, **kwargs)
 
 
 def plot_shading_1d(
@@ -1194,7 +1194,7 @@ def plot_curve_2d(
     fidx = fisher.fiducials[np.where(fisher.names == name1)]
     fidy = fisher.fiducials[np.where(fisher.names == name2)]
 
-    a, b, angle = get_ellipse(fisher, name1, name2)
+    a, b, angle = _get_ellipse(fisher, name1, name2)
 
     patch = ax.add_patch(
         Ellipse(
@@ -1209,7 +1209,7 @@ def plot_curve_2d(
     return (ax.get_figure(), ax, patch)
 
 
-def get_ellipse(
+def _get_ellipse(
     fm: FisherMatrix,
     name1: str,
     name2: str,

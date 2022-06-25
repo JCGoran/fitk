@@ -1,63 +1,53 @@
 """
 Submodule for plotting of Fisher objects.
-See here for documentation of `FisherPlotter`, `FisherFigure1D`, and `FisherFigure2D`.
+See here for documentation of `FisherFigure1D` and `FisherFigure2D`.
 """
 
 # needed for compatibility with Python 3.7
 from __future__ import annotations
 
 # standard library imports
+import copy
 from abc import ABC, abstractmethod
 from collections.abc import Collection
 from itertools import product
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 # third party imports
 import matplotlib.pyplot as plt
 import numpy as np
-from cycler import cycler
+from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
-from matplotlib.ticker import LinearLocator, StrMethodFormatter
+from matplotlib.ticker import Formatter, Locator
 from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
-    MismatchingSizeError,
-    ParameterNotFoundError,
-    get_default_rcparams,
-    get_index_of_other_array,
-)
+from fitk.fisher_utils import ParameterNotFoundError, get_default_rcparams, is_iterable
 
 
 class FisherBaseFigure(ABC):
-    def __init__(
-        self,
-        figure: Figure,
-        axes: Collection[Axes],
-        names: Collection[str],
-    ):
+    """
+    The abstract base class for plotting Fisher objects.
+    """
+
+    def __init__(self, *args, **kwargs):
         """
-        Constructor.
-
-        Parameters
-        ----------
-        figure : Figure
-            the figure plotted by `FisherPlotter`
-
-        axes : Collection[Axes]
-            the axes of the above figure
-
-        names : Collection[str]
-            the names of the parameters that are plotted
+        Constructor
         """
-        self._figure = figure
-        self._axes = axes
-        self._names = names
+        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+        self.current_color = iter(self.cycler)
+
+    @abstractmethod
+    def plot(self, fisher: FisherMatrix, *args, **kwargs):
+        """
+        Implements plotting of Fisher objects.
+        """
+        return NotImplemented
 
     @abstractmethod
     def __getitem__(self, key):
@@ -87,6 +77,27 @@ class FisherBaseFigure(ABC):
         Returns the names of the original parameters plotted.
         """
         return self._names
+
+    @property
+    def handles(self):
+        """
+        Returns the handles of the currently drawn artists.
+        """
+        return self._handles
+
+    @property
+    def labels(self):
+        """
+        Returns the legend labels of the currently drawn artists.
+        """
+        return self._labels
+
+    @property
+    def options(self):
+        """
+        Returns the matplotlib options which were used for plotting.
+        """
+        return self._options
 
     def __repr__(self):
         """
@@ -135,10 +146,16 @@ class FisherBaseFigure(ABC):
             any other keyword arguments that should be passed to
             `figure.savefig`
         """
-        return self.figure.savefig(path, dpi=dpi, bbox_inches=bbox_inches, **kwargs)
+        self.figure.savefig(
+            path,
+            dpi=dpi,
+            bbox_inches=bbox_inches,
+            **kwargs,
+        )
 
     def set_label_params(
         self,
+        which: str = "both",
         **kwargs,
     ):
         """
@@ -146,6 +163,9 @@ class FisherBaseFigure(ABC):
 
         Parameters
         ----------
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+
         kwargs
             any keyword arguments that are also valid for
             `matplotlib.text.Text`, see [the
@@ -159,22 +179,202 @@ class FisherBaseFigure(ABC):
         for nameiter in product(self.names, repeat=np.ndim(self.axes)):
             # only set the parameters which are not empty (should this be done
             # for all of them instead?)
-            if self[nameiter].get_xlabel():
+            if (
+                self[nameiter]
+                and self[nameiter].get_xlabel()
+                and which in ["both", "x"]
+            ):
                 self[nameiter].set_xlabel(
                     self[nameiter].get_xlabel(),
                     **kwargs,
                 )
-            if self[nameiter].get_ylabel():
+            if (
+                self[nameiter]
+                and self[nameiter].get_ylabel()
+                and which in ["both", "y"]
+            ):
                 self[nameiter].set_ylabel(
                     self[nameiter].get_ylabel(),
                     **kwargs,
                 )
+
+    def set_tick_params(
+        self,
+        which: str = "both",
+        **kwargs,
+    ):
+        """
+        Collectively sets both x and y tick parameters.
+
+        Parameters
+        ----------
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+
+        kwargs
+            any keyword arguments passed to the methods for handling tick
+            parameters (such as 'fontsize', 'rotation', etc.)
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            if self[nameiter] and which in ["both", "x"]:
+                for item in self[nameiter].get_xticklabels():
+                    for key, value in kwargs.items():
+                        getattr(item, f"set_{key}")(value)
+            if self[nameiter] and which in ["both", "y"]:
+                for item in self[nameiter].get_yticklabels():
+                    for key, value in kwargs.items():
+                        getattr(item, f"set_{key}")(value)
+            # also alter any exponential offsets
+            for key, value in kwargs.items():
+                if self[nameiter] and which in ["both", "x"]:
+                    getattr(
+                        self[nameiter].get_xaxis().get_offset_text(),
+                        f"set_{key}",
+                    )(value)
+                if self[nameiter] and which in ["both", "y"]:
+                    getattr(
+                        self[nameiter].get_yaxis().get_offset_text(),
+                        f"set_{key}",
+                    )(value)
+
+    def set_major_locator(
+        self,
+        locator: Locator,
+        which: str = "both",
+    ):
+        """
+        Sets the major locator for all of the axes.
+
+        Parameters
+        ----------
+        locator
+            the instance of `matplotlib.ticker.Locator` to use.
+
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            # for some reason, we cannot reuse the same instance, so we just
+            # make a deep copy of it instead
+            if (
+                self[nameiter]
+                and np.any(self[nameiter].get_xticks())
+                and which in ["both", "x"]
+            ):
+                xloc = copy.deepcopy(locator)
+                self[nameiter].xaxis.set_major_locator(xloc)
+            if (
+                self[nameiter]
+                and np.any(self[nameiter].get_yticks())
+                and which in ["both", "y"]
+            ):
+                yloc = copy.deepcopy(locator)
+                self[nameiter].yaxis.set_major_locator(yloc)
+
+    def set_minor_locator(
+        self,
+        locator: Locator,
+        which: str = "both",
+    ):
+        """
+        Sets the minor locator for all of the axes.
+
+        Parameters
+        ----------
+        locator
+            the instance of `matplotlib.ticker.Locator` to use.
+
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            if (
+                self[nameiter]
+                and np.any(self[nameiter].get_xticks())
+                and which in ["both", "x"]
+            ):
+                # same reason as the major locator
+                xloc = copy.deepcopy(locator)
+                self[nameiter].xaxis.set_minor_locator(xloc)
+            if (
+                self[nameiter]
+                and np.any(self[nameiter].get_yticks())
+                and which in ["both", "y"]
+            ):
+                yloc = copy.deepcopy(locator)
+                self[nameiter].yaxis.set_minor_locator(yloc)
+
+    def set_major_formatter(
+        self,
+        formatter: Formatter,
+        which: str = "both",
+    ):
+        """
+        Sets the major formatter for all of the axes.
+
+        Parameters
+        ----------
+        formatter
+            the instance of `matplotlib.ticker.Formatter` to use.
+
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            if self[nameiter] and which in ["both", "x"]:
+                self[nameiter].xaxis.set_major_formatter(formatter)
+            if self[nameiter] and which in ["both", "y"]:
+                self[nameiter].yaxis.set_major_formatter(formatter)
+
+    def set_minor_formatter(
+        self,
+        formatter: Formatter,
+        which: str = "both",
+    ):
+        """
+        Sets the minor formatter for all of the axes.
+
+        Parameters
+        ----------
+        formatter
+            the instance of `matplotlib.ticker.Formatter` to use.
+
+        which
+            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        """
+        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+            if self[nameiter] and which in ["both", "x"]:
+                self[nameiter].xaxis.set_minor_formatter(formatter)
+            if self[nameiter] and which in ["both", "y"]:
+                self[nameiter].yaxis.set_minor_formatter(formatter)
 
 
 class FisherFigure1D(FisherBaseFigure):
     """
     Container for easy access to elements in the 1D plot.
     """
+
+    def __init__(
+        self,
+        figure: Optional[Figure] = None,
+        axes: Optional[Collection[Axes]] = None,
+        handles: Optional[Collection[Artist]] = None,
+        names: Optional[Collection[str]] = None,
+        labels: Optional[Collection[str]] = None,
+        options: Optional[dict] = get_default_rcparams(),
+        max_cols: Optional[int] = None,
+    ):
+        """
+        Constructor.
+        """
+        self._figure = figure
+        self._axes = axes
+        self._handles = handles if handles is not None else []
+        self._names = names
+        self._labels = labels if labels is not None else []
+        self._options = options
+        self.max_cols = max_cols
+        super().__init__()
 
     def __getitem__(
         self,
@@ -188,11 +388,220 @@ class FisherFigure1D(FisherBaseFigure):
 
         return self.axes.flat[np.where(self.names == key)][0]
 
+    def draw(
+        self,
+        name: str,
+        method: str,
+        *args,
+        **kwargs,
+    ):
+        """
+        Implements drawing of other objects on the axis.
+        """
+        if not hasattr(self[name], method):
+            raise AttributeError(
+                f"The method `{method}` is not a valid plotting method"
+            )
+
+        # hopefully the return type should be some artist, or a collection of
+        # artists
+        handles = getattr(self[name], method)(*args, **kwargs)
+        if is_iterable(handles):
+            for handle in handles:
+                if isinstance(handle, Artist) and kwargs.get("label"):
+                    self.labels.append(kwargs.get("label"))
+                    self.handles.append(handle)
+        else:
+            if isinstance(handles, Artist) and kwargs.get("label"):
+                self.labels.append(kwargs.get("label"))
+                self.handles.append(handles)
+
+    def plot(
+        self,
+        fisher: FisherMatrix,
+        *args,
+        **kwargs,
+    ):
+        """
+        Makes a 1D plot (Gaussians) of the Fisher objects
+
+        Parameters
+        ----------
+        fisher
+            the Fisher object which we want to plot
+
+        Returns
+        -------
+        An instance of `FisherFigure1D`.
+
+        Notes
+        -----
+        Also modifies the current instance
+        """
+        size = len(fisher)
+
+        added = False
+
+        # in order to preserve colors for each object, we only use the
+        # (default) cycler when the color is not explicitly set
+        if "c" not in kwargs and "color" not in kwargs:
+            kwargs["color"] = next(self.current_color)
+            self.current_color = iter(self.current_color)
+
+        if self.max_cols is not None and self.max_cols <= size:
+            full = size % self.max_cols == 0
+            layout = (
+                size // self.max_cols if full else size // self.max_cols + 1,
+                self.max_cols,
+            )
+        else:
+            layout = 1, size
+            full = True
+
+        with plt.rc_context(self._options):
+            # general figure setup
+            if self.figure:
+                fig = self.figure
+                axes = self.axes
+            else:
+                fig = plt.figure(
+                    clear=True,
+                    figsize=(2 * layout[1], 2 * layout[0]),
+                )
+                gs = fig.add_gridspec(
+                    nrows=layout[0],
+                    ncols=layout[1],
+                    hspace=0.5,
+                    wspace=0.1,
+                )
+                axes = gs.subplots()
+                if size == 1:
+                    axes = np.array([axes])
+
+            for (index, name), latex_name in zip(
+                enumerate(fisher.names),
+                fisher.latex_names,
+            ):
+                ax = axes.flat[index]
+
+                _, __, handle = plot_curve_1d(fisher, name, ax, **kwargs)
+
+                if not added and kwargs.get("label"):
+                    self.handles.append(handle)
+                    self.labels.append(kwargs["label"])
+                    added = True
+
+                add_shading_1d(
+                    fisher.fiducials[np.where(fisher.names == name)],
+                    fisher.constraints(name, marginalized=True),
+                    ax,
+                    alpha=0.3,
+                    ec=None,
+                    **kwargs,
+                )
+
+                add_shading_1d(
+                    fisher.fiducials[np.where(fisher.names == name)],
+                    fisher.constraints(name, marginalized=True),
+                    ax,
+                    level=2,
+                    alpha=0.1,
+                    ec=None,
+                    **kwargs,
+                )
+
+                ax.autoscale()
+                ax.set_xlabel(latex_name)
+                ax.relim()
+                ax.autoscale_view()
+
+                # the y axis should start at 0 since we're plotting a PDF
+                ax.set_ylim(0, ax.get_ylim()[-1])
+
+                ax.set_yticks([])
+
+            # remove any axes which are not drawn
+            if not full:
+                for index in range(
+                    (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
+                ):
+                    try:
+                        axes.flat[index].remove()
+                    except AttributeError:
+                        pass
+
+        self._figure = fig
+        self._axes = axes
+        self._names = fisher.names
+
+        return self.__class__(
+            figure=self.figure,
+            axes=self.axes,
+            names=fisher.names,
+            labels=self.labels,
+            handles=self.handles,
+            options=self.options,
+            max_cols=self.max_cols,
+        )
+
+    def legend(
+        self,
+        *args: Artist,
+        overwrite: bool = False,
+        loc: Union[str, tuple[float, float]] = "lower center",
+        bbox_to_anchor: Any = [0.5, 1],
+        **kwargs,
+    ):
+        """
+        Creates a legend on the figure.
+        """
+        with plt.rc_context(self.options):
+            if not overwrite:
+                self.figure.legend(
+                    self.handles,
+                    self.labels,
+                    loc=loc,
+                    bbox_to_anchor=bbox_to_anchor,
+                    **kwargs,
+                )
+
+            else:
+                self.figure.legend(
+                    args,
+                    loc=loc,
+                    bbox_to_anchor=bbox_to_anchor,
+                    **kwargs,
+                )
+
 
 class FisherFigure2D(FisherBaseFigure):
     """
     Container for easy access to elements in the 2D plot.
     """
+
+    def __init__(
+        self,
+        figure: Optional[Figure] = None,
+        axes: Optional[Collection[Axes]] = None,
+        handles: Optional[Collection[Artist]] = None,
+        names: Optional[Collection[str]] = None,
+        labels: Optional[Collection[str]] = None,
+        options: Optional[dict] = get_default_rcparams(),
+        show_1d_curves: bool = False,
+        show_joint_dist: bool = False,
+    ):
+        """
+        Constructor.
+        """
+        self._figure = figure
+        self._axes = axes
+        self._handles = handles if handles is not None else []
+        self._names = names
+        self._labels = labels if labels is not None else []
+        self._options = options
+        self.show_1d_curves = show_1d_curves
+        self.show_joint_dist = show_joint_dist
+        super().__init__()
 
     def __getitem__(
         self,
@@ -210,6 +619,10 @@ class FisherFigure2D(FisherBaseFigure):
         if name2 not in self.names:
             raise ParameterNotFoundError(name2, self.names)
 
+        # edge case
+        if not self.show_1d_curves and name1 == name2:
+            return None
+
         index1 = np.where(self.names == name1)
         index2 = np.where(self.names == name2)
 
@@ -218,299 +631,159 @@ class FisherFigure2D(FisherBaseFigure):
 
         return self.axes[index1, index2][0, 0]
 
-
-class FisherPlotter:
-    """
-    Class for plotting FisherMatrix objects.
-
-    Examples
-    --------
-    Create a Fisher plotter:
-    >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=('a', 'b', 'c'))
-    >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=('a', 'b', 'c'))
-    >>> fp = FisherPlotter(fm1, fm2)
-
-    Make a marginalized 1D plot:
-    >>> plot1d = fp.plot_1d()
-    >>> plot1d # doctest: +SKIP
-    <FisherFigure(
-        names=array(['a', 'b', 'c'], dtype=object),
-        figure=<Figure size 600x200 with 3 Axes>,
-        axes=array([<AxesSubplot:xlabel='a', ylabel='$p (\\theta)$'>,
-           <AxesSubplot:xlabel='b'>, <AxesSubplot:xlabel='c'>], dtype=object))>
-
-    Make a triangle plot:
-    >>> plot2d = fp.plot_triangle()
-    >>> plot2d
-    <FisherFigure(
-        names=array(['a', 'b', 'c'], dtype=object),
-        figure=<Figure size 600x600 with 6 Axes>,
-        axes=array([[<AxesSubplot:>, <AxesSubplot:>, <AxesSubplot:>],
-           [<AxesSubplot:ylabel='b'>, <AxesSubplot:>, <AxesSubplot:>],
-           [<AxesSubplot:xlabel='a', ylabel='c'>, <AxesSubplot:xlabel='b'>,
-            <AxesSubplot:xlabel='c'>]], dtype=object))>
-
-    They can be saved easily:
-    >>> plot1d.savefig('example_plot_1d.pdf') # doctest: +SKIP
-    """
-
-    def __init__(
+    def legend(
         self,
-        *args: FisherMatrix,
-        labels: Optional[Collection[str]] = None,
-        ylabel1d: str = r"$p (\theta)$",
-    ):
-        """
-        Constructor.
-
-        Parameters
-        ----------
-        args : FisherMatrix
-            `FisherMatrix` objects which we want to plot.
-            Can have different fiducial values.
-            The order of plotting of the parameters and the LaTeX labels to use
-            are determined by the first argument.
-
-        labels : Optional[Collection[str]] = None
-            the list of labels to put in the legend of the plots.
-            If not set, defaults to `0, ..., len(args) - 1`
-
-        Raises
-        ------
-        * `MismatchingSizeError` if the sizes of the inputs are not equal
-        * `ValueError` if the names of the inputs do not match
-
-        Examples
-        --------
-        Create a Fisher plotter with two objects:
-        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]), names=('a', 'b', 'c'))
-        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]), names=('a', 'b', 'c'))
-        >>> fp = FisherPlotter(fm1, fm2)
-        """
-        # make sure all of the Fisher objects have the same sizes
-        if not all(len(args[0]) == len(arg) for arg in args):
-            raise MismatchingSizeError(*args)
-
-        # check names
-        if not all(set(args[0].names) == set(arg.names) for arg in args):
-            raise ValueError("The names of the inputs do not match")
-
-        if labels is not None:
-            if len(labels) != len(args):
-                raise MismatchingSizeError(labels, args)
-        # default labels are 0, ..., n - 1
-        else:
-            labels = list(map(str, np.arange(len(args))))
-
-        # in case the names are shuffled, we sort them according to the FIRST
-        # input
-        indices = np.array(
-            [get_index_of_other_array(args[0].names, arg.names) for arg in args],
-            dtype=object,
-        )
-
-        self._values = [arg.sort(key=index) for index, arg in zip(indices, args)]
-
-        self._labels = np.array(labels, dtype=object)
-
-        self._ylabel1d = ylabel1d
-
-    @property
-    def values(self):
-        """
-        Returns the input array of Fisher objects.
-        """
-        return self._values
-
-    @property
-    def labels(self):
-        """
-        Returns the labels of the Fisher objects.
-        """
-        return self._labels
-
-    @property
-    def ylabel1d(self):
-        """
-        Returns the y-label used for labelling the 1D curves.
-        """
-        return self._ylabel1d
-
-    @ylabel1d.setter
-    def ylabel1d(self, value):
-        if not isinstance(value, str):
-            raise TypeError(f"Expected `str` for `ylabel1d`, got {type(value)}")
-        self._ylabel1d = value
-
-    def plot_1d(
-        self,
-        scale: float = 1.0,
-        max_cols: Optional[int] = None,
-        mpl_options: Optional[dict] = None,
+        *args: Artist,
+        overwrite: bool = False,
+        loc: Union[str, tuple[float, float]] = "upper right",
+        bbox_to_anchor: Optional[Any] = None,
         **kwargs,
     ):
         """
-        Makes a 1D plot (Gaussians) of the Fisher objects
-
-        Parameters
-        ----------
-        max_cols : Optional[int] = None
-            the maximum number of columns to force the plot into.
-            By default, the parameters are always plotted horizontally; if you
-            need to spread it over `max_cols`, pass a non-negative integer
-            here.
-
-        mpl_options : Optional[dict] = None
-            any parameters meant for `matplotlib.rcParams`. By default, only
-            sets default font to cm serif.
-            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
-            for more information.
-
-        Returns
-        -------
-        An instance of `FisherFigure1D`.
+        Creates a legend on the figure.
         """
-        size = len(self.values[0])
+        with plt.rc_context(self.options):
+            if not overwrite:
+                if self.show_1d_curves:
+                    i, j = 0, -1
+                else:
+                    i, j = 1, -2
 
-        if max_cols is not None and max_cols <= size:
-            full = size % max_cols == 0
-            layout = size // max_cols if full else size // max_cols + 1, max_cols
-        else:
-            layout = 1, size
-            full = True
+                bbox_to_anchor = (
+                    self.axes[0, j].get_position().xmax,
+                    self.axes[i, 0].get_position().ymax,
+                )
+                self.figure.legend(
+                    self.handles,
+                    self.labels,
+                    loc=loc,
+                    bbox_to_anchor=bbox_to_anchor,
+                    **kwargs,
+                )
 
-        if not mpl_options:
-            mpl_options = get_default_rcparams()
+            else:
+                self.figure.legend(
+                    args,
+                    loc=loc,
+                    bbox_to_anchor=bbox_to_anchor,
+                    **kwargs,
+                )
 
-        with plt.rc_context(mpl_options):
-            # general figure setup
-            fig = plt.figure(
-                clear=True,
-                figsize=(scale * 2 * layout[1], scale * 2 * layout[0]),
-            )
-            gs = fig.add_gridspec(
-                nrows=layout[0],
-                ncols=layout[1],
-                hspace=0.5,
-                wspace=0.1,
-            )
-            axes = gs.subplots()
-            if size == 1:
-                axes = np.array([axes])
-
-            names = self.values[0].names
-            latex_names = self.values[0].latex_names
-
-            for (index, name), latex_name in zip(enumerate(names), latex_names):
-                ax = axes.flat[index]
-
-                for c, fm in zip(get_default_cycler(), self.values):
-                    plot_curve_1d(fm, name, ax)
-
-                    add_shading_1d(
-                        fm.fiducials[np.where(fm.names == name)],
-                        fm.constraints(name, marginalized=True),
-                        ax,
-                        color=c["color"],
-                        alpha=0.3,
-                        ec=None,
-                    )
-
-                    add_shading_1d(
-                        fm.fiducials[np.where(fm.names == name)],
-                        fm.constraints(name, marginalized=True),
-                        ax,
-                        level=2,
-                        color=c["color"],
-                        alpha=0.1,
-                        ec=None,
-                    )
-
-                ax.set_xlabel(latex_name)
-                ax.relim()
-                ax.autoscale_view()
-
-                # the y axis should start at 0 since we're plotting a PDF
-                ax.set_ylim(0, ax.get_ylim()[-1])
-
-                if index == 0:
-                    ax.set_ylabel(self.ylabel1d)
-
-                ax.set_yticks([])
-
-            if kwargs.get("legend") is True:
-                # remove any axes which are not drawn
-                if not full:
-                    for index in range(
-                        (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
-                    ):
-                        axes.flat[index].remove()
-
-            # remove any axes which are not drawn
-            if not full:
-                for index in range(
-                    (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
-                ):
-                    axes.flat[index].remove()
-
-        return FisherFigure1D(fig, axes, names)
-
-    def plot_triangle(
+    def draw(
         self,
-        mpl_options: Optional[dict] = None,
-        plot_1d_curves: bool = True,
+        name1: str,
+        name2: str,
+        method: str,
+        *args,
         **kwargs,
     ):
         """
+        Implements drawing of other objects on the axis.
+        """
+        if not hasattr(self[name1, name2], method):
+            raise AttributeError(
+                f"The method `{method}` is not a valid plotting method"
+            )
+
+        # hopefully the return type should be some artist, or a collection of
+        # artists
+        handles = getattr(self[name1, name2], method)(*args, **kwargs)
+        if is_iterable(handles):
+            for handle in handles:
+                if isinstance(handle, Artist) and kwargs.get("label"):
+                    self.labels.append(kwargs["label"])
+                    self.handles.append(handle)
+        else:
+            if isinstance(handles, Artist) and kwargs.get("label"):
+                self.labels.append(kwargs["label"])
+                self.handles.append(handles)
+
+    def plot(
+        self,
+        fisher: FisherMatrix,
+        *args,
+        **kwargs,
+    ):
+        r"""
         Plots the 2D contours (and optionally 1D curves) of the Fisher objects.
 
         Parameters
         ----------
-        mpl_options : Optional[dict] = None
-            any parameters meant for `matplotlib.rcParams`. By default, only
-            sets default font to cm serif.
-            See [Matplotlib documentation](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
-            for more information.
-        plot_1d_curves : bool = True
-            whether or not the 1D (marginalized) curves should be plotted
+        fisher
+            the Fisher object which we want to plot
+
+        joint
+            whether to plot the p-value of the joint distribution, or the
+            p-value of the probability of a single parameter lying within the
+            bounds projected onto a parameter axis.
 
         Returns
         -------
-        An instance of `FisherFigure2D`.
+        None
         """
-        size = len(self.values[0])
+        size = len(fisher)
+
+        added = False
+
+        # in order to preserve colors for each object, we only use the
+        # (default) cycler when the color is not explicitly set
+        if "c" not in kwargs and "color" not in kwargs:
+            kwargs["color"] = next(self.current_color)
+            self.current_color = iter(self.current_color)
 
         if size < 2:
             raise ValueError("Unable to make a 2D plot with < 2 parameters")
 
-        if not mpl_options:
-            mpl_options = get_default_rcparams()
+        if self.names is not None:
+            # make sure they have the same names; if not, raise an error
+            if set(self.names) != set(fisher.names):
+                raise ValueError(
+                    f"The Fisher object names ({fisher.names}) "
+                    f"do not match those on the figure ({self.names})"
+                )
 
-        with plt.rc_context(mpl_options):
+            # otherwise, we reshuffle them
+            fisher = fisher.sort(key=self.names)
+
+        with plt.rc_context(self.options):
             # general figure setup
-            fig = plt.figure(figsize=(2 * size, 2 * size), clear=True)
-            gs = fig.add_gridspec(nrows=size, ncols=size, hspace=0.2, wspace=0.2)
-            # TODO make it work with a shared xcol
-            ax = gs.subplots(sharex="col", sharey=False)
-
-            names = self.values[0].names
-            latex_names = self.values[0].latex_names
+            if self.figure:
+                fig = self.figure
+                ax = self.axes
+            else:
+                fig = plt.figure(
+                    figsize=(2 * size, 2 * size),
+                    clear=True,
+                )
+                ax = fig.add_gridspec(
+                    nrows=size,
+                    ncols=size,
+                    hspace=0.0,
+                    wspace=0.0,
+                ).subplots(
+                    sharex="col",
+                    sharey=False,
+                )
 
             # set automatic limits
             for i, j in product(range(size), repeat=2):
                 if i == j:
                     ax[i, i].set_yticks([])
                     ax[i, i].set_yticklabels([])
+                    if i < size - 1:
+                        ax[i, i].get_xaxis().set_visible(False)
                 if i > 0 and 0 < j < size - 1:
                     ax[i, j].set_yticks([])
                     ax[i, j].set_yticklabels([])
+                if i > j and i != size - 1:
+                    ax[i, j].get_xaxis().set_visible(False)
 
-            for i, j in product(range(len(names)), repeat=2):
+            for i, j in product(range(len(fisher.names)), repeat=2):
                 namey, latex_namey, namex, latex_namex = (
-                    names[i],
-                    latex_names[i],
-                    names[j],
-                    latex_names[j],
+                    fisher.names[i],
+                    fisher.latex_names[i],
+                    fisher.names[j],
+                    fisher.latex_names[j],
                 )
                 # labels for 2D contours (increasing y)
                 if i > 0 and j == 0:
@@ -521,97 +794,90 @@ class FisherPlotter:
                     ax[i, j].set_xlabel(latex_namex)
 
                 # removing any unnecessary axes from the gridspec
-                # TODO should they be removed, or somehow just made invisible?
-                if i < j:
+                if i < j and self.figure is None:
+                    # calling `remove()` is better than `axis("off")` because
+                    # then we obtain the proper bounding box
                     ax[i, j].remove()
-                    # ax[i, j].axis('off')
+
                 # plotting the 2D contours
                 elif i > j:
-                    for c, fm in zip(get_default_cycler(), self.values):
-                        # plot 1-sigma 2D curves
-                        # NOTE this is the "68% of the probability of a
-                        # single parameter lying within the bounds projected
-                        # onto a parameter axis"
-                        plot_curve_2d(
-                            fm,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            fill=False,
-                            color=c["color"],
-                            zorder=20,
-                        )
-                        # same thing, but shaded
-                        plot_curve_2d(
-                            fm,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            fill=True,
-                            alpha=0.2,
-                            ec=None,
-                            color=c["color"],
-                            zorder=20,
-                        )
+                    # plot 1-sigma 2D curves
+                    # NOTE this is the "68% of the probability of a
+                    # single parameter lying within the bounds projected
+                    # onto a parameter axis"
+                    _, __, handle = plot_curve_2d(
+                        fisher,
+                        namex,
+                        namey,
+                        ax=ax[i, j],
+                        fill=False,
+                        zorder=20,
+                        **kwargs,
+                    )
 
-                        # the 2-sigma
-                        plot_curve_2d(
-                            fm,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            scaling_factor=2,
-                            fill=False,
-                            color=c["color"],
-                            zorder=20,
-                        )
-                        # same thing, but shaded
-                        plot_curve_2d(
-                            fm,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            scaling_factor=2,
-                            fill=True,
-                            alpha=0.1,
-                            ec=None,
-                            color=c["color"],
-                            zorder=20,
-                        )
+                    if not added and kwargs.get("label"):
+                        self.handles.append(handle)
+                        self.labels.append(kwargs["label"])
+                        added = True
 
-                else:
+                    # same thing, but shaded
+                    plot_curve_2d(
+                        fisher,
+                        namex,
+                        namey,
+                        ax=ax[i, j],
+                        scaling_factor=1
+                        if not self.show_joint_dist
+                        else np.sqrt(get_chisq(1)),
+                        fill=True,
+                        alpha=0.2,
+                        ec=None,
+                        zorder=20,
+                        **kwargs,
+                    )
+
+                    # the 2-sigma
+                    plot_curve_2d(
+                        fisher,
+                        namex,
+                        namey,
+                        ax=ax[i, j],
+                        scaling_factor=2
+                        if not self.show_joint_dist
+                        else np.sqrt(get_chisq(2)),
+                        fill=False,
+                        zorder=20,
+                        **kwargs,
+                    )
+                    # same thing, but shaded
+                    plot_curve_2d(
+                        fisher,
+                        namex,
+                        namey,
+                        ax=ax[i, j],
+                        scaling_factor=2
+                        if not self.show_joint_dist
+                        else np.sqrt(get_chisq(2)),
+                        fill=True,
+                        alpha=0.1,
+                        ec=None,
+                        zorder=20,
+                        **kwargs,
+                    )
+
+                if i == j:
                     # plotting the 1D Gaussians
-                    if plot_1d_curves is True:
-                        for c, fm in zip(get_default_cycler(), self.values):
-                            plot_curve_1d(
-                                fm,
-                                namex,
-                                ax=ax[i, i],
-                                color=c["color"],
-                            )
-
-                            # 1 and 2 sigma shading
-                            add_shading_1d(
-                                fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                sigma=fm.constraints(namex, marginalized=True),
-                                ax=ax[i, i],
-                                level=1,
-                                alpha=0.2,
-                                color=c["color"],
-                                ec=None,
-                            )
-                            add_shading_1d(
-                                fiducial=fm.fiducials[np.where(fm.names == namex)],
-                                sigma=fm.constraints(namex, marginalized=True),
-                                ax=ax[i, i],
-                                level=2,
-                                alpha=0.1,
-                                color=c["color"],
-                                ec=None,
-                            )
+                    if self.show_1d_curves is True:
+                        plot_curve_1d(
+                            fisher,
+                            namex,
+                            ax=ax[i, i],
+                            **kwargs,
+                        )
 
                     else:
-                        ax[i, i].remove()
+                        if self.figure is None:
+                            ax[i, i].remove()
 
             # set automatic limits
             for i, j in product(range(size), repeat=2):
@@ -619,13 +885,26 @@ class FisherPlotter:
                     ax[i, j].relim()
                     ax[i, j].autoscale_view()
                     if i == j:
+                        ax[i, i].autoscale()
                         ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
                         ax[i, i].set_yticks([])
                         ax[i, i].set_yticklabels([])
                 except AttributeError:
                     pass
 
-        return FisherFigure2D(fig, ax, names)
+        self._figure = fig
+        self._axes = ax
+        self._names = fisher.names
+
+        return self.__class__(
+            figure=fig,
+            axes=ax,
+            names=self.names,
+            handles=self.handles,
+            labels=self.labels,
+            options=self.options,
+            show_1d_curves=self.show_1d_curves,
+        )
 
 
 def get_chisq(
@@ -657,7 +936,7 @@ def add_plot_1d(
     sigma: float,
     ax: Optional[Axes] = None,
     **kwargs,
-) -> tuple[Figure, Axes]:
+) -> tuple[Figure, Axes, Artist]:
     """
     Adds a 1D Gaussian with marginalized constraints `sigma` close to fiducial
     value `fiducial` to axis `ax`.
@@ -671,13 +950,13 @@ def add_plot_1d(
         100,
     )
 
-    ax.plot(
+    (handle,) = ax.plot(
         x,
         [norm.pdf(_, loc=fiducial, scale=sigma) for _ in x],
         **kwargs,
     )
 
-    return (ax.get_figure(), ax)
+    return (ax.get_figure(), ax, handle)
 
 
 def add_shading_1d(
@@ -717,7 +996,7 @@ def plot_curve_1d(
     name: str,
     ax: Optional[Axes] = None,
     **kwargs,
-):
+) -> tuple[Figure, Axes, Artist]:
     """
     Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.
 
@@ -743,9 +1022,7 @@ def plot_curve_1d(
     fid = fisher.fiducials[np.where(fisher.names == name)]
     sigma = fisher.constraints(name, marginalized=True)
 
-    add_plot_1d(fid, sigma, ax=ax, **kwargs)
-
-    return (ax.get_figure(), ax)
+    return add_plot_1d(fid, sigma, ax=ax, **kwargs)
 
 
 def plot_shading_1d(
@@ -791,7 +1068,7 @@ def plot_curve_2d(
     ax: Optional[Axes] = None,
     scaling_factor: float = 1,
     **kwargs,
-) -> tuple[Union[None, Figure], Axes]:
+) -> tuple[Figure, Axes, Artist]:
     """
     Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.
 
@@ -822,7 +1099,7 @@ def plot_curve_2d(
 
     a, b, angle = get_ellipse(fisher, name1, name2)
 
-    ax.add_patch(
+    patch = ax.add_patch(
         Ellipse(
             xy=(fidx, fidy),
             width=2 * a * scaling_factor,
@@ -832,7 +1109,7 @@ def plot_curve_2d(
         ),
     )
 
-    return (ax.get_figure(), ax)
+    return (ax.get_figure(), ax, patch)
 
 
 def get_ellipse(
@@ -871,43 +1148,3 @@ def get_ellipse(
     )
 
     return a, b, angle
-
-
-def set_xticks(
-    ax: Axes,
-):
-    locator = LinearLocator(3)
-    formatter = StrMethodFormatter("{x:.2f}")
-    ax.xaxis.set_major_locator(locator)
-    ax.xaxis.set_major_formatter(formatter)
-    ax.set_xticks(locator())
-    ax.set_xticklabels(
-        formatter.format_ticks(locator()),
-        rotation=45,
-        rotation_mode="anchor",
-        fontdict={
-            "verticalalignment": "top",
-            "horizontalalignment": "right",
-        },
-    )
-
-
-def set_yticks(
-    ax: Axes,
-):
-    locator = LinearLocator(3)
-    formatter = StrMethodFormatter("{x:.2f}")
-    ax.yaxis.set_major_locator(locator)
-    ax.yaxis.set_major_formatter(formatter)
-    ax.set_yticks(locator())
-    ax.set_yticklabels(
-        formatter.format_ticks(locator()),
-        fontdict={
-            "verticalalignment": "top",
-            "horizontalalignment": "right",
-        },
-    )
-
-
-def get_default_cycler():
-    return cycler(color=["C0", "C3", "C2"])

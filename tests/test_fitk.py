@@ -10,6 +10,7 @@ from itertools import product
 
 # third party imports
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib import ticker
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -32,7 +33,12 @@ from scipy.stats import norm, ortho_group
 from fitk.fisher_derivative import D, FisherDerivative
 from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
 from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
-from fitk.fisher_plotter import FisherPlotter, plot_curve_1d, plot_curve_2d
+from fitk.fisher_plotter import (
+    FisherFigure1D,
+    FisherFigure2D,
+    plot_curve_1d,
+    plot_curve_2d,
+)
 from fitk.fisher_utils import (
     MismatchingSizeError,
     MismatchingValuesError,
@@ -849,15 +855,12 @@ class TestFisherPlotter:
         fid2 = [-1, 0.1, 5, -1, 3]
         m1 = FisherMatrix(val1, names=names, fiducials=fid1, latex_names=latex_names)
         m2 = FisherMatrix(val2, names=names, fiducials=fid2, latex_names=latex_names)
-        fp = FisherPlotter(m1, m2, labels=["first", "second"])
-
-        assert fp.values[0] == m1
-        assert fp.values[1] == m2
+        fp = FisherFigure2D()
 
         with pytest.raises(ValueError):
             m1 = FisherMatrix([[3]], names=["a"])
             m2 = FisherMatrix([[5]], names=["b"])
-            FisherPlotter(m1, m2)
+            FisherFigure2D().plot(m1).plot(m2)
 
     def test_plot_1d(self):
         names = list("abcde")
@@ -868,26 +871,32 @@ class TestFisherPlotter:
         fid1 = [0, 0, 0, 1, 2]
         fid2 = [-1, 0.1, 5, -1, 3]
         fid3 = fid1
-        m1 = FisherMatrix(val1, names=names, fiducials=fid1, latex_names=latex_names)
-        m2 = FisherMatrix(val2, names=names, fiducials=fid2, latex_names=latex_names)
-        m3 = FisherMatrix(val3, names=names, fiducials=fid3, latex_names=latex_names)
-        fp = FisherPlotter(m1, m2, m3, labels=["first", "second", "third"])
-
-        ffigure = fp.plot_1d(
-            legend=True,
-            title=True,
-            max_cols=1,
+        m1 = FisherMatrix(
+            val1,
+            names=names,
+            fiducials=fid1,
+            latex_names=latex_names,
         )
-
-        ffigure["a"].plot(
-            np.linspace(-2, 2, 100),
-            [0.5 for _ in np.linspace(-2, 2, 100)],
-            ls="--",
-            label="another line",
+        m2 = FisherMatrix(
+            val2,
+            names=names,
+            fiducials=fid2,
+            latex_names=latex_names,
         )
+        m3 = FisherMatrix(
+            val3,
+            names=names,
+            fiducials=fid3,
+            latex_names=latex_names,
+        )
+        fp = FisherFigure1D()
 
-        ffigure["a"].legend()
-        ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_1d.pdf"))
+        fp.plot(m1, label="first")
+        fp.plot(m2, label="second", ls="--")
+        fp.plot(m3, label="third", ls=":", color="red")
+
+        fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
+        fp.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_1d.pdf"))
 
     def test_plot_1d_euclid(self):
         fm_optimistic = FisherMatrix.from_file(
@@ -897,86 +906,125 @@ class TestFisherPlotter:
             os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
         )
 
-        fp1 = FisherPlotter(
-            fm_optimistic,
-            fm_pessimistic,
-            labels=["optimistic case", "pessimistic case"],
-        )
+        fp1 = FisherFigure1D(max_cols=5)
 
-        ff1 = fp1.plot_1d(
-            legend=True,
-            title=r"Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology",
-            max_cols=5,
+        fp1.plot(
+            fm_optimistic,
+            label="optimistic case",
+        )
+        fp1.plot(
+            fm_pessimistic,
+            ls="--",
+            label="pessimistic case",
         )
 
         # accessing an element and plotting some stuff on it
-        ff1["h"].vlines(
+        fp1.draw(
+            "h",
+            "vlines",
             0.67,
             0,
             norm.pdf(
                 0, loc=0, scale=fm_pessimistic.constraints("h", marginalized=True)
             ),
             color="blue",
+            label="blue line",
         )
+
+        fp1.legend()
 
         # non-existing parameter
         with pytest.raises(ValueError):
-            ff1["asdf"]
+            fp1["asdf"]
 
-        fp2 = FisherPlotter(
+        fp2 = FisherFigure1D(max_cols=5)
+        fp2.plot(
             fm_optimistic.marginalize_over("Omegam", "Omegab", "h", "ns", invert=True),
+            label="optimistic case",
+        )
+        fp2.plot(
             fm_pessimistic.marginalize_over("Omegam", "Omegab", "h", "ns", invert=True),
-            labels=["optimistic case", "pessimistic case"],
+            label="pessimistic case",
+            ls="--",
+            color="red",
         )
 
-        ff2 = fp2.plot_1d(
-            legend=True,
-            title=r"Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology",
-            max_cols=5,
-        )
-
-        # generate another figure from the same data, with different layout and title
-        ff2_2 = fp2.plot_1d(
-            legend=True,
-            title=r"Forecast for $\mathit{Euclid}$ IST:F, $w_0,w_a$ cosmology (take two)",
-            max_cols=2,
-        )
+        fp2.legend(ncol=2)
 
         # add just one element
-        fp3 = FisherPlotter(
+        fp3 = FisherFigure1D()
+        fp3.plot(
             fm_optimistic.marginalize_over("Omegam", invert=True),
-            fm_pessimistic.marginalize_over("Omegam", invert=True),
         )
 
-        ff3 = fp3.plot_1d()
+        fp3.set_label_params(fontsize=30)
+        fp3.set_tick_params(rotation=30)
 
         with PdfPages(os.path.join(DATADIR_OUTPUT, "test_plot_1d_euclid.pdf")) as pdf:
-            for ff in [ff1, ff2, ff2_2, ff3]:
+            for ff in [fp1, fp2, fp3]:
                 pdf.savefig(ff.figure, bbox_inches="tight")
 
     def test_plot_2d_euclid(self):
-        fm_optimistic = FisherMatrix.from_file(
+        fm_opt = FisherMatrix.from_file(
             os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_optimistic.json")
         )
-        fm_pessimistic = FisherMatrix.from_file(
+        fm_pes = FisherMatrix.from_file(
             os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
         )
 
-        fp = FisherPlotter(
-            fm_pessimistic,
-            fm_optimistic,
-            labels=["pessimistic case", "optimistic case"],
+        i = 4
+
+        fm_optimistic = fm_opt.drop(
+            *fm_opt.names[:i],
+            invert=True,
         )
 
-        ffigure = fp.plot_triangle(plot_1d_curves=True)
+        fm_pessimistic = fm_pes.drop(
+            *fm_pes.names[:i],
+            invert=True,
+        )
 
-        ffigure.set_label_params(fontsize=30)
+        fp = FisherFigure2D(
+            show_1d_curves=True,
+            show_joint_dist=True,
+        )
 
-        ffigure.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_triangle_euclid.pdf"))
+        fp.plot(
+            fm_pessimistic,
+            label="pessimistic",
+        )
+
+        fp.plot(
+            fm_optimistic,
+            ls="--",
+            color="red",
+            label="optimistic",
+        )
+
+        fm_shifted = fm_pessimistic
+        fm_shifted.fiducials = fm_shifted.fiducials * (
+            1 + np.random.uniform(-0.05, 0.05, len(fm_shifted))
+        )
+        fm_shifted.values *= 2
+
+        fp.plot(
+            fm_shifted,
+            ls=":",
+            color="green",
+            label="shifted",
+        )
+
+        fp.legend(fontsize=20)
+        fp.set_label_params(fontsize=30)
+        fp.set_tick_params(fontsize=8)
+        fp.set_tick_params(rotation=45, which="x")
+        fp.set_tick_params(fontsize=12, which="y")
+
+        fp.savefig(os.path.join(DATADIR_OUTPUT, "test_plot_2d_euclid.pdf"))
 
     def test_plot_2d(self):
         fm = FisherMatrix([[0.3, -0.5], [-0.5, 0.9]])
-        fp = FisherPlotter(fm)
+        fp = FisherFigure2D()
 
         fm_cf = CFFisherMatrix(fm.values)
         fl_cf = CFFisherAnalysis()
@@ -990,17 +1038,17 @@ class TestFisherPlotter:
         ffigure = fp_cf.figure
 
         ax = fp_cf.figure.axes[0]
-        ffigure, _ = plot_curve_1d(fm, fm.names[0], ax=ax)
+        ffigure, _, __ = plot_curve_1d(fm, fm.names[0], ax=ax)
         ax.set_ylim(0, 0.1)
 
         ax = fp_cf.figure.axes[2]
-        ffigure, _ = plot_curve_1d(fm, fm.names[1], ax=ax)
+        ffigure, _, __ = plot_curve_1d(fm, fm.names[1], ax=ax)
         ax.set_ylim(0, 0.2)
 
         ax = fp_cf.figure.axes[1]
 
-        ffigure, _ = plot_curve_2d(fm, fm.names[0], fm.names[-1], ax=ax)
-        ffigure, _ = plot_curve_2d(
+        ffigure, _, __ = plot_curve_2d(fm, fm.names[0], fm.names[-1], ax=ax)
+        ffigure, _, __ = plot_curve_2d(
             fm,
             fm.names[0],
             fm.names[-1],
@@ -1008,12 +1056,9 @@ class TestFisherPlotter:
             scaling_factor=2,
         )
 
-        fp = FisherPlotter(fm)
+        fp = FisherFigure2D()
 
-        with pytest.raises(TypeError):
-            fp.ylabel1d = {"a": "b"}
-
-        ffigure_my = fp.plot_triangle()
+        ffigure_my = fp.plot(fm)
         ffigure_my.axes.flat[0].set_xlim(-14, 14)
         ffigure_my.axes.flat[2].set_ylim(-8, 8)
         ffigure_my.axes.flat[-1].set_xlim(-8, 8)
@@ -1036,10 +1081,10 @@ class TestFisherPlotter:
 
     def test_plot_2d_continuation(self):
         fm = FisherMatrix(np.diag([1]))
-        fp = FisherPlotter(fm)
+        fp = FisherFigure2D()
 
         with pytest.raises(ValueError):
-            fp.plot_triangle()
+            fp.plot(fm)
 
 
 class LinearDerivative(FisherDerivative):

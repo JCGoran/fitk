@@ -5,6 +5,7 @@ Various tests for the `fitk` module.
 from __future__ import annotations
 
 # standard library imports
+import json
 import os
 from itertools import product
 
@@ -362,6 +363,20 @@ class TestFisherMatrix:
 
     def test_from_file(self):
         fm = FisherMatrix.from_file(os.path.join(DATADIR_INPUT, "test_matrix.json"))
+        assert fm == FisherMatrix(
+            np.diag([2, 1, 3]),
+            names=list("bac"),
+            latex_names=[r"\mathcal{B}", r"\mathcal{A}", r"\mathcal{C}"],
+            fiducials=[5, 4, 6],
+        )
+
+    def test_from_dict(self):
+        with open(
+            os.path.join(DATADIR_INPUT, "test_matrix.json"), "r", encoding="utf-8"
+        ) as file_handle:
+            data = json.loads(file_handle.read())
+
+        fm = FisherMatrix.from_dict(data)
         assert fm == FisherMatrix(
             np.diag([2, 1, 3]),
             names=list("bac"),

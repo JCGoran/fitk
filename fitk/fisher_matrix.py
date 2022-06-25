@@ -1497,6 +1497,34 @@ class FisherMatrix:
             fiducials=data["fiducials"],
         )
 
+    @classmethod
+    def from_dict(
+        cls,
+        data: dict,
+    ):
+        """
+        Reads a Fisher object from a dictionary.
+
+        Parameters
+        ----------
+        data
+            the dictionary
+
+        Raises
+        ------
+        * `KeyError` if any the dictionary does not contain the correct data
+
+        Returns
+        -------
+        Instance of `FisherMatrix`
+        """
+        return cls(
+            data["values"],
+            names=data["names"],
+            latex_names=data["latex_names"],
+            fiducials=data["fiducials"],
+        )
+
     def correlation_matrix(self):
         r"""
         Computes the correlation matrix from the Fisher matrix, whose entries

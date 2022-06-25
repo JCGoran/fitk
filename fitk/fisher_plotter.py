@@ -810,6 +810,9 @@ class FisherFigure2D(FisherBaseFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
+                        scaling_factor=1
+                        if not self.show_joint_dist
+                        else np.sqrt(get_chisq(1)),
                         fill=False,
                         zorder=20,
                         **kwargs,

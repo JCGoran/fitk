@@ -739,18 +739,19 @@ class FisherFigure2D(FisherBaseFigure):
                 f"The method `{method}` is not a valid plotting method"
             )
 
-        # hopefully the return type should be some artist, or a collection of
-        # artists
-        handles = getattr(self[name1, name2], method)(*args, **kwargs)
-        if is_iterable(handles):
-            for handle in handles:
-                if isinstance(handle, Artist) and kwargs.get("label"):
+        with plt.rc_context(self.options):
+            # hopefully the return type should be some artist, or a collection
+            # of artists
+            handles = getattr(self[name1, name2], method)(*args, **kwargs)
+            if is_iterable(handles):
+                for handle in handles:
+                    if isinstance(handle, Artist) and kwargs.get("label"):
+                        self.labels.append(kwargs["label"])
+                        self.handles.append(handle)
+            else:
+                if isinstance(handles, Artist) and kwargs.get("label"):
                     self.labels.append(kwargs["label"])
-                    self.handles.append(handle)
-        else:
-            if isinstance(handles, Artist) and kwargs.get("label"):
-                self.labels.append(kwargs["label"])
-                self.handles.append(handles)
+                    self.handles.append(handles)
 
     def plot(
         self,

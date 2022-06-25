@@ -581,7 +581,11 @@ class FisherMatrix:
             index = np.array(kwargs["key"], dtype=int)
             names = self.names[index]
         # either 'fiducials' or 'latex_names'
-        elif "key" in kwargs and kwargs["key"] in allowed_keys:
+        elif (
+            "key" in kwargs
+            and isinstance(kwargs["key"], str)
+            and kwargs["key"] in allowed_keys
+        ):
             index = np.argsort(getattr(self, kwargs["key"]))
             if "reversed" in kwargs and kwargs["reversed"] is True:
                 index = np.flip(index)

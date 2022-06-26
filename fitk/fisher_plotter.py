@@ -9,7 +9,7 @@ from __future__ import annotations
 # standard library imports
 import copy
 from abc import ABC, abstractmethod
-from collections.abc import Collection
+from collections.abc import MutableSequence
 from itertools import product
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -35,12 +35,57 @@ class FisherBaseFigure(ABC):
     The abstract base class for plotting Fisher objects.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, options: Optional[dict] = None, **kwargs):
         """
         Constructor
         """
+        self._figure = None
+        self._axes = None
+        self._handles: MutableSequence[Artist] = []
+        self._names = None
+        self._labels: MutableSequence[str] = []
+        self._options = get_default_rcparams()
+
         self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         self.current_color = iter(self.cycler)
+
+        if options and "style" in options:
+            style = options.pop("style")
+            # maybe it's one of the built-in styles
+            if style in plt.style.available:
+                self._options = {
+                    **plt.style.library[style],
+                    **get_default_rcparams(),
+                    **options,
+                }
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.library[style]
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+            # maybe it's a file
+            else:
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.core.rc_params_from_file(style)
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+                self._options = {
+                    **plt.style.core.rc_params_from_file(style),
+                    **options,
+                }
 
     @abstractmethod
     def plot(self, fisher: FisherMatrix, *args, **kwargs):
@@ -356,25 +401,31 @@ class FisherFigure1D(FisherBaseFigure):
 
     def __init__(
         self,
-        figure: Optional[Figure] = None,
-        axes: Optional[Collection[Axes]] = None,
-        handles: Optional[Collection[Artist]] = None,
-        names: Optional[Collection[str]] = None,
-        labels: Optional[Collection[str]] = None,
-        options: Optional[dict] = get_default_rcparams(),
+        options: Optional[dict] = None,
         max_cols: Optional[int] = None,
     ):
         """
         Constructor.
+
+        Parameters
+        ----------
+        options
+            the dictionary containing the options for plotting. If the special
+            key 'style' is present, it attempts to use that plotting style (can
+            be one of the outputs of `matplotlib.pyplot.style.available`, or a
+            path to a file. If using a file, does not use the default rc
+            parameters).
+
+        max_cols
+            the maximum number of columns in the final plot
+
+        Notes
+        -----
+        For the style sheet reference, please consult [the matplotlib
+        documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        self._figure = figure
-        self._axes = axes
-        self._handles = handles if handles is not None else []
-        self._names = names
-        self._labels = labels if labels is not None else []
-        self._options = options
-        self.max_cols = max_cols
         super().__init__()
+        self.max_cols = max_cols
 
     def __getitem__(
         self,
@@ -415,6 +466,8 @@ class FisherFigure1D(FisherBaseFigure):
             if isinstance(handles, Artist) and kwargs.get("label"):
                 self.labels.append(kwargs.get("label"))
                 self.handles.append(handles)
+
+        return self
 
     def plot(
         self,
@@ -534,15 +587,7 @@ class FisherFigure1D(FisherBaseFigure):
         self._axes = axes
         self._names = fisher.names
 
-        return self.__class__(
-            figure=self.figure,
-            axes=self.axes,
-            names=fisher.names,
-            labels=self.labels,
-            handles=self.handles,
-            options=self.options,
-            max_cols=self.max_cols,
-        )
+        return self
 
     def legend(
         self,
@@ -573,6 +618,8 @@ class FisherFigure1D(FisherBaseFigure):
                     **kwargs,
                 )
 
+        return self
+
 
 class FisherFigure2D(FisherBaseFigure):
     """
@@ -581,12 +628,7 @@ class FisherFigure2D(FisherBaseFigure):
 
     def __init__(
         self,
-        figure: Optional[Figure] = None,
-        axes: Optional[Collection[Axes]] = None,
-        handles: Optional[Collection[Artist]] = None,
-        names: Optional[Collection[str]] = None,
-        labels: Optional[Collection[str]] = None,
-        options: Optional[dict[str, Any]] = get_default_rcparams(),
+        options: Optional[dict] = None,
         show_1d_curves: bool = False,
         show_joint_dist: bool = False,
     ):
@@ -602,58 +644,22 @@ class FisherFigure2D(FisherBaseFigure):
             path to a file. If using a file, does not use the default rc
             parameters).
 
+        show_1d_curves
+            whether the 1D marginalized curves should be plotted (default:
+            False)
+
+        show_joint_dist
+            whether to plot the isocontours of the joint distribution (default:
+            False)
+
         Notes
         -----
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        self._figure = figure
-        self._axes = axes
-        self._handles = handles if handles is not None else []
-        self._names = names
-        self._labels = labels if labels is not None else []
-        self._options = options
+        super().__init__()
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
-        super().__init__()
-
-        if options and "style" in options:
-            style = options.pop("style")
-            # maybe it's one of the built-in styles
-            if style in plt.style.available:
-                self._options = {
-                    **plt.style.library[style],
-                    **get_default_rcparams(),
-                    **options,
-                }
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.library[style]
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
-                    )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
-
-            # maybe it's a file
-            else:
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.core.rc_params_from_file(style)
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
-                    )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
-
-                self._options = {
-                    **plt.style.core.rc_params_from_file(style),
-                    **options,
-                }
 
     def __getitem__(
         self,
@@ -728,6 +734,8 @@ class FisherFigure2D(FisherBaseFigure):
                     **kwargs,
                 )
 
+        return self
+
     def set_title(
         self,
         *args,
@@ -762,6 +770,8 @@ class FisherFigure2D(FisherBaseFigure):
             else:
                 self.figure.suptitle(*args, **kwargs)
 
+        return self
+
     def draw(
         self,
         name1: str,
@@ -791,6 +801,8 @@ class FisherFigure2D(FisherBaseFigure):
                 if isinstance(handles, Artist) and kwargs.get("label"):
                     self.labels.append(kwargs["label"])
                     self.handles.append(handles)
+
+        return self
 
     def plot(
         self,
@@ -995,15 +1007,7 @@ class FisherFigure2D(FisherBaseFigure):
         self._axes = ax
         self._names = fisher.names
 
-        return self.__class__(
-            figure=fig,
-            axes=ax,
-            names=self.names,
-            handles=self.handles,
-            labels=self.labels,
-            options=self.options,
-            show_1d_curves=self.show_1d_curves,
-        )
+        return self
 
 
 def _get_chisq(

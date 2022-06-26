@@ -740,7 +740,7 @@ class FisherFigure2D(FisherBaseFigure):
         Thin wrapper for setting the title of the figure with the correct
         options.
         """
-        with plt.rc_context(self._options):
+        with plt.rc_context(self.options):
             if not overwrite:
                 if self.show_1d_curves:
                     i, j = 0, -1
@@ -817,14 +817,6 @@ class FisherFigure2D(FisherBaseFigure):
         """
         size = len(fisher)
 
-        added = False
-
-        # in order to preserve colors for each object, we only use the
-        # (default) cycler when the color is not explicitly set
-        if "c" not in kwargs and "color" not in kwargs:
-            kwargs["color"] = next(self.current_color)
-            self.current_color = iter(self.current_color)
-
         if size < 2:
             raise ValueError("Unable to make a 2D plot with < 2 parameters")
 
@@ -838,6 +830,12 @@ class FisherFigure2D(FisherBaseFigure):
 
             # otherwise, we reshuffle them
             fisher = fisher.sort(key=self.names)
+
+        # in order to preserve colors for each object, we only use the
+        # (default) cycler when the color is not explicitly set
+        if "c" not in kwargs and "color" not in kwargs:
+            kwargs["color"] = next(self.current_color)
+            self.current_color = iter(self.current_color)
 
         with plt.rc_context(self.options):
             # general figure setup
@@ -872,6 +870,10 @@ class FisherFigure2D(FisherBaseFigure):
                 if i > j and i != size - 1:
                     ax[i, j].get_xaxis().set_visible(False)
 
+            # flag for whether the current artist has already been added to the
+            # legend handle
+            added = False
+            # loop over the parameters
             for i, j in product(range(len(fisher.names)), repeat=2):
                 namey, latex_namey, namex, latex_namex = (
                     fisher.names[i],

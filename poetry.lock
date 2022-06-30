@@ -1158,6 +1158,25 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
+name = "pytest-mpl"
+version = "0.16.0"
+description = "pytest plugin to help with testing figures output from Matplotlib"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+importlib-resources = {version = "*", markers = "python_version < \"3.8\""}
+Jinja2 = "*"
+matplotlib = "*"
+packaging = "*"
+Pillow = "*"
+pytest = "*"
+
+[package.extras]
+test = ["pytest-cov"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -1445,7 +1464,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "9a944d56e606560a572e39e02cf96466d418d2f8e8fe7a54d3907580b464f280"
+content-hash = "eaa5a28cc2a7fe5e641be8af22a9b1b77b0ca149f9cd844dea3173b6d5b64143"
 
 [metadata.files]
 anyio = [
@@ -2208,6 +2227,10 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-3.0.0.tar.gz", hash = "sha256:e7f0f5b1617d2210a2cabc266dfe2f4c75a8d32fb89eafb7ad9d06f6d076d470"},
     {file = "pytest_cov-3.0.0-py3-none-any.whl", hash = "sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6"},
+]
+pytest-mpl = [
+    {file = "pytest-mpl-0.16.0.tar.gz", hash = "sha256:4d3a9a81f075e45100c64f955ac11f6842d3f81e93c34c2d5c58b7c03da40ffd"},
+    {file = "pytest_mpl-0.16.0-py3-none-any.whl", hash = "sha256:0133a8d9a081b1317d90bc51e24184f1b24bbc06dc4e69c43f01c5f221dd9e50"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},

@@ -45,6 +45,7 @@ class FisherBaseFigure(ABC):
         self._names = None
         self._labels: MutableSequence[str] = []
         self._options = get_default_rcparams()
+        self._ndim = 0
 
         self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         self.current_color = iter(self.cycler)
@@ -221,7 +222,7 @@ class FisherBaseFigure(ABC):
         -------
         None
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             # only set the parameters which are not empty (should this be done
             # for all of them instead?)
             if (
@@ -260,7 +261,7 @@ class FisherBaseFigure(ABC):
             any keyword arguments passed to the methods for handling tick
             parameters (such as 'fontsize', 'rotation', etc.)
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 for item in self[nameiter].get_xticklabels():
                     for key, value in kwargs.items():
@@ -298,7 +299,7 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             # for some reason, we cannot reuse the same instance, so we just
             # make a deep copy of it instead
             if (
@@ -332,7 +333,7 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             if (
                 self[nameiter]
                 and np.any(self[nameiter].get_xticks())
@@ -365,7 +366,7 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 self[nameiter].xaxis.set_major_formatter(formatter)
             if self[nameiter] and which in ["both", "y"]:
@@ -387,7 +388,7 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
-        for nameiter in product(self.names, repeat=np.ndim(self.axes)):
+        for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 self[nameiter].xaxis.set_minor_formatter(formatter)
             if self[nameiter] and which in ["both", "y"]:
@@ -426,6 +427,7 @@ class FisherFigure1D(FisherBaseFigure):
         """
         super().__init__()
         self.max_cols = max_cols
+        self._ndim = 1
 
     def __getitem__(
         self,
@@ -654,6 +656,7 @@ class FisherFigure2D(FisherBaseFigure):
         super().__init__()
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
+        self._ndim = 2
 
     def __getitem__(
         self,

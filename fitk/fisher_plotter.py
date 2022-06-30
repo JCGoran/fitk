@@ -467,8 +467,6 @@ class FisherFigure1D(FisherBaseFigure):
                 self.labels.append(kwargs.get("label"))
                 self.handles.append(handles)
 
-        return self
-
     def plot(
         self,
         fisher: FisherMatrix,
@@ -587,8 +585,6 @@ class FisherFigure1D(FisherBaseFigure):
         self._axes = axes
         self._names = fisher.names
 
-        return self
-
     def legend(
         self,
         *args: Artist,
@@ -617,8 +613,6 @@ class FisherFigure1D(FisherBaseFigure):
                     bbox_to_anchor=bbox_to_anchor,
                     **kwargs,
                 )
-
-        return self
 
 
 class FisherFigure2D(FisherBaseFigure):
@@ -734,8 +728,6 @@ class FisherFigure2D(FisherBaseFigure):
                     **kwargs,
                 )
 
-        return self
-
     def set_title(
         self,
         *args,
@@ -770,8 +762,6 @@ class FisherFigure2D(FisherBaseFigure):
             else:
                 self.figure.suptitle(*args, **kwargs)
 
-        return self
-
     def draw(
         self,
         name1: str,
@@ -801,8 +791,6 @@ class FisherFigure2D(FisherBaseFigure):
                 if isinstance(handles, Artist) and kwargs.get("label"):
                     self.labels.append(kwargs["label"])
                     self.handles.append(handles)
-
-        return self
 
     def plot(
         self,
@@ -1006,8 +994,6 @@ class FisherFigure2D(FisherBaseFigure):
         self._figure = fig
         self._axes = ax
         self._names = fisher.names
-
-        return self
 
 
 def _get_chisq(

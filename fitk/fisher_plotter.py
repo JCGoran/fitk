@@ -425,7 +425,7 @@ class FisherFigure1D(FisherBaseFigure):
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        super().__init__()
+        super().__init__(options=options)
         self.max_cols = max_cols
         self._ndim = 1
 
@@ -653,7 +653,7 @@ class FisherFigure2D(FisherBaseFigure):
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        super().__init__()
+        super().__init__(options=options)
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
         self._ndim = 2

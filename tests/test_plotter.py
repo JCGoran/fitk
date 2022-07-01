@@ -5,9 +5,8 @@ Various tests for the `fitk` module.
 from __future__ import annotations
 
 # standard library imports
-import json
 import os
-from itertools import product
+from pathlib import Path
 
 # third party imports
 import matplotlib.pyplot as plt
@@ -31,8 +30,8 @@ from fitk.fisher_plotter import (
 )
 from fitk.fisher_utils import ParameterNotFoundError
 
-DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
-DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
+DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
+DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
 
 
 def test_init():
@@ -100,14 +99,14 @@ def test_plot_1d():
 @pytest.fixture
 def euclid_opt():
     return FisherMatrix.from_file(
-        os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_optimistic.json")
+        DATADIR_INPUT / "EuclidISTF_WL_w0wa_flat_optimistic.json"
     )
 
 
 @pytest.fixture
 def euclid_pes():
     return FisherMatrix.from_file(
-        os.path.join(DATADIR_INPUT, "EuclidISTF_WL_w0wa_flat_pessimistic.json")
+        DATADIR_INPUT / "EuclidISTF_WL_w0wa_flat_pessimistic.json"
     )
 
 

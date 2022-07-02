@@ -456,6 +456,11 @@ class FisherFigure1D(FisherBaseFigure):
                 f"The method `{method}` is not a valid plotting method"
             )
 
+        # get the right color
+        if "c" not in kwargs and "color" not in kwargs:
+            kwargs["color"] = next(self.current_color)
+            self.current_color = iter(self.current_color)
+
         # hopefully the return type should be some artist, or a collection of
         # artists
         handles = getattr(self[name], method)(*args, **kwargs)
@@ -468,6 +473,10 @@ class FisherFigure1D(FisherBaseFigure):
             if isinstance(handles, Artist) and kwargs.get("label"):
                 self.labels.append(kwargs.get("label"))
                 self.handles.append(handles)
+
+        self[name].autoscale()
+        self[name].relim()
+        self[name].autoscale_view()
 
     def plot(
         self,
@@ -781,6 +790,11 @@ class FisherFigure2D(FisherBaseFigure):
                 f"The method `{method}` is not a valid plotting method"
             )
 
+        # get the right color
+        if "c" not in kwargs and "color" not in kwargs:
+            kwargs["color"] = next(self.current_color)
+            self.current_color = iter(self.current_color)
+
         with plt.rc_context(self.options):
             # hopefully the return type should be some artist, or a collection
             # of artists
@@ -794,6 +808,10 @@ class FisherFigure2D(FisherBaseFigure):
                 if isinstance(handles, Artist) and kwargs.get("label"):
                     self.labels.append(kwargs["label"])
                     self.handles.append(handles)
+
+        self[name1, name2].autoscale()
+        self[name1, name2].relim()
+        self[name1, name2].autoscale_view()
 
     def plot(
         self,

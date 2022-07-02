@@ -55,6 +55,7 @@ def test_init():
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_1d():
     names = list("abcde")
@@ -113,6 +114,7 @@ def euclid_pes():
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_1d_euclid(euclid_opt, euclid_pes):
     fp1 = FisherFigure1D(max_cols=5)
@@ -133,7 +135,11 @@ def test_plot_1d_euclid(euclid_opt, euclid_pes):
         "vlines",
         0.67,
         0,
-        norm.pdf(0, loc=0, scale=euclid_pes.constraints("h", marginalized=True)),
+        norm.pdf(
+            0,
+            loc=0,
+            scale=euclid_pes.constraints("h", marginalized=True),
+        ),
         color="blue",
         label="blue line",
     )
@@ -152,6 +158,7 @@ def test_plot_1d_euclid(euclid_opt, euclid_pes):
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_1d_euclid2(euclid_opt, euclid_pes):
     fp2 = FisherFigure1D(max_cols=5)
@@ -181,7 +188,6 @@ def test_plot_1d_euclid2(euclid_opt, euclid_pes):
 
     fp2.legend(ncol=2)
     fp2.set_major_locator(ticker.MaxNLocator(3))
-    fp2.set_tick_params(which="x", rotation=45)
 
     return fp2.figure
 
@@ -189,6 +195,7 @@ def test_plot_1d_euclid2(euclid_opt, euclid_pes):
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_1d_euclid3(euclid_opt):
     # add just one element
@@ -198,7 +205,6 @@ def test_plot_1d_euclid3(euclid_opt):
     )
 
     fp3.set_label_params(fontsize=30)
-    fp3.set_tick_params(rotation=30)
 
     return fp3.figure
 
@@ -206,44 +212,7 @@ def test_plot_1d_euclid3(euclid_opt):
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
-)
-def test_plot_2d_euclid2(euclid_opt):
-    # add just one element
-    fp = FisherFigure2D(
-        options={"style": "ggplot"},
-    )
-    fp.plot(
-        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
-    )
-
-    fp.set_label_params(fontsize=30)
-    fp.set_tick_params(rotation=30)
-
-    return fp.figure
-
-
-@pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
-    baseline_dir=DATADIR_INPUT,
-)
-def test_plot_2d_euclid3(euclid_opt):
-    # add just one element
-    fp = FisherFigure2D(
-        options={"style": DATADIR_INPUT / "ggplot.mplstyle"},
-    )
-    fp.plot(
-        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
-    )
-
-    fp.set_label_params(fontsize=30)
-    fp.set_tick_params(rotation=30)
-
-    return fp.figure
-
-
-@pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
-    baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_2d_euclid(euclid_opt, euclid_pes):
     fm_opt, fm_pes = euclid_opt, euclid_pes
@@ -294,9 +263,6 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
     fp.legend(fontsize=20)
     fp.set_label_params(fontsize=30)
     fp.set_tick_params(fontsize=8)
-    fp.set_tick_params(rotation=45, which="x")
-    fp.set_major_locator(ticker.MaxNLocator(5))
-    fp.set_tick_params(fontsize=7, which="y")
 
     return fp.figure
 
@@ -304,6 +270,78 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
 @pytest.mark.mpl_image_compare(
     savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
     baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_2d_euclid2(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D(
+        options={"style": "ggplot"},
+    )
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+    fp.set_label_params(fontsize=30)
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_2d_euclid3(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D(
+        options={"style": DATADIR_INPUT / "ggplot.mplstyle"},
+    )
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+    fp.set_label_params(fontsize=30)
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_2d_euclid4(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D(show_1d_curves=True)
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+    fid = euclid_opt.drop("Omegam", invert=True).fiducials[0]
+
+    fp.draw(
+        "Omegam",
+        "Omegam",
+        "plot",
+        np.linspace(0.3, 0.4, 100),
+        100 * np.sin(100 * np.linspace(0.3, 0.4, 100)),
+        ls="--",
+        label="sine function",
+    )
+
+    fp.set_label_params(fontsize=30)
+    fp.legend()
+
+    with pytest.raises(AttributeError):
+        fp.draw("Omegam", "Omegam", "asdf", fid, 0, 10, label="nothing")
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
 )
 def test_plot_2d():
     fm = FisherMatrix([[0.3, -0.5], [-0.5, 0.9]])

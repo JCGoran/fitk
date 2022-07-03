@@ -1135,42 +1135,6 @@ def plot_curve_1d(
     return _add_plot_1d(fid, sigma, ax=ax, **kwargs)
 
 
-def plot_shading_1d(
-    fisher: FisherMatrix,
-    name: str,
-    p: float = 0.68,
-    ax: Optional[Axes] = None,
-    **kwargs,
-) -> tuple[Figure, Axes]:
-    r"""
-    Plots shading at some confidence interval.
-
-    Parameters
-    ----------
-    fisher : FisherMatrix
-        the Fisher matrix which we want to plot
-
-    name : str
-        the name of the parameter to plot
-
-    p : float = 0.68
-        the confidence interval around the fiducial value for which we want to
-        plot the shading. The intervals are computed as:
-        $$
-            p = \int\limits_a^b p(x)\, \mathrm{d}x
-        $$
-        where $(a, b)$ contains the fiducial value, and $p(x)$ is the PDF
-        (not necessarily Gaussian) of the distribution
-
-    ax : Optional[Axes] = None
-        the axis on which to plot the shading
-    """
-    if ax is None:
-        _, ax = plt.subplots()
-
-    sigma = fisher.constraints(name, marginalized=True)
-
-
 def plot_curve_2d(
     fisher: FisherMatrix,
     name1: str,

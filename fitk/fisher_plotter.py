@@ -485,6 +485,14 @@ class FisherFigure1D(FisherBaseFigure):
             path to a file. If using a file, does not use the default rc
             parameters).
 
+        hspace
+            The amount of height reserved for space between subplots, expressed
+            as a fraction of the average axis height.
+
+        wspace
+            The amount of width reserved for space between subplots, expressed
+            as a fraction of the average axis width.
+
         max_cols
             the maximum number of columns in the final plot
 
@@ -520,6 +528,25 @@ class FisherFigure1D(FisherBaseFigure):
     ):
         """
         Implements drawing of other objects on the axis.
+
+        Parameters
+        ----------
+        name
+            the name (label) of the parameter where we want to draw
+
+        method
+            the name of the method which we want to plot (such as `plot`,
+            `scatter`, etc.)
+
+        args
+            any positional arguments passed to the method (usually some data)
+
+        kwargs
+            any keyword arguments passed to the method (usually styling options)
+
+        Returns
+        -------
+        the drawn `Artist`s
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -557,7 +584,7 @@ class FisherFigure1D(FisherBaseFigure):
         **kwargs,
     ):
         """
-        Makes a 1D plot (Gaussians) of the Fisher objects
+        Plots the 1D curves of the Fisher objects.
 
         Parameters
         ----------
@@ -566,11 +593,7 @@ class FisherFigure1D(FisherBaseFigure):
 
         Returns
         -------
-        An instance of `FisherFigure1D`.
-
-        Notes
-        -----
-        Also modifies the current instance
+        None
         """
         size = len(fisher)
 
@@ -678,6 +701,29 @@ class FisherFigure1D(FisherBaseFigure):
     ):
         """
         Creates a legend on the figure.
+
+        Parameters
+        ----------
+        args
+            any positional arguments for the legend
+
+        overwrite
+            whether to overwrite any "nice" options set by `fitk` (default:
+            False)
+
+        loc
+            which corner of the legend to use as the positioning anchor
+            (default: "lower center")
+
+        bbox_to_anchor
+            the location of where to place the legend (default: `[0.5, 1]`)
+
+        kwargs
+            any other keyword arguments for the legend
+
+        Returns
+        -------
+        the legend
         """
         with plt.rc_context(self.options):
             ax = self.axes.flat[0]
@@ -685,7 +731,7 @@ class FisherFigure1D(FisherBaseFigure):
                 if ax.get_legend():
                     ax.get_legend().remove()
 
-                ax.legend(
+                return ax.legend(
                     self.handles,
                     self.labels,
                     loc=loc,
@@ -694,13 +740,12 @@ class FisherFigure1D(FisherBaseFigure):
                     **kwargs,
                 )
 
-            else:
-                ax.legend(
-                    *args,
-                    loc=loc,
-                    bbox_to_anchor=bbox_to_anchor,
-                    **kwargs,
-                )
+            return ax.legend(
+                *args,
+                loc=loc,
+                bbox_to_anchor=bbox_to_anchor,
+                **kwargs,
+            )
 
     def set_title(
         self,
@@ -712,9 +757,27 @@ class FisherFigure1D(FisherBaseFigure):
         """
         Thin wrapper for setting the title of the figure with the correct
         options.
+
+        Parameters
+        ----------
+        args
+            any positional arguments to `figure.suptitle`
+
+        x
+            the x position of the title (default: `0.5`)
+
+        y
+            the y position of the title (default: `1.2`)
+
+        kwargs
+            any keyword arguments to `figure.suptitle`
+
+        Returns
+        -------
+        the title
         """
         with plt.rc_context(self.options):
-            self.figure.suptitle(*args, x=x, y=y, **kwargs)
+            return self.figure.suptitle(*args, x=x, y=y, **kwargs)
 
 
 class FisherFigure2D(FisherBaseFigure):
@@ -742,6 +805,14 @@ class FisherFigure2D(FisherBaseFigure):
             path to a file. If using a file, does not use the default rc
             parameters).
 
+        hspace
+            The amount of height reserved for space between subplots, expressed
+            as a fraction of the average axis height.
+
+        wspace
+            The amount of width reserved for space between subplots, expressed
+            as a fraction of the average axis width.
+
         show_1d_curves
             whether the 1D marginalized curves should be plotted (default:
             False)
@@ -754,6 +825,12 @@ class FisherFigure2D(FisherBaseFigure):
         -----
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
+
+        **Regarding `show_joint_dist`**: this argument specifies whether we
+        wish to plot the p-value of the _joint distribution_, or the p-value of
+        the probability of a single parameter lying within the bounds projected
+        onto a parameter axis. For more details, see
+        [arXiv:0906.0664](https://arxiv.org/abs/0906.0664), section 2.
         """
         super().__init__(options=options, wspace=wspace, hspace=hspace)
         self.show_1d_curves = show_1d_curves
@@ -798,6 +875,30 @@ class FisherFigure2D(FisherBaseFigure):
     ):
         """
         Creates a legend on the figure.
+
+        Parameters
+        ----------
+        args
+            any positional arguments for the legend
+
+        overwrite
+            whether to overwrite any "nice" options set by `fitk` (default:
+            False)
+
+        loc
+            which corner of the legend to use as the positioning anchor
+            (default: "upper right")
+
+        bbox_to_anchor
+            the location of where to place the legend (default: None, picked by
+            `fitk` based on information about the plot)
+
+        kwargs
+            any other keyword arguments for the legend
+
+        Returns
+        -------
+        the legend
         """
         with plt.rc_context(self.options):
             # this will always exist since we can't plot < 2 parameters
@@ -816,7 +917,7 @@ class FisherFigure2D(FisherBaseFigure):
                 if ax.get_legend():
                     ax.get_legend().remove()
 
-                ax.legend(
+                return ax.legend(
                     self.handles,
                     self.labels,
                     loc=loc,
@@ -825,13 +926,12 @@ class FisherFigure2D(FisherBaseFigure):
                     **kwargs,
                 )
 
-            else:
-                ax.legend(
-                    *args,
-                    loc=loc,
-                    bbox_to_anchor=bbox_to_anchor,
-                    **kwargs,
-                )
+            return ax.legend(
+                *args,
+                loc=loc,
+                bbox_to_anchor=bbox_to_anchor,
+                **kwargs,
+            )
 
     def set_title(
         self,
@@ -844,6 +944,24 @@ class FisherFigure2D(FisherBaseFigure):
         """
         Thin wrapper for setting the title of the figure with the correct
         options.
+
+        Parameters
+        ----------
+        args
+            any positional arguments to `figure.suptitle`
+
+        xscale
+            the x position of the title (default: `0.5`)
+
+        yscale
+            the y position of the title (default: `1.08`)
+
+        kwargs
+            any keyword arguments to `figure.suptitle`
+
+        Returns
+        -------
+        the title
         """
         with plt.rc_context(self.options):
             if not overwrite:
@@ -857,15 +975,14 @@ class FisherFigure2D(FisherBaseFigure):
                     self.axes[i, 0].get_position().ymax,
                 )
 
-                self.figure.suptitle(
+                return self.figure.suptitle(
                     *args,
                     x=x * xscale,
                     y=y * yscale,
                     **kwargs,
                 )
 
-            else:
-                self.figure.suptitle(*args, **kwargs)
+            return self.figure.suptitle(*args, **kwargs)
 
     def draw(
         self,
@@ -877,6 +994,28 @@ class FisherFigure2D(FisherBaseFigure):
     ):
         """
         Implements drawing of other objects on the axis.
+
+        Parameters
+        ----------
+        name1
+            the name (label) of the first parameter where we want to draw
+
+        name2
+            the name (label) of the second parameter where we want to draw
+
+        method
+            the name of the method which we want to plot (such as `plot`,
+            `scatter`, etc.)
+
+        args
+            any positional arguments passed to the method (usually some data)
+
+        kwargs
+            any keyword arguments passed to the method (usually styling options)
+
+        Returns
+        -------
+        the drawn `Artist`s
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(
@@ -921,11 +1060,6 @@ class FisherFigure2D(FisherBaseFigure):
         ----------
         fisher
             the Fisher object which we want to plot
-
-        joint
-            whether to plot the p-value of the joint distribution, or the
-            p-value of the probability of a single parameter lying within the
-            bounds projected onto a parameter axis.
 
         Returns
         -------

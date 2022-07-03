@@ -35,7 +35,14 @@ class FisherBaseFigure(ABC):
     The abstract base class for plotting Fisher objects.
     """
 
-    def __init__(self, *args, options: Optional[dict] = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        options: Optional[dict] = None,
+        hspace: float = 0.1,
+        wspace: float = 0.1,
+        **kwargs,
+    ):
         """
         Constructor
         """
@@ -46,6 +53,8 @@ class FisherBaseFigure(ABC):
         self._labels: MutableSequence[str] = []
         self._options = get_default_rcparams()
         self._ndim = 0
+        self._hspace = hspace
+        self._wspace = wspace
 
         self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         self.current_color = iter(self.cycler)
@@ -116,6 +125,22 @@ class FisherBaseFigure(ABC):
         Returns the axes of the figure as a numpy array.
         """
         return self._axes
+
+    @property
+    def hspace(self):
+        """
+        The amount of height reserved for space between subplots, expressed as
+        a fraction of the average axis height.
+        """
+        return self._hspace
+
+    @property
+    def wspace(self):
+        """
+        The amount of width reserved for space between subplots, expressed as a
+        fraction of the average axis width.
+        """
+        return self._wspace
 
     @property
     def names(self):
@@ -404,6 +429,8 @@ class FisherFigure1D(FisherBaseFigure):
         self,
         options: Optional[dict] = None,
         max_cols: Optional[int] = None,
+        hspace: float = 0.5,
+        wspace: float = 0.1,
     ):
         """
         Constructor.
@@ -425,9 +452,11 @@ class FisherFigure1D(FisherBaseFigure):
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        super().__init__(options=options)
+        super().__init__(options=options, wspace=wspace, hspace=hspace)
         self.max_cols = max_cols
         self._ndim = 1
+        self._hspace = hspace
+        self._wspace = wspace
 
     def __getitem__(
         self,
@@ -533,8 +562,8 @@ class FisherFigure1D(FisherBaseFigure):
                 gs = fig.add_gridspec(
                     nrows=layout[0],
                     ncols=layout[1],
-                    hspace=0.5,
-                    wspace=0.1,
+                    hspace=self.hspace,
+                    wspace=self.wspace,
                 )
                 axes = gs.subplots()
                 if size == 1:
@@ -634,6 +663,8 @@ class FisherFigure2D(FisherBaseFigure):
     def __init__(
         self,
         options: Optional[dict] = None,
+        hspace: float = 0,
+        wspace: float = 0,
         show_1d_curves: bool = False,
         show_joint_dist: bool = False,
     ):
@@ -662,7 +693,7 @@ class FisherFigure2D(FisherBaseFigure):
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        super().__init__(options=options)
+        super().__init__(options=options, wspace=wspace, hspace=hspace)
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
         self._ndim = 2
@@ -871,8 +902,8 @@ class FisherFigure2D(FisherBaseFigure):
                 ax = fig.add_gridspec(
                     nrows=size,
                     ncols=size,
-                    hspace=0.0,
-                    wspace=0.0,
+                    hspace=self.hspace,
+                    wspace=self.wspace,
                 ).subplots(
                     sharex="col",
                     sharey=False,

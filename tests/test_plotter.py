@@ -160,7 +160,7 @@ def test_plot_1d_euclid(euclid_opt, euclid_pes):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
-def test_plot_1d_euclid2(euclid_opt, euclid_pes):
+def test_plot_1d_locator(euclid_opt, euclid_pes):
     fp2 = FisherFigure1D(max_cols=5)
 
     fp2.plot(
@@ -190,6 +190,24 @@ def test_plot_1d_euclid2(euclid_opt, euclid_pes):
     fp2.set_major_locator(ticker.MaxNLocator(3))
 
     return fp2.figure
+
+
+def test_plot_2d_getitem(euclid_opt):
+    fp = FisherFigure2D()
+
+    fp.plot(
+        euclid_opt.marginalize_over(
+            "Omegam",
+            "Omegab",
+            "h",
+            "ns",
+            invert=True,
+        ),
+        label="optimistic case",
+    )
+
+    with pytest.raises(TypeError):
+        fp[1]
 
 
 @pytest.mark.mpl_image_compare(
@@ -263,6 +281,12 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
     fp.legend(fontsize=20)
     fp.set_label_params(fontsize=30)
     fp.set_tick_params(fontsize=8)
+    fp.set_major_locator(ticker.MaxNLocator(3))
+    fp.set_minor_locator(ticker.MaxNLocator(5))
+    fp.set_major_formatter(ticker.ScalarFormatter())
+    fp.set_tick_params(which="x", rotation=45)
+
+    fp.savefig(DATADIR_OUTPUT / "test_plot_2d_euclid.pdf")
 
     return fp.figure
 
@@ -272,16 +296,21 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
-def test_plot_2d_euclid2(euclid_opt):
+def test_plot_2d_legend(euclid_opt):
     # add just one element
     fp = FisherFigure2D(
         options={"style": "ggplot"},
     )
     fp.plot(
         euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+        label="Euclid",
     )
 
     fp.set_label_params(fontsize=30)
+
+    fp.legend()
+
+    fp.legend()
 
     return fp.figure
 
@@ -291,7 +320,27 @@ def test_plot_2d_euclid2(euclid_opt):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
-def test_plot_2d_euclid3(euclid_opt):
+def test_plot_2d_set_title(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D()
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+        label="Euclid",
+    )
+
+    fp.set_label_params(fontsize=30)
+
+    fp.set_title(r"$\mathit{Sample}$ survey")
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_2d_options_file(euclid_opt):
     # add just one element
     fp = FisherFigure2D(
         options={"style": DATADIR_INPUT / "ggplot.mplstyle"},
@@ -310,14 +359,12 @@ def test_plot_2d_euclid3(euclid_opt):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
-def test_plot_2d_euclid4(euclid_opt):
+def test_plot_2d_draw(euclid_opt):
     # add just one element
     fp = FisherFigure2D(show_1d_curves=True)
     fp.plot(
         euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
     )
-
-    fid = euclid_opt.drop("Omegam", invert=True).fiducials[0]
 
     fp.draw(
         "Omegam",
@@ -329,11 +376,55 @@ def test_plot_2d_euclid4(euclid_opt):
         label="sine function",
     )
 
-    fp.set_label_params(fontsize=30)
-    fp.legend()
+    with pytest.raises(AttributeError):
+        fp.draw("Omegam", "Omegam", "asdf", 10, 0, 10, label="nothing")
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_1d_draw(euclid_opt):
+    # add just one element
+    fp = FisherFigure1D()
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+    x = np.linspace(0.3, 0.4, 100)
+
+    fp.draw(
+        "Omegam",
+        "plot",
+        x,
+        100 * np.sin(100 * x),
+        label="sine function",
+    )
+
+    fp.draw(
+        "Omegam",
+        "plot",
+        x,
+        100 * np.sin(100 * x),
+        x,
+        100 * np.cos(100 * x),
+        ls=":",
+        label="mutiple plots",
+    )
+
+    # doing it manually
+    (line,) = fp["Omegam"].plot(
+        x,
+        100 * np.sin(80 * x),
+    )
+
+    fp.legend([line], ["sample line"], overwrite=True)
 
     with pytest.raises(AttributeError):
-        fp.draw("Omegam", "Omegam", "asdf", fid, 0, 10, label="nothing")
+        fp.draw("Omegam", "asdf", 10, 0, 10, label="nothing")
 
     return fp.figure
 
@@ -396,8 +487,9 @@ def test_plot_2d():
     return ffigure
 
 
-def test_plot_2d_continuation():
+def test_plot_2d_one_element():
     fp = FisherFigure2D()
 
+    # cannot make a plot with one element
     with pytest.raises(ValueError):
         fp.plot(FisherMatrix(np.diag([1])))

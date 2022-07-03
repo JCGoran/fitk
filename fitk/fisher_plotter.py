@@ -619,7 +619,7 @@ class FisherFigure1D(FisherBaseFigure):
 
             else:
                 self.figure.legend(
-                    args,
+                    *args,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,
                     **kwargs,

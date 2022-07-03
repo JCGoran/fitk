@@ -34,67 +34,48 @@ DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
 DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
 
 
-def test_init():
+@pytest.fixture
+def m1():
     names = list("abcde")
     latex_names = [r"$\mathcal{A}$", r"$\mathcal{B}$", r"$\mathcal{C}$", "d", "e"]
-    val1 = np.diag([1, 2, 3, 9.3, 3])
-    val2 = np.diag([6, 7, 20, 1.5, 0.6])
-    fid1 = [0, 0, 0, 1, 2]
-    fid2 = [-1, 0.1, 5, -1, 3]
-    m1 = FisherMatrix(val1, names=names, fiducials=fid1, latex_names=latex_names)
-    m2 = FisherMatrix(val2, names=names, fiducials=fid2, latex_names=latex_names)
-    fp = FisherFigure2D()
 
-    with pytest.raises(ValueError):
-        m1 = FisherMatrix([[3]], names=["a"])
-        m2 = FisherMatrix([[5]], names=["b"])
-        fp.plot(m1)
-        fp.plot(m2)
+    val = np.diag([1, 2, 3, 9.3, 3])
+    fid = [0, 0, 0, 1, 2]
+    return FisherMatrix(
+        val,
+        names=names,
+        fiducials=fid,
+        latex_names=latex_names,
+    )
 
 
-@pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
-    baseline_dir=DATADIR_INPUT,
-    style="default",
-)
-def test_plot_1d():
+@pytest.fixture
+def m2():
     names = list("abcde")
     latex_names = [r"$\mathcal{A}$", r"$\mathcal{B}$", r"$\mathcal{C}$", "d", "e"]
-    val1 = np.diag([1, 2, 3, 9.3, 3])
-    val2 = np.diag([6, 7, 20, 1.5, 0.6])
-    val3 = np.diag([10, 4.2, 6.4, 0.2, 0.342])
-    fid1 = [0, 0, 0, 1, 2]
-    fid2 = [-1, 0.1, 5, -1, 3]
-    fid3 = fid1
-    m1 = FisherMatrix(
-        val1,
+
+    val = np.diag([6, 7, 20, 1.5, 0.6])
+    fid = [-1, 0.1, 5, -1, 3]
+    return FisherMatrix(
+        val,
         names=names,
-        fiducials=fid1,
+        fiducials=fid,
         latex_names=latex_names,
     )
-    m2 = FisherMatrix(
-        val2,
+
+
+@pytest.fixture
+def m3():
+    names = list("abcde")
+    latex_names = [r"$\mathcal{A}$", r"$\mathcal{B}$", r"$\mathcal{C}$", "d", "e"]
+    val = np.diag([10, 4.2, 6.4, 0.2, 0.342])
+    fid = [0, 0, 0, 1, 2]
+    return FisherMatrix(
+        val,
         names=names,
-        fiducials=fid2,
+        fiducials=fid,
         latex_names=latex_names,
     )
-    m3 = FisherMatrix(
-        val3,
-        names=names,
-        fiducials=fid3,
-        latex_names=latex_names,
-    )
-    fp = FisherFigure1D()
-
-    fp.plot(m1, label="first")
-    fp.plot(m2, label="second", ls="--")
-    fp.plot(m3, label="third", ls=":", color="red")
-
-    fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
-    fp.set_major_locator(ticker.MaxNLocator(3))
-    fp.set_tick_params(which="x", rotation=45)
-
-    return fp.figure
 
 
 @pytest.fixture
@@ -109,6 +90,53 @@ def euclid_pes():
     return FisherMatrix.from_file(
         DATADIR_INPUT / "EuclidISTF_WL_w0wa_flat_pessimistic.json"
     )
+
+
+def test_plot_2d_repr(m1):
+    fp = FisherFigure2D()
+    fp.plot(m1)
+
+    repr(fp)
+    str(fp)
+
+
+def test_plot_2d_size():
+    fp = FisherFigure2D()
+
+    with pytest.raises(ValueError):
+        m = FisherMatrix([[3]], names=["a"])
+        fp.plot(m)
+
+
+def test_plot_2d_names(m1, m2):
+    fp = FisherFigure2D()
+    fp.plot(m1)
+
+    m = FisherMatrix(m2.values, names=m2.names, fiducials=m2.fiducials).rename(
+        {m2.names[0]: "o"},
+    )
+
+    with pytest.raises(ValueError):
+        fp.plot(m)
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_1d(m1, m2, m3):
+    fp = FisherFigure1D()
+
+    fp.plot(m1, label="first")
+    fp.plot(m2, label="second", ls="--")
+    fp.plot(m3, label="third", ls=":", color="red")
+
+    fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
+    fp.set_major_locator(ticker.MaxNLocator(3))
+    fp.set_tick_params(which="x", rotation=45)
+
+    return fp.figure
 
 
 @pytest.mark.mpl_image_compare(
@@ -330,6 +358,27 @@ def test_plot_2d_set_title(euclid_opt):
 
     fp.set_label_params(fontsize=30)
 
+    fp.set_title("My title", overwrite=True)
+    fp.set_title(r"$\mathit{Sample}$ survey")
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_2d_set_title2(euclid_opt):
+    fp = FisherFigure2D(show_1d_curves=True)
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+        label="Euclid",
+    )
+
+    fp.set_label_params(fontsize=30)
+
+    fp.set_title("My title", overwrite=True)
     fp.set_title(r"$\mathit{Sample}$ survey")
 
     return fp.figure
@@ -375,6 +424,8 @@ def test_plot_2d_draw(euclid_opt):
         ls="--",
         label="sine function",
     )
+
+    fp.legend()
 
     with pytest.raises(AttributeError):
         fp.draw("Omegam", "Omegam", "asdf", 10, 0, 10, label="nothing")

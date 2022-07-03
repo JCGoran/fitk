@@ -144,6 +144,56 @@ def test_plot_1d(m1, m2, m3):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
+def test_plot_1d_cols(m1, m2, m3):
+    fp = FisherFigure1D(max_cols=3, hspace=0.8)
+
+    fp.plot(m1, label="first")
+    fp.plot(m2, label="second", ls="--")
+    fp.plot(m3, label="third", ls=":", color="red")
+
+    fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
+    fp.set_major_locator(ticker.MaxNLocator(3))
+    fp.set_tick_params(which="x", rotation=45)
+    fp.set_title("Constrained columns")
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_1d_add_artist_to_legend(m1, m2, m3):
+    fp = FisherFigure1D(max_cols=3, hspace=0.8)
+
+    fp.plot(m1, label="first")
+    fp.plot(m2, label="second", ls="--")
+    fp.plot(m3, label="third", ls=":", color="red")
+
+    fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
+    fp.set_major_locator(ticker.MaxNLocator(3))
+    fp.set_tick_params(which="x", rotation=45)
+    fp.set_title("Constrained columns")
+
+    (handle,) = fp["a"].plot(
+        np.linspace(-3, 3, 100),
+        np.sin(np.linspace(-3, 3, 100)),
+        color="green",
+    )
+
+    fp.add_artist_to_legend(handle, "sine function")
+
+    fp.legend(ncol=4)
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
 def test_plot_1d_euclid(euclid_opt, euclid_pes):
     fp1 = FisherFigure1D(max_cols=5)
 
@@ -472,7 +522,12 @@ def test_plot_1d_draw(euclid_opt):
         100 * np.sin(80 * x),
     )
 
-    fp.legend([line], ["sample line"], overwrite=True)
+    fp.legend(
+        [line],
+        ["sample line"],
+        overwrite=True,
+        bbox_transform=fp.figure.transFigure,
+    )
 
     with pytest.raises(AttributeError):
         fp.draw("Omegam", "asdf", 10, 0, 10, label="nothing")

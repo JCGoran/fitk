@@ -192,6 +192,47 @@ class FisherBaseFigure(ABC):
             f"    axes={str(self.axes)})"
         )
 
+    def add_artist_to_legend(
+        self,
+        artist: Artist,
+        label: str,
+    ):
+        """
+        This is a convenience function for correctly updating the legend after
+        directly plotting some artist via `<instance>[<name(s)>].<method>`
+
+        Parameters
+        ----------
+        artist
+            the artist which we want to put on the legend
+
+        label
+            the label for the artist
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        Setup the plot:
+        >>> fp = FisherFigure1D()
+        >>> fp.plot(FisherMatrix(np.diag([1, 2]), names=["a", "b"]), label="Fisher matrix")
+
+        Add something to the plot that has a handle:
+        >>> handle, = fp["a"].plot([-1, 0, 1], [-1, 0, 1])
+
+        Finally, add the handle to the legend
+        >>> fp.add_artist_to_legend(handle, "linear function")
+        >>> fp.legend() # the artist will now be shown correctly in the legend
+
+        Notes
+        -----
+        The limits of the plot are not updated automatically.
+        """
+        self.labels.append(label)
+        self.handles.append(artist)
+
     def savefig(
         self,
         path: Path,
@@ -507,6 +548,8 @@ class FisherFigure1D(FisherBaseFigure):
         self[name].relim()
         self[name].autoscale_view()
 
+        return handles
+
     def plot(
         self,
         fisher: FisherMatrix,
@@ -549,7 +592,7 @@ class FisherFigure1D(FisherBaseFigure):
             layout = 1, size
             full = True
 
-        with plt.rc_context(self._options):
+        with plt.rc_context(self.options):
             # general figure setup
             if self.figure:
                 fig = self.figure
@@ -614,12 +657,12 @@ class FisherFigure1D(FisherBaseFigure):
             # remove any axes which are not drawn
             if not full:
                 for index in range(
-                    (layout[0] - 1) * layout[1] + 1, layout[0] * layout[1]
+                    size,
+                    layout[0] * layout[1],
                 ):
-                    try:
-                        axes.flat[index].remove()
-                    except AttributeError:
-                        pass
+                    # it's simpler to turn off the axis, than completely remove
+                    # it
+                    axes.flat[index].axis("off")
 
         self._figure = fig
         self._axes = axes
@@ -637,22 +680,41 @@ class FisherFigure1D(FisherBaseFigure):
         Creates a legend on the figure.
         """
         with plt.rc_context(self.options):
+            ax = self.axes.flat[0]
             if not overwrite:
-                self.figure.legend(
+                if ax.get_legend():
+                    ax.get_legend().remove()
+
+                ax.legend(
                     self.handles,
                     self.labels,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,
+                    bbox_transform=self.figure.transFigure,
                     **kwargs,
                 )
 
             else:
-                self.figure.legend(
+                ax.legend(
                     *args,
                     loc=loc,
                     bbox_to_anchor=bbox_to_anchor,
                     **kwargs,
                 )
+
+    def set_title(
+        self,
+        *args,
+        x: float = 0.5,
+        y: float = 1.2,
+        **kwargs,
+    ):
+        """
+        Thin wrapper for setting the title of the figure with the correct
+        options.
+        """
+        with plt.rc_context(self.options):
+            self.figure.suptitle(*args, x=x, y=y, **kwargs)
 
 
 class FisherFigure2D(FisherBaseFigure):
@@ -843,6 +905,8 @@ class FisherFigure2D(FisherBaseFigure):
         self[name1, name2].autoscale()
         self[name1, name2].relim()
         self[name1, name2].autoscale_view()
+
+        return handles
 
     def plot(
         self,

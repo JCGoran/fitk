@@ -42,9 +42,10 @@ def _parse_and_set_args(
     for key, value in kwargs.items():
         if key in special_kwargs:
             bias[key] = value
-            del kwargs[key]
 
-    result = coffe.Coffe(**kwargs)
+    result = coffe.Coffe(
+        **{key: value for key, value in kwargs.items() if key not in special_kwargs}
+    )
 
     if bias:
         for key, value in bias.items():

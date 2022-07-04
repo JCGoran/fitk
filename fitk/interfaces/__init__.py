@@ -6,7 +6,7 @@ one can compute Fisher matrices using finite differences.
 Due to the complexities involved in distributing software that is not
 under direct control of the developers/maintainers of `fitk` (version,
 installation, license issues, etc.), any third-party software (such as
-cosmological codes) is _not_ bundled with `fitk` (i.e. installed
+cosmological codes) is *not* bundled with `fitk` (i.e. installed
 automatically), and must be installed separately by the user.
 
 ### Computation of custom derivatives

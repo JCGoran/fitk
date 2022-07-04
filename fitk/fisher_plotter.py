@@ -30,6 +30,16 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import ParameterNotFoundError, get_default_rcparams, is_iterable
 
 
+class EmptyFigureError(Exception):
+    """
+    Error raised when the figure is empty, i.e. `plot` was not called first.
+    """
+
+    def __init__(self):
+        self.message = "No parameters on the figure; did you forget to call `plot`?"
+        super().__init__(self.message)
+
+
 class FisherBaseFigure(ABC):
     """
     The abstract base class for plotting Fisher objects.
@@ -258,6 +268,9 @@ class FisherBaseFigure(ABC):
             any other keyword arguments that should be passed to
             `figure.savefig`
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         self.figure.savefig(
             path,
             dpi=dpi,
@@ -288,6 +301,9 @@ class FisherBaseFigure(ABC):
         -------
         None
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             # only set the parameters which are not empty (should this be done
             # for all of them instead?)
@@ -327,6 +343,9 @@ class FisherBaseFigure(ABC):
             any keyword arguments passed to the methods for handling tick
             parameters (such as 'fontsize', 'rotation', etc.)
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 for item in self[nameiter].get_xticklabels():
@@ -365,6 +384,9 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             # for some reason, we cannot reuse the same instance, so we just
             # make a deep copy of it instead
@@ -399,6 +421,9 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             if (
                 self[nameiter]
@@ -432,6 +457,9 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 self[nameiter].xaxis.set_major_formatter(formatter)
@@ -454,6 +482,9 @@ class FisherBaseFigure(ABC):
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter] and which in ["both", "x"]:
                 self[nameiter].xaxis.set_minor_formatter(formatter)
@@ -514,6 +545,9 @@ class FisherFigure1D(FisherBaseFigure):
         """
         Returns the axis associated to the name `key`.
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         if key not in self.names:
             raise ParameterNotFoundError(key, self.names)
 
@@ -547,6 +581,10 @@ class FisherFigure1D(FisherBaseFigure):
         Returns
         -------
         the drawn `Artist`s
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -724,7 +762,14 @@ class FisherFigure1D(FisherBaseFigure):
         Returns
         -------
         the legend
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         with plt.rc_context(self.options):
             ax = self.axes.flat[0]
             if not overwrite:
@@ -775,7 +820,14 @@ class FisherFigure1D(FisherBaseFigure):
         Returns
         -------
         the title
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         with plt.rc_context(self.options):
             return self.figure.suptitle(*args, x=x, y=y, **kwargs)
 
@@ -841,6 +893,9 @@ class FisherFigure2D(FisherBaseFigure):
         self,
         key: tuple[str, str],
     ):
+        if not self.figure:
+            raise EmptyFigureError
+
         if not isinstance(key, tuple):
             raise TypeError(
                 f"Incompatible type for element access: expected `tuple`, got `{type(key)}`"
@@ -899,7 +954,14 @@ class FisherFigure2D(FisherBaseFigure):
         Returns
         -------
         the legend
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         with plt.rc_context(self.options):
             # this will always exist since we can't plot < 2 parameters
             ax = self[self.names[0], self.names[1]]
@@ -962,7 +1024,14 @@ class FisherFigure2D(FisherBaseFigure):
         Returns
         -------
         the title
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
+        if not self.figure:
+            raise EmptyFigureError
+
         with plt.rc_context(self.options):
             if not overwrite:
                 if self.show_1d_curves:
@@ -1016,6 +1085,10 @@ class FisherFigure2D(FisherBaseFigure):
         Returns
         -------
         the drawn `Artist`s
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(

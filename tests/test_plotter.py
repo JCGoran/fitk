@@ -23,6 +23,7 @@ from scipy.stats import norm
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_plotter import (
+    EmptyFigureError,
     FisherFigure1D,
     FisherFigure2D,
     plot_curve_1d,
@@ -599,3 +600,111 @@ def test_plot_2d_one_element():
     # cannot make a plot with one element
     with pytest.raises(ValueError):
         fp.plot(FisherMatrix(np.diag([1])))
+
+
+def test_plot_1d_figure_error(euclid_opt):
+    """
+    Check that we can't draw anything before calling `plot`
+    """
+    fp = FisherFigure1D()
+
+    with pytest.raises(EmptyFigureError):
+        fp.legend()
+
+    with pytest.raises(EmptyFigureError):
+        fp.draw("omegam", "asdf", 1, 1)
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_major_locator(ticker.MaxNLocator(3))
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_minor_locator(ticker.MaxNLocator(3))
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_major_formatter(ticker.ScalarFormatter())
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_minor_formatter(ticker.ScalarFormatter())
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_title("title")
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_label_params(fontsize=30)
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_tick_params(fontsize=30)
+
+    with pytest.raises(EmptyFigureError):
+        fp.savefig("path.pdf")
+
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+
+def test_plot_2d_figure_error(euclid_opt):
+    """
+    Check that we can't draw anything before calling `plot`
+    """
+    fp = FisherFigure2D()
+
+    with pytest.raises(EmptyFigureError):
+        fp.legend()
+
+    with pytest.raises(EmptyFigureError):
+        fp.draw("omegam", "omegab", "asdf", 1, 1)
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_major_locator(ticker.MaxNLocator(3))
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_minor_locator(ticker.MaxNLocator(3))
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_major_formatter(ticker.ScalarFormatter())
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_minor_formatter(ticker.ScalarFormatter())
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_title("title")
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_label_params(fontsize=30)
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_tick_params(fontsize=30)
+
+    with pytest.raises(EmptyFigureError):
+        fp.savefig("path.pdf")
+
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+    )
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_curve_1d(m1):
+    fig, ax, _ = plot_curve_1d(m1, m1.names[0])
+
+    return fig
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_curve_2d(m1):
+    fig, ax, _ = plot_curve_2d(m1, m1.names[0], m1.names[-1])
+
+    ax.autoscale()
+    ax.relim()
+    ax.autoscale_view()
+
+    return fig

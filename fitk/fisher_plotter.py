@@ -267,6 +267,10 @@ class FisherBaseFigure(ABC):
         kwargs
             any other keyword arguments that should be passed to
             `figure.savefig`
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -300,6 +304,10 @@ class FisherBaseFigure(ABC):
         Returns
         -------
         None
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -342,6 +350,10 @@ class FisherBaseFigure(ABC):
         kwargs
             any keyword arguments passed to the methods for handling tick
             parameters (such as 'fontsize', 'rotation', etc.)
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -383,6 +395,10 @@ class FisherBaseFigure(ABC):
 
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -420,6 +436,10 @@ class FisherBaseFigure(ABC):
 
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -456,6 +476,10 @@ class FisherBaseFigure(ABC):
 
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -481,6 +505,10 @@ class FisherBaseFigure(ABC):
 
         which
             which axes to change: 'x', 'y', or 'both' (default: 'both')
+
+        Raises
+        ------
+        * `EmptyFigureError` if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -879,7 +907,7 @@ class FisherFigure2D(FisherBaseFigure):
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
 
         **Regarding `show_joint_dist`**: this argument specifies whether we
-        wish to plot the p-value of the _joint distribution_, or the p-value of
+        wish to plot the p-value of the *joint* distribution, or the p-value of
         the probability of a single parameter lying within the bounds projected
         onto a parameter axis. For more details, see
         [arXiv:0906.0664](https://arxiv.org/abs/0906.0664), section 2.

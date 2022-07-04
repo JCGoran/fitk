@@ -26,6 +26,7 @@ from fitk.fisher_plotter import (
     EmptyFigureError,
     FisherFigure1D,
     FisherFigure2D,
+    _get_ellipse,
     plot_curve_1d,
     plot_curve_2d,
 )
@@ -708,3 +709,8 @@ def test_plot_curve_2d(m1):
     ax.autoscale_view()
 
     return fig
+
+
+def test_ellipse(m1):
+    with pytest.raises(ValueError):
+        _get_ellipse(m1, "omegam", "omegam")

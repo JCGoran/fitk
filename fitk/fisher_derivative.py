@@ -29,7 +29,8 @@ def _validate_derivatives(
 
     Raises
     ------
-    * `ValueError` if we are unable to compute the requested derivatives
+    ValueError
+        if we are unable to compute the requested derivatives
     """
     upper_limit = 10
 
@@ -56,29 +57,31 @@ class D:
     abs_step
         the absolute step size for computing the derivative
 
-    order
+    order, optional
         the order of the derivative (default: 1)
 
-    accuracy
+    accuracy, optional
         the accuracy requested for the derivative (default: 4)
 
-    kind
-        the kind of difference to use (default: 'center'). Available options
-        are 'center', 'forward', 'backward'.
+    kind : {'center', 'forward', 'backward'}
+        the kind of difference to use (default: 'center')
 
-    stencil
+    stencil, optional
         the custom stencil used for computing the derivative (default: None).
         If specified, the arguments `accuracy` and `kind` are ignored.
 
     Raises
     ------
-    * `ValueError` if the value of `abs_step` is not positive
-    * `TypeError` if the value of `stencil` is not an iterable
-    * `ValueError` if the value of `stencil` is not strictly monotonically
-    increasing
-    * `ValueError` if the value of `accuracy` is not at least 1
-    * `ValueError` if the value of `kind` is not one of: 'center', 'forward',
-    'backward'
+    ValueError
+        is raised in one of the following situations:
+        * if the value of `abs_step` is not positive
+        * if the value of `stencil` is not strictly monotonically
+        increasing
+        * if the value of `accuracy` is not at least 1
+        * if the value of `kind` is not one of: 'center', 'forward', 'backward'
+
+    TypeError
+        if the value of `stencil` is not an iterable
     """
 
     name: str
@@ -167,7 +170,8 @@ class FisherDerivative(ABC):
 
         Returns
         -------
-        array-like of floats
+        array_like : float
+            the values of the signal as a numpy array
         """
         return NotImplemented
 
@@ -189,12 +193,13 @@ class FisherDerivative(ABC):
 
         Returns
         -------
-        array-like of floats with a square shape
+        array_like : float
+            the values of the covariance as a numpy array
 
         Raises
         ------
-        * `NotImplementedError` if the user has not explicitly overridden the
-        method
+        NotImplementedError
+            if the user has not explicitly overridden the method
         """
         raise NotImplementedError(
             "The `covariance` method must be implemented first in order to be used"
@@ -211,12 +216,11 @@ class FisherDerivative(ABC):
 
         Parameters
         ----------
-        method
-            the method to use for computing the derivative. Can be either
-            'signal' or 'covariance'.
+        method : {'signal', 'covariance'}
+            the object for which we want to compute the derivative
 
-        arg: D
-            the derivative
+        args: D
+            the derivatives which we want to compute
 
         kwargs
             any keyword arguments passed to the method
@@ -278,7 +282,7 @@ class FisherDerivative(ABC):
 
         latex_names
             the LaTeX names of the parameters that will be passed to the
-            `FisherMatrix`
+            `fitk.fisher_matrix.FisherMatrix`
 
         kwargs
             any other keyword arguments that should be passed to `signal` and
@@ -286,7 +290,8 @@ class FisherDerivative(ABC):
 
         Returns
         -------
-        instance of `FisherMatrix` with corresponding names and fiducials
+        fitk.fisher_matrix.FisherMatrix
+            the Fisher object with corresponding names and fiducials
 
         Notes
         -----

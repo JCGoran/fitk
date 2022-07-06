@@ -109,11 +109,12 @@ class SupernovaDerivative(FisherDerivative):
 
         Parameters
         ----------
-        config
+        config : dict, optional
             the configuration for the supernova measurement. Should be a
-            dictionary with the following keys and types: 'omega_m' (`float`, default: 0.32),
-            'w' (`float`, default: -1), 'z', (array-like of `float`, default: [1]), 'sigma' (array-like of
-            `float`, default: [1])
+            dictionary with the following keys and types: 'omega_m' (`float`,
+            default: 0.32), 'w' (`float`, default: -1), 'z', (array-like of
+            `float`, default: [1]), 'sigma' (array-like of `float`, default:
+            [1])
         """
         self._config = dict(
             omega_m=0.32,

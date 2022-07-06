@@ -5,7 +5,7 @@ A Python package for computing, manipulating, and plotting Fisher-like
 objects.
 
 Notes
---------
+-----
 Througout the documentation, it is assumed that the modules are imported
 in the following way:
 

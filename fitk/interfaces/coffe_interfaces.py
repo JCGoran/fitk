@@ -93,7 +93,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
         Parameters
         ----------
-        config
+        config : dict, optional
             the configuration for COFFE, as a dictionary (default: default
             COFFE configuration)
         """
@@ -122,6 +122,11 @@ class CoffeMultipolesDerivative(FisherDerivative):
         r"""
         Computes the multipoles of the 2PCF with some cosmology.
 
+        Returns
+        -------
+        array_like : float
+            the signal as a numpy array
+
         Notes
         -----
         For more details on the modelling, see
@@ -143,6 +148,11 @@ class CoffeMultipolesDerivative(FisherDerivative):
         r"""
         Computes the covariance of the multipoles of the 2PCF with some
         cosmology.
+
+        Returns
+        -------
+        array_like : float
+            the covariance matrix as a numpy array
 
         Notes
         -----

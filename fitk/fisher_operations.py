@@ -60,12 +60,18 @@ def bayes_factor(
 
     Raises
     ------
-    `ValueError` is raised in one of the following situations:
+    ValueError
+        is raised in one of the following situations:
+        * `fisher_extended` does not have at least the same parameter names as `fisher_base`
+        * the size of `priors` is not equal to the difference between the sizes of
+        `fisher_extended` and `fisher_base`
+        * the size of `offsets` is not equal to the size of `fisher_extended`
 
-    * `fisher_extended` does not have at least the same parameter names as `fisher_base`
-    * the size of `priors` is not equal to the difference between the sizes of
-    `fisher_extended` and `fisher_base`
-    * the size of `offsets` is not equal to the size of `fisher_extended`
+    Warns
+    -----
+    UserWarning
+        raised if the value of any of the offsets is larger than the $1\sigma$
+        marginalized constraints
 
     Notes
     -----
@@ -74,9 +80,6 @@ def bayes_factor(
 
     Internally, the method first computes the logarithm of the Bayes factor to prevent
     numerical over- and underflow, and returns the exponential of that result.
-
-    Furthermore, a warning is printed if the value of any of the offsets is
-    larger than the $1\sigma$ marginalized constraints.
 
     Examples
     --------
@@ -160,13 +163,17 @@ def kl_divergence(
 
     Returns
     -------
-    the result as a tuple of 3 `float`s in the requested information units
+    tuple : float
+        the result (3-tuple) in the requested information units
 
     Raises
     ------
-    * `MismatchingValueError` if the parameter names of the Fisher matrices do
-    not match
-    * `ValueError` if the value of `units` cannot be parsed
+    MismatchingValueError
+        if the parameter names of the Fisher matrices do
+        not match
+
+    ValueError
+        if the value of `units` cannot be parsed
 
     Notes
     -----
@@ -244,10 +251,15 @@ def kl_matrix(
     kwargs
         any keyword arguments that are passed to `kl_divergence`
 
+    Returns
+    -------
+    array_like : float
+        the Kullback-Liebler matrix as a numpy array
+
     Raises
     ------
-    * `MismatchingValueError` if the parameter names of the Fisher matrices do
-    not match
+    MismatchingValueError
+        if the parameter names of the Fisher matrices do not match
 
     Notes
     -----

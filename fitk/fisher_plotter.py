@@ -232,7 +232,7 @@ class FisherBaseFigure(ABC):
         Add something to the plot that has a handle:
         >>> handle, = fp["a"].plot([-1, 0, 1], [-1, 0, 1])
 
-        Finally, add the handle to the legend
+        Finally, add the handle to the legend, and draw the legend:
         >>> fp.add_artist_to_legend(handle, "linear function")
         >>> fp.legend() # the artist will now be shown correctly in the legend
 
@@ -270,7 +270,8 @@ class FisherBaseFigure(ABC):
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -292,8 +293,8 @@ class FisherBaseFigure(ABC):
 
         Parameters
         ----------
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         kwargs
             any keyword arguments that are also valid for
@@ -307,7 +308,8 @@ class FisherBaseFigure(ABC):
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -344,8 +346,8 @@ class FisherBaseFigure(ABC):
 
         Parameters
         ----------
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         kwargs
             any keyword arguments passed to the methods for handling tick
@@ -353,7 +355,8 @@ class FisherBaseFigure(ABC):
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -393,12 +396,13 @@ class FisherBaseFigure(ABC):
         locator
             the instance of `matplotlib.ticker.Locator` to use.
 
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -434,12 +438,13 @@ class FisherBaseFigure(ABC):
         locator
             the instance of `matplotlib.ticker.Locator` to use.
 
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -474,12 +479,13 @@ class FisherBaseFigure(ABC):
         formatter
             the instance of `matplotlib.ticker.Formatter` to use.
 
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -503,12 +509,13 @@ class FisherBaseFigure(ABC):
         formatter
             the instance of `matplotlib.ticker.Formatter` to use.
 
-        which
-            which axes to change: 'x', 'y', or 'both' (default: 'both')
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -537,23 +544,23 @@ class FisherFigure1D(FisherBaseFigure):
 
         Parameters
         ----------
-        options
+        options : dict, optional
             the dictionary containing the options for plotting. If the special
             key 'style' is present, it attempts to use that plotting style (can
             be one of the outputs of `matplotlib.pyplot.style.available`, or a
             path to a file. If using a file, does not use the default rc
             parameters).
 
-        hspace
+        max_cols : int, optional
+            the maximum number of columns in the final plot
+
+        hspace : float, optional
             The amount of height reserved for space between subplots, expressed
             as a fraction of the average axis height.
 
-        wspace
+        wspace : float, optional
             The amount of width reserved for space between subplots, expressed
             as a fraction of the average axis width.
-
-        max_cols
-            the maximum number of columns in the final plot
 
         Notes
         -----
@@ -608,11 +615,13 @@ class FisherFigure1D(FisherBaseFigure):
 
         Returns
         -------
-        the drawn `Artist`s
+        Artist
+            the artist that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -773,15 +782,15 @@ class FisherFigure1D(FisherBaseFigure):
         args
             any positional arguments for the legend
 
-        overwrite
+        overwrite : bool, optional
             whether to overwrite any "nice" options set by `fitk` (default:
             False)
 
-        loc
+        loc, optional
             which corner of the legend to use as the positioning anchor
             (default: "lower center")
 
-        bbox_to_anchor
+        bbox_to_anchor, optional
             the location of where to place the legend (default: `[0.5, 1]`)
 
         kwargs
@@ -789,11 +798,13 @@ class FisherFigure1D(FisherBaseFigure):
 
         Returns
         -------
-        the legend
+        Artist
+            the legend that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -836,10 +847,10 @@ class FisherFigure1D(FisherBaseFigure):
         args
             any positional arguments to `figure.suptitle`
 
-        x
+        x : float, optional
             the x position of the title (default: `0.5`)
 
-        y
+        y : float, optional
             the y position of the title (default: `1.2`)
 
         kwargs
@@ -847,11 +858,13 @@ class FisherFigure1D(FisherBaseFigure):
 
         Returns
         -------
-        the title
+        Artist
+            the title that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -878,26 +891,26 @@ class FisherFigure2D(FisherBaseFigure):
 
         Parameters
         ----------
-        options
+        options : dict, optional
             the dictionary containing the options for plotting. If the special
             key 'style' is present, it attempts to use that plotting style (can
             be one of the outputs of `matplotlib.pyplot.style.available`, or a
             path to a file. If using a file, does not use the default rc
             parameters).
 
-        hspace
+        hspace : float, optional
             The amount of height reserved for space between subplots, expressed
             as a fraction of the average axis height.
 
-        wspace
+        wspace : float, optional
             The amount of width reserved for space between subplots, expressed
             as a fraction of the average axis width.
 
-        show_1d_curves
+        show_1d_curves : bool, optional
             whether the 1D marginalized curves should be plotted (default:
             False)
 
-        show_joint_dist
+        show_joint_dist : bool, optional
             whether to plot the isocontours of the joint distribution (default:
             False)
 
@@ -981,11 +994,13 @@ class FisherFigure2D(FisherBaseFigure):
 
         Returns
         -------
-        the legend
+        Artist
+            the legend that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1051,11 +1066,13 @@ class FisherFigure2D(FisherBaseFigure):
 
         Returns
         -------
-        the title
+        Artist
+            the title that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1112,11 +1129,13 @@ class FisherFigure2D(FisherBaseFigure):
 
         Returns
         -------
-        the drawn `Artist`s
+        Artist
+            the artist that was drawn on the figure
 
         Raises
         ------
-        * `EmptyFigureError` if `plot` hasn't been called yet
+        EmptyFigureError
+            if `plot` hasn't been called yet
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(

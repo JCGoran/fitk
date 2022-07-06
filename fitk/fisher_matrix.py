@@ -214,10 +214,15 @@ class FisherMatrix:
 
         Raises
         ------
-        * `ValueError` if the input array has the wrong dimensionality (not 2)
-        * `ValueError` if the object is not square-like
-        * `MismatchingSizeError` if the sizes of the array of names, values,
-        LaTeX names and fiducials do not match
+        ValueError
+            if the input array has the wrong dimensionality (not 2)
+
+        ValueError
+            if the object is not square-like
+
+        MismatchingSizeError
+            if the sizes of the array of names, values, LaTeX names and
+            fiducials do not match
 
         Examples
         --------
@@ -308,7 +313,8 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`.
+        FisherMatrix
+            the Fisher object with new names
 
         Examples
         --------
@@ -465,11 +471,15 @@ class FisherMatrix:
 
         Raises
         ------
-        * `TypeError` if keys are not a tuple, or if `value` is not a number
-        * `MismatchingSizeError` if the size of keys are not equal to the
-        dimensionality of the Fisher object
-        * `ParameterNotFoundError` if any of the keys is not in the parameter
-        names
+        TypeError
+            if keys are not a tuple, or if `value` is not a number
+
+        MismatchingSizeError
+            if the size of keys are not equal to the dimensionality of the
+            Fisher object
+
+        ParameterNotFoundError
+            if any of the keys is not in the parameter names
         """
         try:
             _ = iter(keys)
@@ -516,7 +526,7 @@ class FisherMatrix:
 
         Returns
         -------
-        `True` or `False`
+        bool
 
         Examples
         --------
@@ -537,7 +547,7 @@ class FisherMatrix:
 
         Parameters
         ----------
-        **kwargs
+        kwargs
             all of the other keyword arguments for the Python builtin `sorted`.
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
@@ -552,7 +562,8 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`.
+        FisherMatrix
+            the Fisher object with sorted names
 
         Examples
         --------
@@ -686,7 +697,7 @@ class FisherMatrix:
 
         Returns
         -------
-        `True` or `False`
+        bool
         """
         return np.all(self.values == np.diag(np.diagonal(self.values)))
 
@@ -696,7 +707,7 @@ class FisherMatrix:
 
         Returns
         -------
-        array-like of floats
+        array_like : float
         """
         return np.diag(self.values, **kwargs)
 
@@ -724,7 +735,8 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`
+        FisherMatrix
+            the Fisher object with removed names
 
         Examples
         --------
@@ -827,7 +839,8 @@ class FisherMatrix:
 
         Returns
         -------
-        array containing the covariance matrix
+        array_like : float
+            the covariance matrix as a numpy array
 
         Examples
         --------
@@ -889,7 +902,7 @@ class FisherMatrix:
 
         Returns
         -------
-        array-like of floats or single float
+        float or array_like of float
 
         Notes
         -----
@@ -1296,7 +1309,7 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`.
+        FisherMatrix
 
         Examples
         --------
@@ -1358,7 +1371,8 @@ class FisherMatrix:
 
         Returns
         -------
-        The dictionary that was saved.
+        dict
+            the dictionary that was saved
 
         Examples
         --------
@@ -1414,7 +1428,7 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`.
+        FisherMatrix
 
         Examples
         --------
@@ -1473,7 +1487,7 @@ class FisherMatrix:
 
         Returns
         -------
-        Instance of `FisherMatrix`
+        FisherMatrix
 
         Notes
         -----
@@ -1512,11 +1526,12 @@ class FisherMatrix:
 
         Raises
         ------
-        * `KeyError` if any the dictionary does not contain the correct data
+        KeyError
+            if any the dictionary does not contain the correct data
 
         Returns
         -------
-        Instance of `FisherMatrix`
+        FisherMatrix
         """
         return cls(
             data["values"],
@@ -1537,7 +1552,8 @@ class FisherMatrix:
 
         Returns
         -------
-        array-like matrix of floats
+        array_like : float
+            the correlation matrix as a numpy array
         """
         inv = self.inverse()
         diag = np.diag(inv)

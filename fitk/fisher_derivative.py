@@ -11,6 +11,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Collection
 from dataclasses import dataclass
 from itertools import product
+from math import factorial
 from typing import Optional
 
 # third party imports
@@ -38,6 +39,16 @@ def _validate_derivatives(
         raise ValueError(
             f"Unable to compute derivatives with combined order > {upper_limit}"
         )
+
+
+def _expansion_coefficient(n1: int, n2: int):
+    """
+    Returns the expansion coefficient formed with $n_1$ and $n_2$ derivatives.
+    """
+    if n1 != n2:
+        return 1 / factorial(n1) / factorial(n2)
+
+    return 1 / 2 / factorial(n1) ** 2
 
 
 @dataclass

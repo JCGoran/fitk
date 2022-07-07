@@ -280,11 +280,11 @@ class TestFisherDerivative:
         assert g.fisher_matrix(
             D(name="mu", value=1, abs_step=1e-3),
             D(name="sigma", value=0.5, abs_step=1e-3),
-            constant_covariance=True,
+            parameter_dependence="both",
         ) == g.fisher_matrix(
             D(name="mu", value=1, abs_step=1e-3),
             D(name="sigma", value=0.5, abs_step=1e-3),
-            constant_covariance=False,
+            parameter_dependence="both",
         )
 
 

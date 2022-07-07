@@ -275,7 +275,7 @@ class FisherDerivative(ABC):
     def fisher_matrix(
         self,
         *args: D,
-        constant_covariance: bool = True,
+        parameter_dependence: str = "signal",
         latex_names: Optional[Collection[str]] = None,
         **kwargs,
     ):
@@ -288,12 +288,13 @@ class FisherDerivative(ABC):
             the derivatives (see description of `D`) for which we want to
             compute the derivatives
 
-        constant_covariance
-            whether or not to treat the covariance as constant (default: true)
+        parameter_dependence : {'signal', 'covariance', 'both'}
+            where the parameter dependence is located, in the signal, the
+            covariance, or both (default: 'signal')
 
         latex_names
             the LaTeX names of the parameters that will be passed to the
-            `fitk.fisher_matrix.FisherMatrix`
+            `fitk.fisher_matrix.FisherMatrix` (default: None)
 
         kwargs
             any other keyword arguments that should be passed to `signal` and
@@ -304,10 +305,14 @@ class FisherDerivative(ABC):
         fitk.fisher_matrix.FisherMatrix
             the Fisher object with corresponding names and fiducials
 
+        Raises
+        ------
+        NotImplementedError
+            if the `covariance` method has not been implemented
+
         Notes
         -----
-        The derivative order is automatically set to 1 for each parameter, and
-        is ignored if passed to `D`.
+        The `order` parameter is ignored if passed to `D`.
         """
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early
@@ -323,24 +328,25 @@ class FisherDerivative(ABC):
 
         # TODO parallelize
         for arg in args:
-            signal_derivative[arg.name] = self(
-                "signal",
-                D(
-                    name=arg.name,
-                    value=arg.value,
-                    abs_step=arg.abs_step,
-                    kind=arg.kind,
-                    accuracy=arg.accuracy,
-                    stencil=arg.stencil,
-                    **kwargs,
-                ),
-            )
+            if parameter_dependence in ["signal", "both"]:
+                signal_derivative[arg.name] = self(
+                    "signal",
+                    D(
+                        name=arg.name,
+                        value=arg.value,
+                        abs_step=arg.abs_step,
+                        kind=arg.kind,
+                        accuracy=arg.accuracy,
+                        stencil=arg.stencil,
+                        **kwargs,
+                    ),
+                )
 
         covariance_derivative = {}
 
         # TODO parallelize
         for arg in args:
-            if not constant_covariance:
+            if parameter_dependence in ["covariance", "both"]:
                 covariance_derivative[arg.name] = self(
                     "covariance",
                     D(

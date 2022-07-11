@@ -368,14 +368,29 @@ class FisherMatrix:
         """
         header_matrix = (
             "<thead><tr><th></th>"
-            + ("<th>{}</th>" * len(self)).format(*self.latex_names)
+            + (
+                "".join(
+                    [
+                        f"""<th title="name = '{name}', fiducial = {fiducial}">{latex_name}</th>"""
+                        for name, fiducial, latex_name in zip(
+                            self.names,
+                            self.fiducials,
+                            self.latex_names,
+                        )
+                    ]
+                )
+            )
             + "</tr></thead>"
         )
 
         body_matrix = "<tbody>"
-        for index, name in enumerate(self.latex_names):
+        for name, fiducial, (index, latex_name) in zip(
+            self.names,
+            self.fiducials,
+            enumerate(self.latex_names),
+        ):
             body_matrix += (
-                f"<tr><th>{name}</th>"
+                f"""<tr><th title="name = '{name}', fiducial = {fiducial}">{latex_name}</th>"""
                 + ("<td>{:.3f}</td>" * len(self)).format(*(self.values[:, index]))
                 + "</tr>"
             )

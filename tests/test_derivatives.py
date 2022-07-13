@@ -155,9 +155,10 @@ class TestFisherDerivative:
         D("a", 1, 1e-3, stencil=[-3, -1, 0, 2])
 
     def test_abc(self):
-        # we cannot instantiate the abstract `FisherDerivative` class
-        with pytest.raises(TypeError):
-            fd = FisherDerivative()
+        # we cannot use `FisherDerivative` class (but can instantiate it)
+        fd = FisherDerivative()
+        with pytest.raises(NotImplementedError):
+            fd("signal", D("omega_m", 0.32, abs_step=1e-3))
 
     def test_first_derivative(self):
         lin = LinearDerivative()
@@ -223,6 +224,15 @@ class TestFisherDerivative:
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
                 g("signal", D(name="mu", value=value, abs_step=1e-4, order=2)),
+                g.second_derivative_wrt_mu(value, 1),
+            )
+            # same thing, but we set the derivative
+            assert np.allclose(
+                g(
+                    "signal",
+                    D(name="mu", value=value, abs_step=1e-4),
+                    D(name="mu", value=value, abs_step=1e-4),
+                ),
                 g.second_derivative_wrt_mu(value, 1),
             )
 

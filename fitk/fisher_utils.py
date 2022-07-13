@@ -8,8 +8,10 @@ from __future__ import annotations
 # standard library imports
 import json
 import math
-from collections.abc import Collection, Sequence
-from typing import Optional
+from collections.abc import Collection
+from itertools import permutations
+from math import factorial
+from typing import Any, Optional
 
 # third party imports
 import numpy as np
@@ -301,19 +303,28 @@ def find_diff_weights(
 
     Parameters
     ----------
-    stencil
+    stencil : array_like of float
         the points where the derivative should be evaluated
 
-    order
+    order : int, optional
         the order of the derivative (default: 1)
 
     Raises
     ------
-    * `ValueError` if `order >= len(stencil)`
+    ValueError
+        if `order >= len(stencil)`
 
     Returns
     -------
-    array-like of floats
+    array_like : float
+        the weights for computing the derivative of the specified order at the
+        specified stencil
+
+    Raises
+    ------
+    ValueError
+        if the number of stencil points is smaller or equal to the derivative
+        order
     """
     if order >= len(stencil):
         raise ValueError(
@@ -324,3 +335,13 @@ def find_diff_weights(
     vector[order] = math.factorial(order)
 
     return np.linalg.inv(matrix) @ vector
+
+
+def _expansion_coefficient(n1: int, n2: int):
+    """
+    Returns the expansion coefficient formed with $n_1$ and $n_2$ derivatives.
+    """
+    if n1 != n2:
+        return 1 / factorial(n1) / factorial(n2)
+
+    return 1 / 2 / factorial(n1) ** 2

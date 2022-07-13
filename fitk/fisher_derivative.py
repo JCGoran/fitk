@@ -7,19 +7,21 @@ See here for documentation of `D` and `FisherDerivative`.
 from __future__ import annotations
 
 # standard library imports
-from abc import ABC, abstractmethod
 from collections.abc import Collection
 from dataclasses import dataclass
-from itertools import product
-from math import factorial
-from typing import Optional
+from itertools import permutations, product
+from typing import Any, Optional
 
 # third party imports
 import numpy as np
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import find_diff_weights, is_iterable
+from fitk.fisher_utils import (
+    _expansion_coefficient,
+    find_diff_weights,
+    is_iterable,
+)
 
 
 def _validate_derivatives(
@@ -41,14 +43,20 @@ def _validate_derivatives(
         )
 
 
-def _expansion_coefficient(n1: int, n2: int):
+def _parse_derivatives(*args: D):
     """
-    Returns the expansion coefficient formed with $n_1$ and $n_2$ derivatives.
+    Parses the derivatives
     """
-    if n1 != n2:
-        return 1 / factorial(n1) / factorial(n2)
+    parsed_args: list[D] = []
+    for arg in args:
+        # in case the argument repeats, we just increase the order of the
+        # derivative
+        if arg in parsed_args:
+            parsed_args[parsed_args.index(arg)].order += arg.order
+        else:
+            parsed_args.append(arg)
 
-    return 1 / 2 / factorial(n1) ** 2
+    return tuple(parsed_args)
 
 
 @dataclass
@@ -103,6 +111,17 @@ class D:
     kind: str = "center"
     stencil: Optional[Collection[float]] = None
 
+    def __eq__(self, other):
+        return (
+            isinstance(other, self.__class__)
+            and self.name == other.name
+            and np.allclose(self.value, other.value)
+            and np.allclose(self.abs_step, other.abs_step)
+            and np.allclose(self.order, other.order)
+            and self.kind == other.kind
+            and np.allclose(self.stencil, other.stencil)
+        )
+
     def __post_init__(self):
         if self.abs_step <= 0:
             raise ValueError("The value of `abs_step` must be positive")
@@ -144,14 +163,14 @@ class D:
             self.stencil = np.arange(-npoints, 1)
 
 
-class FisherDerivative(ABC):
+class FisherDerivative:
     r"""
     Abstract class for computing derivatives using finite differences.
 
     Notes
     -----
-    The user must at least implement the `signal` method to be able to
-    instantiate a subclass.
+    The user must implement the `signal` or the `covariance` method (or both)
+    to be able to use a subclass.
     Furthermore, the `covariance` method, if implemented, needs to return an
     array that is shape-compatible with the output of the `signal` method.
     """
@@ -160,9 +179,7 @@ class FisherDerivative(ABC):
         """
         Placeholder constructor that currently does nothing.
         """
-        ...
 
-    @abstractmethod
     def signal(
         self,
         *args: tuple[str, float],
@@ -173,18 +190,25 @@ class FisherDerivative(ABC):
 
         Parameters
         ----------
-        args
+        *args : tuple
             the name(s) of the parameter(s) and their respective value(s)
 
-        kwargs
+        **kwargs
             any keyword arguments to be passed
 
         Returns
         -------
         array_like : float
             the values of the signal as a numpy array
+
+        Raises
+        ------
+        NotImplementedError
+            if the user has not explicitly overridden the method
         """
-        return NotImplemented
+        raise NotImplementedError(
+            "The `signal` method must be implemented first in order to be used"
+        )
 
     def covariance(
         self,
@@ -196,10 +220,10 @@ class FisherDerivative(ABC):
 
         Parameters
         ----------
-        args
+        *args : tuple
             the name(s) of the parameter(s) and their respective value(s)
 
-        kwargs
+        **kwargs
             any keyword arguments to be passed
 
         Returns
@@ -238,10 +262,14 @@ class FisherDerivative(ABC):
         """
         _validate_derivatives(*args)
 
-        weights_arr = [find_diff_weights(arg.stencil, order=arg.order) for arg in args]
-        points_arr = [arg.stencil for arg in args]
+        parsed_args = _parse_derivatives(*args)
 
-        denominator = np.prod([arg.abs_step**arg.order for arg in args])
+        weights_arr = [
+            find_diff_weights(arg.stencil, order=arg.order) for arg in parsed_args
+        ]
+        points_arr = [arg.stencil for arg in parsed_args]
+
+        denominator = np.prod([arg.abs_step**arg.order for arg in parsed_args])
 
         stencils = np.array(list(product(*points_arr)))
         weights = np.array([np.prod(_) for _ in product(*weights_arr)])
@@ -260,7 +288,7 @@ class FisherDerivative(ABC):
                     getattr(self, method)(
                         *[
                             (arg.name, arg.value + arg.abs_step * p)
-                            for arg, p in zip(args, point)
+                            for arg, p in zip(parsed_args, point)
                         ],
                         **kwargs,
                     )
@@ -284,19 +312,19 @@ class FisherDerivative(ABC):
 
         Parameters
         ----------
-        args
-            the derivatives (see description of `D`) for which we want to
+        *args
+            the parameters (see description of `D`) for which we want to
             compute the derivatives
 
         parameter_dependence : {'signal', 'covariance', 'both'}
             where the parameter dependence is located, in the signal, the
             covariance, or both (default: 'signal')
 
-        latex_names
+        latex_names, optional
             the LaTeX names of the parameters that will be passed to the
             `fitk.fisher_matrix.FisherMatrix` (default: None)
 
-        kwargs
+        **kwargs
             any other keyword arguments that should be passed to `signal` and
             `covariance`
 
@@ -308,7 +336,8 @@ class FisherDerivative(ABC):
         Raises
         ------
         NotImplementedError
-            if the `covariance` method has not been implemented
+            if either `signal` or `covariance` have not been implemented, and
+            the user set `parameter_dependence` to be in one of those
 
         Notes
         -----

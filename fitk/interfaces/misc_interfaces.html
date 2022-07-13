@@ -199,73 +199,74 @@
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        Parameters</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        ----------</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        config</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">            the configuration for the supernova measurement. Should be a</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`, default: 0.32),</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of `float`, default: [1]), &#39;sigma&#39; (array-like of</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            `float`, default: [1])</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="p">)</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="nd">@property</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        Returns the current configuration.</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>        <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="p">):</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        The signal is modelled as:</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        $$</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        $$</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="p">):</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        The covariance is modelled as:</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        $$</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">        $$</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        $i$-th redshift bin.</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`,</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            default: 0.32), &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            `float`, default: [1]), &#39;sigma&#39; (array-like of `float`, default:</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            [1])</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="p">)</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="nd">@property</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        Returns the current configuration.</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="p">):</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        The signal is modelled as:</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        $$</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        $$</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="p">):</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">        The covariance is modelled as:</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        $$</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        $$</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        $i$-th redshift bin.</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -333,73 +334,74 @@
 </span><span id="SupernovaDerivative-110"><a href="#SupernovaDerivative-110"><span class="linenos">110</span></a>
 </span><span id="SupernovaDerivative-111"><a href="#SupernovaDerivative-111"><span class="linenos">111</span></a><span class="sd">        Parameters</span>
 </span><span id="SupernovaDerivative-112"><a href="#SupernovaDerivative-112"><span class="linenos">112</span></a><span class="sd">        ----------</span>
-</span><span id="SupernovaDerivative-113"><a href="#SupernovaDerivative-113"><span class="linenos">113</span></a><span class="sd">        config</span>
+</span><span id="SupernovaDerivative-113"><a href="#SupernovaDerivative-113"><span class="linenos">113</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="SupernovaDerivative-114"><a href="#SupernovaDerivative-114"><span class="linenos">114</span></a><span class="sd">            the configuration for the supernova measurement. Should be a</span>
-</span><span id="SupernovaDerivative-115"><a href="#SupernovaDerivative-115"><span class="linenos">115</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`, default: 0.32),</span>
-</span><span id="SupernovaDerivative-116"><a href="#SupernovaDerivative-116"><span class="linenos">116</span></a><span class="sd">            &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of `float`, default: [1]), &#39;sigma&#39; (array-like of</span>
-</span><span id="SupernovaDerivative-117"><a href="#SupernovaDerivative-117"><span class="linenos">117</span></a><span class="sd">            `float`, default: [1])</span>
-</span><span id="SupernovaDerivative-118"><a href="#SupernovaDerivative-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-119"><a href="#SupernovaDerivative-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-</span><span id="SupernovaDerivative-120"><a href="#SupernovaDerivative-120"><span class="linenos">120</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-121"><a href="#SupernovaDerivative-121"><span class="linenos">121</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-122"><a href="#SupernovaDerivative-122"><span class="linenos">122</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="SupernovaDerivative-123"><a href="#SupernovaDerivative-123"><span class="linenos">123</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="SupernovaDerivative-124"><a href="#SupernovaDerivative-124"><span class="linenos">124</span></a>        <span class="p">)</span>
-</span><span id="SupernovaDerivative-125"><a href="#SupernovaDerivative-125"><span class="linenos">125</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SupernovaDerivative-126"><a href="#SupernovaDerivative-126"><span class="linenos">126</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-</span><span id="SupernovaDerivative-127"><a href="#SupernovaDerivative-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span id="SupernovaDerivative-128"><a href="#SupernovaDerivative-128"><span class="linenos">128</span></a>
-</span><span id="SupernovaDerivative-129"><a href="#SupernovaDerivative-129"><span class="linenos">129</span></a>    <span class="nd">@property</span>
-</span><span id="SupernovaDerivative-130"><a href="#SupernovaDerivative-130"><span class="linenos">130</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SupernovaDerivative-131"><a href="#SupernovaDerivative-131"><span class="linenos">131</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-132"><a href="#SupernovaDerivative-132"><span class="linenos">132</span></a><span class="sd">        Returns the current configuration.</span>
-</span><span id="SupernovaDerivative-133"><a href="#SupernovaDerivative-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-134"><a href="#SupernovaDerivative-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
-</span><span id="SupernovaDerivative-135"><a href="#SupernovaDerivative-135"><span class="linenos">135</span></a>
-</span><span id="SupernovaDerivative-136"><a href="#SupernovaDerivative-136"><span class="linenos">136</span></a>    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
-</span><span id="SupernovaDerivative-137"><a href="#SupernovaDerivative-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="SupernovaDerivative-138"><a href="#SupernovaDerivative-138"><span class="linenos">138</span></a>        <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="SupernovaDerivative-139"><a href="#SupernovaDerivative-139"><span class="linenos">139</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="SupernovaDerivative-140"><a href="#SupernovaDerivative-140"><span class="linenos">140</span></a>
-</span><span id="SupernovaDerivative-141"><a href="#SupernovaDerivative-141"><span class="linenos">141</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
-</span><span id="SupernovaDerivative-142"><a href="#SupernovaDerivative-142"><span class="linenos">142</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-143"><a href="#SupernovaDerivative-143"><span class="linenos">143</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="SupernovaDerivative-144"><a href="#SupernovaDerivative-144"><span class="linenos">144</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-145"><a href="#SupernovaDerivative-145"><span class="linenos">145</span></a>    <span class="p">):</span>
-</span><span id="SupernovaDerivative-146"><a href="#SupernovaDerivative-146"><span class="linenos">146</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-147"><a href="#SupernovaDerivative-147"><span class="linenos">147</span></a><span class="sd">        The signal is modelled as:</span>
-</span><span id="SupernovaDerivative-148"><a href="#SupernovaDerivative-148"><span class="linenos">148</span></a>
-</span><span id="SupernovaDerivative-149"><a href="#SupernovaDerivative-149"><span class="linenos">149</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative-150"><a href="#SupernovaDerivative-150"><span class="linenos">150</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
-</span><span id="SupernovaDerivative-151"><a href="#SupernovaDerivative-151"><span class="linenos">151</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative-152"><a href="#SupernovaDerivative-152"><span class="linenos">152</span></a>
-</span><span id="SupernovaDerivative-153"><a href="#SupernovaDerivative-153"><span class="linenos">153</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
-</span><span id="SupernovaDerivative-154"><a href="#SupernovaDerivative-154"><span class="linenos">154</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
-</span><span id="SupernovaDerivative-155"><a href="#SupernovaDerivative-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-156"><a href="#SupernovaDerivative-156"><span class="linenos">156</span></a>
-</span><span id="SupernovaDerivative-157"><a href="#SupernovaDerivative-157"><span class="linenos">157</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
-</span><span id="SupernovaDerivative-158"><a href="#SupernovaDerivative-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="SupernovaDerivative-159"><a href="#SupernovaDerivative-159"><span class="linenos">159</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
-</span><span id="SupernovaDerivative-160"><a href="#SupernovaDerivative-160"><span class="linenos">160</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="SupernovaDerivative-161"><a href="#SupernovaDerivative-161"><span class="linenos">161</span></a>
-</span><span id="SupernovaDerivative-162"><a href="#SupernovaDerivative-162"><span class="linenos">162</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
-</span><span id="SupernovaDerivative-163"><a href="#SupernovaDerivative-163"><span class="linenos">163</span></a>
-</span><span id="SupernovaDerivative-164"><a href="#SupernovaDerivative-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="SupernovaDerivative-165"><a href="#SupernovaDerivative-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-166"><a href="#SupernovaDerivative-166"><span class="linenos">166</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="SupernovaDerivative-167"><a href="#SupernovaDerivative-167"><span class="linenos">167</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="SupernovaDerivative-168"><a href="#SupernovaDerivative-168"><span class="linenos">168</span></a>    <span class="p">):</span>
-</span><span id="SupernovaDerivative-169"><a href="#SupernovaDerivative-169"><span class="linenos">169</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-170"><a href="#SupernovaDerivative-170"><span class="linenos">170</span></a><span class="sd">        The covariance is modelled as:</span>
-</span><span id="SupernovaDerivative-171"><a href="#SupernovaDerivative-171"><span class="linenos">171</span></a>
-</span><span id="SupernovaDerivative-172"><a href="#SupernovaDerivative-172"><span class="linenos">172</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative-173"><a href="#SupernovaDerivative-173"><span class="linenos">173</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
-</span><span id="SupernovaDerivative-174"><a href="#SupernovaDerivative-174"><span class="linenos">174</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative-175"><a href="#SupernovaDerivative-175"><span class="linenos">175</span></a>
-</span><span id="SupernovaDerivative-176"><a href="#SupernovaDerivative-176"><span class="linenos">176</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
-</span><span id="SupernovaDerivative-177"><a href="#SupernovaDerivative-177"><span class="linenos">177</span></a><span class="sd">        $i$-th redshift bin.</span>
-</span><span id="SupernovaDerivative-178"><a href="#SupernovaDerivative-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative-179"><a href="#SupernovaDerivative-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="SupernovaDerivative-115"><a href="#SupernovaDerivative-115"><span class="linenos">115</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`,</span>
+</span><span id="SupernovaDerivative-116"><a href="#SupernovaDerivative-116"><span class="linenos">116</span></a><span class="sd">            default: 0.32), &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of</span>
+</span><span id="SupernovaDerivative-117"><a href="#SupernovaDerivative-117"><span class="linenos">117</span></a><span class="sd">            `float`, default: [1]), &#39;sigma&#39; (array-like of `float`, default:</span>
+</span><span id="SupernovaDerivative-118"><a href="#SupernovaDerivative-118"><span class="linenos">118</span></a><span class="sd">            [1])</span>
+</span><span id="SupernovaDerivative-119"><a href="#SupernovaDerivative-119"><span class="linenos">119</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-120"><a href="#SupernovaDerivative-120"><span class="linenos">120</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+</span><span id="SupernovaDerivative-121"><a href="#SupernovaDerivative-121"><span class="linenos">121</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-122"><a href="#SupernovaDerivative-122"><span class="linenos">122</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-123"><a href="#SupernovaDerivative-123"><span class="linenos">123</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="SupernovaDerivative-124"><a href="#SupernovaDerivative-124"><span class="linenos">124</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="SupernovaDerivative-125"><a href="#SupernovaDerivative-125"><span class="linenos">125</span></a>        <span class="p">)</span>
+</span><span id="SupernovaDerivative-126"><a href="#SupernovaDerivative-126"><span class="linenos">126</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SupernovaDerivative-127"><a href="#SupernovaDerivative-127"><span class="linenos">127</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</span><span id="SupernovaDerivative-128"><a href="#SupernovaDerivative-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="SupernovaDerivative-129"><a href="#SupernovaDerivative-129"><span class="linenos">129</span></a>
+</span><span id="SupernovaDerivative-130"><a href="#SupernovaDerivative-130"><span class="linenos">130</span></a>    <span class="nd">@property</span>
+</span><span id="SupernovaDerivative-131"><a href="#SupernovaDerivative-131"><span class="linenos">131</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SupernovaDerivative-132"><a href="#SupernovaDerivative-132"><span class="linenos">132</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-133"><a href="#SupernovaDerivative-133"><span class="linenos">133</span></a><span class="sd">        Returns the current configuration.</span>
+</span><span id="SupernovaDerivative-134"><a href="#SupernovaDerivative-134"><span class="linenos">134</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-135"><a href="#SupernovaDerivative-135"><span class="linenos">135</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+</span><span id="SupernovaDerivative-136"><a href="#SupernovaDerivative-136"><span class="linenos">136</span></a>
+</span><span id="SupernovaDerivative-137"><a href="#SupernovaDerivative-137"><span class="linenos">137</span></a>    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
+</span><span id="SupernovaDerivative-138"><a href="#SupernovaDerivative-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="SupernovaDerivative-139"><a href="#SupernovaDerivative-139"><span class="linenos">139</span></a>        <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="SupernovaDerivative-140"><a href="#SupernovaDerivative-140"><span class="linenos">140</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="SupernovaDerivative-141"><a href="#SupernovaDerivative-141"><span class="linenos">141</span></a>
+</span><span id="SupernovaDerivative-142"><a href="#SupernovaDerivative-142"><span class="linenos">142</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
+</span><span id="SupernovaDerivative-143"><a href="#SupernovaDerivative-143"><span class="linenos">143</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-144"><a href="#SupernovaDerivative-144"><span class="linenos">144</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="SupernovaDerivative-145"><a href="#SupernovaDerivative-145"><span class="linenos">145</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-146"><a href="#SupernovaDerivative-146"><span class="linenos">146</span></a>    <span class="p">):</span>
+</span><span id="SupernovaDerivative-147"><a href="#SupernovaDerivative-147"><span class="linenos">147</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-148"><a href="#SupernovaDerivative-148"><span class="linenos">148</span></a><span class="sd">        The signal is modelled as:</span>
+</span><span id="SupernovaDerivative-149"><a href="#SupernovaDerivative-149"><span class="linenos">149</span></a>
+</span><span id="SupernovaDerivative-150"><a href="#SupernovaDerivative-150"><span class="linenos">150</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative-151"><a href="#SupernovaDerivative-151"><span class="linenos">151</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
+</span><span id="SupernovaDerivative-152"><a href="#SupernovaDerivative-152"><span class="linenos">152</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative-153"><a href="#SupernovaDerivative-153"><span class="linenos">153</span></a>
+</span><span id="SupernovaDerivative-154"><a href="#SupernovaDerivative-154"><span class="linenos">154</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
+</span><span id="SupernovaDerivative-155"><a href="#SupernovaDerivative-155"><span class="linenos">155</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
+</span><span id="SupernovaDerivative-156"><a href="#SupernovaDerivative-156"><span class="linenos">156</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-157"><a href="#SupernovaDerivative-157"><span class="linenos">157</span></a>
+</span><span id="SupernovaDerivative-158"><a href="#SupernovaDerivative-158"><span class="linenos">158</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
+</span><span id="SupernovaDerivative-159"><a href="#SupernovaDerivative-159"><span class="linenos">159</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="SupernovaDerivative-160"><a href="#SupernovaDerivative-160"><span class="linenos">160</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
+</span><span id="SupernovaDerivative-161"><a href="#SupernovaDerivative-161"><span class="linenos">161</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="SupernovaDerivative-162"><a href="#SupernovaDerivative-162"><span class="linenos">162</span></a>
+</span><span id="SupernovaDerivative-163"><a href="#SupernovaDerivative-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+</span><span id="SupernovaDerivative-164"><a href="#SupernovaDerivative-164"><span class="linenos">164</span></a>
+</span><span id="SupernovaDerivative-165"><a href="#SupernovaDerivative-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="SupernovaDerivative-166"><a href="#SupernovaDerivative-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-167"><a href="#SupernovaDerivative-167"><span class="linenos">167</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="SupernovaDerivative-168"><a href="#SupernovaDerivative-168"><span class="linenos">168</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="SupernovaDerivative-169"><a href="#SupernovaDerivative-169"><span class="linenos">169</span></a>    <span class="p">):</span>
+</span><span id="SupernovaDerivative-170"><a href="#SupernovaDerivative-170"><span class="linenos">170</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-171"><a href="#SupernovaDerivative-171"><span class="linenos">171</span></a><span class="sd">        The covariance is modelled as:</span>
+</span><span id="SupernovaDerivative-172"><a href="#SupernovaDerivative-172"><span class="linenos">172</span></a>
+</span><span id="SupernovaDerivative-173"><a href="#SupernovaDerivative-173"><span class="linenos">173</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative-174"><a href="#SupernovaDerivative-174"><span class="linenos">174</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
+</span><span id="SupernovaDerivative-175"><a href="#SupernovaDerivative-175"><span class="linenos">175</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative-176"><a href="#SupernovaDerivative-176"><span class="linenos">176</span></a>
+</span><span id="SupernovaDerivative-177"><a href="#SupernovaDerivative-177"><span class="linenos">177</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
+</span><span id="SupernovaDerivative-178"><a href="#SupernovaDerivative-178"><span class="linenos">178</span></a><span class="sd">        $i$-th redshift bin.</span>
+</span><span id="SupernovaDerivative-179"><a href="#SupernovaDerivative-179"><span class="linenos">179</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative-180"><a href="#SupernovaDerivative-180"><span class="linenos">180</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -408,7 +410,7 @@ $w$ for a supernova measurement.
 For definitions of the quantities used, refer to the documentation of
 <code><a href="#SupernovaDerivative.signal">signal</a></code> and <code><a href="#SupernovaDerivative.covariance">covariance</a></code>.</p>
 
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <p>Create an instance with the default config:</p>
 
@@ -474,33 +476,37 @@ and $w$:</p>
 </span><span id="SupernovaDerivative.__init__-110"><a href="#SupernovaDerivative.__init__-110"><span class="linenos">110</span></a>
 </span><span id="SupernovaDerivative.__init__-111"><a href="#SupernovaDerivative.__init__-111"><span class="linenos">111</span></a><span class="sd">        Parameters</span>
 </span><span id="SupernovaDerivative.__init__-112"><a href="#SupernovaDerivative.__init__-112"><span class="linenos">112</span></a><span class="sd">        ----------</span>
-</span><span id="SupernovaDerivative.__init__-113"><a href="#SupernovaDerivative.__init__-113"><span class="linenos">113</span></a><span class="sd">        config</span>
+</span><span id="SupernovaDerivative.__init__-113"><a href="#SupernovaDerivative.__init__-113"><span class="linenos">113</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="SupernovaDerivative.__init__-114"><a href="#SupernovaDerivative.__init__-114"><span class="linenos">114</span></a><span class="sd">            the configuration for the supernova measurement. Should be a</span>
-</span><span id="SupernovaDerivative.__init__-115"><a href="#SupernovaDerivative.__init__-115"><span class="linenos">115</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`, default: 0.32),</span>
-</span><span id="SupernovaDerivative.__init__-116"><a href="#SupernovaDerivative.__init__-116"><span class="linenos">116</span></a><span class="sd">            &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of `float`, default: [1]), &#39;sigma&#39; (array-like of</span>
-</span><span id="SupernovaDerivative.__init__-117"><a href="#SupernovaDerivative.__init__-117"><span class="linenos">117</span></a><span class="sd">            `float`, default: [1])</span>
-</span><span id="SupernovaDerivative.__init__-118"><a href="#SupernovaDerivative.__init__-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative.__init__-119"><a href="#SupernovaDerivative.__init__-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-</span><span id="SupernovaDerivative.__init__-120"><a href="#SupernovaDerivative.__init__-120"><span class="linenos">120</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.__init__-121"><a href="#SupernovaDerivative.__init__-121"><span class="linenos">121</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.__init__-122"><a href="#SupernovaDerivative.__init__-122"><span class="linenos">122</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="SupernovaDerivative.__init__-123"><a href="#SupernovaDerivative.__init__-123"><span class="linenos">123</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
-</span><span id="SupernovaDerivative.__init__-124"><a href="#SupernovaDerivative.__init__-124"><span class="linenos">124</span></a>        <span class="p">)</span>
-</span><span id="SupernovaDerivative.__init__-125"><a href="#SupernovaDerivative.__init__-125"><span class="linenos">125</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SupernovaDerivative.__init__-126"><a href="#SupernovaDerivative.__init__-126"><span class="linenos">126</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-</span><span id="SupernovaDerivative.__init__-127"><a href="#SupernovaDerivative.__init__-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="SupernovaDerivative.__init__-115"><a href="#SupernovaDerivative.__init__-115"><span class="linenos">115</span></a><span class="sd">            dictionary with the following keys and types: &#39;omega_m&#39; (`float`,</span>
+</span><span id="SupernovaDerivative.__init__-116"><a href="#SupernovaDerivative.__init__-116"><span class="linenos">116</span></a><span class="sd">            default: 0.32), &#39;w&#39; (`float`, default: -1), &#39;z&#39;, (array-like of</span>
+</span><span id="SupernovaDerivative.__init__-117"><a href="#SupernovaDerivative.__init__-117"><span class="linenos">117</span></a><span class="sd">            `float`, default: [1]), &#39;sigma&#39; (array-like of `float`, default:</span>
+</span><span id="SupernovaDerivative.__init__-118"><a href="#SupernovaDerivative.__init__-118"><span class="linenos">118</span></a><span class="sd">            [1])</span>
+</span><span id="SupernovaDerivative.__init__-119"><a href="#SupernovaDerivative.__init__-119"><span class="linenos">119</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative.__init__-120"><a href="#SupernovaDerivative.__init__-120"><span class="linenos">120</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+</span><span id="SupernovaDerivative.__init__-121"><a href="#SupernovaDerivative.__init__-121"><span class="linenos">121</span></a>            <span class="n">omega_m</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.__init__-122"><a href="#SupernovaDerivative.__init__-122"><span class="linenos">122</span></a>            <span class="n">w</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.__init__-123"><a href="#SupernovaDerivative.__init__-123"><span class="linenos">123</span></a>            <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="SupernovaDerivative.__init__-124"><a href="#SupernovaDerivative.__init__-124"><span class="linenos">124</span></a>            <span class="n">sigma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+</span><span id="SupernovaDerivative.__init__-125"><a href="#SupernovaDerivative.__init__-125"><span class="linenos">125</span></a>        <span class="p">)</span>
+</span><span id="SupernovaDerivative.__init__-126"><a href="#SupernovaDerivative.__init__-126"><span class="linenos">126</span></a>        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SupernovaDerivative.__init__-127"><a href="#SupernovaDerivative.__init__-127"><span class="linenos">127</span></a>            <span class="n">_validate_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</span><span id="SupernovaDerivative.__init__-128"><a href="#SupernovaDerivative.__init__-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Constructor</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>config
-    the configuration for the supernova measurement. Should be a
-    dictionary with the following keys and types: 'omega_m' (<code>float</code>, default: 0.32),
-    'w' (<code>float</code>, default: -1), 'z', (array-like of <code>float</code>, default: [1]), 'sigma' (array-like of
-    <code>float</code>, default: [1])</p>
+<ul>
+<li><strong>config</strong> (dict, optional):
+the configuration for the supernova measurement. Should be a
+dictionary with the following keys and types: 'omega_m' (<code>float</code>,
+default: 0.32), 'w' (<code>float</code>, default: -1), 'z', (array-like of
+<code>float</code>, default: [1]), 'sigma' (array-like of <code>float</code>, default:
+[1])</li>
+</ul>
 </div>
 
 
@@ -529,28 +535,28 @@ and $w$:</p>
 
     </div>
     <a class="headerlink" href="#SupernovaDerivative.signal"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SupernovaDerivative.signal-141"><a href="#SupernovaDerivative.signal-141"><span class="linenos">141</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
-</span><span id="SupernovaDerivative.signal-142"><a href="#SupernovaDerivative.signal-142"><span class="linenos">142</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.signal-143"><a href="#SupernovaDerivative.signal-143"><span class="linenos">143</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="SupernovaDerivative.signal-144"><a href="#SupernovaDerivative.signal-144"><span class="linenos">144</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.signal-145"><a href="#SupernovaDerivative.signal-145"><span class="linenos">145</span></a>    <span class="p">):</span>
-</span><span id="SupernovaDerivative.signal-146"><a href="#SupernovaDerivative.signal-146"><span class="linenos">146</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative.signal-147"><a href="#SupernovaDerivative.signal-147"><span class="linenos">147</span></a><span class="sd">        The signal is modelled as:</span>
-</span><span id="SupernovaDerivative.signal-148"><a href="#SupernovaDerivative.signal-148"><span class="linenos">148</span></a>
-</span><span id="SupernovaDerivative.signal-149"><a href="#SupernovaDerivative.signal-149"><span class="linenos">149</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative.signal-150"><a href="#SupernovaDerivative.signal-150"><span class="linenos">150</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
-</span><span id="SupernovaDerivative.signal-151"><a href="#SupernovaDerivative.signal-151"><span class="linenos">151</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative.signal-152"><a href="#SupernovaDerivative.signal-152"><span class="linenos">152</span></a>
-</span><span id="SupernovaDerivative.signal-153"><a href="#SupernovaDerivative.signal-153"><span class="linenos">153</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
-</span><span id="SupernovaDerivative.signal-154"><a href="#SupernovaDerivative.signal-154"><span class="linenos">154</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
-</span><span id="SupernovaDerivative.signal-155"><a href="#SupernovaDerivative.signal-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative.signal-156"><a href="#SupernovaDerivative.signal-156"><span class="linenos">156</span></a>
-</span><span id="SupernovaDerivative.signal-157"><a href="#SupernovaDerivative.signal-157"><span class="linenos">157</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
-</span><span id="SupernovaDerivative.signal-158"><a href="#SupernovaDerivative.signal-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="SupernovaDerivative.signal-159"><a href="#SupernovaDerivative.signal-159"><span class="linenos">159</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
-</span><span id="SupernovaDerivative.signal-160"><a href="#SupernovaDerivative.signal-160"><span class="linenos">160</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="SupernovaDerivative.signal-161"><a href="#SupernovaDerivative.signal-161"><span class="linenos">161</span></a>
-</span><span id="SupernovaDerivative.signal-162"><a href="#SupernovaDerivative.signal-162"><span class="linenos">162</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SupernovaDerivative.signal-142"><a href="#SupernovaDerivative.signal-142"><span class="linenos">142</span></a>    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span>
+</span><span id="SupernovaDerivative.signal-143"><a href="#SupernovaDerivative.signal-143"><span class="linenos">143</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.signal-144"><a href="#SupernovaDerivative.signal-144"><span class="linenos">144</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="SupernovaDerivative.signal-145"><a href="#SupernovaDerivative.signal-145"><span class="linenos">145</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.signal-146"><a href="#SupernovaDerivative.signal-146"><span class="linenos">146</span></a>    <span class="p">):</span>
+</span><span id="SupernovaDerivative.signal-147"><a href="#SupernovaDerivative.signal-147"><span class="linenos">147</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative.signal-148"><a href="#SupernovaDerivative.signal-148"><span class="linenos">148</span></a><span class="sd">        The signal is modelled as:</span>
+</span><span id="SupernovaDerivative.signal-149"><a href="#SupernovaDerivative.signal-149"><span class="linenos">149</span></a>
+</span><span id="SupernovaDerivative.signal-150"><a href="#SupernovaDerivative.signal-150"><span class="linenos">150</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative.signal-151"><a href="#SupernovaDerivative.signal-151"><span class="linenos">151</span></a><span class="sd">            m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}</span>
+</span><span id="SupernovaDerivative.signal-152"><a href="#SupernovaDerivative.signal-152"><span class="linenos">152</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative.signal-153"><a href="#SupernovaDerivative.signal-153"><span class="linenos">153</span></a>
+</span><span id="SupernovaDerivative.signal-154"><a href="#SupernovaDerivative.signal-154"><span class="linenos">154</span></a><span class="sd">        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =</span>
+</span><span id="SupernovaDerivative.signal-155"><a href="#SupernovaDerivative.signal-155"><span class="linenos">155</span></a><span class="sd">        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.</span>
+</span><span id="SupernovaDerivative.signal-156"><a href="#SupernovaDerivative.signal-156"><span class="linenos">156</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative.signal-157"><a href="#SupernovaDerivative.signal-157"><span class="linenos">157</span></a>
+</span><span id="SupernovaDerivative.signal-158"><a href="#SupernovaDerivative.signal-158"><span class="linenos">158</span></a>        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
+</span><span id="SupernovaDerivative.signal-159"><a href="#SupernovaDerivative.signal-159"><span class="linenos">159</span></a>        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="SupernovaDerivative.signal-160"><a href="#SupernovaDerivative.signal-160"><span class="linenos">160</span></a>            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span>
+</span><span id="SupernovaDerivative.signal-161"><a href="#SupernovaDerivative.signal-161"><span class="linenos">161</span></a>            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="SupernovaDerivative.signal-162"><a href="#SupernovaDerivative.signal-162"><span class="linenos">162</span></a>
+</span><span id="SupernovaDerivative.signal-163"><a href="#SupernovaDerivative.signal-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_luminosity_distance</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -577,22 +583,22 @@ $$</p>
 
     </div>
     <a class="headerlink" href="#SupernovaDerivative.covariance"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SupernovaDerivative.covariance-164"><a href="#SupernovaDerivative.covariance-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="SupernovaDerivative.covariance-165"><a href="#SupernovaDerivative.covariance-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.covariance-166"><a href="#SupernovaDerivative.covariance-166"><span class="linenos">166</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="SupernovaDerivative.covariance-167"><a href="#SupernovaDerivative.covariance-167"><span class="linenos">167</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="SupernovaDerivative.covariance-168"><a href="#SupernovaDerivative.covariance-168"><span class="linenos">168</span></a>    <span class="p">):</span>
-</span><span id="SupernovaDerivative.covariance-169"><a href="#SupernovaDerivative.covariance-169"><span class="linenos">169</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative.covariance-170"><a href="#SupernovaDerivative.covariance-170"><span class="linenos">170</span></a><span class="sd">        The covariance is modelled as:</span>
-</span><span id="SupernovaDerivative.covariance-171"><a href="#SupernovaDerivative.covariance-171"><span class="linenos">171</span></a>
-</span><span id="SupernovaDerivative.covariance-172"><a href="#SupernovaDerivative.covariance-172"><span class="linenos">172</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative.covariance-173"><a href="#SupernovaDerivative.covariance-173"><span class="linenos">173</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
-</span><span id="SupernovaDerivative.covariance-174"><a href="#SupernovaDerivative.covariance-174"><span class="linenos">174</span></a><span class="sd">        $$</span>
-</span><span id="SupernovaDerivative.covariance-175"><a href="#SupernovaDerivative.covariance-175"><span class="linenos">175</span></a>
-</span><span id="SupernovaDerivative.covariance-176"><a href="#SupernovaDerivative.covariance-176"><span class="linenos">176</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
-</span><span id="SupernovaDerivative.covariance-177"><a href="#SupernovaDerivative.covariance-177"><span class="linenos">177</span></a><span class="sd">        $i$-th redshift bin.</span>
-</span><span id="SupernovaDerivative.covariance-178"><a href="#SupernovaDerivative.covariance-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SupernovaDerivative.covariance-179"><a href="#SupernovaDerivative.covariance-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SupernovaDerivative.covariance-165"><a href="#SupernovaDerivative.covariance-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="SupernovaDerivative.covariance-166"><a href="#SupernovaDerivative.covariance-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.covariance-167"><a href="#SupernovaDerivative.covariance-167"><span class="linenos">167</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="SupernovaDerivative.covariance-168"><a href="#SupernovaDerivative.covariance-168"><span class="linenos">168</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="SupernovaDerivative.covariance-169"><a href="#SupernovaDerivative.covariance-169"><span class="linenos">169</span></a>    <span class="p">):</span>
+</span><span id="SupernovaDerivative.covariance-170"><a href="#SupernovaDerivative.covariance-170"><span class="linenos">170</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative.covariance-171"><a href="#SupernovaDerivative.covariance-171"><span class="linenos">171</span></a><span class="sd">        The covariance is modelled as:</span>
+</span><span id="SupernovaDerivative.covariance-172"><a href="#SupernovaDerivative.covariance-172"><span class="linenos">172</span></a>
+</span><span id="SupernovaDerivative.covariance-173"><a href="#SupernovaDerivative.covariance-173"><span class="linenos">173</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative.covariance-174"><a href="#SupernovaDerivative.covariance-174"><span class="linenos">174</span></a><span class="sd">            \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)</span>
+</span><span id="SupernovaDerivative.covariance-175"><a href="#SupernovaDerivative.covariance-175"><span class="linenos">175</span></a><span class="sd">        $$</span>
+</span><span id="SupernovaDerivative.covariance-176"><a href="#SupernovaDerivative.covariance-176"><span class="linenos">176</span></a>
+</span><span id="SupernovaDerivative.covariance-177"><a href="#SupernovaDerivative.covariance-177"><span class="linenos">177</span></a><span class="sd">        where $\sigma_i^2$ is the (parameter-independent!) variance at the</span>
+</span><span id="SupernovaDerivative.covariance-178"><a href="#SupernovaDerivative.covariance-178"><span class="linenos">178</span></a><span class="sd">        $i$-th redshift bin.</span>
+</span><span id="SupernovaDerivative.covariance-179"><a href="#SupernovaDerivative.covariance-179"><span class="linenos">179</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SupernovaDerivative.covariance-180"><a href="#SupernovaDerivative.covariance-180"><span class="linenos">180</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 </span></pre></div>
 
 

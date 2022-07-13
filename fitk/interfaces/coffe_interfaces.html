@@ -184,7 +184,7 @@ code</p>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Parameters</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        ----------</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        config</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            the configuration for COFFE, as a dictionary (default: default</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            COFFE configuration)</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -213,53 +213,63 @@ code</p>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        Computes the multipoles of the 2PCF with some cosmology.</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        Notes</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        -----</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="p">)</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="p">):</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        cosmology.</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        Notes</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        -----</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="p">)</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="nd">@property</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">__credits__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>            <span class="sa">f</span><span class="s2">&quot;Software: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__software_name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>            <span class="sa">f</span><span class="s2">&quot;Version: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>            <span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__url__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>            <span class="sa">f</span><span class="s2">&quot;Interface maintainer(s): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__maintainers__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="p">)</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        Returns</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        -------</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        array_like : float</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">            the signal as a numpy array</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">        Notes</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        -----</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="p">)</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="p">):</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        cosmology.</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        Returns</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        -------</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        array_like : float</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">            the covariance matrix as a numpy array</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        Notes</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">        -----</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="p">)</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="nd">@property</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="nf">__credits__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>            <span class="sa">f</span><span class="s2">&quot;Software: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__software_name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>            <span class="sa">f</span><span class="s2">&quot;Version: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>            <span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__url__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>            <span class="sa">f</span><span class="s2">&quot;Interface maintainer(s): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__maintainers__</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -312,7 +322,7 @@ code</p>
 </span><span id="CoffeMultipolesDerivative-94"><a href="#CoffeMultipolesDerivative-94"><span class="linenos"> 94</span></a>
 </span><span id="CoffeMultipolesDerivative-95"><a href="#CoffeMultipolesDerivative-95"><span class="linenos"> 95</span></a><span class="sd">        Parameters</span>
 </span><span id="CoffeMultipolesDerivative-96"><a href="#CoffeMultipolesDerivative-96"><span class="linenos"> 96</span></a><span class="sd">        ----------</span>
-</span><span id="CoffeMultipolesDerivative-97"><a href="#CoffeMultipolesDerivative-97"><span class="linenos"> 97</span></a><span class="sd">        config</span>
+</span><span id="CoffeMultipolesDerivative-97"><a href="#CoffeMultipolesDerivative-97"><span class="linenos"> 97</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="CoffeMultipolesDerivative-98"><a href="#CoffeMultipolesDerivative-98"><span class="linenos"> 98</span></a><span class="sd">            the configuration for COFFE, as a dictionary (default: default</span>
 </span><span id="CoffeMultipolesDerivative-99"><a href="#CoffeMultipolesDerivative-99"><span class="linenos"> 99</span></a><span class="sd">            COFFE configuration)</span>
 </span><span id="CoffeMultipolesDerivative-100"><a href="#CoffeMultipolesDerivative-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -341,59 +351,69 @@ code</p>
 </span><span id="CoffeMultipolesDerivative-123"><a href="#CoffeMultipolesDerivative-123"><span class="linenos">123</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="CoffeMultipolesDerivative-124"><a href="#CoffeMultipolesDerivative-124"><span class="linenos">124</span></a><span class="sd">        Computes the multipoles of the 2PCF with some cosmology.</span>
 </span><span id="CoffeMultipolesDerivative-125"><a href="#CoffeMultipolesDerivative-125"><span class="linenos">125</span></a>
-</span><span id="CoffeMultipolesDerivative-126"><a href="#CoffeMultipolesDerivative-126"><span class="linenos">126</span></a><span class="sd">        Notes</span>
-</span><span id="CoffeMultipolesDerivative-127"><a href="#CoffeMultipolesDerivative-127"><span class="linenos">127</span></a><span class="sd">        -----</span>
-</span><span id="CoffeMultipolesDerivative-128"><a href="#CoffeMultipolesDerivative-128"><span class="linenos">128</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="CoffeMultipolesDerivative-129"><a href="#CoffeMultipolesDerivative-129"><span class="linenos">129</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="CoffeMultipolesDerivative-130"><a href="#CoffeMultipolesDerivative-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative-131"><a href="#CoffeMultipolesDerivative-131"><span class="linenos">131</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-132"><a href="#CoffeMultipolesDerivative-132"><span class="linenos">132</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="CoffeMultipolesDerivative-133"><a href="#CoffeMultipolesDerivative-133"><span class="linenos">133</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-134"><a href="#CoffeMultipolesDerivative-134"><span class="linenos">134</span></a>
-</span><span id="CoffeMultipolesDerivative-135"><a href="#CoffeMultipolesDerivative-135"><span class="linenos">135</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative-136"><a href="#CoffeMultipolesDerivative-136"><span class="linenos">136</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
-</span><span id="CoffeMultipolesDerivative-137"><a href="#CoffeMultipolesDerivative-137"><span class="linenos">137</span></a>        <span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-138"><a href="#CoffeMultipolesDerivative-138"><span class="linenos">138</span></a>
-</span><span id="CoffeMultipolesDerivative-139"><a href="#CoffeMultipolesDerivative-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative-140"><a href="#CoffeMultipolesDerivative-140"><span class="linenos">140</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="CoffeMultipolesDerivative-141"><a href="#CoffeMultipolesDerivative-141"><span class="linenos">141</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="CoffeMultipolesDerivative-142"><a href="#CoffeMultipolesDerivative-142"><span class="linenos">142</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="CoffeMultipolesDerivative-143"><a href="#CoffeMultipolesDerivative-143"><span class="linenos">143</span></a>    <span class="p">):</span>
-</span><span id="CoffeMultipolesDerivative-144"><a href="#CoffeMultipolesDerivative-144"><span class="linenos">144</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative-145"><a href="#CoffeMultipolesDerivative-145"><span class="linenos">145</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
-</span><span id="CoffeMultipolesDerivative-146"><a href="#CoffeMultipolesDerivative-146"><span class="linenos">146</span></a><span class="sd">        cosmology.</span>
-</span><span id="CoffeMultipolesDerivative-147"><a href="#CoffeMultipolesDerivative-147"><span class="linenos">147</span></a>
-</span><span id="CoffeMultipolesDerivative-148"><a href="#CoffeMultipolesDerivative-148"><span class="linenos">148</span></a><span class="sd">        Notes</span>
-</span><span id="CoffeMultipolesDerivative-149"><a href="#CoffeMultipolesDerivative-149"><span class="linenos">149</span></a><span class="sd">        -----</span>
-</span><span id="CoffeMultipolesDerivative-150"><a href="#CoffeMultipolesDerivative-150"><span class="linenos">150</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="CoffeMultipolesDerivative-151"><a href="#CoffeMultipolesDerivative-151"><span class="linenos">151</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="CoffeMultipolesDerivative-152"><a href="#CoffeMultipolesDerivative-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative-153"><a href="#CoffeMultipolesDerivative-153"><span class="linenos">153</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-154"><a href="#CoffeMultipolesDerivative-154"><span class="linenos">154</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="CoffeMultipolesDerivative-155"><a href="#CoffeMultipolesDerivative-155"><span class="linenos">155</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-156"><a href="#CoffeMultipolesDerivative-156"><span class="linenos">156</span></a>
-</span><span id="CoffeMultipolesDerivative-157"><a href="#CoffeMultipolesDerivative-157"><span class="linenos">157</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative-158"><a href="#CoffeMultipolesDerivative-158"><span class="linenos">158</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
-</span><span id="CoffeMultipolesDerivative-159"><a href="#CoffeMultipolesDerivative-159"><span class="linenos">159</span></a>        <span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative-160"><a href="#CoffeMultipolesDerivative-160"><span class="linenos">160</span></a>
-</span><span id="CoffeMultipolesDerivative-161"><a href="#CoffeMultipolesDerivative-161"><span class="linenos">161</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
-</span><span id="CoffeMultipolesDerivative-162"><a href="#CoffeMultipolesDerivative-162"><span class="linenos">162</span></a>
-</span><span id="CoffeMultipolesDerivative-163"><a href="#CoffeMultipolesDerivative-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
-</span><span id="CoffeMultipolesDerivative-164"><a href="#CoffeMultipolesDerivative-164"><span class="linenos">164</span></a>
-</span><span id="CoffeMultipolesDerivative-165"><a href="#CoffeMultipolesDerivative-165"><span class="linenos">165</span></a>    <span class="nd">@property</span>
-</span><span id="CoffeMultipolesDerivative-166"><a href="#CoffeMultipolesDerivative-166"><span class="linenos">166</span></a>    <span class="k">def</span> <span class="nf">__credits__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="CoffeMultipolesDerivative-167"><a href="#CoffeMultipolesDerivative-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative-168"><a href="#CoffeMultipolesDerivative-168"><span class="linenos">168</span></a>            <span class="sa">f</span><span class="s2">&quot;Software: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__software_name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="CoffeMultipolesDerivative-169"><a href="#CoffeMultipolesDerivative-169"><span class="linenos">169</span></a>            <span class="sa">f</span><span class="s2">&quot;Version: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="CoffeMultipolesDerivative-170"><a href="#CoffeMultipolesDerivative-170"><span class="linenos">170</span></a>            <span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__url__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-</span><span id="CoffeMultipolesDerivative-171"><a href="#CoffeMultipolesDerivative-171"><span class="linenos">171</span></a>            <span class="sa">f</span><span class="s2">&quot;Interface maintainer(s): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__maintainers__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="CoffeMultipolesDerivative-172"><a href="#CoffeMultipolesDerivative-172"><span class="linenos">172</span></a>        <span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-126"><a href="#CoffeMultipolesDerivative-126"><span class="linenos">126</span></a><span class="sd">        Returns</span>
+</span><span id="CoffeMultipolesDerivative-127"><a href="#CoffeMultipolesDerivative-127"><span class="linenos">127</span></a><span class="sd">        -------</span>
+</span><span id="CoffeMultipolesDerivative-128"><a href="#CoffeMultipolesDerivative-128"><span class="linenos">128</span></a><span class="sd">        array_like : float</span>
+</span><span id="CoffeMultipolesDerivative-129"><a href="#CoffeMultipolesDerivative-129"><span class="linenos">129</span></a><span class="sd">            the signal as a numpy array</span>
+</span><span id="CoffeMultipolesDerivative-130"><a href="#CoffeMultipolesDerivative-130"><span class="linenos">130</span></a>
+</span><span id="CoffeMultipolesDerivative-131"><a href="#CoffeMultipolesDerivative-131"><span class="linenos">131</span></a><span class="sd">        Notes</span>
+</span><span id="CoffeMultipolesDerivative-132"><a href="#CoffeMultipolesDerivative-132"><span class="linenos">132</span></a><span class="sd">        -----</span>
+</span><span id="CoffeMultipolesDerivative-133"><a href="#CoffeMultipolesDerivative-133"><span class="linenos">133</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="CoffeMultipolesDerivative-134"><a href="#CoffeMultipolesDerivative-134"><span class="linenos">134</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="CoffeMultipolesDerivative-135"><a href="#CoffeMultipolesDerivative-135"><span class="linenos">135</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative-136"><a href="#CoffeMultipolesDerivative-136"><span class="linenos">136</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-137"><a href="#CoffeMultipolesDerivative-137"><span class="linenos">137</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="CoffeMultipolesDerivative-138"><a href="#CoffeMultipolesDerivative-138"><span class="linenos">138</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-139"><a href="#CoffeMultipolesDerivative-139"><span class="linenos">139</span></a>
+</span><span id="CoffeMultipolesDerivative-140"><a href="#CoffeMultipolesDerivative-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative-141"><a href="#CoffeMultipolesDerivative-141"><span class="linenos">141</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
+</span><span id="CoffeMultipolesDerivative-142"><a href="#CoffeMultipolesDerivative-142"><span class="linenos">142</span></a>        <span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-143"><a href="#CoffeMultipolesDerivative-143"><span class="linenos">143</span></a>
+</span><span id="CoffeMultipolesDerivative-144"><a href="#CoffeMultipolesDerivative-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative-145"><a href="#CoffeMultipolesDerivative-145"><span class="linenos">145</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="CoffeMultipolesDerivative-146"><a href="#CoffeMultipolesDerivative-146"><span class="linenos">146</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="CoffeMultipolesDerivative-147"><a href="#CoffeMultipolesDerivative-147"><span class="linenos">147</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="CoffeMultipolesDerivative-148"><a href="#CoffeMultipolesDerivative-148"><span class="linenos">148</span></a>    <span class="p">):</span>
+</span><span id="CoffeMultipolesDerivative-149"><a href="#CoffeMultipolesDerivative-149"><span class="linenos">149</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative-150"><a href="#CoffeMultipolesDerivative-150"><span class="linenos">150</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
+</span><span id="CoffeMultipolesDerivative-151"><a href="#CoffeMultipolesDerivative-151"><span class="linenos">151</span></a><span class="sd">        cosmology.</span>
+</span><span id="CoffeMultipolesDerivative-152"><a href="#CoffeMultipolesDerivative-152"><span class="linenos">152</span></a>
+</span><span id="CoffeMultipolesDerivative-153"><a href="#CoffeMultipolesDerivative-153"><span class="linenos">153</span></a><span class="sd">        Returns</span>
+</span><span id="CoffeMultipolesDerivative-154"><a href="#CoffeMultipolesDerivative-154"><span class="linenos">154</span></a><span class="sd">        -------</span>
+</span><span id="CoffeMultipolesDerivative-155"><a href="#CoffeMultipolesDerivative-155"><span class="linenos">155</span></a><span class="sd">        array_like : float</span>
+</span><span id="CoffeMultipolesDerivative-156"><a href="#CoffeMultipolesDerivative-156"><span class="linenos">156</span></a><span class="sd">            the covariance matrix as a numpy array</span>
+</span><span id="CoffeMultipolesDerivative-157"><a href="#CoffeMultipolesDerivative-157"><span class="linenos">157</span></a>
+</span><span id="CoffeMultipolesDerivative-158"><a href="#CoffeMultipolesDerivative-158"><span class="linenos">158</span></a><span class="sd">        Notes</span>
+</span><span id="CoffeMultipolesDerivative-159"><a href="#CoffeMultipolesDerivative-159"><span class="linenos">159</span></a><span class="sd">        -----</span>
+</span><span id="CoffeMultipolesDerivative-160"><a href="#CoffeMultipolesDerivative-160"><span class="linenos">160</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="CoffeMultipolesDerivative-161"><a href="#CoffeMultipolesDerivative-161"><span class="linenos">161</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="CoffeMultipolesDerivative-162"><a href="#CoffeMultipolesDerivative-162"><span class="linenos">162</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative-163"><a href="#CoffeMultipolesDerivative-163"><span class="linenos">163</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-164"><a href="#CoffeMultipolesDerivative-164"><span class="linenos">164</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="CoffeMultipolesDerivative-165"><a href="#CoffeMultipolesDerivative-165"><span class="linenos">165</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-166"><a href="#CoffeMultipolesDerivative-166"><span class="linenos">166</span></a>
+</span><span id="CoffeMultipolesDerivative-167"><a href="#CoffeMultipolesDerivative-167"><span class="linenos">167</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative-168"><a href="#CoffeMultipolesDerivative-168"><span class="linenos">168</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
+</span><span id="CoffeMultipolesDerivative-169"><a href="#CoffeMultipolesDerivative-169"><span class="linenos">169</span></a>        <span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative-170"><a href="#CoffeMultipolesDerivative-170"><span class="linenos">170</span></a>
+</span><span id="CoffeMultipolesDerivative-171"><a href="#CoffeMultipolesDerivative-171"><span class="linenos">171</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+</span><span id="CoffeMultipolesDerivative-172"><a href="#CoffeMultipolesDerivative-172"><span class="linenos">172</span></a>
+</span><span id="CoffeMultipolesDerivative-173"><a href="#CoffeMultipolesDerivative-173"><span class="linenos">173</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+</span><span id="CoffeMultipolesDerivative-174"><a href="#CoffeMultipolesDerivative-174"><span class="linenos">174</span></a>
+</span><span id="CoffeMultipolesDerivative-175"><a href="#CoffeMultipolesDerivative-175"><span class="linenos">175</span></a>    <span class="nd">@property</span>
+</span><span id="CoffeMultipolesDerivative-176"><a href="#CoffeMultipolesDerivative-176"><span class="linenos">176</span></a>    <span class="k">def</span> <span class="nf">__credits__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CoffeMultipolesDerivative-177"><a href="#CoffeMultipolesDerivative-177"><span class="linenos">177</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative-178"><a href="#CoffeMultipolesDerivative-178"><span class="linenos">178</span></a>            <span class="sa">f</span><span class="s2">&quot;Software: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__software_name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="CoffeMultipolesDerivative-179"><a href="#CoffeMultipolesDerivative-179"><span class="linenos">179</span></a>            <span class="sa">f</span><span class="s2">&quot;Version: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="CoffeMultipolesDerivative-180"><a href="#CoffeMultipolesDerivative-180"><span class="linenos">180</span></a>            <span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__url__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="CoffeMultipolesDerivative-181"><a href="#CoffeMultipolesDerivative-181"><span class="linenos">181</span></a>            <span class="sa">f</span><span class="s2">&quot;Interface maintainer(s): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__maintainers__</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="CoffeMultipolesDerivative-182"><a href="#CoffeMultipolesDerivative-182"><span class="linenos">182</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Computes the derivative of the multipoles of the 2PCF w.r.t. parameters</p>
 
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <p>Set some cosmology:</p>
 
@@ -437,7 +457,7 @@ parameters:</p>
 </span><span id="CoffeMultipolesDerivative.__init__-94"><a href="#CoffeMultipolesDerivative.__init__-94"><span class="linenos"> 94</span></a>
 </span><span id="CoffeMultipolesDerivative.__init__-95"><a href="#CoffeMultipolesDerivative.__init__-95"><span class="linenos"> 95</span></a><span class="sd">        Parameters</span>
 </span><span id="CoffeMultipolesDerivative.__init__-96"><a href="#CoffeMultipolesDerivative.__init__-96"><span class="linenos"> 96</span></a><span class="sd">        ----------</span>
-</span><span id="CoffeMultipolesDerivative.__init__-97"><a href="#CoffeMultipolesDerivative.__init__-97"><span class="linenos"> 97</span></a><span class="sd">        config</span>
+</span><span id="CoffeMultipolesDerivative.__init__-97"><a href="#CoffeMultipolesDerivative.__init__-97"><span class="linenos"> 97</span></a><span class="sd">        config : dict, optional</span>
 </span><span id="CoffeMultipolesDerivative.__init__-98"><a href="#CoffeMultipolesDerivative.__init__-98"><span class="linenos"> 98</span></a><span class="sd">            the configuration for COFFE, as a dictionary (default: default</span>
 </span><span id="CoffeMultipolesDerivative.__init__-99"><a href="#CoffeMultipolesDerivative.__init__-99"><span class="linenos"> 99</span></a><span class="sd">            COFFE configuration)</span>
 </span><span id="CoffeMultipolesDerivative.__init__-100"><a href="#CoffeMultipolesDerivative.__init__-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -455,11 +475,13 @@ parameters:</p>
 
             <div class="docstring"><p>The constructor for the class.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>config
-    the configuration for COFFE, as a dictionary (default: default
-    COFFE configuration)</p>
+<ul>
+<li><strong>config</strong> (dict, optional):
+the configuration for COFFE, as a dictionary (default: default
+COFFE configuration)</li>
+</ul>
 </div>
 
 
@@ -496,24 +518,36 @@ parameters:</p>
 </span><span id="CoffeMultipolesDerivative.signal-123"><a href="#CoffeMultipolesDerivative.signal-123"><span class="linenos">123</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="CoffeMultipolesDerivative.signal-124"><a href="#CoffeMultipolesDerivative.signal-124"><span class="linenos">124</span></a><span class="sd">        Computes the multipoles of the 2PCF with some cosmology.</span>
 </span><span id="CoffeMultipolesDerivative.signal-125"><a href="#CoffeMultipolesDerivative.signal-125"><span class="linenos">125</span></a>
-</span><span id="CoffeMultipolesDerivative.signal-126"><a href="#CoffeMultipolesDerivative.signal-126"><span class="linenos">126</span></a><span class="sd">        Notes</span>
-</span><span id="CoffeMultipolesDerivative.signal-127"><a href="#CoffeMultipolesDerivative.signal-127"><span class="linenos">127</span></a><span class="sd">        -----</span>
-</span><span id="CoffeMultipolesDerivative.signal-128"><a href="#CoffeMultipolesDerivative.signal-128"><span class="linenos">128</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="CoffeMultipolesDerivative.signal-129"><a href="#CoffeMultipolesDerivative.signal-129"><span class="linenos">129</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="CoffeMultipolesDerivative.signal-130"><a href="#CoffeMultipolesDerivative.signal-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative.signal-131"><a href="#CoffeMultipolesDerivative.signal-131"><span class="linenos">131</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative.signal-132"><a href="#CoffeMultipolesDerivative.signal-132"><span class="linenos">132</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="CoffeMultipolesDerivative.signal-133"><a href="#CoffeMultipolesDerivative.signal-133"><span class="linenos">133</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative.signal-134"><a href="#CoffeMultipolesDerivative.signal-134"><span class="linenos">134</span></a>
-</span><span id="CoffeMultipolesDerivative.signal-135"><a href="#CoffeMultipolesDerivative.signal-135"><span class="linenos">135</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative.signal-136"><a href="#CoffeMultipolesDerivative.signal-136"><span class="linenos">136</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
-</span><span id="CoffeMultipolesDerivative.signal-137"><a href="#CoffeMultipolesDerivative.signal-137"><span class="linenos">137</span></a>        <span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.signal-126"><a href="#CoffeMultipolesDerivative.signal-126"><span class="linenos">126</span></a><span class="sd">        Returns</span>
+</span><span id="CoffeMultipolesDerivative.signal-127"><a href="#CoffeMultipolesDerivative.signal-127"><span class="linenos">127</span></a><span class="sd">        -------</span>
+</span><span id="CoffeMultipolesDerivative.signal-128"><a href="#CoffeMultipolesDerivative.signal-128"><span class="linenos">128</span></a><span class="sd">        array_like : float</span>
+</span><span id="CoffeMultipolesDerivative.signal-129"><a href="#CoffeMultipolesDerivative.signal-129"><span class="linenos">129</span></a><span class="sd">            the signal as a numpy array</span>
+</span><span id="CoffeMultipolesDerivative.signal-130"><a href="#CoffeMultipolesDerivative.signal-130"><span class="linenos">130</span></a>
+</span><span id="CoffeMultipolesDerivative.signal-131"><a href="#CoffeMultipolesDerivative.signal-131"><span class="linenos">131</span></a><span class="sd">        Notes</span>
+</span><span id="CoffeMultipolesDerivative.signal-132"><a href="#CoffeMultipolesDerivative.signal-132"><span class="linenos">132</span></a><span class="sd">        -----</span>
+</span><span id="CoffeMultipolesDerivative.signal-133"><a href="#CoffeMultipolesDerivative.signal-133"><span class="linenos">133</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="CoffeMultipolesDerivative.signal-134"><a href="#CoffeMultipolesDerivative.signal-134"><span class="linenos">134</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="CoffeMultipolesDerivative.signal-135"><a href="#CoffeMultipolesDerivative.signal-135"><span class="linenos">135</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative.signal-136"><a href="#CoffeMultipolesDerivative.signal-136"><span class="linenos">136</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.signal-137"><a href="#CoffeMultipolesDerivative.signal-137"><span class="linenos">137</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="CoffeMultipolesDerivative.signal-138"><a href="#CoffeMultipolesDerivative.signal-138"><span class="linenos">138</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.signal-139"><a href="#CoffeMultipolesDerivative.signal-139"><span class="linenos">139</span></a>
+</span><span id="CoffeMultipolesDerivative.signal-140"><a href="#CoffeMultipolesDerivative.signal-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative.signal-141"><a href="#CoffeMultipolesDerivative.signal-141"><span class="linenos">141</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_multipoles_bulk</span><span class="p">()],</span>
+</span><span id="CoffeMultipolesDerivative.signal-142"><a href="#CoffeMultipolesDerivative.signal-142"><span class="linenos">142</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Computes the multipoles of the 2PCF with some cosmology.</p>
 
-<h2 id="notes">Notes</h2>
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>array_like</strong> (float):
+the signal as a numpy array</li>
+</ul>
+
+<h6 id="notes">Notes</h6>
 
 <p>For more details on the modelling, see
 <a href="https://arxiv.org/abs/1806.11090">arXiv:1806.11090</a>, section 2.</p>
@@ -532,38 +566,50 @@ parameters:</p>
 
     </div>
     <a class="headerlink" href="#CoffeMultipolesDerivative.covariance"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CoffeMultipolesDerivative.covariance-139"><a href="#CoffeMultipolesDerivative.covariance-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative.covariance-140"><a href="#CoffeMultipolesDerivative.covariance-140"><span class="linenos">140</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="CoffeMultipolesDerivative.covariance-141"><a href="#CoffeMultipolesDerivative.covariance-141"><span class="linenos">141</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="CoffeMultipolesDerivative.covariance-142"><a href="#CoffeMultipolesDerivative.covariance-142"><span class="linenos">142</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="CoffeMultipolesDerivative.covariance-143"><a href="#CoffeMultipolesDerivative.covariance-143"><span class="linenos">143</span></a>    <span class="p">):</span>
-</span><span id="CoffeMultipolesDerivative.covariance-144"><a href="#CoffeMultipolesDerivative.covariance-144"><span class="linenos">144</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative.covariance-145"><a href="#CoffeMultipolesDerivative.covariance-145"><span class="linenos">145</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
-</span><span id="CoffeMultipolesDerivative.covariance-146"><a href="#CoffeMultipolesDerivative.covariance-146"><span class="linenos">146</span></a><span class="sd">        cosmology.</span>
-</span><span id="CoffeMultipolesDerivative.covariance-147"><a href="#CoffeMultipolesDerivative.covariance-147"><span class="linenos">147</span></a>
-</span><span id="CoffeMultipolesDerivative.covariance-148"><a href="#CoffeMultipolesDerivative.covariance-148"><span class="linenos">148</span></a><span class="sd">        Notes</span>
-</span><span id="CoffeMultipolesDerivative.covariance-149"><a href="#CoffeMultipolesDerivative.covariance-149"><span class="linenos">149</span></a><span class="sd">        -----</span>
-</span><span id="CoffeMultipolesDerivative.covariance-150"><a href="#CoffeMultipolesDerivative.covariance-150"><span class="linenos">150</span></a><span class="sd">        For more details on the modelling, see</span>
-</span><span id="CoffeMultipolesDerivative.covariance-151"><a href="#CoffeMultipolesDerivative.covariance-151"><span class="linenos">151</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
-</span><span id="CoffeMultipolesDerivative.covariance-152"><a href="#CoffeMultipolesDerivative.covariance-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CoffeMultipolesDerivative.covariance-153"><a href="#CoffeMultipolesDerivative.covariance-153"><span class="linenos">153</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative.covariance-154"><a href="#CoffeMultipolesDerivative.covariance-154"><span class="linenos">154</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-</span><span id="CoffeMultipolesDerivative.covariance-155"><a href="#CoffeMultipolesDerivative.covariance-155"><span class="linenos">155</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative.covariance-156"><a href="#CoffeMultipolesDerivative.covariance-156"><span class="linenos">156</span></a>
-</span><span id="CoffeMultipolesDerivative.covariance-157"><a href="#CoffeMultipolesDerivative.covariance-157"><span class="linenos">157</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="CoffeMultipolesDerivative.covariance-158"><a href="#CoffeMultipolesDerivative.covariance-158"><span class="linenos">158</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
-</span><span id="CoffeMultipolesDerivative.covariance-159"><a href="#CoffeMultipolesDerivative.covariance-159"><span class="linenos">159</span></a>        <span class="p">)</span>
-</span><span id="CoffeMultipolesDerivative.covariance-160"><a href="#CoffeMultipolesDerivative.covariance-160"><span class="linenos">160</span></a>
-</span><span id="CoffeMultipolesDerivative.covariance-161"><a href="#CoffeMultipolesDerivative.covariance-161"><span class="linenos">161</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
-</span><span id="CoffeMultipolesDerivative.covariance-162"><a href="#CoffeMultipolesDerivative.covariance-162"><span class="linenos">162</span></a>
-</span><span id="CoffeMultipolesDerivative.covariance-163"><a href="#CoffeMultipolesDerivative.covariance-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CoffeMultipolesDerivative.covariance-144"><a href="#CoffeMultipolesDerivative.covariance-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">covariance</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative.covariance-145"><a href="#CoffeMultipolesDerivative.covariance-145"><span class="linenos">145</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="CoffeMultipolesDerivative.covariance-146"><a href="#CoffeMultipolesDerivative.covariance-146"><span class="linenos">146</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="CoffeMultipolesDerivative.covariance-147"><a href="#CoffeMultipolesDerivative.covariance-147"><span class="linenos">147</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="CoffeMultipolesDerivative.covariance-148"><a href="#CoffeMultipolesDerivative.covariance-148"><span class="linenos">148</span></a>    <span class="p">):</span>
+</span><span id="CoffeMultipolesDerivative.covariance-149"><a href="#CoffeMultipolesDerivative.covariance-149"><span class="linenos">149</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative.covariance-150"><a href="#CoffeMultipolesDerivative.covariance-150"><span class="linenos">150</span></a><span class="sd">        Computes the covariance of the multipoles of the 2PCF with some</span>
+</span><span id="CoffeMultipolesDerivative.covariance-151"><a href="#CoffeMultipolesDerivative.covariance-151"><span class="linenos">151</span></a><span class="sd">        cosmology.</span>
+</span><span id="CoffeMultipolesDerivative.covariance-152"><a href="#CoffeMultipolesDerivative.covariance-152"><span class="linenos">152</span></a>
+</span><span id="CoffeMultipolesDerivative.covariance-153"><a href="#CoffeMultipolesDerivative.covariance-153"><span class="linenos">153</span></a><span class="sd">        Returns</span>
+</span><span id="CoffeMultipolesDerivative.covariance-154"><a href="#CoffeMultipolesDerivative.covariance-154"><span class="linenos">154</span></a><span class="sd">        -------</span>
+</span><span id="CoffeMultipolesDerivative.covariance-155"><a href="#CoffeMultipolesDerivative.covariance-155"><span class="linenos">155</span></a><span class="sd">        array_like : float</span>
+</span><span id="CoffeMultipolesDerivative.covariance-156"><a href="#CoffeMultipolesDerivative.covariance-156"><span class="linenos">156</span></a><span class="sd">            the covariance matrix as a numpy array</span>
+</span><span id="CoffeMultipolesDerivative.covariance-157"><a href="#CoffeMultipolesDerivative.covariance-157"><span class="linenos">157</span></a>
+</span><span id="CoffeMultipolesDerivative.covariance-158"><a href="#CoffeMultipolesDerivative.covariance-158"><span class="linenos">158</span></a><span class="sd">        Notes</span>
+</span><span id="CoffeMultipolesDerivative.covariance-159"><a href="#CoffeMultipolesDerivative.covariance-159"><span class="linenos">159</span></a><span class="sd">        -----</span>
+</span><span id="CoffeMultipolesDerivative.covariance-160"><a href="#CoffeMultipolesDerivative.covariance-160"><span class="linenos">160</span></a><span class="sd">        For more details on the modelling, see</span>
+</span><span id="CoffeMultipolesDerivative.covariance-161"><a href="#CoffeMultipolesDerivative.covariance-161"><span class="linenos">161</span></a><span class="sd">        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.</span>
+</span><span id="CoffeMultipolesDerivative.covariance-162"><a href="#CoffeMultipolesDerivative.covariance-162"><span class="linenos">162</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoffeMultipolesDerivative.covariance-163"><a href="#CoffeMultipolesDerivative.covariance-163"><span class="linenos">163</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">_parse_and_set_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.covariance-164"><a href="#CoffeMultipolesDerivative.covariance-164"><span class="linenos">164</span></a>        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+</span><span id="CoffeMultipolesDerivative.covariance-165"><a href="#CoffeMultipolesDerivative.covariance-165"><span class="linenos">165</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.covariance-166"><a href="#CoffeMultipolesDerivative.covariance-166"><span class="linenos">166</span></a>
+</span><span id="CoffeMultipolesDerivative.covariance-167"><a href="#CoffeMultipolesDerivative.covariance-167"><span class="linenos">167</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span id="CoffeMultipolesDerivative.covariance-168"><a href="#CoffeMultipolesDerivative.covariance-168"><span class="linenos">168</span></a>            <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">compute_covariance_bulk</span><span class="p">()],</span>
+</span><span id="CoffeMultipolesDerivative.covariance-169"><a href="#CoffeMultipolesDerivative.covariance-169"><span class="linenos">169</span></a>        <span class="p">)</span>
+</span><span id="CoffeMultipolesDerivative.covariance-170"><a href="#CoffeMultipolesDerivative.covariance-170"><span class="linenos">170</span></a>
+</span><span id="CoffeMultipolesDerivative.covariance-171"><a href="#CoffeMultipolesDerivative.covariance-171"><span class="linenos">171</span></a>        <span class="n">dim</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+</span><span id="CoffeMultipolesDerivative.covariance-172"><a href="#CoffeMultipolesDerivative.covariance-172"><span class="linenos">172</span></a>
+</span><span id="CoffeMultipolesDerivative.covariance-173"><a href="#CoffeMultipolesDerivative.covariance-173"><span class="linenos">173</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Computes the covariance of the multipoles of the 2PCF with some
 cosmology.</p>
 
-<h2 id="notes">Notes</h2>
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>array_like</strong> (float):
+the covariance matrix as a numpy array</li>
+</ul>
+
+<h6 id="notes">Notes</h6>
 
 <p>For more details on the modelling, see
 <a href="https://arxiv.org/abs/1806.11090">arXiv:1806.11090</a>, section 2.</p>

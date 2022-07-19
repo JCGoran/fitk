@@ -463,6 +463,7 @@ class FisherDerivative:
         *args: D,
         parameter_dependence: str = "signal",
         latex_names: Optional[Collection[str]] = None,
+        correction_order: int = 1,
         **kwargs,
     ):
         r"""
@@ -482,6 +483,10 @@ class FisherDerivative:
             the LaTeX names of the parameters that will be passed to the
             `fitk.fisher_matrix.FisherMatrix` (default: None)
 
+        correction_order, optional
+            the order (in number of derivatives) of the correction to take into
+            account (default: 1, i.e.  just the Fisher matrix)
+
         **kwargs
             any other keyword arguments that should be passed to `signal` and
             `covariance`
@@ -493,6 +498,9 @@ class FisherDerivative:
 
         Raises
         ------
+        ValueError
+            if the value of `correction_order` is < 1
+
         NotImplementedError
             if either `signal` or `covariance` have not been implemented, and
             the user set `parameter_dependence` to be in one of those
@@ -500,73 +508,33 @@ class FisherDerivative:
         Notes
         -----
         The `order` parameter is ignored if passed to `D`.
+
+        If `parameter_dependence` is set to 'both', the cross terms (such as
+        $\mu_{,\alpha} \mathsf{C}_{,\beta} \mu_{,\gamma}$) are ignored, which
+        may not yield a good approximation to the likelihood. For more details,
+        see [arXiv:1506.04866](https://arxiv.org/abs/1506.04866), section 6.
         """
-        # first we attempt to compute the covariance; if that fails, it means
-        # it hasn't been implemented, so we fail fast and early
+        if correction_order < 1:
+            raise ValueError("The value of `correction_order ` must be >= 1")
+
+        tensor = {}
+
+        correction_order_index = np.transpose(np.triu_indices(correction_order)) + 1
+
+        for n1, n2 in correction_order_index:
+            tensor[n1, n2] = self.derivative_tensor(
+                n1,
+                n2,
+                *args,
+                parameter_dependence=parameter_dependence,
+                **kwargs,
+            )
+
         names = np.array([_.name for _ in args])
         values = np.array([_.value for _ in args])
 
-        covariance_matrix = self.covariance(*zip(names, values))
-        inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
-
-        covariance_shape = np.shape(inverse_covariance_matrix)
-
-        signal_derivative = {}
-
-        # TODO parallelize
-        for arg in args:
-            if parameter_dependence in ["signal", "both"]:
-                signal_derivative[arg.name] = self(
-                    "signal",
-                    D(
-                        name=arg.name,
-                        value=arg.value,
-                        abs_step=arg.abs_step,
-                        kind=arg.kind,
-                        accuracy=arg.accuracy,
-                        stencil=arg.stencil,
-                        **kwargs,
-                    ),
-                )
-
-        covariance_derivative = {}
-
-        # TODO parallelize
-        for arg in args:
-            if parameter_dependence in ["covariance", "both"]:
-                covariance_derivative[arg.name] = self(
-                    "covariance",
-                    D(
-                        name=arg.name,
-                        value=arg.value,
-                        abs_step=arg.abs_step,
-                        kind=arg.kind,
-                        accuracy=arg.accuracy,
-                        stencil=arg.stencil,
-                        **kwargs,
-                    ),
-                )
-            else:
-                covariance_derivative[arg.name] = np.zeros(covariance_shape)
-
-        fisher_matrix = np.zeros([len(args)] * 2)
-
-        for (i, arg1), (j, arg2) in product(enumerate(args), repeat=2):
-            fisher_matrix[i, j] = (
-                signal_derivative[arg1.name]
-                @ inverse_covariance_matrix
-                @ signal_derivative[arg2.name]
-                + np.trace(
-                    inverse_covariance_matrix
-                    @ covariance_derivative[arg1.name]
-                    @ inverse_covariance_matrix
-                    @ covariance_derivative[arg2.name]
-                )
-                / 2
-            )
-
         return FisherMatrix(
-            fisher_matrix,
+            tensor[1, 1],
             names=names,
             fiducials=values,
             latex_names=latex_names,

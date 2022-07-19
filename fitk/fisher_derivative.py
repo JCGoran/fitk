@@ -19,6 +19,7 @@ import numpy as np
 from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import (
     _expansion_coefficient,
+    _simplexu_indices,
     find_diff_weights,
     is_iterable,
 )
@@ -299,6 +300,163 @@ class FisherDerivative:
                 axis=0,
             )
         )
+
+    def derivative_tensor(
+        self,
+        n1: int,
+        n2: int,
+        *args: D,
+        parameter_dependence: str = "signal",
+        **kwargs,
+    ):
+        r"""
+        Computes the following derivative tensor:
+        $$
+            \mu_{,i_1, \ldots, i_{n_1}} \, \mathsf{C}^{-1} \, \mu_{,j_1,
+            \ldots, j_{n_2}}
+            +
+            \frac{1}{2} \mathrm{Tr}(\mathsf{C}^{-1} \mathsf{C}_{,i_1, \ldots,
+            i_{n_1}} \mathsf{C}^{-1} \mathsf{C}_{,j_1, \ldots, j_{n_2}})
+        $$
+
+        Parameters
+        ----------
+        n1 : int
+            the order of the first derivative
+
+        n2 : int
+            the order of the second derivative
+
+        *args : D
+            the parameters (see description of `D`) for which we want to
+            compute the derivatives
+
+        parameter_dependence : {'signal', 'covariance', 'both'}
+            where the parameter dependence is located, in the signal, the
+            covariance, or both (default: 'signal')
+
+        **kwargs
+            any other keyword arguments that should be passed to `signal` and
+            `covariance`
+
+        Returns
+        -------
+        array_like : float
+            the requested tensor as a numpy array
+
+        Raises
+        ------
+        ValueError
+            if either `n1` or `n2` are smaller than 1
+
+        Notes
+        -----
+        The output tensors are not symmetric in all indices.
+
+        Examples
+        --------
+        Suppose we have a model with parameters `p1` (fiducial value = 0) and
+        `p2` (fiducial value = 1), and we want to compute the tensor:
+        $$
+            \mu_{,\alpha,\beta} \, \mathsf{C}^{-1} \, \mu_{,\gamma}
+        $$
+        >>> fd = MyDerivative()
+        >>> fd.derivative_tensor(2, 1, D('p1', 0, 1e-3), D('p2', 1, 1e-3))
+        >>> # should we return an array? A dictionary? What?
+        """
+        if n1 < 1 or n2 < 1:
+            raise ValueError(
+                f"The values (n1={n1}, n2={n2}) do not satisfy the condition (n1, n2) >= (1, 1)"
+            )
+
+        names = np.array([_.name for _ in args])
+        values = np.array([_.value for _ in args])
+
+        # first we attempt to compute the covariance; if that fails, it means
+        # it hasn't been implemented, so we fail fast and early
+        covariance_matrix = self.covariance(*zip(names, values))
+        inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+
+        covariance_shape = np.shape(inverse_covariance_matrix)
+
+        signal_derivative: dict[str, Any] = {"n1": {}, "n2": {}}
+        covariance_derivative: dict[str, Any] = {"n1": {}, "n2": {}}
+
+        for name, n in (("n1", n1), ("n2", n2)):
+            for index in np.transpose(_simplexu_indices(len(names), n)):
+                if not is_iterable(index):
+                    key: tuple[Any, ...] = (names[index],)
+                    derivatives: tuple[Any, ...] = (
+                        D(
+                            name=args[index].name,
+                            value=args[index].value,
+                            abs_step=args[index].abs_step,
+                            accuracy=args[index].accuracy,
+                            kind=args[index].kind,
+                            stencil=args[index].stencil,
+                        ),
+                    )
+                else:
+                    key = tuple(names[_] for _ in index)
+                    derivatives = tuple(
+                        D(
+                            name=args[_].name,
+                            value=args[_].value,
+                            abs_step=args[_].abs_step,
+                            accuracy=args[_].accuracy,
+                            kind=args[_].kind,
+                            stencil=args[_].stencil,
+                        )
+                        for _ in index
+                    )
+
+                if parameter_dependence in ["signal", "both"]:
+                    signal_derivative[name][key] = self(
+                        "signal",
+                        *derivatives,
+                        **kwargs,
+                    )
+                else:
+                    signal_derivative[name][key] = np.zeros(covariance_shape[0])
+                # set all of the other permutations as well
+                for permutation in list(permutations(key)):
+                    signal_derivative[name][permutation] = signal_derivative[name][key]
+
+                if parameter_dependence in ["covariance", "both"]:
+                    covariance_derivative[name][key] = self(
+                        "covariance",
+                        *derivatives,
+                        **kwargs,
+                    )
+                else:
+                    covariance_derivative[name][key] = np.zeros(covariance_shape)
+                # set all of the other permutations as well
+                for permutation in list(permutations(key)):
+                    covariance_derivative[name][permutation] = covariance_derivative[
+                        name
+                    ][key]
+
+        result = np.zeros([len(args)] * (n1 + n2))
+        for index, (name1, name2) in enumerate(
+            product(
+                product(names, repeat=n1),
+                product(names, repeat=n2),
+            )
+        ):
+            result[np.unravel_index(index, result.shape)] = (
+                signal_derivative["n1"][name1]
+                @ inverse_covariance_matrix
+                @ signal_derivative["n2"][name2]
+                + np.trace(
+                    inverse_covariance_matrix
+                    @ covariance_derivative["n1"][name1]
+                    @ inverse_covariance_matrix
+                    @ covariance_derivative["n2"][name2]
+                )
+                / 2
+            )
+
+        return result
 
     def fisher_matrix(
         self,

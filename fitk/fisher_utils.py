@@ -337,6 +337,86 @@ def find_diff_weights(
     return np.linalg.inv(matrix) @ vector
 
 
+def _simplex_indices(n: int, dim: int, upper: bool = True):
+    if dim == 1:
+        return np.arange(n)
+
+    if upper:
+        return np.triu(np.ones((n,) * dim)).nonzero()
+
+    return np.tril(np.ones((n,) * dim)).nonzero()
+
+
+def _simplexu_indices(n: int, dim: int = 2) -> tuple[Any, ...]:
+    """
+    The N-dimensional generalization of `numpy.triu_indices`.
+
+    Parameters
+    ----------
+    n : int
+        the size of the "side" of the simplex
+
+    dim : int, optional
+        the number of dimensions of the simplex (default: 2)
+
+    Returns
+    -------
+    tuple : int
+        Tuple of size `dim`.
+
+    Raises
+    ------
+    ValueError
+        if `dim` is smaller than 2
+
+    Notes
+    -----
+    The name `simplex` was chosen because the triangle is the simplest polytope
+    in 2 dimensions, and a simplex is the simplest polytope in N dimensions.
+    Equivalent to `np.triu(np.ones((n,) * dim)).nonzero()`.
+
+    See also
+    --------
+    `simplexl_indices`
+    """
+    return _simplex_indices(n, dim, upper=True)
+
+
+def _simplexl_indices(n: int, dim: int = 2) -> tuple[Any, ...]:
+    """
+    The N-dimensional generalization of `numpy.tril_indices`.
+
+    Parameters
+    ----------
+    n : int
+        the size of the "side" of the simplex
+
+    dim : int, optional
+        the number of dimensions of the simplex (default: 2)
+
+    Returns
+    -------
+    tuple : int
+        Tuple of size `dim`.
+
+    Raises
+    ------
+    ValueError
+        if `dim` is smaller than 2
+
+    Notes
+    -----
+    The name `simplex` was chosen because the triangle is the simplest polytope
+    in 2 dimensions, and a simplex is the simplest polytope in N dimensions.
+    Equivalent to `np.tril(np.ones((n,) * dim)).nonzero()`.
+
+    See also
+    --------
+    `simplexu_indices`
+    """
+    return _simplex_indices(n, dim, upper=False)
+
+
 def _expansion_coefficient(n1: int, n2: int):
     """
     Returns the expansion coefficient formed with $n_1$ and $n_2$ derivatives.

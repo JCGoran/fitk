@@ -276,6 +276,47 @@ class TestFisherDerivative:
         with pytest.raises(ValueError):
             g("signal", D(name="mu", value=2, abs_step=1e-5, order=11))
 
+    def test_derivative_tensor(self):
+        g = GaussianDerivative(config={"mu": 1, "sigma": 1})
+
+        with pytest.raises(ValueError):
+            g.derivative_tensor(0, 0, D("mu", 1, 1e-3))
+
+        with pytest.raises(ValueError):
+            g.derivative_tensor(3, 0, D("mu", 1, 1e-3))
+
+        with pytest.raises(ValueError):
+            g.derivative_tensor(0, 2, D("mu", 1, 1e-3))
+
+        result = g.derivative_tensor(
+            1,
+            2,
+            D("mu", 1, 1e-3),
+            D("sigma", 1, 1e-3),
+            parameter_dependence="signal",
+        )
+
+        assert np.allclose(
+            result[0, 0, 0],
+            g.first_derivative_wrt_mu(1, 1)
+            @ np.linalg.inv(g.covariance(("mu", 1), ("sigma", 1)))
+            @ g.second_derivative_wrt_mu(1, 1),
+        )
+
+        assert np.allclose(
+            result[0, 0, 1],
+            g.first_derivative_wrt_mu(1, 1)
+            @ np.linalg.inv(g.covariance(("mu", 1), ("sigma", 1)))
+            @ g.mixed_derivative(1, 1),
+        )
+
+        assert np.allclose(
+            result[0, 1, 0],
+            g.first_derivative_wrt_mu(1, 1)
+            @ np.linalg.inv(g.covariance(("mu", 1), ("sigma", 1)))
+            @ g.mixed_derivative(1, 1),
+        )
+
     def test_fisher_matrix(self):
         lin = LinearDerivative()
 

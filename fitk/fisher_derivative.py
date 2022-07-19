@@ -534,7 +534,7 @@ class FisherDerivative:
         values = np.array([_.value for _ in args])
 
         return FisherMatrix(
-            tensor[1, 1],
+            *tensor.values(),
             names=names,
             fiducials=values,
             latex_names=latex_names,

@@ -25,6 +25,7 @@ from fitk.fisher_utils import (
     MismatchingValuesError,
     ParameterNotFoundError,
     get_index_of_other_array,
+    is_iterable,
     is_positive_semidefinite,
     is_square,
     is_symmetric,
@@ -187,7 +188,7 @@ class FisherMatrix:
 
     def __init__(
         self,
-        values,
+        *values,
         names: Optional[Collection[str]] = None,
         latex_names: Optional[Collection[str]] = None,
         fiducials: Optional[Collection[float]] = None,
@@ -246,17 +247,16 @@ class FisherMatrix:
             latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object),
             fiducials=array([-3.,  2.]))
         """
-        if np.ndim(values) != 2:
-            raise ValueError(f"The object {values} is not 2-dimensional")
-
-        if not is_square(values):
-            raise ValueError(f"The object {values} is not square-like")
+        for value in values:
+            if not is_square(value):
+                raise ValueError(f"The object {value} is not square-like")
+            if len(values[0]) != len(value):
+                raise ValueError(f"The objects {values} have mismatching sizes")
 
         # try to treat it as an array-like object
-        self._values = np.array(values, dtype=float)
+        self._values = tuple([np.array(_, dtype=float) for _ in values])
 
-        self._size = np.shape(self._values)[0]
-        self._ndim = np.ndim(self._values)
+        self._size = np.shape(self._values[0])[0]
 
         # setting the fiducials
         if fiducials is None:
@@ -286,7 +286,7 @@ class FisherMatrix:
             for _ in (self._names, self._fiducial, self._latex_names)
         ):
             raise MismatchingSizeError(
-                self._values[0],
+                self._values[0][0],
                 self._names,
                 self._fiducial,
                 self._latex_names,
@@ -435,7 +435,7 @@ class FisherMatrix:
         # the object can be sliced
         if isinstance(keys, slice):
             start, stop, step = keys.indices(len(self))
-            indices = (slice(start, stop, step),) * self.ndim
+            indices = (slice(start, stop, step),) * 2
             sl = slice(start, stop, step)
             values = self.values[indices]
             names = self.names[sl]
@@ -449,15 +449,13 @@ class FisherMatrix:
                 fiducials=fiducials,
             )
 
-        try:
-            _ = iter(keys)
-        except TypeError as err:
-            raise TypeError(err) from err
+        if not is_iterable(keys):
+            raise TypeError(f"Object {keys} is not an iterable")
 
         # the keys can be a tuple
         if isinstance(keys, tuple):
-            if len(keys) != self.ndim:
-                raise ValueError(f"Expected {self.ndim} arguments, got {len(keys)}")
+            if len(keys) != 2:
+                raise ValueError(f"Expected 2 arguments, got {len(keys)}")
 
             # error checking
             for key in keys:
@@ -473,7 +471,7 @@ class FisherMatrix:
 
             indices = (np.where(self.names == keys),)
 
-        return self._values[indices][0, 0]
+        return self.values[indices][0, 0]
 
     def __setitem__(
         self,
@@ -496,17 +494,15 @@ class FisherMatrix:
         ParameterNotFoundError
             if any of the keys is not in the parameter names
         """
-        try:
-            _ = iter(keys)
-        except TypeError as err:
-            raise TypeError(err) from err
+        if not is_iterable(keys):
+            raise TypeError(f"Object {keys} is not an iterable")
 
         # the above fails for strings (since they are iterable), so we do an
         # explicit check here
         if isinstance(keys, str):
             raise MismatchingSizeError(keys)
 
-        if len(keys) != self.ndim:
+        if len(keys) != 2:
             raise MismatchingSizeError(keys)
 
         if not isinstance(value, Number):
@@ -519,7 +515,7 @@ class FisherMatrix:
         # automatically raises a value error
         indices = tuple(np.where(self.names == key) for key in keys)
 
-        temp_data = copy.deepcopy(self._values)
+        temp_data = copy.deepcopy(self.values)
 
         if not all(index == indices[0] for index in indices):
             for permutation in list(permutations(indices)):
@@ -528,7 +524,7 @@ class FisherMatrix:
         else:
             temp_data[indices] = value
 
-        self._values = copy.deepcopy(temp_data)
+        self._values = np.array([copy.deepcopy(temp_data)])
 
     def is_valid(self):
         """
@@ -657,7 +653,6 @@ class FisherMatrix:
 
         return (
             isinstance(other, self.__class__)
-            and self.ndim == other.ndim
             and len(self) == len(other)
             and set(self.names) == set(other.names)
             and np.allclose(
@@ -670,13 +665,6 @@ class FisherMatrix:
             )
         )
 
-    @property
-    def ndim(self):
-        """
-        Returns the number of dimensions of the Fisher object (for now always 2).
-        """
-        return np.ndim(self._values)
-
     def __len__(self):
         """
         Returns the number of parameters in the Fisher object.
@@ -688,7 +676,7 @@ class FisherMatrix:
         """
         Returns the values in the Fisher object as a numpy array.
         """
-        return self._values
+        return self._values[0]
 
     @values.setter
     def values(
@@ -704,7 +692,7 @@ class FisherMatrix:
         if not is_square(value):
             raise ValueError(f"{value} is not a square object")
 
-        self._values = np.array(value, dtype=float)
+        self._values = np.array([np.array(value, dtype=float)])
 
     def is_diagonal(self):
         """
@@ -796,7 +784,7 @@ class FisherMatrix:
         index = [np.array(np.where(self.names == name), dtype=int) for name in names]
 
         values = self.values
-        for dim in range(self.ndim):
+        for dim in range(2):
             values = np.delete(
                 values,
                 index,
@@ -1233,7 +1221,7 @@ class FisherMatrix:
                     "fiducial value", fiducials, self.fiducials
                 )
 
-            if other.ndim == self.ndim:
+            if np.ndim(other.values) == np.ndim(self.values):
                 values = self.values / reindex_array(other.values, index)
         else:
             values = self.values / other
@@ -1270,7 +1258,7 @@ class FisherMatrix:
                     "fiducial value", fiducials, self.fiducials
                 )
 
-            if other.ndim == self.ndim:
+            if np.ndim(other.values) == np.ndim(self.values):
                 values = self.values * reindex_array(other.values, index)
         else:
             values = self.values * other

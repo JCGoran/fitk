@@ -24,6 +24,7 @@ from fitk.fisher_utils import (
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
+    _get_expansion_coefficient_from_index,
     get_index_of_other_array,
     is_iterable,
     is_positive_semidefinite,
@@ -1625,3 +1626,33 @@ class FisherMatrix:
         float
         """
         return -np.linalg.slogdet(self.correlation_matrix())[-1] / 2
+
+    def loglikelihood(self, args: Collection[float]):
+        """
+        Returns the log-likelihood associated with the Fisher object at a given
+        point.
+
+        Parameters
+        ----------
+        args : array_like
+            the values of the parameters where we wish to evaluate the
+            likelihood. The order must match the order of `names`.
+
+        Returns
+        -------
+        float
+        """
+
+        indices = lambda value: [chr(ord("a") + _) for _ in range(np.ndim(value))]
+
+        return -np.sum(
+            [
+                _get_expansion_coefficient_from_index(index + 1)
+                * np.einsum(
+                    f"{''.join(indices(value))},{','.join(indices(value))}",
+                    value,
+                    *([np.array(args)] * np.ndim(value)),
+                )
+                for index, value in enumerate(self._values)
+            ]
+        )

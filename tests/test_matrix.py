@@ -610,3 +610,11 @@ class TestFisherMatrix:
             fisher1.figure_of_correlation(),
             -np.log(np.sqrt(np.linalg.det(fisher1.correlation_matrix()))),
         )
+
+    def test_loglikelihood(self):
+        fisher = FisherMatrix([[1, 1 / 2], [1 / 2, 1]])
+
+        vector = np.array([0.1, 0.3])
+
+        result = fisher.loglikelihood(vector)
+        assert np.allclose(result, -vector @ fisher.values @ vector / 2)

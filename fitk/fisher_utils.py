@@ -425,3 +425,10 @@ def _expansion_coefficient(n1: int, n2: int):
         return 1 / factorial(n1) / factorial(n2)
 
     return 1 / 2 / factorial(n1) ** 2
+
+
+def _get_expansion_coefficient_from_index(index: int):
+    """
+    Returns the expansion coefficient for the DALI series from the index.
+    """
+    return _expansion_coefficient(*((np.transpose(np.triu_indices(index)) + 1)[-1]))

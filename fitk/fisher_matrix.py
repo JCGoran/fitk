@@ -1651,7 +1651,7 @@ class FisherMatrix:
                 * np.einsum(
                     f"{''.join(indices(value))},{','.join(indices(value))}",
                     value,
-                    *([np.array(args)] * np.ndim(value)),
+                    *([np.array(args) - self.fiducials] * np.ndim(value)),
                 )
                 for index, value in enumerate(self._values)
             ]

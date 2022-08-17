@@ -306,6 +306,38 @@ class TestFisherMatrix:
         with pytest.raises(ValueError):
             data.constraints(p=-2)
 
+    @pytest.mark.xfail(reason="May fail due to the probabilistic nature of MCMC")
+    def test_constraints_extended1(self):
+        data = FisherMatrix([[1, -1], [-1, 1.2]])
+
+        # a Fisher matrix with higher-order corrections set to zero
+        data_extended = FisherMatrix(data.values, np.zeros(np.shape(data.values)))
+
+        # verify that the marginalized constraints are the same (up to some tolerance)
+        assert np.allclose(
+            data.constraints(),
+            data_extended.constraints(
+                sampler=data_extended._get_default_sampler(seed=1234)
+            ),
+            rtol=1e-2,
+        )
+
+    @pytest.mark.xfail(reason="May fail due to the probabilistic nature of MCMC")
+    def test_constraints_extended2(self):
+        data = FisherMatrix([[1, -1], [-1, 1.2]])
+
+        # a Fisher matrix with only one element
+        data_extended_single = FisherMatrix(
+            np.full((1, 1), data.values[0, 0]), np.zeros((1, 1, 1))
+        )
+
+        # verify that the unmarginalized constraints are the same (up to some tolerance)
+        assert np.allclose(
+            data.constraints(data.names[0], marginalized=False),
+            data_extended_single.constraints(),
+            rtol=1e-2,
+        )
+
     def test_sort(self):
         m = FisherMatrix(
             [[11, 12, 13], [21, 22, 23], [31, 32, 33]],

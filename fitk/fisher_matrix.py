@@ -875,6 +875,7 @@ class FisherMatrix:
         marginalized: bool = True,
         sigma: Optional[float] = None,
         p: Optional[float] = None,
+        sampler: Optional[FisherBaseSampler] = None,
     ):
         r"""
         Returns the constraints on a parameter as a float, or on all of them
@@ -907,6 +908,10 @@ class FisherMatrix:
             The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
             0.683, 0.954, and 0.997, respectively.
 
+        sampler : FisherBaseSampler, optional
+            the sampler used to get the constraints (default: the default
+            sampler, which uses the `emcee` package)
+
         Returns
         -------
         float or array_like of float
@@ -916,6 +921,11 @@ class FisherMatrix:
         The user should specify either `sigma` or `p`, but not both
         simultaneously.
         If neither are specified, defaults to `sigma=1`.
+
+        If `marginalized=False`, the `sampler` argument is ignored; to obtain
+        unmarginalized constraints with higher order corrections, it is simpler
+        to just drop all parameters from the tensor except one, and then
+        compute the marginalized constraints for each parameter separately.
 
         Examples
         --------
@@ -957,20 +967,35 @@ class FisherMatrix:
             )
 
         if marginalized:
+            # we just invert the Fisher matrix
             inv = self.__class__(
                 self.inverse(),
                 names=self.names,
                 latex_names=self.latex_names,
                 fiducials=self.fiducials,
             )
-            result = np.sqrt(np.diag(inv.values)) * sigma
+            # 1 sigma constraints according to Fisher matrix
+            result = np.sqrt(np.diag(inv.values))
+
+            # in case we have non-Gaussianities, we need to sample the
+            # likelihood
+            if len(self._values) > 1:
+                # in case the sampler has not been set, we use the default one
+                if sampler is None:
+                    sampler = self._get_default_sampler()
+
+                sampler.run_sampler()
+                samples = sampler.get_samples()
+                result = np.std(samples, axis=0, ddof=1)
+
+            result *= sigma
         else:
             result = 1.0 / np.sqrt(np.diag(self.values)) * sigma
 
         if name is not None:
-            if name in self.names:
-                return result[np.where(self.names == name)]
-            raise ParameterNotFoundError(name, self.names)
+            if not name in self.names:
+                raise ParameterNotFoundError(name, self.names)
+            return result[np.where(self.names == name)]
 
         return result
 

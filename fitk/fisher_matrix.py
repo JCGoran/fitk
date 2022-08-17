@@ -19,6 +19,7 @@ import numpy as np
 from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
+from fitk.fisher_sampler import FisherBaseSampler, FisherDefaultSampler
 from fitk.fisher_utils import (
     FisherEncoder,
     MismatchingSizeError,
@@ -1658,3 +1659,70 @@ class FisherMatrix:
                 for index, value in enumerate(self._values)
             ]
         )
+
+    def _get_default_sampler(
+        self,
+        seed: Optional[Any] = None,
+        position_half_width: Optional[Union[float, Collection[float]]] = None,
+        points: int = 20_000,
+    ) -> FisherBaseSampler:
+        """
+        Returns the default `emcee` sampler as subclass of `FisherBaseSampler`.
+
+        Parameters
+        ----------
+        seed : Any, optional
+            the initial seed to get the positions of the default RNG
+
+        position_half_width : float, optional
+            the half-width of the initial point (default: 2 sigma marginalized
+            constraints obtained from Fisher matrix)
+
+        points : int, optional
+            the number of points used for sampling the loglikelihood (default:
+            20000)
+
+        Returns
+        -------
+        fitk.fisher_sampler.FisherDefaultSampler
+
+        Notes
+        -----
+        The `seed` parameter is useful for helping with reproducibility issues,
+        albeit the sampler itself is not deterministic.
+        """
+        inv = self.__class__(
+            self.inverse(),
+            names=self.names,
+            latex_names=self.latex_names,
+            fiducials=self.fiducials,
+        )
+        constraints = np.sqrt(np.diag(inv.values))
+
+        # the default sampler requires an initial position; in this
+        # case, we choose the interval around 2 * (marginalized constraints
+        # from Fisher matrix)
+        rng = np.random.default_rng(seed)
+        if position_half_width:
+            half_width = position_half_width
+        else:
+            half_width = 2 * constraints
+
+        initial_position = rng.uniform(
+            self.fiducials - half_width,
+            self.fiducials + half_width,
+            size=(8, len(self)),
+        )
+
+        sampler = FisherDefaultSampler(
+            ctor_kwargs=dict(
+                nwalkers=8,
+                ndim=len(self),
+                log_prob_fn=self.loglikelihood,
+            ),
+            run_sampler_args=(initial_position, points),
+            run_sampler_kwargs=dict(progress=False),
+            get_sampler_kwargs=dict(flat=True),
+        )
+
+        return sampler

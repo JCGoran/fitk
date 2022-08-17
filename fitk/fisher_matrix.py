@@ -199,7 +199,7 @@ class FisherMatrix:
 
         Parameters
         ----------
-        values : Collection
+        *values : array_like
             The values of the Fisher object.
 
         names : Optional[Collection[str]] = None
@@ -217,10 +217,10 @@ class FisherMatrix:
         Raises
         ------
         ValueError
-            if the input array has the wrong dimensionality (not 2)
+            if the input arrays have mismatching dimensionalities
 
         ValueError
-            if the object is not square-like
+            if any of the input arrays is not square-like
 
         MismatchingSizeError
             if the sizes of the array of names, values, LaTeX names and
@@ -255,7 +255,7 @@ class FisherMatrix:
                 raise ValueError(f"The objects {values} have mismatching sizes")
 
         # try to treat it as an array-like object
-        self._values = tuple([np.array(_, dtype=float) for _ in values])
+        self._values = tuple(np.array(_, dtype=float) for _ in values)
 
         self._size = np.shape(self._values[0])[0]
 
@@ -306,8 +306,9 @@ class FisherMatrix:
         ----------
         names : Mapping[str, Union[str, Mapping]]
             a mapping (dictionary-like object) between the old names and the
-            new ones. The values it maps to can either be a string (the new name), or a dict
-            with keys `name`, `latex_name`, and `fiducial` (only `name` is mandatory).
+            new ones. The values it maps to can either be a string (the new
+            name), or a dict with keys `name`, `latex_name`, and `fiducial`
+            (only `name` is mandatory).
 
         ignore_errors : bool = False
             if set to True, will not raise an error if a parameter doesn't exist
@@ -407,7 +408,7 @@ class FisherMatrix:
         """
         return (
             "FisherMatrix(\n"
-            f"    {repr(self.values)},\n"
+            f"    {repr(self._values)},\n"
             f"    names={repr(self.names)},\n"
             f"    latex_names={repr(self.latex_names)},\n"
             f"    fiducials={repr(self.fiducials)})"
@@ -419,7 +420,7 @@ class FisherMatrix:
         """
         return (
             "FisherMatrix(\n"
-            f"    {self.values},\n"
+            f"    {self._values},\n"
             f"    names={self.names},\n"
             f"    latex_names={self.latex_names},\n"
             f"    fiducials={self.fiducials})"
@@ -839,7 +840,8 @@ class FisherMatrix:
 
     def inverse(self):
         """
-        Returns the inverse of the Fisher matrix.
+        Returns the inverse of the Fisher matrix, i.e. the covariance matrix of
+        the parameters.
 
         Returns
         -------

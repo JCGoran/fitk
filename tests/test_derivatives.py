@@ -13,17 +13,7 @@ import pytest
 
 # first party imports
 from fitk.fisher_derivative import D, FisherDerivative
-from fitk.fisher_utils import _expansion_coefficient
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
-
-
-def test_expansion_coefficient():
-    assert np.allclose(_expansion_coefficient(1, 1), 1 / 2)
-    assert np.allclose(_expansion_coefficient(2, 1), 1 / 2)
-    assert np.allclose(_expansion_coefficient(2, 2), 1 / 8)
-    assert np.allclose(_expansion_coefficient(1, 3), 1 / 6)
-    assert np.allclose(_expansion_coefficient(3, 2), 1 / 12)
-    assert np.allclose(_expansion_coefficient(3, 3), 1 / 72)
 
 
 class LinearDerivative(FisherDerivative):

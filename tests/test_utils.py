@@ -27,6 +27,7 @@ from fitk.fisher_utils import (
     make_default_names,
     process_units,
     reindex_array,
+    _expansion_coefficient,
 )
 
 
@@ -155,3 +156,11 @@ class TestFisherUtils:
         # requested
         with pytest.raises(ValueError):
             find_diff_weights([-1, 1], order=2)
+
+    def test_expansion_coefficient(self):
+        assert np.allclose(_expansion_coefficient(1, 1), 1 / 2)
+        assert np.allclose(_expansion_coefficient(2, 1), 1 / 2)
+        assert np.allclose(_expansion_coefficient(2, 2), 1 / 8)
+        assert np.allclose(_expansion_coefficient(1, 3), 1 / 6)
+        assert np.allclose(_expansion_coefficient(3, 2), 1 / 12)
+        assert np.allclose(_expansion_coefficient(3, 3), 1 / 72)

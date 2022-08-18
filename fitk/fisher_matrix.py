@@ -662,9 +662,13 @@ class FisherMatrix:
                 self.fiducials,
                 other.fiducials[index],
             )
-            and np.allclose(
-                self.values,
-                reindex_array(other.values, index),
+            and len(self._values) == len(other._values)
+            and all(
+                np.allclose(
+                    val_self,
+                    reindex_array(val_other, index),
+                )
+                for val_self, val_other in zip(self._values, other._values)
             )
         )
 

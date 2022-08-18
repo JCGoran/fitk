@@ -419,6 +419,16 @@ class TestFisherMatrix:
             )
         )
 
+        assert FisherMatrix(
+            np.diag([1, 2]),
+            [[[1, 0], [0, 0]], [[0, 0], [0, 2]]],
+            names=list("ba"),
+        ) == FisherMatrix(
+            np.diag([2, 1]),
+            [[[2, 0], [0, 0]], [[0, 0], [0, 1]]],
+            names=list("ab"),
+        )
+
     def test_trace(self):
         data = FisherMatrix(np.diag([1, 2, 3]))
 

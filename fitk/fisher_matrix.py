@@ -790,20 +790,22 @@ class FisherMatrix:
 
         index = [np.array(np.where(self.names == name), dtype=int) for name in names]
 
-        values = self.values
-        for dim in range(2):
-            values = np.delete(
-                values,
-                index,
-                axis=dim,
-            )
+        # we cannot modify a tuple so we turn it into a list first
+        values = list(self._values)
+        for i in range(len(values)):
+            for dim in range(np.ndim(values[i])):
+                values[i] = np.delete(
+                    values[i],
+                    index,
+                    axis=dim,
+                )
 
         fiducials = np.delete(self.fiducials, index)
         latex_names = np.delete(self.latex_names, index)
         names = np.delete(self.names, index)
 
         return self.__class__(
-            values,
+            *values,
             names=names,
             latex_names=latex_names,
             fiducials=fiducials,

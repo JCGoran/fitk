@@ -496,6 +496,19 @@ class TestFisherMatrix:
         with pytest.raises(ValueError):
             data_new = data.drop(*data.names)
 
+        data_extended = FisherMatrix(
+            np.diag([1, 2, 3]),
+            _diag_multidimensional([1, 2, 3], 3),
+            fiducials=[-1, 0, 1],
+        )
+
+        assert data_extended.drop("p1") == FisherMatrix(
+            np.diag([2, 3]),
+            _diag_multidimensional([2, 3], 3),
+            fiducials=[0, 1],
+            names=["p2", "p3"],
+        )
+
     def test_add(self):
         m1 = FisherMatrix(np.diag([1, 2, 3]))
         m2 = FisherMatrix(np.diag([6, 5, 4]))

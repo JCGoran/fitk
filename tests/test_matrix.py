@@ -25,7 +25,11 @@ from scipy.stats import ortho_group
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
-from fitk.fisher_utils import MismatchingSizeError, ParameterNotFoundError
+from fitk.fisher_utils import (
+    MismatchingSizeError,
+    ParameterNotFoundError,
+    _diag_multidimensional,
+)
 
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
@@ -384,24 +388,16 @@ class TestFisherMatrix:
         )
 
         # with derivative corrections
-        correction_order2 = np.zeros((3,) * 3)
-        correction_order2[np.diag_indices(3, ndim=3)] = np.diag(m.values)
-
-        correction_order2_sorted_by_fiducials = np.zeros((3,) * 3)
-        correction_order2_sorted_by_fiducials[np.diag_indices(3, ndim=3)] = np.array(
-            [3, 5, 1]
-        )
-
         m_extended = FisherMatrix(
             m.values,
-            correction_order2,
+            _diag_multidimensional(np.diag(m.values), 3),
             fiducials=[2, 0, 1],
             names=["p3", "p1", "p2"],
         )
 
         assert m_extended.sort(key="fiducials") == FisherMatrix(
             np.diag([3, 5, 1]),
-            correction_order2_sorted_by_fiducials,
+            _diag_multidimensional([3, 5, 1], 3),
             fiducials=[0, 1, 2],
             names=["p1", "p2", "p3"],
         )
@@ -444,11 +440,11 @@ class TestFisherMatrix:
 
         assert FisherMatrix(
             np.diag([1, 2]),
-            [[[1, 0], [0, 0]], [[0, 0], [0, 2]]],
+            _diag_multidimensional([1, 2], 3),
             names=list("ba"),
         ) == FisherMatrix(
             np.diag([2, 1]),
-            [[[2, 0], [0, 0]], [[0, 0], [0, 1]]],
+            _diag_multidimensional([2, 1], 3),
             names=list("ab"),
         )
 

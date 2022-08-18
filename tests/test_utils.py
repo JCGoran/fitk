@@ -27,6 +27,7 @@ from fitk.fisher_utils import (
     make_default_names,
     process_units,
     reindex_array,
+    _diag_multidimensional,
     _expansion_coefficient,
 )
 
@@ -164,3 +165,14 @@ class TestFisherUtils:
         assert np.allclose(_expansion_coefficient(1, 3), 1 / 6)
         assert np.allclose(_expansion_coefficient(3, 2), 1 / 12)
         assert np.allclose(_expansion_coefficient(3, 3), 1 / 72)
+
+    def test_multidimensional_diag(self):
+        assert np.allclose(
+            [[1, 0], [0, 2]],
+            _diag_multidimensional([1, 2], 2),
+        )
+
+        assert np.allclose(
+            [[[1, 0], [0, 0]], [[0, 0], [0, 2]]],
+            _diag_multidimensional([1, 2], 3),
+        )

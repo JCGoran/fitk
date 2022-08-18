@@ -431,3 +431,13 @@ def _get_expansion_coefficient_from_index(index: int):
     Returns the expansion coefficient for the DALI series from the index.
     """
     return _expansion_coefficient(*((np.transpose(np.triu_indices(index)) + 1)[-1]))
+
+
+def _diag_multidimensional(a: Collection[float], dim: int):
+    """
+    Returns the multidimensional analog of `numpy.diag`.
+    """
+    x = np.zeros((len(a),) * dim)
+    x[np.diag_indices(len(a), ndim=dim)] = np.array(a)
+
+    return x

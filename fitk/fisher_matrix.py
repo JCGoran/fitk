@@ -1091,13 +1091,16 @@ class FisherMatrix:
                     "fiducial value", fiducials, self.fiducials
                 )
 
-            values = self.values + reindex_array(other.values, index)
+            values = tuple(
+                self_values + reindex_array(other_values, index)
+                for self_values, other_values in zip(self._values, other._values)
+            )
 
         else:
-            values = self.values + other
+            values = tuple(value + other for value in self._values)
 
         return self.__class__(
-            values,
+            *values,
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,
@@ -1117,7 +1120,7 @@ class FisherMatrix:
         Returns the negation of the Fisher object.
         """
         return self.__class__(
-            -self.values,
+            *(-value for value in self._values),
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,

@@ -628,10 +628,10 @@ class FisherMatrix:
 
         latex_names = self.latex_names[index]
         fiducials = self.fiducials[index]
-        values = reindex_array(self.values, index)
+        values = tuple(reindex_array(val, index) for val in self._values)
 
         return self.__class__(
-            values,
+            *values,
             names=names,
             latex_names=latex_names,
             fiducials=fiducials,

@@ -383,6 +383,29 @@ class TestFisherMatrix:
             np.diag([1, 5, 3]), names=["p3", "p2", "p1"], fiducials=[2, 1, 0]
         )
 
+        # with derivative corrections
+        correction_order2 = np.zeros((3,) * 3)
+        correction_order2[np.diag_indices(3, ndim=3)] = np.diag(m.values)
+
+        correction_order2_sorted_by_fiducials = np.zeros((3,) * 3)
+        correction_order2_sorted_by_fiducials[np.diag_indices(3, ndim=3)] = np.array(
+            [3, 5, 1]
+        )
+
+        m_extended = FisherMatrix(
+            m.values,
+            correction_order2,
+            fiducials=[2, 0, 1],
+            names=["p3", "p1", "p2"],
+        )
+
+        assert m_extended.sort(key="fiducials") == FisherMatrix(
+            np.diag([3, 5, 1]),
+            correction_order2_sorted_by_fiducials,
+            fiducials=[0, 1, 2],
+            names=["p1", "p2", "p3"],
+        )
+
     def test_eq(self):
         assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(
             np.diag([2, 1]),

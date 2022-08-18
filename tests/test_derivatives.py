@@ -12,7 +12,8 @@ import numpy as np
 import pytest
 
 # first party imports
-from fitk.fisher_derivative import D, FisherDerivative, _expansion_coefficient
+from fitk.fisher_derivative import D, FisherDerivative
+from fitk.fisher_utils import _expansion_coefficient
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
 
 

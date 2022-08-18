@@ -771,7 +771,7 @@ class FisherFigure1D(FisherBaseFigure):
         *args: Artist,
         overwrite: bool = False,
         loc: Union[str, tuple[float, float]] = "lower center",
-        bbox_to_anchor: Any = [0.5, 1],
+        bbox_to_anchor: Any = (0.5, 1),
         **kwargs,
     ):
         """

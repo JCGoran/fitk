@@ -17,12 +17,7 @@ import numpy as np
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
-    _expansion_coefficient,
-    _simplexu_indices,
-    find_diff_weights,
-    is_iterable,
-)
+from fitk.fisher_utils import _simplexu_indices, find_diff_weights, is_iterable
 
 
 def _validate_derivatives(

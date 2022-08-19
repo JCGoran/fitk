@@ -1071,7 +1071,7 @@ class FisherMatrix:
 
     def __add__(
         self,
-        other: FisherMatrix,
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Returns the result of adding two Fisher objects.
@@ -1108,7 +1108,7 @@ class FisherMatrix:
 
     def __radd__(
         self,
-        other: FisherMatrix,
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Addition when the Fisher object is the right operand.
@@ -1128,7 +1128,7 @@ class FisherMatrix:
 
     def __sub__(
         self,
-        other: FisherMatrix,
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Returns the result of subtracting two Fisher objects.
@@ -1137,7 +1137,7 @@ class FisherMatrix:
 
     def __rsub__(
         self,
-        other: FisherMatrix,
+        other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
         """
         Subtraction when the Fisher object is the right operand.
@@ -1259,13 +1259,18 @@ class FisherMatrix:
                     "fiducial value", fiducials, self.fiducials
                 )
 
-            if np.ndim(other.values) == np.ndim(self.values):
-                values = self.values / reindex_array(other.values, index)
+            if len(other._values) != len(self._values):
+                raise MismatchingSizeError(other._values, self._values)
+
+            values = tuple(
+                self_values / reindex_array(other_values, index)
+                for self_values, other_values in zip(self._values, other._values)
+            )
         else:
-            values = self.values / other
+            values = tuple(self_values / other for self_values in self._values)
 
         return self.__class__(
-            values,
+            *values,
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,
@@ -1296,13 +1301,18 @@ class FisherMatrix:
                     "fiducial value", fiducials, self.fiducials
                 )
 
-            if np.ndim(other.values) == np.ndim(self.values):
-                values = self.values * reindex_array(other.values, index)
+            if len(other._values) != len(self._values):
+                raise MismatchingSizeError(other._values, self._values)
+
+            values = tuple(
+                self_values * reindex_array(other_values, index)
+                for self_values, other_values in zip(self._values, other._values)
+            )
         else:
-            values = self.values * other
+            values = tuple(self_values * other for self_values in self._values)
 
         return self.__class__(
-            values,
+            *values,
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,

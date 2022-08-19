@@ -147,11 +147,13 @@ class TestFisherMatrix:
         )
 
     def test_rename(self):
-        m1 = FisherMatrix(np.diag([1, 2, 3]), names=list("abc"))
+        m1 = FisherMatrix(
+            np.diag([1, 2, 3]), _diag_multidimensional([1, 2, 3], 3), names=list("abc")
+        )
         m2 = m1.rename({"a": dict(name="x", latex_name=None, fiducial=1)})
 
         assert m2 == FisherMatrix(
-            m1.values,
+            *m1._values,
             names=list("xbc"),
             latex_names=list("xbc"),
             fiducials=[1, 0, 0],
@@ -446,6 +448,15 @@ class TestFisherMatrix:
             np.diag([2, 1]),
             _diag_multidimensional([2, 1], 3),
             names=list("ab"),
+        )
+
+        assert FisherMatrix(
+            np.diag([1, 2]),
+            _diag_multidimensional([1, 2], 3),
+            names=list("ba"),
+        ) != FisherMatrix(
+            np.diag([1, 2]),
+            names=list("ba"),
         )
 
     def test_trace(self):

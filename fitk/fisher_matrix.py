@@ -358,7 +358,7 @@ class FisherMatrix:
                 latex_names_new[index] = value
 
         return self.__class__(
-            self.values,
+            *self._values,
             names=names_new,
             latex_names=latex_names_new,
             fiducials=fiducial_new,

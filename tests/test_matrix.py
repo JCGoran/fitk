@@ -224,6 +224,28 @@ class TestFisherMatrix:
         with pytest.raises(ParameterNotFoundError):
             data[1, 1]
 
+    def test_getitem_extended(self):
+        data = FisherMatrix(
+            np.diag([1, 2, 3]),
+            _diag_multidimensional([4, 5, 6], 3),
+        )
+
+        # verify single-item access works
+        assert data["p1", "p1"] == 1
+        assert data["p1", "p1", "p1"] == 4
+        assert data["p1", "p1", "p2"] == 0
+        assert data["p2", "p2", "p2"] == 5
+
+        # verify slicing works
+        assert data[1:] == FisherMatrix(
+            np.diag([2, 3]),
+            _diag_multidimensional([5, 6], 3),
+            names=["p2", "p3"],
+        )
+
+        with pytest.raises(ValueError):
+            data["p1", "p1", "p4"]
+
     def test_setitem(self):
         data = FisherMatrix(np.diag([1, 2, 3]))
 
@@ -252,6 +274,27 @@ class TestFisherMatrix:
         # wrong number of keys
         with pytest.raises(MismatchingSizeError):
             data["p1", "p2", "p3"] = 1
+
+    def test_setitem_extended(self):
+        data = FisherMatrix(
+            np.diag([1, 2, 3]),
+            _diag_multidimensional([4, 5, 6], 3),
+        )
+
+        data["p1", "p1"] = 3
+        assert data == FisherMatrix(
+            np.diag([3, 2, 3]),
+            _diag_multidimensional([4, 5, 6], 3),
+        )
+
+        data["p2", "p2", "p2"] = 8
+        assert data == FisherMatrix(
+            np.diag([3, 2, 3]),
+            _diag_multidimensional([4, 8, 6], 3),
+        )
+
+        with pytest.raises(MismatchingSizeError):
+            data["p1", "p1", "p1", "p1"] = 2
 
     def test_values(self):
         data = FisherMatrix(np.diag([1, 2, 3]))

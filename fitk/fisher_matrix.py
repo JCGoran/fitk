@@ -430,7 +430,7 @@ class FisherMatrix:
     def __getitem__(
         self,
         keys: Union[tuple[str, ...], slice],
-    ):
+    ) -> Union[FisherMatrix, float]:
         """
         Implements access to elements in the Fisher object.
         Has support for slicing.
@@ -438,15 +438,16 @@ class FisherMatrix:
         # the object can be sliced
         if isinstance(keys, slice):
             start, stop, step = keys.indices(len(self))
-            indices = (slice(start, stop, step),) * 2
             sl = slice(start, stop, step)
-            values = self.values[indices]
+            values = tuple(
+                val[(slice(start, stop, step),) * np.ndim(val)] for val in self._values
+            )
             names = self.names[sl]
             latex_names = self.latex_names[sl]
             fiducials = self.fiducials[sl]
 
             return self.__class__(
-                values,
+                *values,
                 names=names,
                 latex_names=latex_names,
                 fiducials=fiducials,
@@ -457,15 +458,16 @@ class FisherMatrix:
 
         # the keys can be a tuple
         if isinstance(keys, tuple):
-            if len(keys) != 2:
-                raise ValueError(f"Expected 2 arguments, got {len(keys)}")
-
             # error checking
             for key in keys:
                 if key not in self.names:
                     raise ParameterNotFoundError(key, self.names)
 
             indices = tuple(np.where(self.names == key) for key in keys)
+
+            # check that the element exists
+            if not any(len(indices) == np.ndim(val) for val in self._values):
+                raise MismatchingSizeError(keys)
 
         # otherwise, it's some generic object
         else:
@@ -474,7 +476,7 @@ class FisherMatrix:
 
             indices = (np.where(self.names == keys),)
 
-        return self.values[indices][0, 0]
+        return self._values[len(indices) - 2][indices]
 
     def __setitem__(
         self,
@@ -505,9 +507,6 @@ class FisherMatrix:
         if isinstance(keys, str):
             raise MismatchingSizeError(keys)
 
-        if len(keys) != 2:
-            raise MismatchingSizeError(keys)
-
         if not isinstance(value, Number):
             raise TypeError(f"{value} is not a number")
 
@@ -518,16 +517,21 @@ class FisherMatrix:
         # automatically raises a value error
         indices = tuple(np.where(self.names == key) for key in keys)
 
-        temp_data = copy.deepcopy(self.values)
+        # check that the element exists
+        if not any(len(indices) == np.ndim(val) for val in self._values):
+            raise MismatchingSizeError(keys)
+
+        temp_data = copy.deepcopy(list(self._values))
 
         if not all(index == indices[0] for index in indices):
             for permutation in list(permutations(indices)):
                 # update all symmetric parts
-                temp_data[permutation] = value
+                # TODO should this be done for higher order corrections?
+                temp_data[len(indices) - 2][permutation] = value
         else:
-            temp_data[indices] = value
+            temp_data[len(indices) - 2][indices] = value
 
-        self._values = np.array([copy.deepcopy(temp_data)])
+        self._values = tuple(copy.deepcopy(temp_data))
 
     def is_valid(self):
         """

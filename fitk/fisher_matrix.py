@@ -1447,7 +1447,9 @@ class FisherMatrix:
         )
 
     def to_file(
-        self, path: str, metadata: Optional[Mapping[str, Any]] = None
+        self,
+        path: str,
+        metadata: Optional[Mapping[str, Any]] = None,
     ) -> dict[str, Any]:
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
@@ -1484,7 +1486,7 @@ class FisherMatrix:
         True
         """
         data = {
-            "values": self.values,
+            "values": self._values,
             "names": self.names,
             "latex_names": self.latex_names,
             "fiducials": self.fiducials,
@@ -1600,7 +1602,7 @@ class FisherMatrix:
             data = json.loads(file_handle.read())
 
         return cls(
-            data["values"],
+            *data["values"],
             names=data["names"],
             latex_names=data["latex_names"],
             fiducials=data["fiducials"],
@@ -1629,7 +1631,7 @@ class FisherMatrix:
         FisherMatrix
         """
         return cls(
-            data["values"],
+            *data["values"],
             names=data["names"],
             latex_names=data["latex_names"],
             fiducials=data["fiducials"],

@@ -1365,6 +1365,8 @@ class FisherMatrix:
         Returns
         -------
         FisherMatrix
+            the reparametrized Fisher object with possibly new names and
+            fiducials
 
         Examples
         --------
@@ -1378,7 +1380,45 @@ class FisherMatrix:
             latex_names=array(['a', 'b'], dtype=object),
             fiducials=array([0., 0.]))
         """
-        values = np.transpose(jacobian) @ self.values @ jacobian
+        char_first = "a"
+        char_second = "A"
+
+        # makes the string 'aA,bB,cC,dD,...'
+        indices_transformation = tuple(
+            ",".join(
+                [
+                    f"{chr(ord(char_first) + i)}{chr(ord(char_second) + i)}"
+                    for i in range(np.ndim(val))
+                ]
+            )
+            for val in self._values
+        )
+
+        # the dummy indices are 'abcd...'
+        indices_dummy = tuple(
+            "".join([chr(ord(char_first) + i) for i in range(np.ndim(val))])
+            for val in self._values
+        )
+
+        # the output indices are 'ABCD...'
+        indices_result = tuple(
+            "".join([chr(ord(char_second) + i) for i in range(np.ndim(val))])
+            for val in self._values
+        )
+
+        values = tuple(
+            np.einsum(
+                f"{index_transformation},{index_dummy}->{index_result}",
+                *([jacobian] * np.ndim(val)),
+                val,
+            )
+            for (index_transformation, index_dummy, index_result, val) in zip(
+                indices_transformation,
+                indices_dummy,
+                indices_result,
+                self._values,
+            )
+        )
 
         if names is not None:
             if len(set(names)) != np.shape(jacobian)[-1]:
@@ -1400,7 +1440,7 @@ class FisherMatrix:
             fiducials = copy.deepcopy(self.fiducials)
 
         return self.__class__(
-            values,
+            *values,
             names=names,
             latex_names=latex_names,
             fiducials=fiducials,

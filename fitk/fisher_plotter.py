@@ -9,7 +9,7 @@ from __future__ import annotations
 # standard library imports
 import copy
 from abc import ABC, abstractmethod
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Sequence
 from itertools import product
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -27,6 +27,7 @@ from scipy.stats import chi2, norm
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
+from fitk.fisher_sampler import FisherBaseSampler
 from fitk.fisher_utils import ParameterNotFoundError, get_default_rcparams, is_iterable
 
 
@@ -656,6 +657,7 @@ class FisherFigure1D(FisherBaseFigure):
         self,
         fisher: FisherMatrix,
         *args,
+        sampler: Optional[FisherBaseSampler] = None,
         **kwargs,
     ):
         """
@@ -665,6 +667,10 @@ class FisherFigure1D(FisherBaseFigure):
         ----------
         fisher
             the Fisher object which we want to plot
+
+        sampler : FisherBaseSampler, optional
+            the sampler used to sample the loglikelihood (default: the default
+            sampler, which uses the `emcee` package)
 
         Returns
         -------
@@ -689,6 +695,14 @@ class FisherFigure1D(FisherBaseFigure):
         else:
             layout = 1, size
             full = True
+
+        samples = None
+        if len(fisher._values) > 1:
+            if sampler is None:
+                sampler = fisher._get_default_sampler()
+
+            sampler.run_sampler()
+            samples = sampler.get_samples()
 
         with plt.rc_context(self.options):
             # general figure setup
@@ -716,31 +730,18 @@ class FisherFigure1D(FisherBaseFigure):
             ):
                 ax = axes.flat[index]
 
-                _, __, handle = plot_curve_1d(fisher, name, ax, **kwargs)
+                _, __, handle = plot_curve_1d(
+                    fisher,
+                    name,
+                    samples=samples,
+                    ax=ax,
+                    **kwargs,
+                )
 
                 if not added and kwargs.get("label"):
                     self.handles.append(handle)
                     self.labels.append(kwargs["label"])
                     added = True
-
-                _add_shading_1d(
-                    fisher.fiducials[np.where(fisher.names == name)],
-                    fisher.constraints(name, marginalized=True),
-                    ax,
-                    alpha=0.3,
-                    ec=None,
-                    **kwargs,
-                )
-
-                _add_shading_1d(
-                    fisher.fiducials[np.where(fisher.names == name)],
-                    fisher.constraints(name, marginalized=True),
-                    ax,
-                    level=2,
-                    alpha=0.1,
-                    ec=None,
-                    **kwargs,
-                )
 
                 ax.autoscale()
                 ax.set_xlabel(latex_name)
@@ -1453,6 +1454,7 @@ def _add_shading_1d(
 def plot_curve_1d(
     fisher: FisherMatrix,
     name: str,
+    samples: Optional[Any] = None,
     ax: Optional[Axes] = None,
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
@@ -1467,6 +1469,11 @@ def plot_curve_1d(
     name : str
         the name of the parameter which we want to plot
 
+    samples : array_like, optional
+        the samples obtained from directly sampling the likelihood of the
+        Fisher object. If not set, only plots the Gaussian part of the
+        likelihood
+
     ax : Optional[matplotlib.axes.Axes] = None
         the axis on which we want to plot the contour. By default, plots to a
         new figure.
@@ -1477,6 +1484,19 @@ def plot_curve_1d(
     """
     if ax is None:
         _, ax = plt.subplots()
+
+    if samples is not None:
+        result = ax.hist(
+            np.transpose(samples)[np.where(fisher.names == name)][0],
+            density=True,
+            **kwargs,
+        )
+
+        handle = result[-1]
+        if isinstance(handle, Sequence):
+            handle = handle[0]
+
+        return (ax.get_figure(), ax, handle)
 
     fid = fisher.fiducials[np.where(fisher.names == name)]
     sigma = fisher.constraints(name, marginalized=True)

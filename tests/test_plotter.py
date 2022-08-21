@@ -714,3 +714,45 @@ def test_plot_curve_2d(m1):
 def test_ellipse(m1):
     with pytest.raises(ValueError):
         _get_ellipse(m1, "omegam", "omegam")
+
+
+@pytest.mark.xfail(reason="May fail due to the probabilistic nature of MCMC")
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_1d_euclid_extended(euclid_opt):
+    fp1 = FisherFigure1D(max_cols=5)
+
+    euclid_opt = euclid_opt.drop(*euclid_opt.names[:3], invert=True)
+
+    # plotting the standard result
+    fp1.plot(
+        euclid_opt,
+        label="optimistic case",
+        ls="--",
+        zorder=100,
+        color="red",
+    )
+
+    euclid_opt_extended = FisherMatrix(
+        euclid_opt.values,
+        np.zeros((len(euclid_opt),) * 3),
+        names=euclid_opt.names,
+        latex_names=euclid_opt.latex_names,
+        fiducials=euclid_opt.fiducials,
+    )
+
+    # plotting with higher order corrections, but which are set to zero
+    fp1.plot(
+        euclid_opt_extended,
+        sampler=euclid_opt_extended._get_default_sampler(points=5000),
+        label="histograms",
+        bins=50,
+        histtype="step",
+    )
+
+    fp1.legend()
+
+    return fp1.figure

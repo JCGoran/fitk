@@ -32,8 +32,8 @@ from fitk.fisher_plotter import (
 )
 from fitk.fisher_utils import ParameterNotFoundError
 
-DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
-DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
+DATADIR_INPUT = Path(os.path.dirname(__file__)) / "data_input"
+DATADIR_OUTPUT = Path(os.path.dirname(__file__)) / "data_output"
 
 
 @pytest.fixture

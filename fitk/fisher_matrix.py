@@ -1781,13 +1781,7 @@ class FisherMatrix:
         The `seed` parameter is useful for helping with reproducibility issues,
         albeit the sampler itself is not deterministic.
         """
-        inv = self.__class__(
-            self.inverse(),
-            names=self.names,
-            latex_names=self.latex_names,
-            fiducials=self.fiducials,
-        )
-        constraints = np.sqrt(np.diag(inv.values))
+        constraints = np.sqrt(np.diag(self.inverse()))
 
         # the default sampler requires an initial position; in this
         # case, we choose the interval around 2 * (marginalized constraints

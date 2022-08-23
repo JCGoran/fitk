@@ -1359,7 +1359,7 @@ class FisherFigure2D(FisherBaseFigure):
                         ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
                         ax[i, i].set_yticks([])
                         ax[i, i].set_yticklabels([])
-                except AttributeError:
+                except:
                     pass
 
         self._figure = fig

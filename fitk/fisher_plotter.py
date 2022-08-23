@@ -1419,38 +1419,6 @@ def _add_plot_1d(
     return (ax.get_figure(), ax, handle)
 
 
-def _add_shading_1d(
-    fiducial: float,
-    sigma: float,
-    ax: Optional[Axes] = None,
-    level: float = 1,
-    **kwargs,
-) -> tuple[Figure, Axes]:
-    """
-    Add shading to a 1D axes.
-    """
-    if ax is None:
-        _, ax = plt.subplots()
-
-    x = np.ndarray.flatten(
-        np.linspace(
-            fiducial - level * sigma,
-            fiducial + level * sigma,
-            100,
-        )
-    )
-
-    ax.fill_between(
-        x,
-        np.ndarray.flatten(
-            np.array([norm.pdf(_, loc=fiducial, scale=sigma) for _ in x])
-        ),
-        **kwargs,
-    )
-
-    return (ax.get_figure(), ax)
-
-
 def plot_curve_1d(
     fisher: FisherMatrix,
     name: str,

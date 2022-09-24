@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.2.0"/>
     <title>fitk.fisher_matrix API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -157,9 +157,9 @@
 See here for documentation of <code><a href="#FisherMatrix">FisherMatrix</a></code>.</p>
 </div>
 
-                        <input id="fisher_matrix-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="mod-fisher_matrix-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="fisher_matrix-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="mod-fisher_matrix-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">   1</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">   2</span></a><span class="sd">Submodule for performing operations on Fisher objects.</span>
@@ -3410,43 +3410,54 @@ See here for documentation of <code><a href="#FisherMatrix">FisherMatrix</a></co
 
 <p>Specify a Fisher object with default names and fiducials:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
-</code></pre></div>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
+</code></pre>
+</div>
 
 <p>The object has a friendly representation in the interactive session:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[5., 0.],</span>
 <span class="go">       [0., 4.]]),</span>
 <span class="go">    names=array([&#39;p1&#39;, &#39;p2&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;p1&#39;, &#39;p2&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>List the names:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">names</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">names</span>
 <span class="go">array([&#39;p1&#39;, &#39;p2&#39;], dtype=object)</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>List the values of the Fisher object:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">values</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">values</span>
 <span class="go">array([[5., 0.],</span>
 <span class="go">       [0., 4.]])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>List the values of the fiducials:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">fiducials</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">fiducials</span>
 <span class="go">array([0., 0.])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Names can be changed in bulk (ditto for fiducials and values; dimension
 must of course match the original):</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">latex_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\mathbf</span><span class="si">{X}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\mathbf</span><span class="si">{Y}</span><span class="s1">$&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span>
@@ -3456,18 +3467,22 @@ must of course match the original):</p>
 <span class="go">    names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\mathbf{X}$&#39;, &#39;$\\mathbf{Y}$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can get and set individual elements of the matrix using dict-like notation:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span>
 <span class="go">5.0</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>The off-diagonal elements are automatically updated when using the setter:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span>
 <span class="go">FisherMatrix(</span>
@@ -3476,11 +3491,13 @@ must of course match the original):</p>
 <span class="go">    names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can select submatrices by index:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">])</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[2., 0.],</span>
@@ -3488,88 +3505,107 @@ must of course match the original):</p>
 <span class="go">    names=array([&#39;y&#39;, &#39;z&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;y&#39;, &#39;z&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Fisher object with parameter names:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span>
 <span class="gp">... </span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mathbf</span><span class="si">{X}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mathbf</span><span class="si">{Y}</span><span class="s1">$&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm_with_names</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can add Fisher objects (ordering of names is taken care of):</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">+</span> <span class="n">fm_with_names</span> <span class="c1"># doctest: +SKIP</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">+</span> <span class="n">fm_with_names</span> <span class="c1"># doctest: +SKIP</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[6., 0.],</span>
 <span class="go">       [0., 6.]]),</span>
 <span class="go">    names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\mathbf{X}$&#39;, &#39;$\\mathbf{Y}$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can also do element-wise multiplication or division:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">*</span> <span class="n">fm_with_names</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">*</span> <span class="n">fm_with_names</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[5., 0.],</span>
 <span class="go">       [0., 8.]]),</span>
 <span class="go">    names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\mathbf{X}$&#39;, &#39;$\\mathbf{Y}$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Furthermore, we can do matrix multiplication:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">@</span> <span class="n">fm_with_names</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">@</span> <span class="n">fm_with_names</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[5., 0.],</span>
 <span class="go">       [0., 8.]]),</span>
 <span class="go">    names=array([&#39;x&#39;, &#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\mathbf{X}$&#39;, &#39;$\\mathbf{Y}$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can also perform standard matrix operations like the trace, eigenvalues, determinant:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
 <span class="go">9.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">()</span>
 <span class="go">array([4., 5.])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">determinant</span><span class="p">()</span>
 <span class="go">19.999999999999996</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can also get the inverse (the covariance matrix):</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
 <span class="go">array([[0.2 , 0.  ],</span>
 <span class="go">       [0.  , 0.25]])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can drop parameters from the object:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[4.]]),</span>
 <span class="go">    names=array([&#39;y&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\mathbf{Y}$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>We can save it to a file (the returned value is the dictionary that was saved):</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">),</span> <span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">),</span> <span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
 <span class="go">{&#39;values&#39;: [[5.0, 0.0], [0.0, 4.0]],</span>
 <span class="go"> &#39;names&#39;: [&#39;x&#39;, &#39;y&#39;],</span>
 <span class="go"> &#39;latex_names&#39;: [&#39;$\\mathbf{X}$&#39;, &#39;$\\mathbf{Y}$&#39;],</span>
 <span class="go"> &#39;fiducials&#39;: [0.0, 0.0]}</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Loading is performed by a class method <code><a href="#FisherMatrix.from_file">from_file</a></code>:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm_new</span> <span class="o">=</span> <span class="n"><a href="#FisherMatrix.from_file">FisherMatrix.from_file</a></span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">)</span>
-</code></pre></div>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm_new</span> <span class="o">=</span> <span class="n"><a href="#FisherMatrix.from_file">FisherMatrix.from_file</a></span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">)</span>
+</code></pre>
+</div>
 </div>
 
 
@@ -3723,7 +3759,8 @@ fiducials do not match</li>
 
 <p>Specify a Fisher object without names:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[1., 0., 0.],</span>
 <span class="go">       [0., 2., 0.],</span>
@@ -3731,11 +3768,13 @@ fiducials do not match</li>
 <span class="go">    names=array([&#39;p1&#39;, &#39;p2&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;p1&#39;, &#39;p2&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Specify a Fisher object with names, LaTeX names, and fiducials:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">],</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">],</span>
 <span class="gp">... </span><span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\alpha$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\beta$&#39;</span><span class="p">],</span> <span class="n">fiducials</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[1., 0.],</span>
@@ -3743,7 +3782,8 @@ fiducials do not match</li>
 <span class="go">    names=array([&#39;alpha&#39;, &#39;beta&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;$\\alpha$&#39;, &#39;$\\beta$&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([-3.,  2.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -3852,7 +3892,8 @@ if set to True, will not raise an error if a parameter doesn't exist</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;p1&#39;</span> <span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="s1">&#39;$b$&#39;</span><span class="p">,</span> <span class="n">fiducial</span><span class="o">=</span><span class="mi">2</span><span class="p">)})</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[1., 0., 0.],</span>
@@ -3861,7 +3902,8 @@ if set to True, will not raise an error if a parameter doesn't exist</li>
 <span class="go">    names=array([&#39;a&#39;, &#39;b&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;a&#39;, &#39;$b$&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 2., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -3871,7 +3913,7 @@ if set to True, will not raise an error if a parameter doesn't exist</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">is_valid</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">is_valid</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.is_valid-view-source"><span>View Source</span></label>
 
@@ -3919,12 +3961,14 @@ criteria:</p>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 <span class="go">False</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4053,7 +4097,8 @@ values.</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s1">&#39;sdf&#39;</span><span class="p">),</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s1">&#39;sdf&#39;</span><span class="p">),</span>
 <span class="gp">... </span><span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hjkl&#39;</span><span class="p">,</span> <span class="s1">&#39;qwe&#39;</span><span class="p">,</span> <span class="s1">&#39;ll&#39;</span><span class="p">],</span> <span class="n">fiducials</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;fiducials&#39;</span><span class="p">)</span>
 <span class="go">FisherMatrix(</span>
@@ -4071,7 +4116,8 @@ values.</li>
 <span class="go">    names=array([&#39;s&#39;, &#39;f&#39;, &#39;d&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;hjkl&#39;, &#39;ll&#39;, &#39;qwe&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([8., 3., 7.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4097,7 +4143,7 @@ values.</li>
     </div>
     <a class="headerlink" href="#FisherMatrix.values"></a>
     
-            <div class="docstring"><p>Returns the values in the Fisher object as a numpy array.</p>
+            <div class="docstring"><p>Setter for the values of the Fisher object.</p>
 </div>
 
 
@@ -4107,7 +4153,7 @@ values.</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">is_diagonal</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">is_diagonal</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.is_diagonal-view-source"><span>View Source</span></label>
 
@@ -4141,7 +4187,7 @@ values.</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">diagonal</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
+        <span class="name">diagonal</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.diagonal-view-source"><span>View Source</span></label>
 
@@ -4294,7 +4340,8 @@ should non-existing parameters be ignored</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="s1">&#39;p3&#39;</span><span class="p">)</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[2.]]),</span>
@@ -4315,7 +4362,8 @@ should non-existing parameters be ignored</li>
 <span class="go">    names=array([&#39;p1&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;p1&#39;, &#39;p3&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4325,7 +4373,7 @@ should non-existing parameters be ignored</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">trace</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
+        <span class="name">trace</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.trace-view-source"><span>View Source</span></label>
 
@@ -4352,7 +4400,7 @@ should non-existing parameters be ignored</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">eigenvalues</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">eigenvalues</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.eigenvalues-view-source"><span>View Source</span></label>
 
@@ -4376,7 +4424,7 @@ should non-existing parameters be ignored</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">eigenvectors</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">eigenvectors</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.eigenvectors-view-source"><span>View Source</span></label>
 
@@ -4400,7 +4448,7 @@ should non-existing parameters be ignored</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">condition_number</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">condition_number</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.condition_number-view-source"><span>View Source</span></label>
 
@@ -4425,10 +4473,12 @@ should non-existing parameters be ignored</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">condition_number</span><span class="p">()</span>
 <span class="go">3.0</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4438,7 +4488,7 @@ should non-existing parameters be ignored</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">inverse</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">inverse</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.inverse-view-source"><span>View Source</span></label>
 
@@ -4476,12 +4526,14 @@ the covariance matrix as a numpy array</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
 <span class="go">array([[1. , 0. , 0. ],</span>
 <span class="go">       [0. , 0.5, 0. ],</span>
 <span class="go">       [0. , 0. , 0.2]])</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4491,7 +4543,7 @@ the covariance matrix as a numpy array</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">determinant</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">determinant</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.determinant-view-source"><span>View Source</span></label>
 
@@ -4525,7 +4577,7 @@ the covariance matrix as a numpy array</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">constraints</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">marginalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">sigma</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">p</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">constraints</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">marginalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">sigma</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">p</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.constraints-view-source"><span>View Source</span></label>
 
@@ -4655,13 +4707,13 @@ how many sigmas away.</li>
 the confidence interval (p-value).
 The relationship between <code>p</code> and <code>sigma</code> is defined via:
 $$
-   p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
-               f(x, \mu, 1)\, \mathrm{d}x
-             = \mathrm{Erf}(\sigma / \sqrt{2})
+    p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
+                f(x, \mu, 1)\, \mathrm{d}x
+              = \mathrm{Erf}(\sigma / \sqrt{2})
 $$
 and therefore the inverse is simply:
 $$
-   \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
+    \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
 $$
 The values of <code>p</code> corresponding to 1, 2, 3 <code>sigma</code> are roughly
 0.683, 0.954, and 0.997, respectively.</li>
@@ -4683,28 +4735,36 @@ If neither are specified, defaults to <code>sigma=1</code>.</p>
 
 <p>Get (marginalized by default) constraints for all parameters:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">()</span>
 <span class="go">array([0.67419986, 0.52223297])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Get the unmarginalized constraints instead:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="n">marginalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="n">marginalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">array([0.57735027, 0.4472136 ])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Get the unmarginalized constraints for a single parameter:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="n">marginalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="n">marginalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">array([0.57735027])</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Get the marginalized constraints for a single parameter:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.682689</span><span class="p">)</span> <span class="c1"># p-value roughly equal to 1 sigma</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">constraints</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.682689</span><span class="p">)</span> <span class="c1"># p-value roughly equal to 1 sigma</span>
 <span class="go">array([0.67419918])</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4717,7 +4777,7 @@ If neither are specified, defaults to <code>sigma=1</code>.</p>
     </div>
     <a class="headerlink" href="#FisherMatrix.fiducials"></a>
     
-            <div class="docstring"><p>Returns the fiducial values of the Fisher object as a numpy array.</p>
+            <div class="docstring"><p>The setter for the fiducial values of the Fisher object.</p>
 </div>
 
 
@@ -4730,7 +4790,9 @@ If neither are specified, defaults to <code>sigma=1</code>.</p>
     </div>
     <a class="headerlink" href="#FisherMatrix.names"></a>
     
-            <div class="docstring"><p>Returns the parameter names of the Fisher object.</p>
+            <div class="docstring"><p>The bulk setter for the names.
+The length of the names must be the same as the one of the original
+object.</p>
 </div>
 
 
@@ -4743,7 +4805,9 @@ If neither are specified, defaults to <code>sigma=1</code>.</p>
     </div>
     <a class="headerlink" href="#FisherMatrix.latex_names"></a>
     
-            <div class="docstring"><p>Returns the LaTeX names of the parameters of the Fisher object.</p>
+            <div class="docstring"><p>The bulk setter for the LaTeX names.
+The length of the names must be the same as the one of the original
+object.</p>
 </div>
 
 
@@ -4864,7 +4928,8 @@ the new values of the fiducials. If not set, defaults to old values.</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jac</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">reparametrize</span><span class="p">(</span><span class="n">jac</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
 <span class="go">FisherMatrix(</span>
@@ -4873,7 +4938,8 @@ the new values of the fiducials. If not set, defaults to old values.</li>
 <span class="go">    names=array([&#39;a&#39;, &#39;b&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;a&#39;, &#39;b&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -4969,7 +5035,8 @@ form of a dictionary-like object</li>
 
 <h6 id="examples">Examples</h6>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
 <span class="gp">... </span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\mathbf</span><span class="si">{A}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\mathbf</span><span class="si">{B}</span><span class="s1">$&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">),</span> <span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
 <span class="go">{&#39;values&#39;: [[1.0, 0.0], [0.0, 2.0]],</span>
@@ -4980,7 +5047,8 @@ form of a dictionary-like object</li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm_read</span> <span class="o">=</span> <span class="n"><a href="#FisherMatrix.from_file">FisherMatrix.from_file</a></span><span class="p">(</span><span class="s1">&#39;example_matrix.json&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">==</span> <span class="n">fm_read</span> <span class="c1"># verify it&#39;s the same object</span>
 <span class="go">True</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -5087,14 +5155,17 @@ should non-existing parameters be ignored</li>
 
 <p>Generate a Fisher object using a random orthogonal matrix:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ortho_group</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ortho_group</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rm</span> <span class="o">=</span> <span class="n">ortho_group</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span> <span class="o">=</span> <span class="n">FisherMatrix</span><span class="p">(</span><span class="n">rm</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">@</span> <span class="n">rm</span><span class="p">)</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Marginalize over some parameters:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">marginalize_over</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">marginalize_over</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">)</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[ 1.67715591, -1.01556085,  0.30020773],</span>
 <span class="go">       [-1.01556085,  4.92788976,  0.91219831],</span>
@@ -5102,18 +5173,21 @@ should non-existing parameters be ignored</li>
 <span class="go">    names=array([&#39;p3&#39;, &#39;p4&#39;, &#39;p5&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;p3&#39;, &#39;p4&#39;, &#39;p5&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Marginalize over all parameters which are NOT <code>p1</code> or <code>p2</code>:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">marginalize_over</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm</span><span class="o">.</span><span class="n">marginalize_over</span><span class="p">(</span><span class="s1">&#39;p1&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[ 5.04480062, -0.04490453],</span>
 <span class="go">       [-0.04490453,  1.61599083]]),</span>
 <span class="go">    names=array([&#39;p1&#39;, &#39;p2&#39;], dtype=object),</span>
 <span class="go">    latex_names=array([&#39;p1&#39;, &#39;p2&#39;], dtype=object),</span>
 <span class="go">    fiducials=array([0., 0.]))</span>
-</code></pre></div>
+</code></pre>
+</div>
 </div>
 
 
@@ -5124,7 +5198,7 @@ should non-existing parameters be ignored</li>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_file</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">path</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
+        <span class="name">from_file</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">path</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.from_file-view-source"><span>View Source</span></label>
 
@@ -5191,10 +5265,12 @@ the path to the file</li>
 <p>Any metadata is ignored when reading the file.
 If you want to read the metadata as well, use something like the following:</p>
 
-<div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># doctest: +SKIP</span>
 <span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> <span class="c1"># doctest: +SKIP</span>
-</code></pre></div>
+</code></pre>
+</div>
 
 <p>Then <code>data</code> will contain a dictionary with all of the data from the
 file, which can be easily parsed.</p>
@@ -5208,7 +5284,7 @@ file, which can be easily parsed.</p>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span></span>)</span>
+        <span class="name">from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.from_dict-view-source"><span>View Source</span></label>
 
@@ -5273,7 +5349,7 @@ file, which can be easily parsed.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">correlation_matrix</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">correlation_matrix</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="FisherMatrix.correlation_matrix-view-source"><span>View Source</span></label>
 
@@ -5586,7 +5662,11 @@ where $\mathsf{P}$ denotes the correlation matrix (see
                 let heading;
                 switch (result.doc.type) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;

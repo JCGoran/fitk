@@ -12,10 +12,10 @@ from typing import Optional
 
 # third party imports
 import numpy as np
+from scipy.integrate import quad
 
 # first party imports
 from fitk.fisher_derivative import D, FisherDerivative
-from scipy.integrate import quad
 
 
 def _hubble(config: dict):

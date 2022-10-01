@@ -61,8 +61,8 @@ class FisherBaseFigure(ABC):
         self._handles: MutableSequence[Artist] = []
         self._names = None
         self._labels: MutableSequence[str] = []
-        self._options = get_default_rcparams()
-        self._ndim = 0
+        self._options: dict = get_default_rcparams()
+        self._ndim: int = 0
         self._hspace = hspace
         self._wspace = wspace
 
@@ -137,7 +137,7 @@ class FisherBaseFigure(ABC):
         return self._axes
 
     @property
-    def hspace(self):
+    def hspace(self) -> float:
         """
         The amount of height reserved for space between subplots, expressed as
         a fraction of the average axis height.
@@ -145,7 +145,7 @@ class FisherBaseFigure(ABC):
         return self._hspace
 
     @property
-    def wspace(self):
+    def wspace(self) -> float:
         """
         The amount of width reserved for space between subplots, expressed as a
         fraction of the average axis width.
@@ -216,7 +216,7 @@ class FisherBaseFigure(ABC):
         artist
             the artist which we want to put on the legend
 
-        label
+        label : str
             the label for the artist
 
         Returns
@@ -258,15 +258,19 @@ class FisherBaseFigure(ABC):
         path : Path
             the path where to save the figure
 
-        dpi : float = 300
-            the resolution of the saved figure
+        dpi : float, optional
+            the resolution of the saved figure (default: 300)
 
-        bbox_inches : Union[str, Bbox] = "tight"
-            what is the bounding box for the figure
+        bbox_inches : str or Bbox, optional
+            what is the bounding box for the figure (default: 'tight')
 
-        kwargs
+        **kwargs
             any other keyword arguments that should be passed to
             `figure.savefig`
+
+        Returns
+        -------
+        None
 
         Raises
         ------
@@ -296,7 +300,7 @@ class FisherBaseFigure(ABC):
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
 
-        kwargs
+        **kwargs
             any keyword arguments that are also valid for
             `matplotlib.text.Text`, see [the
             documentation](https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text)
@@ -349,9 +353,13 @@ class FisherBaseFigure(ABC):
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
 
-        kwargs
+        **kwargs
             any keyword arguments passed to the methods for handling tick
             parameters (such as 'fontsize', 'rotation', etc.)
+
+        Returns
+        -------
+        None
 
         Raises
         ------
@@ -399,6 +407,10 @@ class FisherBaseFigure(ABC):
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
 
+        Returns
+        -------
+        None
+
         Raises
         ------
         EmptyFigureError
@@ -441,6 +453,10 @@ class FisherBaseFigure(ABC):
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
 
+        Returns
+        -------
+        None
+
         Raises
         ------
         EmptyFigureError
@@ -482,6 +498,10 @@ class FisherBaseFigure(ABC):
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
 
+        Returns
+        -------
+        None
+
         Raises
         ------
         EmptyFigureError
@@ -511,6 +531,10 @@ class FisherBaseFigure(ABC):
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
+
+        Returns
+        -------
+        None
 
         Raises
         ------
@@ -600,17 +624,17 @@ class FisherFigure1D(FisherBaseFigure):
 
         Parameters
         ----------
-        name
+        name : str
             the name (label) of the parameter where we want to draw
 
-        method
+        method : str
             the name of the method which we want to plot (such as `plot`,
             `scatter`, etc.)
 
-        args
+        *args
             any positional arguments passed to the method (usually some data)
 
-        kwargs
+        **kwargs
             any keyword arguments passed to the method (usually styling options)
 
         Returns
@@ -665,6 +689,9 @@ class FisherFigure1D(FisherBaseFigure):
         ----------
         fisher
             the Fisher object which we want to plot
+
+        **kwargs
+            any keyword arguments used for plotting (same as `plot_curve_1d`)
 
         Returns
         -------
@@ -779,21 +806,21 @@ class FisherFigure1D(FisherBaseFigure):
 
         Parameters
         ----------
-        args
+        *args
             any positional arguments for the legend
 
         overwrite : bool, optional
             whether to overwrite any "nice" options set by `fitk` (default:
             False)
 
-        loc, optional
+        loc : str or tuple of floats, optional
             which corner of the legend to use as the positioning anchor
-            (default: "lower center")
+            (default: 'lower center')
 
-        bbox_to_anchor, optional
+        bbox_to_anchor : Any, optional
             the location of where to place the legend (default: `[0.5, 1]`)
 
-        kwargs
+        **kwargs
             any other keyword arguments for the legend
 
         Returns
@@ -844,7 +871,7 @@ class FisherFigure1D(FisherBaseFigure):
 
         Parameters
         ----------
-        args
+        *args
             any positional arguments to `figure.suptitle`
 
         x : float, optional
@@ -853,7 +880,7 @@ class FisherFigure1D(FisherBaseFigure):
         y : float, optional
             the y position of the title (default: `1.2`)
 
-        kwargs
+        **kwargs
             any keyword arguments to `figure.suptitle`
 
         Returns
@@ -974,22 +1001,22 @@ class FisherFigure2D(FisherBaseFigure):
 
         Parameters
         ----------
-        args
+        *args
             any positional arguments for the legend
 
-        overwrite
+        overwrite : bool, optional
             whether to overwrite any "nice" options set by `fitk` (default:
             False)
 
-        loc
+        loc : str or tuple of floats, optional
             which corner of the legend to use as the positioning anchor
-            (default: "upper right")
+            (default: 'upper right')
 
-        bbox_to_anchor
+        bbox_to_anchor : Any, optional
             the location of where to place the legend (default: None, picked by
             `fitk` based on information about the plot)
 
-        kwargs
+        **kwargs
             any other keyword arguments for the legend
 
         Returns
@@ -1052,16 +1079,16 @@ class FisherFigure2D(FisherBaseFigure):
 
         Parameters
         ----------
-        args
+        *args
             any positional arguments to `figure.suptitle`
 
-        xscale
+        xscale : float, optional
             the x position of the title (default: `0.5`)
 
-        yscale
+        yscale : float, optional
             the y position of the title (default: `1.08`)
 
-        kwargs
+        **kwargs
             any keyword arguments to `figure.suptitle`
 
         Returns
@@ -1111,20 +1138,20 @@ class FisherFigure2D(FisherBaseFigure):
 
         Parameters
         ----------
-        name1
+        name1 : str
             the name (label) of the first parameter where we want to draw
 
-        name2
+        name2 : str
             the name (label) of the second parameter where we want to draw
 
-        method
+        method : str
             the name of the method which we want to plot (such as `plot`,
             `scatter`, etc.)
 
-        args
+        *args
             any positional arguments passed to the method (usually some data)
 
-        kwargs
+        **kwargs
             any keyword arguments passed to the method (usually styling options)
 
         Returns
@@ -1178,8 +1205,11 @@ class FisherFigure2D(FisherBaseFigure):
 
         Parameters
         ----------
-        fisher
+        fisher : FisherMatrix
             the Fisher object which we want to plot
+
+        **kwargs
+            any keyword arguments used for plotting (same as `plot_curve_2d`)
 
         Returns
         -------
@@ -1467,13 +1497,18 @@ def plot_curve_1d(
     name : str
         the name of the parameter which we want to plot
 
-    ax : Optional[matplotlib.axes.Axes] = None
-        the axis on which we want to plot the contour. By default, plots to a
-        new figure.
+    ax : matplotlib.axes.Axes, optional
+        the axis on which we want to plot the contour (default: None). If None,
+        plots to a new figure.
+
+    **kwargs
+        any keyword arguments passed to `matplotlib.pyplot.plot`
 
     Returns
     -------
     A 3-tuple `(Figure, Axes, Artist)`
+        The figure and the axis on which the artist was drawn on, as well as
+        the artist itself.
     """
     if ax is None:
         _, ax = plt.subplots()
@@ -1506,13 +1541,18 @@ def plot_curve_2d(
     name2 : str
         the name of the second parameter which we want to plot
 
-    ax : Optional[matplotlib.axes.Axes] = None
-        the axis on which we want to plot the contour. By default, plots to a
-        new figure.
+    ax : matplotlib.axes.Axes, optional
+        the axis on which we want to plot the contour (default: None). If None,
+        plots to a new figure.
+
+    **kwargs
+        any keyword arguments passed to `matplotlib.patches.Ellipse`
 
     Returns
     -------
     A 3-tuple `(Figure, Axes, Artist)`
+        The figure and the axis on which the artist was drawn on, as well as
+        the artist itself.
     """
     if ax is None:
         _, ax = plt.subplots()

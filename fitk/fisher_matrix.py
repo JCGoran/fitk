@@ -1383,6 +1383,17 @@ class FisherMatrix:
             fiducials=fiducials,
         )
 
+    def to_dict(self) -> dict:
+        """
+        Returns the Fisher object as a dictionary.
+        """
+        return dict(
+            values=self.values,
+            names=self.names,
+            latex_names=self.latex_names,
+            fiducials=self.fiducials,
+        )
+
     def to_file(
         self, path: str, metadata: Optional[Mapping[str, Any]] = None
     ) -> dict[str, Any]:
@@ -1422,12 +1433,7 @@ class FisherMatrix:
         >>> fm == fm_read # verify it's the same object
         True
         """
-        data = {
-            "values": self.values,
-            "names": self.names,
-            "latex_names": self.latex_names,
-            "fiducials": self.fiducials,
-        }
+        data = self.to_dict()
 
         if metadata is not None:
             data = {
@@ -1539,12 +1545,7 @@ class FisherMatrix:
         with open(path, "r", encoding="utf-8") as file_handle:
             data = json.loads(file_handle.read())
 
-        return cls(
-            data["values"],
-            names=data["names"],
-            latex_names=data["latex_names"],
-            fiducials=data["fiducials"],
-        )
+        return cls.from_dict(data)
 
     @classmethod
     def from_dict(

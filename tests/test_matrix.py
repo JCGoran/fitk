@@ -82,6 +82,19 @@ class TestFisherMatrix:
         with pytest.raises(MismatchingSizeError):
             FisherMatrix(np.diag([1, 2]), names=["a", "b", "c"])
 
+    def test_to_dict(self):
+        """
+        Check we get the correct representation of the Fisher object as a
+        dictionary
+        """
+        fm = FisherMatrix(np.diag([1, 2]))
+        assert fm.to_dict() == dict(
+            values=fm.values,
+            names=fm.names,
+            latex_names=fm.latex_names,
+            fiducials=fm.fiducials,
+        )
+
     def test_to_file(self):
         names = "Omegam Omegab w0 wa h ns sigma8 aIA etaIA betaIA".split(" ")
         # taken from v2 of https://arxiv.org/abs/1910.09273, table 1, and page 23

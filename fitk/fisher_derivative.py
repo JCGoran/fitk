@@ -85,6 +85,10 @@ class D:
         the custom stencil used for computing the derivative (default: None).
         If specified, the arguments `accuracy` and `kind` are ignored.
 
+    latex_name, optional
+        the display name of the parameter. If not specified, equals to name
+        (default: None)
+
     Raises
     ------
     ValueError
@@ -106,6 +110,7 @@ class D:
     accuracy: int = 4
     kind: str = "center"
     stencil: Optional[Collection[float]] = None
+    latex_name: Optional[str] = None
 
     def __eq__(self, other):
         return (
@@ -157,6 +162,9 @@ class D:
         else:
             npoints = self.accuracy + self.order
             self.stencil = np.arange(-npoints, 1)
+
+        if not self.latex_name:
+            self.latex_name = self.name
 
 
 class FisherDerivative:
@@ -300,11 +308,27 @@ class FisherDerivative:
         self,
         *args: D,
         parameter_dependence: str = "signal",
-        latex_names: Optional[Collection[str]] = None,
         **kwargs,
     ):
         r"""
         Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
+        The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
+        defined as:
+        $$
+            \frac{\partial \mathbf{S}^T}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathbf{S}}{\partial \theta_j}
+            +
+            \frac{1}{2}
+            \mathrm{Tr}\left(
+            \frac{\partial \mathsf{C}}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathsf{C}}{\partial \theta_j}
+            \mathsf{C}^{-1}
+            \right)
+        $$
+        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
+        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
 
         Parameters
         ----------
@@ -315,10 +339,6 @@ class FisherDerivative:
         parameter_dependence : {'signal', 'covariance', 'both'}
             where the parameter dependence is located, in the signal, the
             covariance, or both (default: 'signal')
-
-        latex_names, optional
-            the LaTeX names of the parameters that will be passed to the
-            `fitk.fisher_matrix.FisherMatrix` (default: None)
 
         **kwargs
             any other keyword arguments that should be passed to `signal` and
@@ -343,6 +363,7 @@ class FisherDerivative:
         # it hasn't been implemented, so we fail fast and early
         names = np.array([_.name for _ in args])
         values = np.array([_.value for _ in args])
+        latex_names = np.array([_.latex_name for _ in args])
 
         covariance_matrix = self.covariance(*zip(names, values))
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)

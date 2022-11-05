@@ -13,6 +13,14 @@ in the following way:
 >>> from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, D, FisherDerivative
 """
 
+from pathlib import Path
+
+__version__ = (
+    (Path(__file__).resolve().parent / "VERSION.txt")
+    .read_text(encoding="utf-8")
+    .strip()
+)
+
 from fitk import fisher_operations, fisher_utils, interfaces
 from fitk.fisher_derivative import D, FisherDerivative
 from fitk.fisher_matrix import FisherMatrix

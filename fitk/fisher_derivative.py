@@ -66,7 +66,7 @@ class D:
     name
         the name of the parameter w.r.t. which we take the derivative
 
-    value
+    fiducial
         the point where we want to compute the derivative
 
     abs_step
@@ -104,7 +104,7 @@ class D:
     """
 
     name: str
-    value: float
+    fiducial: float
     abs_step: float
     order: int = 1
     accuracy: int = 4
@@ -116,7 +116,7 @@ class D:
         return (
             isinstance(other, self.__class__)
             and self.name == other.name
-            and np.allclose(self.value, other.value)
+            and np.allclose(self.fiducial, other.fiducial)
             and np.allclose(self.abs_step, other.abs_step)
             and np.allclose(self.order, other.order)
             and self.kind == other.kind
@@ -291,7 +291,7 @@ class FisherDerivative:
                 [
                     getattr(self, method)(
                         *[
-                            (arg.name, arg.value + arg.abs_step * p)
+                            (arg.name, arg.fiducial + arg.abs_step * p)
                             for arg, p in zip(parsed_args, point)
                         ],
                         **kwargs,
@@ -362,10 +362,10 @@ class FisherDerivative:
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early
         names = np.array([_.name for _ in args])
-        values = np.array([_.value for _ in args])
+        fiducials = np.array([_.fiducial for _ in args])
         latex_names = np.array([_.latex_name for _ in args])
 
-        covariance_matrix = self.covariance(*zip(names, values))
+        covariance_matrix = self.covariance(*zip(names, fiducials))
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
@@ -379,7 +379,7 @@ class FisherDerivative:
                     "signal",
                     D(
                         name=arg.name,
-                        value=arg.value,
+                        fiducial=arg.fiducial,
                         abs_step=arg.abs_step,
                         kind=arg.kind,
                         accuracy=arg.accuracy,
@@ -397,7 +397,7 @@ class FisherDerivative:
                     "covariance",
                     D(
                         name=arg.name,
-                        value=arg.value,
+                        fiducial=arg.fiducial,
                         abs_step=arg.abs_step,
                         kind=arg.kind,
                         accuracy=arg.accuracy,
@@ -427,6 +427,6 @@ class FisherDerivative:
         return FisherMatrix(
             fisher_matrix,
             names=names,
-            fiducials=values,
+            fiducials=fiducials,
             latex_names=latex_names,
         )

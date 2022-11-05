@@ -169,14 +169,17 @@ class TestFisherDerivative:
 
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
-                g("signal", D(name="mu", value=value, abs_step=1e-4)),
+                g("signal", D(name="mu", fiducial=value, abs_step=1e-4)),
                 g.first_derivative_wrt_mu(value, 1),
             )
 
         # forward method
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
-                g("signal", D(name="mu", value=value, abs_step=1e-4, kind="forward")),
+                g(
+                    "signal",
+                    D(name="mu", fiducial=value, abs_step=1e-4, kind="forward"),
+                ),
                 g.first_derivative_wrt_mu(value, 1),
             )
 
@@ -185,7 +188,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="mu", value=value, abs_step=1e-4, kind="backward"),
+                    D(name="mu", fiducial=value, abs_step=1e-4, kind="backward"),
                 ),
                 g.first_derivative_wrt_mu(value, 1),
             )
@@ -195,7 +198,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="sigma", value=value, abs_step=1e-4, kind="forward"),
+                    D(name="sigma", fiducial=value, abs_step=1e-4, kind="forward"),
                 ),
                 g.first_derivative_wrt_sigma(1, value),
             )
@@ -205,7 +208,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="sigma", value=value, abs_step=1e-4, kind="backward"),
+                    D(name="sigma", fiducial=value, abs_step=1e-4, kind="backward"),
                 ),
                 g.first_derivative_wrt_sigma(1, value),
             )
@@ -223,15 +226,17 @@ class TestFisherDerivative:
 
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
-                g("signal", D(name="mu", value=value, abs_step=1e-4, order=2)),
+                g(
+                    "signal", D(name="mu", fiducial=value, abs_step=1e-4, order=2)
+                ),
                 g.second_derivative_wrt_mu(value, 1),
             )
             # same thing, but we set the derivative
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="mu", value=value, abs_step=1e-4),
-                    D(name="mu", value=value, abs_step=1e-4),
+                    D(name="mu", fiducial=value, abs_step=1e-4),
+                    D(name="mu", fiducial=value, abs_step=1e-4),
                 ),
                 g.second_derivative_wrt_mu(value, 1),
             )
@@ -240,8 +245,8 @@ class TestFisherDerivative:
             assert np.allclose(
                 g(
                     "signal",
-                    D(name="mu", value=mu, abs_step=1e-5, order=1, accuracy=2),
-                    D(name="sigma", value=sigma, abs_step=1e-5, order=1, accuracy=2),
+                    D(name="mu", fiducial=mu, abs_step=1e-5, order=1, accuracy=2),
+                    D(name="sigma", fiducial=sigma, abs_step=1e-5, order=1, accuracy=2),
                 ),
                 g.mixed_derivative(mu, sigma),
                 rtol=1e-3,
@@ -253,7 +258,7 @@ class TestFisherDerivative:
                     "signal",
                     D(
                         name="mu",
-                        value=mu,
+                        fiducial=mu,
                         abs_step=1e-5,
                         order=1,
                         kind="forward",
@@ -261,7 +266,7 @@ class TestFisherDerivative:
                     ),
                     D(
                         name="sigma",
-                        value=sigma,
+                        fiducial=sigma,
                         abs_step=1e-5,
                         accuracy=2,
                         order=1,
@@ -274,7 +279,7 @@ class TestFisherDerivative:
 
         # order of the combined derivative requested is too high
         with pytest.raises(ValueError):
-            g("signal", D(name="mu", value=2, abs_step=1e-5, order=11))
+            g("signal", D(name="mu", fiducial=2, abs_step=1e-5, order=11))
 
     def test_fisher_matrix(self):
         lin = LinearDerivative()
@@ -285,15 +290,17 @@ class TestFisherDerivative:
 
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
-        assert np.allclose(g("covariance", D(name="mu", value=1, abs_step=1e-3)), 0)
+        assert np.allclose(
+            g("covariance", D(name="mu", fiducial=1, abs_step=1e-3)), 0
+        )
 
         assert g.fisher_matrix(
-            D(name="mu", value=1, abs_step=1e-3),
-            D(name="sigma", value=0.5, abs_step=1e-3),
+            D(name="mu", fiducial=1, abs_step=1e-3),
+            D(name="sigma", fiducial=0.5, abs_step=1e-3),
             parameter_dependence="both",
         ) == g.fisher_matrix(
-            D(name="mu", value=1, abs_step=1e-3),
-            D(name="sigma", value=0.5, abs_step=1e-3),
+            D(name="mu", fiducial=1, abs_step=1e-3),
+            D(name="sigma", fiducial=0.5, abs_step=1e-3),
             parameter_dependence="both",
         )
 

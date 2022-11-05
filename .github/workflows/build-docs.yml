@@ -31,7 +31,7 @@ jobs:
     # Build the site
     - name: Build the site
       run: |
-        python3 -m pdoc --math --docformat numpy -o ./docs/ fitk
+        bash generate_docs.sh
 
     # If we've pushed to master, push the book's HTML to github-pages
     - if: ${{ github.ref == 'refs/heads/master' }}

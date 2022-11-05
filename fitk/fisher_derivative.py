@@ -244,24 +244,24 @@ class FisherDerivative:
             "The `covariance` method must be implemented first in order to be used"
         )
 
-    def __call__(
+    def derivative(
         self,
         method: str,
         *args: D,
         **kwargs,
     ):
         r"""
-        Evaluates the derivative.
+        Evaluates the derivative of `method` with respect to arguments `args`.
 
         Parameters
         ----------
         method : {'signal', 'covariance'}
-            the object for which we want to compute the derivative
+            the object (method) for which we want to compute the derivative
 
         args: D
             the derivatives which we want to compute
 
-        kwargs
+        **kwargs
             any keyword arguments passed to the method
         """
         _validate_derivatives(*args)
@@ -375,7 +375,7 @@ class FisherDerivative:
         # TODO parallelize
         for arg in args:
             if parameter_dependence in ["signal", "both"]:
-                signal_derivative[arg.name] = self(
+                signal_derivative[arg.name] = self.derivative(
                     "signal",
                     D(
                         name=arg.name,
@@ -393,7 +393,7 @@ class FisherDerivative:
         # TODO parallelize
         for arg in args:
             if parameter_dependence in ["covariance", "both"]:
-                covariance_derivative[arg.name] = self(
+                covariance_derivative[arg.name] = self.derivative(
                     "covariance",
                     D(
                         name=arg.name,

@@ -1563,7 +1563,7 @@ class FisherMatrix:
         Raises
         ------
         KeyError
-            if any the dictionary does not contain the correct data
+            if the dictionary contains malformed data
 
         Returns
         -------

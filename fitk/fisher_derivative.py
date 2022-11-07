@@ -258,11 +258,22 @@ class FisherDerivative:
         method : {'signal', 'covariance'}
             the object (method) for which we want to compute the derivative
 
-        args: D
-            the derivatives which we want to compute
+        *args
+            the parameters (see description of `D`) for which we want to
+            compute the derivatives
 
         **kwargs
             any keyword arguments passed to the method
+
+        Returns
+        -------
+        array_like of float
+            the resulting derivative as a numpy array
+
+        Raises
+        ------
+        ValueError
+            if `method` is not one of {'signal', 'covariance'}
         """
         # check that `method` is valid
         valid_methods = ["signal", "covariance"]

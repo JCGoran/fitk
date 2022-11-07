@@ -11,6 +11,7 @@ from typing import Optional
 
 # third party imports
 import numpy as np
+from scipy.linalg import block_diag
 
 try:
     import coffe
@@ -132,12 +133,12 @@ class CoffeMultipolesDerivative(FisherDerivative):
         For more details on the modelling, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
-        result = _parse_and_set_args(**self.config)
+        cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:
-            setattr(result, arg, value)
+            setattr(cosmo, arg, value)
 
         return np.array(
-            [_.value for _ in result.compute_multipoles_bulk()],
+            [_.value for _ in cosmo.compute_multipoles_bulk()],
         )
 
     def covariance(
@@ -159,17 +160,32 @@ class CoffeMultipolesDerivative(FisherDerivative):
         For more details on the modelling, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
-        result = _parse_and_set_args(**self.config)
+        cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:
-            setattr(result, arg, value)
+            setattr(cosmo, arg, value)
 
-        result = np.array(
-            [_.value for _ in result.compute_covariance_bulk()],
+        covariance = cosmo.compute_covariance_bulk()
+
+        result = block_diag(
+            *[
+                np.reshape(
+                    [
+                        _.value
+                        for _ in covariance[
+                            i : i + len(cosmo.sep) ** 2 * len(cosmo.l) ** 2
+                        ]
+                    ],
+                    (len(cosmo.sep) * len(cosmo.l), len(cosmo.sep) * len(cosmo.l)),
+                )
+                for i in range(
+                    0,
+                    len(covariance),
+                    len(cosmo.sep) ** 2 * len(cosmo.l) ** 2,
+                )
+            ]
         )
 
-        dim = round(np.sqrt(len(result)))
-
-        return np.reshape(result, (dim, dim))
+        return result
 
     @property
     def __credits__(self):

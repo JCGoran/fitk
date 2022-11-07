@@ -264,6 +264,12 @@ class FisherDerivative:
         **kwargs
             any keyword arguments passed to the method
         """
+        # check that `method` is valid
+        valid_methods = ["signal", "covariance"]
+        if method not in valid_methods:
+            raise ValueError(
+                f"The method `{method}` is not one of: {valid_methods}",
+            )
         _validate_derivatives(*args)
 
         parsed_args = _parse_derivatives(*args)

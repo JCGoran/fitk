@@ -221,6 +221,10 @@ class TestFisherDerivative:
         with pytest.raises(ValueError):
             g.derivative("covariance", D("a", 1, 1e-2))
 
+        # it should not be possible to call the derivative function itself
+        with pytest.raises(ValueError):
+            g.derivative("derivative", D(name="sigma", fiducial=1, abs_step=1e-4))
+
     def test_second_derivative(self):
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 

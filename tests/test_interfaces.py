@@ -10,7 +10,10 @@ from typing import Any
 import numpy as np
 from scipy.linalg import block_diag
 
-import coffe
+try:
+    import coffe
+except Exception:
+    pass
 from fitk import D, FisherMatrix
 from fitk.fisher_utils import find_diff_weights
 from fitk.interfaces.coffe_interfaces import CoffeMultipolesDerivative

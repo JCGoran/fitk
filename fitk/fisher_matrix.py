@@ -12,6 +12,7 @@ import json
 from collections.abc import Collection, Mapping
 from itertools import permutations
 from numbers import Number
+from pathlib import Path
 from typing import Any, Optional, Union
 
 # third party imports
@@ -1395,7 +1396,7 @@ class FisherMatrix:
         )
 
     def to_file(
-        self, path: str, metadata: Optional[Mapping[str, Any]] = None
+        self, path: Union[str, Path], metadata: Optional[Mapping[str, Any]] = None
     ) -> dict[str, Any]:
         r"""
         Saves the Fisher object to a file (UTF-8 encoded).
@@ -1405,7 +1406,7 @@ class FisherMatrix:
 
         Parameters
         ----------
-        path : str
+        path : str or Path
             the path to save the data to.
 
         metadata : dict, optional
@@ -1516,14 +1517,14 @@ class FisherMatrix:
     @classmethod
     def from_file(
         cls,
-        path: str,
+        path: Union[str, Path],
     ):
         """
         Reads a Fisher object from a file.
 
         Parameters
         ----------
-        path : str
+        path : str or Path
             the path to the file
 
         Returns

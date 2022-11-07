@@ -382,7 +382,7 @@ class FisherDerivative:
         fiducials = np.array([_.fiducial for _ in args])
         latex_names = np.array([_.latex_name for _ in args])
 
-        covariance_matrix = self.covariance(*zip(names, fiducials))
+        covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
@@ -401,8 +401,8 @@ class FisherDerivative:
                         kind=arg.kind,
                         accuracy=arg.accuracy,
                         stencil=arg.stencil,
-                        **kwargs,
                     ),
+                    **kwargs,
                 )
 
         covariance_derivative = {}
@@ -419,8 +419,8 @@ class FisherDerivative:
                         kind=arg.kind,
                         accuracy=arg.accuracy,
                         stencil=arg.stencil,
-                        **kwargs,
                     ),
+                    **kwargs,
                 )
             else:
                 covariance_derivative[arg.name] = np.zeros(covariance_shape)

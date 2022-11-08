@@ -160,18 +160,18 @@
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    &gt;&gt;&gt; sn = SupernovaDerivative()</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    Compute the derivative of the signal w.r.t. $\Omega_\mathrm{m}$:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    &gt;&gt;&gt; sn(&#39;signal&#39;, D(name=&#39;omega_m&#39;, value=0.32, abs_step=1e-3))</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    &gt;&gt;&gt; sn.derivative(&#39;signal&#39;, D(name=&#39;omega_m&#39;, fiducial=0.32, abs_step=1e-3))</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    array([-3.17838358])</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    Compute the mixed derivative of the signal w.r.t. both $\Omega_\mathrm{m}$</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    and $w$:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    &gt;&gt;&gt; sn(&#39;signal&#39;, D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3))</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    &gt;&gt;&gt; sn.derivative(&#39;signal&#39;, D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3))</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    array([2.94319875])</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    Compute the Fisher with $\Omega_\mathrm{m}$ and $w$ as parameters:</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    &gt;&gt;&gt; fm1 = sn.fisher_matrix(</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3),</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    ... latex_names=[r&#39;$\Omega_\mathrm{m}$&#39;, &#39;$w$&#39;])</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-3, latex_name=r&#39;$\Omega_\mathrm{m}$&#39;),</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    ... D(&#39;w&#39;, -1, 1e-3, latex_name=&#39;$w$&#39;))</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">    &gt;&gt;&gt; fm1</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    FisherMatrix(</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        array([[10.1021222 ,  3.13019854],</span>
@@ -182,8 +182,8 @@
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    Finally, check that we don&#39;t alter the result by using a smaller stepsize:</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    &gt;&gt;&gt; fm2 = sn.fisher_matrix(</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-4), D(&#39;w&#39;, -1, 1e-4),</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    ... latex_names=[r&#39;$\Omega_\mathrm{m}$&#39;, &#39;$w$&#39;])</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-4, latex_name=r&#39;$\Omega_\mathrm{m}$&#39;),</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    ... D(&#39;w&#39;, -1, 1e-4, latex_name=&#39;$w$&#39;))</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    &gt;&gt;&gt; fm2 == fm1</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    True</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -295,18 +295,18 @@
 </span><span id="SupernovaDerivative-71"><a href="#SupernovaDerivative-71"><span class="linenos"> 71</span></a><span class="sd">    &gt;&gt;&gt; sn = SupernovaDerivative()</span>
 </span><span id="SupernovaDerivative-72"><a href="#SupernovaDerivative-72"><span class="linenos"> 72</span></a>
 </span><span id="SupernovaDerivative-73"><a href="#SupernovaDerivative-73"><span class="linenos"> 73</span></a><span class="sd">    Compute the derivative of the signal w.r.t. $\Omega_\mathrm{m}$:</span>
-</span><span id="SupernovaDerivative-74"><a href="#SupernovaDerivative-74"><span class="linenos"> 74</span></a><span class="sd">    &gt;&gt;&gt; sn(&#39;signal&#39;, D(name=&#39;omega_m&#39;, value=0.32, abs_step=1e-3))</span>
+</span><span id="SupernovaDerivative-74"><a href="#SupernovaDerivative-74"><span class="linenos"> 74</span></a><span class="sd">    &gt;&gt;&gt; sn.derivative(&#39;signal&#39;, D(name=&#39;omega_m&#39;, fiducial=0.32, abs_step=1e-3))</span>
 </span><span id="SupernovaDerivative-75"><a href="#SupernovaDerivative-75"><span class="linenos"> 75</span></a><span class="sd">    array([-3.17838358])</span>
 </span><span id="SupernovaDerivative-76"><a href="#SupernovaDerivative-76"><span class="linenos"> 76</span></a>
 </span><span id="SupernovaDerivative-77"><a href="#SupernovaDerivative-77"><span class="linenos"> 77</span></a><span class="sd">    Compute the mixed derivative of the signal w.r.t. both $\Omega_\mathrm{m}$</span>
 </span><span id="SupernovaDerivative-78"><a href="#SupernovaDerivative-78"><span class="linenos"> 78</span></a><span class="sd">    and $w$:</span>
-</span><span id="SupernovaDerivative-79"><a href="#SupernovaDerivative-79"><span class="linenos"> 79</span></a><span class="sd">    &gt;&gt;&gt; sn(&#39;signal&#39;, D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3))</span>
+</span><span id="SupernovaDerivative-79"><a href="#SupernovaDerivative-79"><span class="linenos"> 79</span></a><span class="sd">    &gt;&gt;&gt; sn.derivative(&#39;signal&#39;, D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3))</span>
 </span><span id="SupernovaDerivative-80"><a href="#SupernovaDerivative-80"><span class="linenos"> 80</span></a><span class="sd">    array([2.94319875])</span>
 </span><span id="SupernovaDerivative-81"><a href="#SupernovaDerivative-81"><span class="linenos"> 81</span></a>
 </span><span id="SupernovaDerivative-82"><a href="#SupernovaDerivative-82"><span class="linenos"> 82</span></a><span class="sd">    Compute the Fisher with $\Omega_\mathrm{m}$ and $w$ as parameters:</span>
 </span><span id="SupernovaDerivative-83"><a href="#SupernovaDerivative-83"><span class="linenos"> 83</span></a><span class="sd">    &gt;&gt;&gt; fm1 = sn.fisher_matrix(</span>
-</span><span id="SupernovaDerivative-84"><a href="#SupernovaDerivative-84"><span class="linenos"> 84</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-3), D(&#39;w&#39;, -1, 1e-3),</span>
-</span><span id="SupernovaDerivative-85"><a href="#SupernovaDerivative-85"><span class="linenos"> 85</span></a><span class="sd">    ... latex_names=[r&#39;$\Omega_\mathrm{m}$&#39;, &#39;$w$&#39;])</span>
+</span><span id="SupernovaDerivative-84"><a href="#SupernovaDerivative-84"><span class="linenos"> 84</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-3, latex_name=r&#39;$\Omega_\mathrm{m}$&#39;),</span>
+</span><span id="SupernovaDerivative-85"><a href="#SupernovaDerivative-85"><span class="linenos"> 85</span></a><span class="sd">    ... D(&#39;w&#39;, -1, 1e-3, latex_name=&#39;$w$&#39;))</span>
 </span><span id="SupernovaDerivative-86"><a href="#SupernovaDerivative-86"><span class="linenos"> 86</span></a><span class="sd">    &gt;&gt;&gt; fm1</span>
 </span><span id="SupernovaDerivative-87"><a href="#SupernovaDerivative-87"><span class="linenos"> 87</span></a><span class="sd">    FisherMatrix(</span>
 </span><span id="SupernovaDerivative-88"><a href="#SupernovaDerivative-88"><span class="linenos"> 88</span></a><span class="sd">        array([[10.1021222 ,  3.13019854],</span>
@@ -317,8 +317,8 @@
 </span><span id="SupernovaDerivative-93"><a href="#SupernovaDerivative-93"><span class="linenos"> 93</span></a>
 </span><span id="SupernovaDerivative-94"><a href="#SupernovaDerivative-94"><span class="linenos"> 94</span></a><span class="sd">    Finally, check that we don&#39;t alter the result by using a smaller stepsize:</span>
 </span><span id="SupernovaDerivative-95"><a href="#SupernovaDerivative-95"><span class="linenos"> 95</span></a><span class="sd">    &gt;&gt;&gt; fm2 = sn.fisher_matrix(</span>
-</span><span id="SupernovaDerivative-96"><a href="#SupernovaDerivative-96"><span class="linenos"> 96</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-4), D(&#39;w&#39;, -1, 1e-4),</span>
-</span><span id="SupernovaDerivative-97"><a href="#SupernovaDerivative-97"><span class="linenos"> 97</span></a><span class="sd">    ... latex_names=[r&#39;$\Omega_\mathrm{m}$&#39;, &#39;$w$&#39;])</span>
+</span><span id="SupernovaDerivative-96"><a href="#SupernovaDerivative-96"><span class="linenos"> 96</span></a><span class="sd">    ... D(&#39;omega_m&#39;, 0.32, 1e-4, latex_name=r&#39;$\Omega_\mathrm{m}$&#39;),</span>
+</span><span id="SupernovaDerivative-97"><a href="#SupernovaDerivative-97"><span class="linenos"> 97</span></a><span class="sd">    ... D(&#39;w&#39;, -1, 1e-4, latex_name=&#39;$w$&#39;))</span>
 </span><span id="SupernovaDerivative-98"><a href="#SupernovaDerivative-98"><span class="linenos"> 98</span></a><span class="sd">    &gt;&gt;&gt; fm2 == fm1</span>
 </span><span id="SupernovaDerivative-99"><a href="#SupernovaDerivative-99"><span class="linenos"> 99</span></a><span class="sd">    True</span>
 </span><span id="SupernovaDerivative-100"><a href="#SupernovaDerivative-100"><span class="linenos">100</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -422,7 +422,7 @@ For definitions of the quantities used, refer to the documentation of
 <p>Compute the derivative of the signal w.r.t. $\Omega_\mathrm{m}$:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="p">(</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span> <span class="n">abs_step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">))</span>
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="n">fiducial</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span> <span class="n">abs_step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">))</span>
 <span class="go">array([-3.17838358])</span>
 </code></pre>
 </div>
@@ -431,7 +431,7 @@ For definitions of the quantities used, refer to the documentation of
 and $w$:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="p">(</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">))</span>
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">))</span>
 <span class="go">array([2.94319875])</span>
 </code></pre>
 </div>
@@ -440,8 +440,8 @@ and $w$:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm1</span> <span class="o">=</span> <span class="n">sn</span><span class="o">.</span><span class="n">fisher_matrix</span><span class="p">(</span>
-<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span>
-<span class="gp">... </span><span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\Omega_\mathrm</span><span class="si">{m}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="s1">&#39;$w$&#39;</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Omega_\mathrm</span><span class="si">{m}</span><span class="s1">$&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="s1">&#39;$w$&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm1</span>
 <span class="go">FisherMatrix(</span>
 <span class="go">    array([[10.1021222 ,  3.13019854],</span>
@@ -456,8 +456,8 @@ and $w$:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fm2</span> <span class="o">=</span> <span class="n">sn</span><span class="o">.</span><span class="n">fisher_matrix</span><span class="p">(</span>
-<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">),</span>
-<span class="gp">... </span><span class="n">latex_names</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\Omega_\mathrm</span><span class="si">{m}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="s1">&#39;$w$&#39;</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;omega_m&#39;</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Omega_\mathrm</span><span class="si">{m}</span><span class="s1">$&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="s1">&#39;$w$&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fm2</span> <span class="o">==</span> <span class="n">fm1</span>
 <span class="go">True</span>
 </code></pre>

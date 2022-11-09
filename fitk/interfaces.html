@@ -69,18 +69,18 @@ one can compute Fisher matrices using finite differences.</p>
 
 <h3 id="important-notice">Important notice</h3>
 
-<p>Due to the complexities involved in distributing software that is not
-under direct control of the developers/maintainers of <code><a href="../fitk.html">fitk</a></code> (version,
-installation, license issues, etc.), any third-party software (such as
-cosmological codes) is <em>not</em> bundled with <code><a href="../fitk.html">fitk</a></code> (i.e. installed
-automatically), and must be installed separately by the user.</p>
+<p>Due to the complexities involved in distributing software that is not under
+direct control of the developers/maintainers of <code><a href="../fitk.html">fitk</a></code> (version, installation,
+license issues, etc.), any external, third-party software (such as cosmological
+codes) is <em>not</em> bundled with <code><a href="../fitk.html">fitk</a></code> (i.e. installed automatically), and must be
+installed separately by the user.</p>
 
 <h3 id="computation-of-custom-derivatives">Computation of custom derivatives</h3>
 
-<p>To define a new interface, one should define a class that inherits from
-<code><a href="fisher_derivative.html#FisherDerivative">fitk.fisher_derivative.FisherDerivative</a></code>, and implements either the <code>signal</code>
-or the <code>covariance</code> method; below outlines the steps to create an interface of
-your own using a minimal amount of code:</p>
+<p>To define a new interface for computing derivatives, one should define a class
+that inherits from <code><a href="fisher_derivative.html#FisherDerivative">fitk.fisher_derivative.FisherDerivative</a></code>, and implements
+either the <code>signal</code> or the <code>covariance</code> methods (or both); below outlines the
+steps to create an interface of your own using a minimal amount of code:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span> <span class="c1"># required for Python 3.7</span>
@@ -125,14 +125,21 @@ your own using a minimal amount of code:</p>
 </code></pre>
 </div>
 
-<p>It is recommended (but not required) that any additional parameters should be
-stored in the constructor (i.e. <code>__init__</code> method), to prevent forgetting to
-pass them when computing the derivatives.
-Additionally, any extra information (members and methods) should be documented
-accordingly.
-Finally, if the external module could not be loaded, importing the module
-should raise an <code>ImportError</code> if the user attempts to instantiate a class
-with that module missing.</p>
+<p>The following are some general recommendations when creating a new interface:</p>
+
+<ul>
+<li>for ease of use, any additional parameters specifying the configuration for
+the interface should be passed to the constructor (i.e. the <code>__init__</code>
+method)</li>
+<li>extra information (methods, members, custom parameters) should be documented
+accordingly</li>
+<li>if the external module could not be imported, rather than directly raising an
+exception, it is preferable that instantiating a class from that module
+raises an <code>ImportError</code> instead. A simple way to accomplish this is to wrap
+the import in a <code>try...except ImportError</code>, pass the success result (perhaps
+stored as a boolean) to the constructor of the class, and then only raise the
+<code>ImportError</code> there</li>
+</ul>
 </div>
 
                         <input id="mod-interfaces-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -144,17 +151,17 @@ with that module missing.</p>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">one can compute Fisher matrices using finite differences.</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">### Important notice</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">Due to the complexities involved in distributing software that is not</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">under direct control of the developers/maintainers of `fitk` (version,</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">installation, license issues, etc.), any third-party software (such as</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">cosmological codes) is *not* bundled with `fitk` (i.e. installed</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">automatically), and must be installed separately by the user.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">Due to the complexities involved in distributing software that is not under</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">direct control of the developers/maintainers of `fitk` (version, installation,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">license issues, etc.), any external, third-party software (such as cosmological</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">codes) is *not* bundled with `fitk` (i.e. installed automatically), and must be</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">installed separately by the user.</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">### Computation of custom derivatives</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">To define a new interface, one should define a class that inherits from</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">`fitk.fisher_derivative.FisherDerivative`, and implements either the `signal`</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">or the `covariance` method; below outlines the steps to create an interface of</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">your own using a minimal amount of code:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">To define a new interface for computing derivatives, one should define a class</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">that inherits from `fitk.fisher_derivative.FisherDerivative`, and implements</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">either the `signal` or the `covariance` methods (or both); below outlines the</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">steps to create an interface of your own using a minimal amount of code:</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">```python</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">from __future__ import annotations # required for Python 3.7</span>
@@ -198,15 +205,19 @@ with that module missing.</p>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        return np.array([...])</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">```</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">It is recommended (but not required) that any additional parameters should be</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">stored in the constructor (i.e. `__init__` method), to prevent forgetting to</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">pass them when computing the derivatives.</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">Additionally, any extra information (members and methods) should be documented</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">accordingly.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">Finally, if the external module could not be loaded, importing the module</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">should raise an `ImportError` if the user attempts to instantiate a class</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">with that module missing.</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">The following are some general recommendations when creating a new interface:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">- for ease of use, any additional parameters specifying the configuration for</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">  the interface should be passed to the constructor (i.e. the `__init__`</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">  method)</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">- extra information (methods, members, custom parameters) should be documented</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">  accordingly</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">- if the external module could not be imported, rather than directly raising an</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">  exception, it is preferable that instantiating a class from that module</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">  raises an `ImportError` instead. A simple way to accomplish this is to wrap</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">  the import in a `try...except ImportError`, pass the success result (perhaps</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">  stored as a boolean) to the constructor of the class, and then only raise the</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">  `ImportError` there</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 
 

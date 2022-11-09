@@ -135,7 +135,11 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
         Notes
         -----
-        For more details on the modelling, see
+        The coordinates used are $(r, \ell, \bar{z})$, in that increasing order.
+        The size of the output is $\text{size}(r) \times \text{size}(\ell)
+        \times \text{size}(\bar{z})$.
+
+        For more details on the exact theoetical modelling used, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
         cosmo = _parse_and_set_args(**self.config)
@@ -162,7 +166,18 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
         Notes
         -----
-        For more details on the modelling, see
+        The covariance does not take into account cross-correlations between
+        the different redshifts, i.e. for $n$ redshift bins it has the form:
+        $$
+            \begin{pmatrix}
+            \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
+            0 & \mathsf{C}(\bar{z}_2) & \ldots & 0\\\
+            \vdots & \vdots & \ddots & \vdots\\\
+            0 & 0 & \ldots & \mathsf{C}(\bar{z}_n)
+            \end{pmatrix}
+        $$
+
+        For more details on the exact theoretical modelling used, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
         cosmo = _parse_and_set_args(**self.config)

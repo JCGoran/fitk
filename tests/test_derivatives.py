@@ -301,7 +301,7 @@ class TestFisherDerivative:
         assert g.fisher_matrix(
             D(name="mu", fiducial=1, abs_step=1e-3),
             D(name="sigma", fiducial=0.5, abs_step=1e-3),
-            parameter_dependence="both",
+            parameter_dependence="signal",
         ) == g.fisher_matrix(
             D(name="mu", fiducial=1, abs_step=1e-3),
             D(name="sigma", fiducial=0.5, abs_step=1e-3),

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 # standard library imports
 import copy
+import os
 from abc import ABC, abstractmethod
 from collections.abc import MutableSequence
 from itertools import product
@@ -207,7 +208,7 @@ class FisherBaseFigure(ABC):
         artist: Artist,
         label: str,
     ):
-        """
+        r"""
         This is a convenience function for correctly updating the legend after
         directly plotting some artist via `<instance>[<name(s)>].<method>`
 
@@ -226,15 +227,22 @@ class FisherBaseFigure(ABC):
         Examples
         --------
         Setup the plot:
-        >>> fp = FisherFigure1D()
-        >>> fp.plot(FisherMatrix(np.diag([1, 2]), names=["a", "b"]), label="Fisher matrix")
+        >>> fig = FisherFigure1D()
+        >>> fig.plot(FisherMatrix(np.diag([1, 2]), names=["a", "b"]), label="Fisher matrix")
 
         Add something to the plot that has a handle:
-        >>> handle, = fp["a"].plot([-1, 0, 1], [-1, 0, 1])
+        >>> handle, = fig["a"].plot([-1, 0, 1], [-1, 0, 1], color='red')
 
         Finally, add the handle to the legend, and draw the legend:
-        >>> fp.add_artist_to_legend(handle, "linear function")
-        >>> fp.legend() # the artist will now be shown correctly in the legend
+        >>> fig.add_artist_to_legend(handle, "linear function")
+        >>> _ = fig.legend() # the artist will now be shown correctly in the legend
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_add_artist_to_legend1.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_add_artist_to_legend1.png"
 
         Notes
         -----
@@ -552,8 +560,52 @@ class FisherBaseFigure(ABC):
 
 
 class FisherFigure1D(FisherBaseFigure):
-    """
+    r"""
     Container for easy access to elements in the 1D plot.
+
+    Examples
+    --------
+    Define some Fisher matrices:
+    >>> m1 = FisherMatrix(
+    ... [[3, -2], [-2, 5]],
+    ... names=['a', 'b'],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+    >>> m2 = FisherMatrix(
+    ... [[4, 1], [1, 6]],
+    ... names=['a', 'b'],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+
+    Instantiate a figure:
+    >>> fig = FisherFigure1D()
+
+    Draw marginalized 1D plots with the previously defined Fisher matrix:
+    >>> fig.plot(m1, label='first')
+
+    Add another plot with a different color and style:
+    >>> fig.plot(m2, label='second', ls=':', color='green')
+
+    Draw some other stuff on it:
+    >>> artist, = fig.draw('a', 'plot', [-1, 0, 1], [-1, 0, 1], color='red')
+    >>> # alternatively, the below will accomplish the same thing
+    >>> # artist, = fig['a'].plot([-1, 0, 1], [-1, 0, 1], color='red')
+
+    Caveat for the above: make sure to update the legend with this artist:
+    >>> fig.add_artist_to_legend(artist, label='curve')
+
+    Add a legend:
+    >>> _ = fig.legend(ncol=3, loc='center')
+
+    Add a title:
+    >>> _ = fig.set_title('Example Fisher matrix 1D plotting')
+
+    Save it to a file:
+    >>> fig.savefig(
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure1d_example1.png",
+    ... dpi=150)
+
+    <img width="100%" src="$IMAGE_PATH/fisher_figure1d_example1.png"
     """
 
     def __init__(
@@ -901,8 +953,52 @@ class FisherFigure1D(FisherBaseFigure):
 
 
 class FisherFigure2D(FisherBaseFigure):
-    """
+    r"""
     Container for easy access to elements in the 2D plot.
+
+    Examples
+    --------
+    Define some Fisher matrices:
+    >>> m1 = FisherMatrix(
+    ... [[3, -2], [-2, 5]],
+    ... names=['a', 'b'],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+    >>> m2 = FisherMatrix(
+    ... [[4, 1], [1, 6]],
+    ... names=['a', 'b'],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+
+    Instantiate a figure:
+    >>> fig = FisherFigure2D(show_1d_curves=True)
+
+    Draw a "triangle plot" with the previously defined Fisher matrix:
+    >>> fig.plot(m1, label='first')
+
+    Add a plot with a different color and style:
+    >>> fig.plot(m2, label='second', ls=':', color='green')
+
+    Draw some other stuff on it:
+    >>> artist, = fig.draw('a', 'b', 'plot', [-1, 0, 1], [-1, 0, 1], color='red')
+    >>> # alternatively, the below will accomplish the same thing
+    >>> # artist, = fig['a', 'b'].plot([-1, 0, 1], [-1, 0, 1], color='red')
+
+    Caveat: make sure to update the legend with this artist:
+    >>> fig.add_artist_to_legend(artist, label='curve')
+
+    Add a legend:
+    >>> _ = fig.legend()
+
+    Add a title:
+    >>> _ = fig.set_title('Example Fisher matrix 2D plotting')
+
+    Save it to a file:
+    >>> fig.savefig(
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_example1.png",
+    ... dpi=150)
+
+    <img width="100%" src="$IMAGE_PATH/fisher_figure2d_example1.png"
     """
 
     def __init__(
@@ -1214,6 +1310,24 @@ class FisherFigure2D(FisherBaseFigure):
         Returns
         -------
         None
+
+        Examples
+        --------
+        Define a Fisher matrix:
+        >>> m = FisherMatrix([[3, -2], [-2, 5]], names=['a', 'b'], latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'])
+
+        Initiate a figure:
+        >>> fig = FisherFigure2D(show_1d_curves=True)
+
+        Draw a "triangle plot" with the previously defined Fisher matrix:
+        >>> fig.plot(m)
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_plot_example.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_plot_example.png"
         """
         size = len(fisher)
 
@@ -1486,7 +1600,7 @@ def plot_curve_1d(
     ax: Optional[Axes] = None,
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
-    """
+    r"""
     Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.
 
     Parameters
@@ -1509,6 +1623,25 @@ def plot_curve_1d(
     A 3-tuple `(Figure, Axes, Artist)`
         The figure and the axis on which the artist was drawn on, as well as
         the artist itself.
+
+    Examples
+    --------
+    Define a Fisher matrix:
+    >>> m = FisherMatrix(
+    ... [[3, -2], [-2, 5]],
+    ... names=['a', 'b'],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+
+    Draw the marginalized parameter `a`:
+    >>> fig, ax, artist = plot_curve_1d(m, name='a', ls='--', color='red')
+
+    Save it to a file:
+    >>> fig.savefig(
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "plot_curve_1d_example1.png",
+    ... dpi=100)
+
+    <img width="100%" src="$IMAGE_PATH/plot_curve_1d_example1.png"
     """
     if ax is None:
         _, ax = plt.subplots()
@@ -1527,7 +1660,7 @@ def plot_curve_2d(
     scaling_factor: float = 1,
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
-    """
+    r"""
     Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.
 
     Parameters
@@ -1553,6 +1686,35 @@ def plot_curve_2d(
     A 3-tuple `(Figure, Axes, Artist)`
         The figure and the axis on which the artist was drawn on, as well as
         the artist itself.
+
+    Examples
+    --------
+    Define a Fisher matrix:
+    >>> m = FisherMatrix(
+    ... [[3, -2], [-2, 5]],
+    ... names=['a', 'b'],
+    ... fiducials=[1, -2],
+    ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
+    ... )
+
+    Draw the 1$\sigma$ contour of the parameter combination `a`, `b`:
+    >>> fig, ax, artist = plot_curve_2d(m, name1='a', name2='b', ls='--', color='red', fill=False)
+
+    Rescale the view a bit:
+    >>> _ = ax.autoscale()
+    >>> _ = ax.relim()
+    >>> _ = ax.autoscale_view()
+
+    Save it to a file:
+    >>> fig.savefig(
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "plot_curve_2d_example1.png",
+    ... dpi=100)
+
+    <img width="100%" src="$IMAGE_PATH/plot_curve_2d_example1.png"
+
+    Notes
+    -----
+    The limits of the plot are not updated automatically.
     """
     if ax is None:
         _, ax = plt.subplots()

@@ -1,5 +1,5 @@
 """
-FITK - Fisher Information ToolKit, version $VERSION
+### FITK - Fisher Information ToolKit, version $VERSION
 
 A Python package for computing, manipulating, and plotting Fisher-like
 objects.

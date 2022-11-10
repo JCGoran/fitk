@@ -62,7 +62,7 @@ jobs:
         run: |
           source .venv/bin/activate
           python -m pip install .
-          python -m pytest --cov=./ --cov-report=xml --mpl tests/
+          python -m pytest --cov=./ --cov-report=xml -k "not test_interfaces" tests/
           python -m coverage report
       - name: Upload coverage
         uses: codecov/codecov-action@v1

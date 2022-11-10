@@ -11,6 +11,7 @@ from typing import Optional
 
 # third party imports
 import numpy as np
+from scipy.linalg import block_diag
 
 try:
     import coffe
@@ -62,18 +63,23 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
     Examples
     --------
+    Import the necessary modules:
+    >>> from fitk import D
+
     Set some cosmology:
-    >>> cosmo = CoffeMultipolesDerivative(config=dict(omega_m=0.32)) # doctest: +SKIP
+    >>> cosmo = CoffeMultipolesDerivative(
+    ... config=dict(omega_m=0.32, sep=[10, 20, 30], l=[0], pixelsize=[5],
+    ... number_density1=[1e-3], number_density2=[1e-3], fsky=[0.3]))
 
     Compute the derivative of the signal (multipoles of 2PCF) w.r.t. $h$ with a
     fiducial value of $0.67$ and an absolute step size $10^{-3}$:
-    >>> cosmo('signal', D('h', 0.67, 1e-3)) # doctest: +SKIP
+    >>> cosmo.derivative('signal', D('h', 0.67, 1e-3))
 
     Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
     parameters:
-    >>> fm = cosmo.fisher_matrix( # doctest: +SKIP
-    ... D(name='omega_m', value=0.32, abs_step=1e-3),
-    ... D(name='n_s', value=0.96, abs_step=1e-3))
+    >>> fm = cosmo.fisher_matrix(
+    ... D(name='omega_m', fiducial=0.32, abs_step=1e-3),
+    ... D(name='n_s', fiducial=0.96, abs_step=1e-3))
     """
 
     __software_name__ = "coffe"
@@ -129,15 +135,19 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
         Notes
         -----
-        For more details on the modelling, see
+        The coordinates used are $(r, \ell, \bar{z})$, in that increasing order.
+        The size of the output is $\text{size}(r) \times \text{size}(\ell)
+        \times \text{size}(\bar{z})$.
+
+        For more details on the exact theoetical modelling used, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
-        result = _parse_and_set_args(**self.config)
+        cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:
-            setattr(result, arg, value)
+            setattr(cosmo, arg, value)
 
         return np.array(
-            [_.value for _ in result.compute_multipoles_bulk()],
+            [_.value for _ in cosmo.compute_multipoles_bulk()],
         )
 
     def covariance(
@@ -156,20 +166,46 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
         Notes
         -----
-        For more details on the modelling, see
+        The covariance does not take into account cross-correlations between
+        the different redshifts, i.e. for $n$ redshift bins it has the form:
+        $$
+            \begin{pmatrix}
+            \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
+            0 & \mathsf{C}(\bar{z}_2) & \ldots & 0\\\
+            \vdots & \vdots & \ddots & \vdots\\\
+            0 & 0 & \ldots & \mathsf{C}(\bar{z}_n)
+            \end{pmatrix}
+        $$
+
+        For more details on the exact theoretical modelling used, see
         [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
         """
-        result = _parse_and_set_args(**self.config)
+        cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:
-            setattr(result, arg, value)
+            setattr(cosmo, arg, value)
 
-        result = np.array(
-            [_.value for _ in result.compute_covariance_bulk()],
+        covariance = cosmo.compute_covariance_bulk()
+
+        result = block_diag(
+            *[
+                np.reshape(
+                    [
+                        _.value
+                        for _ in covariance[
+                            i : i + len(cosmo.sep) ** 2 * len(cosmo.l) ** 2
+                        ]
+                    ],
+                    (len(cosmo.sep) * len(cosmo.l), len(cosmo.sep) * len(cosmo.l)),
+                )
+                for i in range(
+                    0,
+                    len(covariance),
+                    len(cosmo.sep) ** 2 * len(cosmo.l) ** 2,
+                )
+            ]
         )
 
-        dim = round(np.sqrt(len(result)))
-
-        return np.reshape(result, (dim, dim))
+        return result
 
     @property
     def __credits__(self):

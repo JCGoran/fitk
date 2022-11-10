@@ -12,6 +12,7 @@ import json
 from collections.abc import Collection, Mapping
 from itertools import permutations
 from numbers import Number
+from pathlib import Path
 from typing import Any, Optional, Union
 
 # third party imports
@@ -200,20 +201,20 @@ class FisherMatrix:
 
         Parameters
         ----------
-        *values : array_like
+        *values : array_like of float
             The values of the Fisher object.
 
-        names : Optional[Collection[str]] = None
-            The names of the parameters.
+        names : array_like of str, optional
+            The names of the parameters (default: None).
             If not specified, defaults to `p1, ..., pn`.
 
-        latex_names : Optional[Collection[str]] = None
-            The LaTeX names of the parameters.
+        latex_names : array_like of str, optional
+            The LaTeX names of the parameters (default: None).
             If not specified, defaults to `names`.
 
-        fiducials : Optional[Collection[float]] = None
-            The fiducial values of the parameters. If not specified, default to
-            0 for all parameters.
+        fiducials : array_like of float, optional
+            The fiducial values of the parameters (default: None). If not
+            specified, default to 0 for all parameters.
 
         Raises
         ------
@@ -305,14 +306,15 @@ class FisherMatrix:
 
         Parameters
         ----------
-        names : Mapping[str, Union[str, Mapping]]
+        names : dict-like
             a mapping (dictionary-like object) between the old names and the
             new ones. The values it maps to can either be a string (the new
             name), or a dict with keys `name`, `latex_name`, and `fiducial`
             (only `name` is mandatory).
 
-        ignore_errors : bool = False
-            if set to True, will not raise an error if a parameter doesn't exist
+        ignore_errors : bool, optional
+            if set to True, will not raise an error if a parameter doesn't
+            exist (default: False)
 
         Returns
         -------
@@ -545,6 +547,7 @@ class FisherMatrix:
         Returns
         -------
         bool
+            Whether or nor the Fisher object is valid.
 
         Examples
         --------
@@ -565,7 +568,7 @@ class FisherMatrix:
 
         Parameters
         ----------
-        kwargs
+        **kwargs
             all of the other keyword arguments for the Python builtin `sorted`.
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
@@ -722,6 +725,7 @@ class FisherMatrix:
         Returns
         -------
         array_like : float
+            The diagonal elements as a numpy array.
         """
         return np.diag(self.values, **kwargs)
 
@@ -736,16 +740,17 @@ class FisherMatrix:
 
         Parameters
         ----------
-        names : string-like
+        names : str
             the names of the parameters to drop.
             If passing a list or a tuple, make sure to unpack it using the
             asterisk (*).
 
-        invert : bool = False
+        invert : bool, optional
             whether to drop all the parameters NOT in names (the complement)
+            (default: False)
 
-        ignore_errors : bool = False
-            should non-existing parameters be ignored
+        ignore_errors : bool, optional
+            should non-existing parameters be ignored (default: False)
 
         Returns
         -------
@@ -893,18 +898,19 @@ class FisherMatrix:
 
         Parameters
         ----------
-        name : Optional[str] = None
+        name : str, optional
             the name of the parameter for which we we want the constraints
+            (default: None)
 
-        marginalized : bool = True
+        marginalized : bool, optional
             whether we want the marginalized or the unmarginalized
-            constraints.
+            constraints (default: True).
 
-        sigma : Optional[float] = None
-            how many sigmas away.
+        sigma : float, optional
+            how many sigmas away (default: 1).
 
-        p : Optional[float] = None
-            the confidence interval (p-value).
+        p : float, optional
+            the confidence interval (p-value) (default: None).
             The relationship between `p` and `sigma` is defined via:
             $$
                 p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
@@ -1348,29 +1354,38 @@ class FisherMatrix:
 
         Parameters
         ----------
-        transformation : array-like
+        transformation : array_like of float
             the Jacobian of the transformation
 
-        names : array-like = None
-            list of new names for the Fisher object. If None, uses the old
-            names.
+        names : array_like of str, optional
+            list of new names for the Fisher object (default: None). If None,
+            uses the old names.
 
-        latex_names: array-like = None
-            list of new LaTeX names for the Fisher object. If None, and
-            `names` is set, uses those instead, otherwise uses the old LaTeX names.
+        latex_names: array_like of str, optional
+            list of new LaTeX names for the Fisher object (default: None). If
+            None, and `names` is set, uses those instead, otherwise uses the
+            old LaTeX names.
 
-        fiducials : array-like = None
-            the new values of the fiducials. If not set, defaults to old values.
+        fiducials : array_like of float, optional
+            the new values of the fiducials (default: None). If None, defaults
+            to old values.
 
         Returns
         -------
         FisherMatrix
-            the reparametrized Fisher object with possibly new names and
-            fiducials
+            The new Fisher object with the specified names, LaTeX names, and
+            fiducials.
 
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2]))
+        >>> fm
+        FisherMatrix(
+            array([[1., 0.],
+               [0., 2.]]),
+            names=array(['p1', 'p2'], dtype=object),
+            latex_names=array(['p1', 'p2'], dtype=object),
+            fiducials=array([0., 0.]))
         >>> jac = [[1, 4], [3, 2]]
         >>> fm.reparametrize(jac, names=['a', 'b'])
         FisherMatrix(
@@ -1446,9 +1461,20 @@ class FisherMatrix:
             fiducials=fiducials,
         )
 
+    def to_dict(self) -> dict:
+        """
+        Returns the Fisher object as a dictionary.
+        """
+        return dict(
+            values=self.values,
+            names=self.names,
+            latex_names=self.latex_names,
+            fiducials=self.fiducials,
+        )
+
     def to_file(
         self,
-        path: str,
+        path: Union[str, Path],
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> dict[str, Any]:
         r"""
@@ -1459,10 +1485,10 @@ class FisherMatrix:
 
         Parameters
         ----------
-        path : str
+        path : str or Path
             the path to save the data to.
 
-        metadata : Optional[Mapping[str, Any]] = None
+        metadata : dict, optional
             any metadata that should be associated to the object saved, in the
             form of a dictionary-like object
 
@@ -1473,13 +1499,15 @@ class FisherMatrix:
 
         Examples
         --------
+        >>> from pprint import pprint
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
-        >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False) # doctest: +SKIP
-        {'values': [[1.0, 0.0], [0.0, 2.0]],
-         'names': ['a', 'b'],
-         'latex_names': ['$\\mathbf{A}$', '$\\mathbf{B}$'],
-         'fiducials': [0.0, 0.0]}
+        >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False)
+        {'values': array([[1., 0.],
+               [0., 2.]]),
+         'names': array(['a', 'b'], dtype=object),
+         'latex_names': array(['$\\mathbf{A}$', '$\\mathbf{B}$'], dtype=object),
+         'fiducials': array([0., 0.])}
         >>> # convenience function for reading it
         >>> fm_read = FisherMatrix.from_file('example_matrix.json')
         >>> fm == fm_read # verify it's the same object
@@ -1517,15 +1545,16 @@ class FisherMatrix:
         names : str
             the names of the parameters to marginalize over
 
-        invert : bool = False
-            whether to marginalize over all the parameters NOT in names (the complement)
+        invert : bool, optional
+            whether to marginalize over all the parameters NOT in names (the complement) (default: False)
 
-        ignore_errors : bool = False
-            should non-existing parameters be ignored
+        ignore_errors : bool, optional
+            should non-existing parameters be ignored (default: False)
 
         Returns
         -------
         FisherMatrix
+            The Fisher object with the specified parameters marginalized over.
 
         Examples
         --------
@@ -1572,14 +1601,14 @@ class FisherMatrix:
     @classmethod
     def from_file(
         cls,
-        path: str,
+        path: Union[str, Path],
     ):
         """
         Reads a Fisher object from a file.
 
         Parameters
         ----------
-        path : str
+        path : str or Path
             the path to the file
 
         Returns
@@ -1624,7 +1653,7 @@ class FisherMatrix:
         Raises
         ------
         KeyError
-            if any the dictionary does not contain the correct data
+            if the dictionary contains malformed data
 
         Returns
         -------
@@ -1667,10 +1696,10 @@ class FisherMatrix:
 
         Parameters
         ----------
-        name1
+        name1 : str
             the name of the first parameter
 
-        name2
+        name2 : str
             the name of the second parameter
 
         Returns

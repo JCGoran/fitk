@@ -25,12 +25,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        poetry install
+        python3 -m pip install pdoc matplotlib numpy scipy wheel setuptools
+        python3 -m pip install .
 
     # Build the site
     - name: Build the site
       run: |
-        poetry run pdoc --math --docformat numpy -o ./docs/ fitk
+        bash generate_docs.sh
 
     # If we've pushed to master, push the book's HTML to github-pages
     - if: ${{ github.ref == 'refs/heads/master' }}

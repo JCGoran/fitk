@@ -66,7 +66,7 @@ class D:
     name
         the name of the parameter w.r.t. which we take the derivative
 
-    value
+    fiducial
         the point where we want to compute the derivative
 
     abs_step
@@ -85,6 +85,10 @@ class D:
         the custom stencil used for computing the derivative (default: None).
         If specified, the arguments `accuracy` and `kind` are ignored.
 
+    latex_name, optional
+        the display name of the parameter. If not specified, equals to name
+        (default: None)
+
     Raises
     ------
     ValueError
@@ -100,18 +104,19 @@ class D:
     """
 
     name: str
-    value: float
+    fiducial: float
     abs_step: float
     order: int = 1
     accuracy: int = 4
     kind: str = "center"
     stencil: Optional[Collection[float]] = None
+    latex_name: Optional[str] = None
 
     def __eq__(self, other):
         return (
             isinstance(other, self.__class__)
             and self.name == other.name
-            and np.allclose(self.value, other.value)
+            and np.allclose(self.fiducial, other.fiducial)
             and np.allclose(self.abs_step, other.abs_step)
             and np.allclose(self.order, other.order)
             and self.kind == other.kind
@@ -157,6 +162,9 @@ class D:
         else:
             npoints = self.accuracy + self.order
             self.stencil = np.arange(-npoints, 1)
+
+        if not self.latex_name:
+            self.latex_name = self.name
 
 
 class FisherDerivative:
@@ -236,26 +244,43 @@ class FisherDerivative:
             "The `covariance` method must be implemented first in order to be used"
         )
 
-    def __call__(
+    def derivative(
         self,
         method: str,
         *args: D,
         **kwargs,
     ):
         r"""
-        Evaluates the derivative.
+        Evaluates the derivative of `method` with respect to arguments `args`.
 
         Parameters
         ----------
         method : {'signal', 'covariance'}
-            the object for which we want to compute the derivative
+            the object (method) for which we want to compute the derivative
 
-        args: D
-            the derivatives which we want to compute
+        *args
+            the parameters (see description of `D`) for which we want to
+            compute the derivatives
 
-        kwargs
+        **kwargs
             any keyword arguments passed to the method
+
+        Returns
+        -------
+        array_like of float
+            the resulting derivative as a numpy array
+
+        Raises
+        ------
+        ValueError
+            if `method` is not one of {'signal', 'covariance'}
         """
+        # check that `method` is valid
+        valid_methods = ["signal", "covariance"]
+        if method not in valid_methods:
+            raise ValueError(
+                f"The method `{method}` is not one of: {valid_methods}",
+            )
         _validate_derivatives(*args)
 
         parsed_args = _parse_derivatives(*args)
@@ -283,7 +308,7 @@ class FisherDerivative:
                 [
                     getattr(self, method)(
                         *[
-                            (arg.name, arg.value + arg.abs_step * p)
+                            (arg.name, arg.fiducial + arg.abs_step * p)
                             for arg, p in zip(parsed_args, point)
                         ],
                         **kwargs,
@@ -307,12 +332,14 @@ class FisherDerivative:
         r"""
         Computes the following derivative tensor:
         $$
-            \mu_{,i_1, \ldots, i_{n_1}} \, \mathsf{C}^{-1} \, \mu_{,j_1,
+            \mathbf{S}^T_{,i_1, \ldots, i_{n_1}} \, \mathsf{C}^{-1} \, \mathbf{S}_{,j_1,
             \ldots, j_{n_2}}
             +
             \frac{1}{2} \mathrm{Tr}(\mathsf{C}^{-1} \mathsf{C}_{,i_1, \ldots,
             i_{n_1}} \mathsf{C}^{-1} \mathsf{C}_{,j_1, \ldots, j_{n_2}})
         $$
+        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
+        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
 
         Parameters
         ----------
@@ -353,7 +380,7 @@ class FisherDerivative:
         Suppose we have a model with parameters `p1` (fiducial value = 0) and
         `p2` (fiducial value = 1), and we want to compute the tensor:
         $$
-            \mu_{,\alpha,\beta} \, \mathsf{C}^{-1} \, \mu_{,\gamma}
+            \mathbf{S}^T_{,\alpha,\beta} \, \mathsf{C}^{-1} \, \mathbf{S}_{,\gamma}
         $$
         >>> fd = MyDerivative()
         >>> fd.derivative_tensor(2, 1, D('p1', 0, 1e-3), D('p2', 1, 1e-3))
@@ -365,11 +392,11 @@ class FisherDerivative:
             )
 
         names = np.array([_.name for _ in args])
-        values = np.array([_.value for _ in args])
+        fiducials = np.array([_.fiducial for _ in args])
 
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early
-        covariance_matrix = self.covariance(*zip(names, values))
+        covariance_matrix = self.covariance(*zip(names, fiducials))
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
@@ -384,7 +411,7 @@ class FisherDerivative:
                     derivatives: tuple[Any, ...] = (
                         D(
                             name=args[index].name,
-                            value=args[index].value,
+                            fiducial=args[index].fiducial,
                             abs_step=args[index].abs_step,
                             accuracy=args[index].accuracy,
                             kind=args[index].kind,
@@ -396,7 +423,7 @@ class FisherDerivative:
                     derivatives = tuple(
                         D(
                             name=args[_].name,
-                            value=args[_].value,
+                            fiducial=args[_].fiducial,
                             abs_step=args[_].abs_step,
                             accuracy=args[_].accuracy,
                             kind=args[_].kind,
@@ -406,7 +433,7 @@ class FisherDerivative:
                     )
 
                 if parameter_dependence in ["signal", "both"]:
-                    signal_derivative[name][key] = self(
+                    signal_derivative[name][key] = self.derivative(
                         "signal",
                         *derivatives,
                         **kwargs,
@@ -418,7 +445,7 @@ class FisherDerivative:
                     signal_derivative[name][permutation] = signal_derivative[name][key]
 
                 if parameter_dependence in ["covariance", "both"]:
-                    covariance_derivative[name][key] = self(
+                    covariance_derivative[name][key] = self.derivative(
                         "covariance",
                         *derivatives,
                         **kwargs,
@@ -457,12 +484,28 @@ class FisherDerivative:
         self,
         *args: D,
         parameter_dependence: str = "signal",
-        latex_names: Optional[Collection[str]] = None,
         correction_order: int = 1,
         **kwargs,
     ):
         r"""
         Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
+        The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
+        defined as:
+        $$
+            \frac{\partial \mathbf{S}^T}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathbf{S}}{\partial \theta_j}
+            +
+            \frac{1}{2}
+            \mathrm{Tr}\left(
+            \frac{\partial \mathsf{C}}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathsf{C}}{\partial \theta_j}
+            \mathsf{C}^{-1}
+            \right)
+        $$
+        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
+        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
 
         Parameters
         ----------
@@ -473,10 +516,6 @@ class FisherDerivative:
         parameter_dependence : {'signal', 'covariance', 'both'}
             where the parameter dependence is located, in the signal, the
             covariance, or both (default: 'signal')
-
-        latex_names, optional
-            the LaTeX names of the parameters that will be passed to the
-            `fitk.fisher_matrix.FisherMatrix` (default: None)
 
         correction_order, optional
             the order (in number of derivatives) of the correction to take into
@@ -525,12 +564,9 @@ class FisherDerivative:
                 **kwargs,
             )
 
-        names = np.array([_.name for _ in args])
-        values = np.array([_.value for _ in args])
-
         return FisherMatrix(
             *tensor.values(),
-            names=names,
-            fiducials=values,
-            latex_names=latex_names,
+            names=np.array([_.name for _ in args]),
+            fiducials=np.array([_.fiducial for _ in args]),
+            latex_names=np.array([_.latex_name for _ in args]),
         )

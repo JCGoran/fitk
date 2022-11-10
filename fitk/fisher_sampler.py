@@ -30,6 +30,11 @@ class FisherBaseSampler(ABC):
     def get_samples(self, *args, **kwargs):
         """
         Abstract method for returning the samples
+
+        Returns
+        -------
+        array_like : float
+            the samples as a numpy array
         """
         return NotImplemented
 
@@ -37,6 +42,11 @@ class FisherBaseSampler(ABC):
 class FisherDefaultSampler(FisherBaseSampler):
     """
     The default sampler used, which is `emcee`.
+
+    Notes
+    -----
+    For more details about `emcee`, see
+    https://emcee.readthedocs.io/en/stable/
     """
 
     def __init__(
@@ -81,6 +91,11 @@ class FisherDefaultSampler(FisherBaseSampler):
     def get_samples(self, *args, **kwargs):
         """
         Get the samples from emcee
+
+        Returns
+        -------
+        array_like of float
+            the samples as a numpy array
         """
         return self.sampler.get_chain(
             *self._get_sampler_args,

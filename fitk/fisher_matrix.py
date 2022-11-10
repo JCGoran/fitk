@@ -1786,14 +1786,16 @@ class FisherMatrix:
         points: int = 20_000,
     ) -> FisherBaseSampler:
         """
-        Returns the default `emcee` sampler as subclass of `FisherBaseSampler`.
+        Returns the default `emcee` sampler as subclass of
+        `fitk.fisher_sampler.FisherBaseSampler`.
 
         Parameters
         ----------
         seed : Any, optional
-            the initial seed to get the positions of the default RNG
+            the initial seed to get the positions of the default RNG (default:
+            None)
 
-        position_half_width : float, optional
+        position_half_width : float or array_like of float, optional
             the half-width of the initial point (default: 2 sigma marginalized
             constraints obtained from Fisher matrix)
 
@@ -1804,6 +1806,7 @@ class FisherMatrix:
         Returns
         -------
         fitk.fisher_sampler.FisherDefaultSampler
+            the instance of the sampler used for performing the sampling
 
         Notes
         -----

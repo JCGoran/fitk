@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 
-replace_version(){
+parse_docs(){
     # need to substitute the version in the init file
     init_path="fitk/__init__.py"
     init_content="$(cat "${init_path}")"
     package_version="$(cat "fitk/VERSION.txt")"
     sed -i 's/\$VERSION/'"${package_version}"'/g' "${init_path}"
-    # restore the init file
-    printf '%s\n' "${init_content}" > "${init_path}"
 
-    return 0
-}
-
-replace_images(){
     module="fitk/fisher_plotter.py"
     file_content="$(cat "${module}")"
     TEMP_IMAGE_DIR="$(mktemp -d -p .)"
@@ -29,8 +23,12 @@ replace_images(){
     else
         python3 -m pdoc --docformat numpy --math -o docs/ fitk
     fi
-    # restore the other file
+
+    # restore the module file
     printf '%s\n' "${file_content}" > "fitk/fisher_plotter.py"
+
+    # restore the init file
+    printf '%s\n' "${init_content}" > "${init_path}"
 
     # delete the image dir
     trap 'rm -fr ${TEMP_IMAGE_DIR}' EXIT
@@ -38,5 +36,4 @@ replace_images(){
     return 0
 }
 
-replace_version
-replace_images "$@"
+parse_docs "$@"

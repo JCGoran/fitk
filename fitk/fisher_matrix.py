@@ -293,6 +293,95 @@ class FisherMatrix:
                 self._latex_names,
             )
 
+    @property
+    def values(self):
+        """
+        Returns the values in the Fisher object as a numpy array.
+        """
+        return self._values
+
+    @values.setter
+    def values(
+        self,
+        value,
+    ):
+        """
+        Setter for the values of the Fisher object.
+        """
+        if len(self) != len(value):
+            raise MismatchingSizeError(self, value)
+
+        if not is_square(value):
+            raise ValueError(f"{value} is not a square object")
+
+        self._values = np.array(value, dtype=float)
+
+    @property
+    def fiducials(self):
+        """
+        Returns the fiducial values of the Fisher object as a numpy array.
+        """
+        return self._fiducial
+
+    @fiducials.setter
+    def fiducials(
+        self,
+        value: Collection[float],
+    ):
+        """
+        The bulk setter for the fiducial values of the Fisher object.
+        The length of the fiducials must be the same as the one of the original
+        object.
+        """
+        if len(value) != len(self):
+            raise MismatchingSizeError(value, self)
+        try:
+            self._fiducial = np.array([float(_) for _ in value])
+        except TypeError as err:
+            raise TypeError(err) from err
+
+    @property
+    def names(self):
+        """
+        Returns the parameter names of the Fisher object.
+        """
+        return self._names
+
+    @names.setter
+    def names(
+        self,
+        value: Collection[str],
+    ):
+        """
+        The bulk setter for the names.
+        The length of the names must be the same as the one of the original
+        object.
+        """
+        if len(set(value)) != len(self):
+            raise MismatchingSizeError(set(value), self)
+        self._names = np.array(value, dtype=object)
+
+    @property
+    def latex_names(self):
+        """
+        Returns the LaTeX names of the parameters of the Fisher object.
+        """
+        return self._latex_names
+
+    @latex_names.setter
+    def latex_names(
+        self,
+        value: Collection[str],
+    ):
+        """
+        The bulk setter for the LaTeX names.
+        The length of the names must be the same as the one of the original
+        object.
+        """
+        if len(set(value)) != len(self):
+            raise MismatchingSizeError(set(value), self)
+        self._latex_names = np.array(value, dtype=object)
+
     def rename(
         self,
         names: Mapping[str, Union[str, Mapping]],
@@ -687,29 +776,6 @@ class FisherMatrix:
         """
         return self._size
 
-    @property
-    def values(self):
-        """
-        Returns the values in the Fisher object as a numpy array.
-        """
-        return self._values
-
-    @values.setter
-    def values(
-        self,
-        value,
-    ):
-        """
-        Setter for the values of the Fisher object.
-        """
-        if len(self) != len(value):
-            raise MismatchingSizeError(self, value)
-
-        if not is_square(value):
-            raise ValueError(f"{value} is not a square object")
-
-        self._values = np.array(value, dtype=float)
-
     def is_diagonal(self):
         """
         Checks whether the Fisher matrix is diagonal.
@@ -988,70 +1054,6 @@ class FisherMatrix:
             raise ParameterNotFoundError(name, self.names)
 
         return result
-
-    @property
-    def fiducials(self):
-        """
-        Returns the fiducial values of the Fisher object as a numpy array.
-        """
-        return self._fiducial
-
-    @fiducials.setter
-    def fiducials(
-        self,
-        value: Collection[float],
-    ):
-        """
-        The setter for the fiducial values of the Fisher object.
-        """
-        if len(value) != len(self):
-            raise MismatchingSizeError(value, self)
-        try:
-            self._fiducial = np.array([float(_) for _ in value])
-        except TypeError as err:
-            raise TypeError(err) from err
-
-    @property
-    def names(self):
-        """
-        Returns the parameter names of the Fisher object.
-        """
-        return self._names
-
-    @names.setter
-    def names(
-        self,
-        value: Collection[str],
-    ):
-        """
-        The bulk setter for the names.
-        The length of the names must be the same as the one of the original
-        object.
-        """
-        if len(set(value)) != len(self):
-            raise MismatchingSizeError(set(value), self)
-        self._names = np.array(value, dtype=object)
-
-    @property
-    def latex_names(self):
-        """
-        Returns the LaTeX names of the parameters of the Fisher object.
-        """
-        return self._latex_names
-
-    @latex_names.setter
-    def latex_names(
-        self,
-        value: Collection[str],
-    ):
-        """
-        The bulk setter for the LaTeX names.
-        The length of the names must be the same as the one of the original
-        object.
-        """
-        if len(set(value)) != len(self):
-            raise MismatchingSizeError(set(value), self)
-        self._latex_names = np.array(value, dtype=object)
 
     def __add__(
         self,

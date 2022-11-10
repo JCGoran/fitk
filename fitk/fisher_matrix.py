@@ -59,7 +59,7 @@ class FisherMatrix:
     Examples
     --------
     Specify a Fisher object with default names and fiducials:
-    >>> fm = FisherMatrix(np.diag([5, 4]))
+    >>> fm = FisherMatrix(np.diag([5, 4]), latex_names=['$p_1$', '$p_2$'])
 
     The object has a friendly representation in the interactive session:
     >>> fm
@@ -67,8 +67,34 @@ class FisherMatrix:
         array([[5., 0.],
            [0., 4.]]),
         names=array(['p1', 'p2'], dtype=object),
-        latex_names=array(['p1', 'p2'], dtype=object),
+        latex_names=array(['$p_1$', '$p_2$'], dtype=object),
         fiducials=array([0., 0.]))
+
+    In a Jupyter notebook, it looks similar to the below (you can hover over
+    the $\LaTeX$ label to show the corresponding name and fiducial of that
+    parameter):
+
+    <table>
+    <thead>
+    <tr>
+    <th></th>
+    <th title="name = 'p1', fiducial = 0.0">$p_1$</th>
+    <th title="name = 'p2', fiducial = 0.0">$p_2$</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <th title="name = 'p1', fiducial = 0.0">$p_1$</th>
+    <td>5.000</td>
+    <td>0.000</td>
+    </tr>
+    <tr>
+    <th title="name = 'p2', fiducial = 0.0">$p_2$</th>
+    <td>0.000</td>
+    <td>4.000</td>
+    </tr>
+    </tbody>
+    </table>
 
     List the names:
     >>> fm.names

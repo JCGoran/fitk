@@ -782,12 +782,12 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-587"><a href="#L-587"><span class="linenos"> 587</span></a><span class="sd">    &gt;&gt;&gt; fig.plot(m2, label=&#39;second&#39;, ls=&#39;:&#39;, color=&#39;green&#39;)</span>
 </span><span id="L-588"><a href="#L-588"><span class="linenos"> 588</span></a>
 </span><span id="L-589"><a href="#L-589"><span class="linenos"> 589</span></a><span class="sd">    Draw some other stuff on it:</span>
-</span><span id="L-590"><a href="#L-590"><span class="linenos"> 590</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
+</span><span id="L-590"><a href="#L-590"><span class="linenos"> 590</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;, label=&#39;curve&#39;)</span>
 </span><span id="L-591"><a href="#L-591"><span class="linenos"> 591</span></a><span class="sd">    &gt;&gt;&gt; # alternatively, the below will accomplish the same thing</span>
 </span><span id="L-592"><a href="#L-592"><span class="linenos"> 592</span></a><span class="sd">    &gt;&gt;&gt; # artist, = fig[&#39;a&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</span><span id="L-593"><a href="#L-593"><span class="linenos"> 593</span></a>
-</span><span id="L-594"><a href="#L-594"><span class="linenos"> 594</span></a><span class="sd">    Caveat for the above: make sure to update the legend with this artist:</span>
-</span><span id="L-595"><a href="#L-595"><span class="linenos"> 595</span></a><span class="sd">    &gt;&gt;&gt; fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
+</span><span id="L-593"><a href="#L-593"><span class="linenos"> 593</span></a><span class="sd">    &gt;&gt;&gt; # note that in this case, due to certain limitations, you need to</span>
+</span><span id="L-594"><a href="#L-594"><span class="linenos"> 594</span></a><span class="sd">    &gt;&gt;&gt; # manually add the legend using a convenience function:</span>
+</span><span id="L-595"><a href="#L-595"><span class="linenos"> 595</span></a><span class="sd">    &gt;&gt;&gt; # fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </span><span id="L-596"><a href="#L-596"><span class="linenos"> 596</span></a>
 </span><span id="L-597"><a href="#L-597"><span class="linenos"> 597</span></a><span class="sd">    Add a legend:</span>
 </span><span id="L-598"><a href="#L-598"><span class="linenos"> 598</span></a><span class="sd">    &gt;&gt;&gt; _ = fig.legend(ncol=3, loc=&#39;center&#39;)</span>
@@ -1175,12 +1175,12 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-980"><a href="#L-980"><span class="linenos"> 980</span></a><span class="sd">    &gt;&gt;&gt; fig.plot(m2, label=&#39;second&#39;, ls=&#39;:&#39;, color=&#39;green&#39;)</span>
 </span><span id="L-981"><a href="#L-981"><span class="linenos"> 981</span></a>
 </span><span id="L-982"><a href="#L-982"><span class="linenos"> 982</span></a><span class="sd">    Draw some other stuff on it:</span>
-</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;b&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
+</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;b&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;, label=&#39;curve&#39;)</span>
 </span><span id="L-984"><a href="#L-984"><span class="linenos"> 984</span></a><span class="sd">    &gt;&gt;&gt; # alternatively, the below will accomplish the same thing</span>
 </span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a><span class="sd">    &gt;&gt;&gt; # artist, = fig[&#39;a&#39;, &#39;b&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</span><span id="L-986"><a href="#L-986"><span class="linenos"> 986</span></a>
-</span><span id="L-987"><a href="#L-987"><span class="linenos"> 987</span></a><span class="sd">    Caveat: make sure to update the legend with this artist:</span>
-</span><span id="L-988"><a href="#L-988"><span class="linenos"> 988</span></a><span class="sd">    &gt;&gt;&gt; fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
+</span><span id="L-986"><a href="#L-986"><span class="linenos"> 986</span></a><span class="sd">    &gt;&gt;&gt; # note that in this case, due to certain limitations, you need to</span>
+</span><span id="L-987"><a href="#L-987"><span class="linenos"> 987</span></a><span class="sd">    &gt;&gt;&gt; # manually add the legend using a convenience function:</span>
+</span><span id="L-988"><a href="#L-988"><span class="linenos"> 988</span></a><span class="sd">    &gt;&gt;&gt; # fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </span><span id="L-989"><a href="#L-989"><span class="linenos"> 989</span></a>
 </span><span id="L-990"><a href="#L-990"><span class="linenos"> 990</span></a><span class="sd">    Add a legend:</span>
 </span><span id="L-991"><a href="#L-991"><span class="linenos"> 991</span></a><span class="sd">    &gt;&gt;&gt; _ = fig.legend()</span>
@@ -3516,12 +3516,12 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-588"><a href="#FisherFigure1D-588"><span class="linenos">588</span></a><span class="sd">    &gt;&gt;&gt; fig.plot(m2, label=&#39;second&#39;, ls=&#39;:&#39;, color=&#39;green&#39;)</span>
 </span><span id="FisherFigure1D-589"><a href="#FisherFigure1D-589"><span class="linenos">589</span></a>
 </span><span id="FisherFigure1D-590"><a href="#FisherFigure1D-590"><span class="linenos">590</span></a><span class="sd">    Draw some other stuff on it:</span>
-</span><span id="FisherFigure1D-591"><a href="#FisherFigure1D-591"><span class="linenos">591</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
+</span><span id="FisherFigure1D-591"><a href="#FisherFigure1D-591"><span class="linenos">591</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;, label=&#39;curve&#39;)</span>
 </span><span id="FisherFigure1D-592"><a href="#FisherFigure1D-592"><span class="linenos">592</span></a><span class="sd">    &gt;&gt;&gt; # alternatively, the below will accomplish the same thing</span>
 </span><span id="FisherFigure1D-593"><a href="#FisherFigure1D-593"><span class="linenos">593</span></a><span class="sd">    &gt;&gt;&gt; # artist, = fig[&#39;a&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</span><span id="FisherFigure1D-594"><a href="#FisherFigure1D-594"><span class="linenos">594</span></a>
-</span><span id="FisherFigure1D-595"><a href="#FisherFigure1D-595"><span class="linenos">595</span></a><span class="sd">    Caveat for the above: make sure to update the legend with this artist:</span>
-</span><span id="FisherFigure1D-596"><a href="#FisherFigure1D-596"><span class="linenos">596</span></a><span class="sd">    &gt;&gt;&gt; fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
+</span><span id="FisherFigure1D-594"><a href="#FisherFigure1D-594"><span class="linenos">594</span></a><span class="sd">    &gt;&gt;&gt; # note that in this case, due to certain limitations, you need to</span>
+</span><span id="FisherFigure1D-595"><a href="#FisherFigure1D-595"><span class="linenos">595</span></a><span class="sd">    &gt;&gt;&gt; # manually add the legend using a convenience function:</span>
+</span><span id="FisherFigure1D-596"><a href="#FisherFigure1D-596"><span class="linenos">596</span></a><span class="sd">    &gt;&gt;&gt; # fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </span><span id="FisherFigure1D-597"><a href="#FisherFigure1D-597"><span class="linenos">597</span></a>
 </span><span id="FisherFigure1D-598"><a href="#FisherFigure1D-598"><span class="linenos">598</span></a><span class="sd">    Add a legend:</span>
 </span><span id="FisherFigure1D-599"><a href="#FisherFigure1D-599"><span class="linenos">599</span></a><span class="sd">    &gt;&gt;&gt; _ = fig.legend(ncol=3, loc=&#39;center&#39;)</span>
@@ -3926,16 +3926,12 @@ which axis to change (default: 'both')</li>
 <p>Draw some other stuff on it:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">artist</span><span class="p">,</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">artist</span><span class="p">,</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;curve&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># alternatively, the below will accomplish the same thing</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># artist, = fig[&#39;a&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</code></pre>
-</div>
-
-<p>Caveat for the above: make sure to update the legend with this artist:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">add_artist_to_legend</span><span class="p">(</span><span class="n">artist</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;curve&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># note that in this case, due to certain limitations, you need to</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># manually add the legend using a convenience function:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </code></pre>
 </div>
 
@@ -4559,12 +4555,12 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-981"><a href="#FisherFigure2D-981"><span class="linenos"> 981</span></a><span class="sd">    &gt;&gt;&gt; fig.plot(m2, label=&#39;second&#39;, ls=&#39;:&#39;, color=&#39;green&#39;)</span>
 </span><span id="FisherFigure2D-982"><a href="#FisherFigure2D-982"><span class="linenos"> 982</span></a>
 </span><span id="FisherFigure2D-983"><a href="#FisherFigure2D-983"><span class="linenos"> 983</span></a><span class="sd">    Draw some other stuff on it:</span>
-</span><span id="FisherFigure2D-984"><a href="#FisherFigure2D-984"><span class="linenos"> 984</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;b&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
+</span><span id="FisherFigure2D-984"><a href="#FisherFigure2D-984"><span class="linenos"> 984</span></a><span class="sd">    &gt;&gt;&gt; artist, = fig.draw(&#39;a&#39;, &#39;b&#39;, &#39;plot&#39;, [-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;, label=&#39;curve&#39;)</span>
 </span><span id="FisherFigure2D-985"><a href="#FisherFigure2D-985"><span class="linenos"> 985</span></a><span class="sd">    &gt;&gt;&gt; # alternatively, the below will accomplish the same thing</span>
 </span><span id="FisherFigure2D-986"><a href="#FisherFigure2D-986"><span class="linenos"> 986</span></a><span class="sd">    &gt;&gt;&gt; # artist, = fig[&#39;a&#39;, &#39;b&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</span><span id="FisherFigure2D-987"><a href="#FisherFigure2D-987"><span class="linenos"> 987</span></a>
-</span><span id="FisherFigure2D-988"><a href="#FisherFigure2D-988"><span class="linenos"> 988</span></a><span class="sd">    Caveat: make sure to update the legend with this artist:</span>
-</span><span id="FisherFigure2D-989"><a href="#FisherFigure2D-989"><span class="linenos"> 989</span></a><span class="sd">    &gt;&gt;&gt; fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
+</span><span id="FisherFigure2D-987"><a href="#FisherFigure2D-987"><span class="linenos"> 987</span></a><span class="sd">    &gt;&gt;&gt; # note that in this case, due to certain limitations, you need to</span>
+</span><span id="FisherFigure2D-988"><a href="#FisherFigure2D-988"><span class="linenos"> 988</span></a><span class="sd">    &gt;&gt;&gt; # manually add the legend using a convenience function:</span>
+</span><span id="FisherFigure2D-989"><a href="#FisherFigure2D-989"><span class="linenos"> 989</span></a><span class="sd">    &gt;&gt;&gt; # fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </span><span id="FisherFigure2D-990"><a href="#FisherFigure2D-990"><span class="linenos"> 990</span></a>
 </span><span id="FisherFigure2D-991"><a href="#FisherFigure2D-991"><span class="linenos"> 991</span></a><span class="sd">    Add a legend:</span>
 </span><span id="FisherFigure2D-992"><a href="#FisherFigure2D-992"><span class="linenos"> 992</span></a><span class="sd">    &gt;&gt;&gt; _ = fig.legend()</span>
@@ -5134,16 +5130,12 @@ the y position of the title (default: <code>1.2</code>)</li>
 <p>Draw some other stuff on it:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">artist</span><span class="p">,</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">artist</span><span class="p">,</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;curve&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># alternatively, the below will accomplish the same thing</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># artist, = fig[&#39;a&#39;, &#39;b&#39;].plot([-1, 0, 1], [-1, 0, 1], color=&#39;red&#39;)</span>
-</code></pre>
-</div>
-
-<p>Caveat: make sure to update the legend with this artist:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">add_artist_to_legend</span><span class="p">(</span><span class="n">artist</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;curve&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># note that in this case, due to certain limitations, you need to</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># manually add the legend using a convenience function:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># fig.add_artist_to_legend(artist, label=&#39;curve&#39;)</span>
 </code></pre>
 </div>
 

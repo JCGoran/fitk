@@ -587,12 +587,12 @@ class FisherFigure1D(FisherBaseFigure):
     >>> fig.plot(m2, label='second', ls=':', color='green')
 
     Draw some other stuff on it:
-    >>> artist, = fig.draw('a', 'plot', [-1, 0, 1], [-1, 0, 1], color='red')
+    >>> artist, = fig.draw('a', 'plot', [-1, 0, 1], [-1, 0, 1], color='red', label='curve')
     >>> # alternatively, the below will accomplish the same thing
     >>> # artist, = fig['a'].plot([-1, 0, 1], [-1, 0, 1], color='red')
-
-    Caveat for the above: make sure to update the legend with this artist:
-    >>> fig.add_artist_to_legend(artist, label='curve')
+    >>> # note that in this case, due to certain limitations, you need to
+    >>> # manually add the legend using a convenience function:
+    >>> # fig.add_artist_to_legend(artist, label='curve')
 
     Add a legend:
     >>> _ = fig.legend(ncol=3, loc='center')
@@ -980,12 +980,12 @@ class FisherFigure2D(FisherBaseFigure):
     >>> fig.plot(m2, label='second', ls=':', color='green')
 
     Draw some other stuff on it:
-    >>> artist, = fig.draw('a', 'b', 'plot', [-1, 0, 1], [-1, 0, 1], color='red')
+    >>> artist, = fig.draw('a', 'b', 'plot', [-1, 0, 1], [-1, 0, 1], color='red', label='curve')
     >>> # alternatively, the below will accomplish the same thing
     >>> # artist, = fig['a', 'b'].plot([-1, 0, 1], [-1, 0, 1], color='red')
-
-    Caveat: make sure to update the legend with this artist:
-    >>> fig.add_artist_to_legend(artist, label='curve')
+    >>> # note that in this case, due to certain limitations, you need to
+    >>> # manually add the legend using a convenience function:
+    >>> # fig.add_artist_to_legend(artist, label='curve')
 
     Add a legend:
     >>> _ = fig.legend()

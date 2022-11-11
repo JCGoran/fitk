@@ -701,8 +701,11 @@ class FisherMatrix:
 
         Examples
         --------
+        Define a Fisher matrix:
         >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'),
         ... latex_names=['hjkl', 'qwe', 'll'], fiducials=[8, 7, 3])
+
+        Sort according to values of the fiducials:
         >>> m.sort(key='fiducials')
         FisherMatrix(
             array([[2., 0., 0.],
@@ -711,6 +714,8 @@ class FisherMatrix:
             names=array(['f', 'd', 's'], dtype=object),
             latex_names=array(['ll', 'qwe', 'hjkl'], dtype=object),
             fiducials=array([3., 7., 8.]))
+
+        Sort according to the LaTeX names (alphabetically):
         >>> m.sort(key='latex_names')
         FisherMatrix(
             array([[3., 0., 0.],
@@ -854,19 +859,24 @@ class FisherMatrix:
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
+
+        Drop `p1` and `p3`:
         >>> m.drop('p1', 'p3')
         FisherMatrix(
             array([[2.]]),
             names=array(['p2'], dtype=object),
             latex_names=array(['p2'], dtype=object),
             fiducials=array([0.]))
-        >>> m.drop(*['p1', 'p3']) # same thing, but note the asterisk (*)
+
+        Same result, but note the asterisk (`*`):
+        >>> m.drop(*['p1', 'p3'])
         FisherMatrix(
             array([[2.]]),
             names=array(['p2'], dtype=object),
             latex_names=array(['p2'], dtype=object),
             fiducials=array([0.]))
-        >>> # drop everything that's NOT `p1` or `p3`
+
+        Drop everything *except* `p1` and `p3`:
         >>> m.drop('p1', 'p3', invert=True)
         FisherMatrix(
             array([[1., 0.],
@@ -1001,18 +1011,6 @@ class FisherMatrix:
 
         p : float, optional
             the confidence interval (p-value) (default: None).
-            The relationship between `p` and `sigma` is defined via:
-            $$
-                p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
-                            f(x, \mu, 1)\, \mathrm{d}x
-                          = \mathrm{Erf}(\sigma / \sqrt{2})
-            $$
-            and therefore the inverse is simply:
-            $$
-                \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
-            $$
-            The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
-            0.683, 0.954, and 0.997, respectively.
 
         Returns
         -------
@@ -1023,6 +1021,19 @@ class FisherMatrix:
         The user should specify either `sigma` or `p`, but not both
         simultaneously.
         If neither are specified, defaults to `sigma=1`.
+
+        The relationship between `p` and `sigma` is defined via:
+        $$
+            p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
+                        f(x, \mu, 1)\, \mathrm{d}x
+                      = \mathrm{Erf}(\sigma / \sqrt{2})
+        $$
+        and therefore the inverse is simply:
+        $$
+            \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
+        $$
+        The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
+        0.683, 0.954, and 0.997, respectively.
 
         Examples
         --------
@@ -1375,7 +1386,11 @@ class FisherMatrix:
             names=array(['p1', 'p2'], dtype=object),
             latex_names=array(['p1', 'p2'], dtype=object),
             fiducials=array([0., 0.]))
+
+        Define a Jacobian:
         >>> jac = [[1, 4], [3, 2]]
+
+        Reparametrize according to that Jacobian:
         >>> fm.reparametrize(jac, names=['a', 'b'])
         FisherMatrix(
             array([[19., 16.],
@@ -1457,9 +1472,12 @@ class FisherMatrix:
          'names': array(['a', 'b'], dtype=object),
          'latex_names': array(['$\\mathbf{A}$', '$\\mathbf{B}$'], dtype=object),
          'fiducials': array([0., 0.])}
-        >>> # convenience function for reading it
+
+        There is also a convenience function for reading it:
         >>> fm_read = FisherMatrix.from_file('example_matrix.json')
-        >>> fm == fm_read # verify it's the same object
+
+        Verify it's the same object:
+        >>> fm == fm_read
         True
         """
         data = self.to_dict()

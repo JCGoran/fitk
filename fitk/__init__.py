@@ -69,7 +69,7 @@ error)
 5. sort according to indices (0-based) of the names
 >>> my_matrix.sort(key=[2, 1, 0])
 
-## ...reverse the order of parameters in my matrix?
+## ...reverse the order of parameters in the matrix?
 
 You can use the following code:
 >>> my_matrix.sort(key=list(reversed(my_matrix.names)))
@@ -129,6 +129,33 @@ Note that the Jacobian does *not* need to be a square matrix, so the new names,
 fiducials, and LaTeX names should have the same dimensions as the output
 matrix.
 
+## ...verify that the Fisher matrix is valid?
+
+Use the [`is_valid`](fitk/fisher_matrix.html#FisherMatrix.is_valid) method,
+which returns a boolean reporting whether the matrix is a Fisher matrix:
+
+>>> my_matrix.is_valid()
+
+## ...retrieve/add a value for a specific element in the matrix?
+
+You can use the element accessor `[]`.
+
+For instance, the below outputs the off-diagonal element corresponding to parameters 'a' and 'b':
+>>> my_matrix['a', 'b']
+
+while the below sets its value:
+>>> my_matrix['a', 'b'] = 5
+
+Note that the transpose element (in this case, `('b', 'a')`) is automatically
+updated to keep the Fisher matrix symmetric.
+
+## ...add a Gaussian prior for a specific parameter?
+
+Since this is equivalent to adding $1 / \sigma^2$ to the diagonal element
+corresponding to that parameter, see: [...retrieve/add a value for a specific
+element in the
+matrix?](#retrieveadd-a-value-for-a-specific-element-in-the-matrix)
+
 ## ...compute constraints?
 
 Use the [`constraints`](fitk/fisher_matrix.html#FisherMatrix.constraints)
@@ -176,9 +203,9 @@ method:
 
 See the linked method for details on how the FoM is computed.
 
-## ...numerically compute a Fisher matrix using my code?
+## ...numerically compute a Fisher matrix using a code?
 
-Assuming you already have a Python module for your code, you can follow the
+Assuming you already have a Python module for the code, you can follow the
 instructions how to define an interface at `fitk.interfaces`.
 
 Once you've done that, and you are sure that the results check out, it should
@@ -239,19 +266,19 @@ Note that `plot` accepts the most frequently used arguments from
 such as `ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`),
 `label`, as well as many others.
 
-## ...add a legend to my plot?
+## ...add a legend to the plot?
 
 Use the `legend` method of
 [`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D.legend)/[`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D.legend):
 >>> fig.legend()
 
-## ...add a title to my plot?
+## ...add a title to the plot?
 
 Use the `set_title` method of
 [`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D.set_title)/[`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D.set_title):
->>> fig.set_title('My cool plot')
+>>> fig.set_title('Example plot')
 
-## ...save my plot?
+## ...save the plot?
 
 Use the [`savefig`](fitk/fisher_plotter.html#FisherBaseFigure.savefig) method
 of `FisherFigure1D`/`FisherFigure2D`:

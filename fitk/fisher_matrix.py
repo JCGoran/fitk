@@ -287,9 +287,9 @@ class FisherMatrix:
 
         # setting the fiducials
         if fiducials is None:
-            self._fiducial = np.zeros(self._size, dtype=float)
+            self._fiducials = np.zeros(self._size, dtype=float)
         else:
-            self._fiducial = np.array(fiducials, dtype=float)
+            self._fiducials = np.array(fiducials, dtype=float)
 
         # setting the names
         if names is None:
@@ -310,12 +310,12 @@ class FisherMatrix:
         # check sizes of inputs
         if not all(
             len(_) == self._size
-            for _ in (self._names, self._fiducial, self._latex_names)
+            for _ in (self._names, self._fiducials, self._latex_names)
         ):
             raise MismatchingSizeError(
                 self._values[0],
                 self._names,
-                self._fiducial,
+                self._fiducials,
                 self._latex_names,
             )
 
@@ -347,7 +347,7 @@ class FisherMatrix:
         """
         Returns the fiducial values of the Fisher object as a numpy array.
         """
-        return self._fiducial
+        return self._fiducials
 
     @fiducials.setter
     def fiducials(
@@ -362,7 +362,7 @@ class FisherMatrix:
         if len(value) != len(self):
             raise MismatchingSizeError(value, self)
         try:
-            self._fiducial = np.array([float(_) for _ in value])
+            self._fiducials = np.array([float(_) for _ in value])
         except TypeError as err:
             raise TypeError(err) from err
 

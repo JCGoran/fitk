@@ -729,3 +729,13 @@ class TestFisherMatrix:
             fisher1.figure_of_correlation(),
             -np.log(np.sqrt(np.linalg.det(fisher1.correlation_matrix()))),
         )
+
+    def test_constructor(self):
+        """
+        Check that `FisherMatrix` is idempotent, that is, that
+        `FisherMatrix(<instance of FisherMatrix>)` works and returns the same
+        `FisherMatrix`
+        """
+        matrix = FisherMatrix(np.diag([1, 2, 3]))
+
+        assert matrix == FisherMatrix(matrix)

@@ -273,6 +273,15 @@ class FisherMatrix:
             latex_names=array(['$\\alpha$', '$\\beta$'], dtype=object),
             fiducials=array([-3.,  2.]))
         """
+        if isinstance(values, self.__class__):
+            self._values = values.values
+            self._fiducials = values.fiducials
+            self._names = values.names
+            self._latex_names = values.latex_names
+            self._size = np.shape(self._values)[0]
+            self._ndim = np.ndim(self._values)
+            return
+
         if np.ndim(values) != 2:
             raise ValueError(f"The object {values} is not 2-dimensional")
 

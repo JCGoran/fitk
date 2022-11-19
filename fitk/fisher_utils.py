@@ -87,6 +87,17 @@ class ParameterNotFoundError(ValueError):
         super().__init__(self.message)
 
 
+class ValidationError(Exception):
+    """
+    Error raised when
+    `fitk.fisher_derivative.FisherDerivative.validate_parameters` fails.
+    """
+
+    def __init__(self, parameter):
+        self.message = f"Parameter '{parameter.name}' contains invalid values"
+        super().__init__(self.message)
+
+
 class MismatchingValuesError(ValueError):
     """
     Error raised when values of either fiducials or names do not match.

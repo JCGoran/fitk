@@ -13,6 +13,7 @@ import pytest
 
 # first party imports
 from fitk.fisher_derivative import D, FisherDerivative, _expansion_coefficient
+from fitk.fisher_utils import ValidationError
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
 
 
@@ -42,6 +43,12 @@ class LinearDerivative(FisherDerivative):
 class GaussianDerivative(FisherDerivative):
     def __init__(self, config=None):
         self.config = config if config is not None else {"mu": 1.0, "sigma": 1.0}
+
+    def validate_parameter(self, arg: D):
+        if arg.name not in ["mu", "sigma"]:
+            return False
+
+        return True
 
     def signal(
         self,
@@ -307,6 +314,15 @@ class TestFisherDerivative:
             D(name="sigma", fiducial=0.5, abs_step=1e-3),
             parameter_dependence="both",
         )
+
+    def test_validate_parameters(self):
+        """
+        Test to make sure `validate_parameters` method works.
+        """
+        g = GaussianDerivative({"mu": 1, "sigma": 1})
+
+        with pytest.raises(ValidationError):
+            g.fisher_matrix(D(name="asdf", fiducial=0, abs_step=1e-3))
 
 
 class TestMiscDerivatives:

@@ -17,7 +17,12 @@ import numpy as np
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import _expansion_coefficient, find_diff_weights, is_iterable
+from fitk.fisher_utils import (
+    ValidationError,
+    _expansion_coefficient,
+    find_diff_weights,
+    is_iterable,
+)
 
 
 def _validate_derivatives(
@@ -184,6 +189,27 @@ class FisherDerivative:
         Placeholder constructor that does nothing. The user should override
         this method if they wish to perform custom initialization.
         """
+
+    def validate_parameter(
+        self,
+        arg: D,
+    ) -> bool:
+        """
+        Placeholder method used for validating a parameter when calling
+        `fisher_matrix`. The user should override this method if they wish to
+        perform custom validation.
+
+        Parameters
+        ----------
+        arg
+            the parameter (see description of `D`) which we want to validate
+
+        Returns
+        -------
+        bool
+            the outcome of the validation (default: True)
+        """
+        return True
 
     def signal(
         self,
@@ -373,6 +399,9 @@ class FisherDerivative:
             if either `signal` or `covariance` have not been implemented, and
             the user set `parameter_dependence` to be in one of those
 
+        ValidationError
+            if the parameter validation failed
+
         Notes
         -----
         The `order` parameter is ignored if passed to `D`.
@@ -382,6 +411,10 @@ class FisherDerivative:
         names = np.array([_.name for _ in args])
         fiducials = np.array([_.fiducial for _ in args])
         latex_names = np.array([_.latex_name for _ in args])
+
+        for arg in args:
+            if not self.validate_parameter(arg):
+                raise ValidationError(arg)
 
         covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)

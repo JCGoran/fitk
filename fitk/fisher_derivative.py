@@ -181,7 +181,8 @@ class FisherDerivative:
 
     def __init__(self, *args, **kwargs):
         """
-        Placeholder constructor that currently does nothing.
+        Placeholder constructor that does nothing. The user should override
+        this method if they wish to perform custom initialization.
         """
 
     def signal(

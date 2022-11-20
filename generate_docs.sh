@@ -7,6 +7,8 @@ parse_docs(){
     package_version="$(cat "fitk/VERSION.txt")"
     sed -i 's/\$VERSION/'"${package_version}"'/g' "${init_path}"
 
+    logo_path="./assets/project_logo.png"
+
     module="fitk/fisher_plotter.py"
     file_content="$(cat "${module}")"
     TEMP_IMAGE_DIR="$(mktemp -d -p .)"
@@ -19,9 +21,16 @@ parse_docs(){
     done
     if [ "$1" = '-i' ]
     then
-        python3 -m pdoc -h 0.0.0.0 --docformat numpy --math fitk
+        python3 -m pdoc \
+            -h 0.0.0.0 \
+            --logo "data:image/png;base64,$(base64 -w 0 "${logo_path}")" \
+            --favicon "data:image/png;base64,$(convert -background none -gravity center ${logo_path} -resize 400x400 -extent 400x400 png:- | base64 -w 0)" \
+            --docformat numpy --math fitk
     else
-        python3 -m pdoc --docformat numpy --math -o docs/ fitk
+        python3 -m pdoc \
+            --logo "data:image/png;base64,$(base64 -w 0 "${logo_path}")" \
+            --favicon "data:image/png;base64,$(convert -background none -gravity center ${logo_path} -resize 400x400 -extent 400x400 png:- | base64 -w 0)" \
+            --docformat numpy --math -o docs/ fitk
     fi
 
     # restore the module file

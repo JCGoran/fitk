@@ -239,7 +239,7 @@ class FisherBaseFigure(ABC):
 
         Save it to a file:
         >>> fig.savefig(
-        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_add_artist_to_legend1.png",
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_add_artist_to_legend1.png",
         ... dpi=150)
 
         <img width="100%" src="$IMAGE_PATH/fisher_figure2d_add_artist_to_legend1.png"
@@ -602,7 +602,7 @@ class FisherFigure1D(FisherBaseFigure):
 
     Save it to a file:
     >>> fig.savefig(
-    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure1d_example1.png",
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure1d_example1.png",
     ... dpi=150)
 
     <img width="100%" src="$IMAGE_PATH/fisher_figure1d_example1.png"
@@ -995,7 +995,7 @@ class FisherFigure2D(FisherBaseFigure):
 
     Save it to a file:
     >>> fig.savefig(
-    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_example1.png",
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_example1.png",
     ... dpi=150)
 
     <img width="100%" src="$IMAGE_PATH/fisher_figure2d_example1.png"
@@ -1324,7 +1324,7 @@ class FisherFigure2D(FisherBaseFigure):
 
         Save it to a file:
         >>> fig.savefig(
-        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "fisher_figure2d_plot_example.png",
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_plot_example.png",
         ... dpi=150)
 
         <img width="100%" src="$IMAGE_PATH/fisher_figure2d_plot_example.png"
@@ -1638,7 +1638,7 @@ def plot_curve_1d(
 
     Save it to a file:
     >>> fig.savefig(
-    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "plot_curve_1d_example1.png",
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_1d_example1.png",
     ... dpi=100)
 
     <img width="100%" src="$IMAGE_PATH/plot_curve_1d_example1.png"
@@ -1707,7 +1707,7 @@ def plot_curve_2d(
 
     Save it to a file:
     >>> fig.savefig(
-    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR") / "plot_curve_2d_example1.png",
+    ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_2d_example1.png",
     ... dpi=100)
 
     <img width="100%" src="$IMAGE_PATH/plot_curve_2d_example1.png"

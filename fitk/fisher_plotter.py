@@ -253,7 +253,7 @@ class FisherBaseFigure(ABC):
 
     def savefig(
         self,
-        path: Path,
+        path: Union[str, Path],
         dpi: float = 300,
         bbox_inches: Union[str, Bbox] = "tight",
         **kwargs,
@@ -263,7 +263,7 @@ class FisherBaseFigure(ABC):
 
         Parameters
         ----------
-        path : Path
+        path : Path or str
             the path where to save the figure
 
         dpi : float, optional

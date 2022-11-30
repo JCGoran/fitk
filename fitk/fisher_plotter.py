@@ -8,6 +8,7 @@ from __future__ import annotations
 
 # standard library imports
 import copy
+import os  # pylint: disable=unused-import
 from abc import ABC, abstractmethod
 from collections.abc import MutableSequence
 from itertools import product

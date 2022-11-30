@@ -9,9 +9,8 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Collection
-from itertools import permutations
 from math import factorial
-from typing import Any, Optional
+from typing import Optional
 
 # third party imports
 import numpy as np

@@ -9,20 +9,15 @@ from __future__ import annotations
 # standard library imports
 from collections.abc import Collection
 from dataclasses import dataclass
-from itertools import permutations, product
-from typing import Any, Optional
+from itertools import product
+from typing import Optional
 
 # third party imports
 import numpy as np
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
-    ValidationError,
-    _expansion_coefficient,
-    find_diff_weights,
-    is_iterable,
-)
+from fitk.fisher_utils import ValidationError, find_diff_weights, is_iterable
 
 
 def _validate_derivatives(

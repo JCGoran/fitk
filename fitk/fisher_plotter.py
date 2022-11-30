@@ -8,7 +8,6 @@ from __future__ import annotations
 
 # standard library imports
 import copy
-import os
 from abc import ABC, abstractmethod
 from collections.abc import MutableSequence
 from itertools import product

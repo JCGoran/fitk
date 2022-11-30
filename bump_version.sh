@@ -66,8 +66,17 @@ update_version(){
 
     if [ "${REPLY}" = 'y' ] || [ "${REPLY}" = 'Y' ]
     then
-        printf "%s\n" "${version}" > "${VERSION_PATH}"
-        python3 -m poetry version "${version}"
+        if [ -z "$(git diff --staged)" ]
+        then
+            printf "%s\n" "${version}" > "${VERSION_PATH}"
+            python3 -m poetry version "${version}"
+            git add --update -- pyproject.toml "${VERSION_PATH}" && \
+            git commit --message 'Bumped version' &&
+            git tag "${version}"
+        else
+            printf "ERROR: you have uncommited changes in the staging area, please remove or commit them before proceeding\n"
+            return 3
+        fi
         return 0
     fi
 

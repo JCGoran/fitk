@@ -25,6 +25,7 @@ from fitk.fisher_utils import (
     is_square,
     is_symmetric,
     make_default_names,
+    math_mode,
     process_units,
     reindex_array,
 )
@@ -155,3 +156,18 @@ class TestFisherUtils:
         # requested
         with pytest.raises(ValueError):
             find_diff_weights([-1, 1], order=2)
+
+    def test_math_mode(self):
+        """
+        Tests for the `math_mode` utility function
+        """
+        item = "a"
+        assert math_mode(item) == f"${item}$"
+
+        arr = ("a", "b", "c")
+        result = [f"${_}$" for _ in arr]
+        assert math_mode(arr) == result
+
+        assert math_mode(list(arr)) == result
+
+        assert math_mode(np.array(arr)) == result

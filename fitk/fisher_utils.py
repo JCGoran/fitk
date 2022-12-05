@@ -8,9 +8,9 @@ from __future__ import annotations
 # standard library imports
 import json
 import math
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 from math import factorial
-from typing import Optional
+from typing import Optional, Union
 
 # third party imports
 import numpy as np
@@ -355,3 +355,42 @@ def _expansion_coefficient(n1: int, n2: int):
         return 1 / factorial(n1) / factorial(n2)
 
     return 1 / 2 / factorial(n1) ** 2
+
+
+def math_mode(
+    arg: Union[str, Sequence[str]],
+) -> Union[str, list[str]]:
+    """
+    Returns the argument with surrounding math characters (`$...$`).
+
+    Parameters
+    ----------
+    arg : str or array_like of str
+        the string or list of strings which we want to convert to math mode
+
+    Returns
+    -------
+    str or list of str
+        the input converted to math mode
+
+    Raises
+    ------
+    TypeError
+        if the argument is not iterable
+
+    Examples
+    --------
+    >>> math_mode('a')
+    '$a$'
+    >>> math_mode(['a', 'b'])
+    ['$a$', '$b$']
+    """
+    if isinstance(arg, str):
+        return f"${arg}$"
+
+    try:
+        iter(arg)
+    except TypeError as err:
+        raise TypeError(err) from err
+
+    return [f"${_}$" for _ in arg]

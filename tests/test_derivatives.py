@@ -106,7 +106,7 @@ class LinearDerivative(FisherDerivative):
             if name == "x":
                 x = value
 
-        return x
+        return np.array([x])
 
 
 class GaussianDerivative(FisherDerivative):
@@ -383,6 +383,40 @@ class TestFisherDerivative:
             D(name="sigma", fiducial=0.5, abs_step=1e-3),
             parameter_dependence="both",
         )
+
+        # an object of type subclassed by `FisherDerivative` should work if
+        # `external_covariance` is defined, but `covariance` was not overridden
+        assert np.allclose(
+            lin.fisher_matrix(
+                D(name="x", fiducial=1, abs_step=1e-3),
+                external_covariance=[[1]],
+            ).values,
+            lin.derivative(
+                "signal",
+                D(name="x", fiducial=1, abs_step=1e-3),
+            ),
+        )
+
+        # wrong dimension of `external_covariance`
+        with pytest.raises(ValueError):
+            lin.fisher_matrix(
+                D(name="x", fiducial=1, abs_step=1e-3),
+                external_covariance=[[1, 2, 3], [4, 5, 6]],
+            )
+
+        # wrong dimension of `external_covariance`
+        with pytest.raises(ValueError):
+            lin.fisher_matrix(
+                D(name="x", fiducial=1, abs_step=1e-3),
+                external_covariance=[1, 2],
+            )
+
+        with pytest.warns(UserWarning):
+            g.fisher_matrix(
+                D(name="mu", fiducial=1, abs_step=1e-3),
+                parameter_dependence="both",
+                external_covariance=[[1]],
+            )
 
     def test_validate_parameters(self):
         """

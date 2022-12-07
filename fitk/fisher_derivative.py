@@ -7,7 +7,8 @@ See here for documentation of `D` and `FisherDerivative`.
 from __future__ import annotations
 
 # standard library imports
-from collections.abc import Collection
+import warnings
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 from itertools import product
 from typing import Optional
@@ -462,6 +463,7 @@ class FisherDerivative:
         self,
         *args: D,
         parameter_dependence: str = "signal",
+        external_covariance: Optional[Sequence[Sequence[float]]] = None,
         **kwargs,
     ):
         r"""
@@ -494,6 +496,10 @@ class FisherDerivative:
             where the parameter dependence is located, in the signal, the
             covariance, or both (default: 'signal')
 
+        external_covariance : array_like, optional
+            the external covariance matrix to use when computing the result
+            (default: None)
+
         **kwargs
             any other keyword arguments that should be passed to `signal` and
             `covariance`
@@ -503,6 +509,12 @@ class FisherDerivative:
         fitk.fisher_matrix.FisherMatrix
             the Fisher object with corresponding names and fiducials
 
+        Warns
+        -----
+        UserWarning
+            if `parameter_dependence` is set to 'covariance' or 'both', and
+            `external_covariance` is not `None`
+
         Raises
         ------
         NotImplementedError
@@ -511,6 +523,9 @@ class FisherDerivative:
 
         ValidationError
             if the parameter validation failed
+
+        ValueError
+            if the argument `external_covariance` is not a square matrix
 
         Notes
         -----
@@ -526,7 +541,30 @@ class FisherDerivative:
             if not self.validate_parameter(arg):
                 raise ValidationError(arg)
 
-        covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
+        if external_covariance is not None:
+            if not (
+                np.ndim(external_covariance) == 2
+                and len(set(np.shape(external_covariance))) == 1
+            ):
+                raise ValueError(
+                    "The argument `external_covariance` must be a square matrix"
+                )
+
+            if (
+                parameter_dependence in ["covariance", "both"]
+                and external_covariance is not None
+            ):
+                warnings.warn(
+                    "`external_covariance` has no effect if `parameter_dependence` "
+                    f"is set to '{parameter_dependence}'"
+                )
+                covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
+
+            else:
+                covariance_matrix = external_covariance
+        else:
+            covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
+
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)

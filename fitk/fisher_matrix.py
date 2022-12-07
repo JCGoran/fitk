@@ -320,6 +320,14 @@ class FisherMatrix:
             )
 
     @property
+    def matrix(self):
+        """
+        Returns the values of the Fisher matrix (the Gaussian contribution to
+        the likelihood) as a numpy array.
+        """
+        return self._values
+
+    @property
     def values(self):
         """
         Returns the values in the Fisher object as a numpy array.

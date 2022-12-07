@@ -260,6 +260,10 @@ class TestFisherMatrix:
         with pytest.raises(MismatchingSizeError):
             data["p1", "p2", "p3"] = 1
 
+    def test_matrix(self):
+        data = FisherMatrix(np.diag([1, 2, 3]))
+        assert np.allclose(data.matrix, data.values)
+
     def test_values(self):
         data = FisherMatrix(np.diag([1, 2, 3]))
         data.values = [[1, 0, -1], [0, 2, 0], [-1, 0, 4]]

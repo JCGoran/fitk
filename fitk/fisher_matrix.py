@@ -331,6 +331,21 @@ class FisherMatrix:
     def values(self):
         """
         Returns the values in the Fisher object as a numpy array.
+
+        Raises
+        ------
+        MismatchingSizeError
+            if the new values do not have the same size as the original ones
+
+        ValueError
+            if the shape of the new values is not square
+
+        TypeError
+            if the new values do not have the same type as the original ones
+
+        Notes
+        -----
+        Currently returns the same output as `matrix` (subject to change).
         """
         return self._values
 
@@ -339,9 +354,6 @@ class FisherMatrix:
         self,
         value,
     ):
-        """
-        Setter for the values of the Fisher object.
-        """
         if len(self) != len(value):
             raise MismatchingSizeError(self, value)
 
@@ -354,6 +366,14 @@ class FisherMatrix:
     def fiducials(self):
         """
         Returns the fiducial values of the Fisher object as a numpy array.
+
+        Raises
+        ------
+        MismatchingSizeError
+            if the new values do not have the same size as the original ones
+
+        TypeError
+            if the new values do not have the same type as the original ones
         """
         return self._fiducials
 
@@ -362,11 +382,6 @@ class FisherMatrix:
         self,
         value: Collection[float],
     ):
-        """
-        The bulk setter for the fiducial values of the Fisher object.
-        The length of the fiducials must be the same as the one of the original
-        object.
-        """
         if len(value) != len(self):
             raise MismatchingSizeError(value, self)
         try:
@@ -378,6 +393,11 @@ class FisherMatrix:
     def names(self):
         """
         Returns the parameter names of the Fisher object.
+
+        Raises
+        ------
+        MismatchingSizeError
+            if the new values do not have the same size as the original ones
         """
         return self._names
 
@@ -386,11 +406,6 @@ class FisherMatrix:
         self,
         value: Collection[str],
     ):
-        """
-        The bulk setter for the names.
-        The length of the names must be the same as the one of the original
-        object.
-        """
         if len(set(value)) != len(self):
             raise MismatchingSizeError(set(value), self)
         self._names = np.array(value, dtype=object)
@@ -399,6 +414,11 @@ class FisherMatrix:
     def latex_names(self):
         """
         Returns the LaTeX names of the parameters of the Fisher object.
+
+        Raises
+        ------
+        MismatchingSizeError
+            if the new values do not have the same size as the original ones
         """
         return self._latex_names
 
@@ -407,11 +427,6 @@ class FisherMatrix:
         self,
         value: Collection[str],
     ):
-        """
-        The bulk setter for the LaTeX names.
-        The length of the names must be the same as the one of the original
-        object.
-        """
         if len(set(value)) != len(self):
             raise MismatchingSizeError(set(value), self)
         self._latex_names = np.array(value, dtype=object)

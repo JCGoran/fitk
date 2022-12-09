@@ -10,7 +10,7 @@ from __future__ import annotations
 import copy
 import os  # pylint: disable=unused-import
 from abc import ABC, abstractmethod
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Sequence
 from itertools import product
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -52,6 +52,7 @@ class FisherBaseFigure(ABC):
         options: Optional[dict] = None,
         hspace: float = 0.1,
         wspace: float = 0.1,
+        contour_levels: Optional[Sequence[tuple[float, float]]] = None,
         **kwargs,
     ):
         """
@@ -107,6 +108,29 @@ class FisherBaseFigure(ABC):
                     **plt.style.core.rc_params_from_file(style),
                     **options,
                 }
+
+        # parse `contour_levels`
+        if contour_levels is None:
+            self.contour_levels = [(1.0, 0.3), (2.0, 0.1)]
+        else:
+            try:
+                contour_levels = [
+                    (float(level), float(alpha)) for level, alpha in contour_levels
+                ]
+            except Exception:
+                raise ValueError(
+                    f"The object {contour_levels} cannot be converted to a list of 2-tuples"
+                )
+            for level, alpha in contour_levels:
+                if level < 0:
+                    raise ValueError(
+                        f"Negative contour level found in: {contour_levels}"
+                    )
+                if not 0 <= alpha <= 1:
+                    raise ValueError(
+                        f"Opacity value outside of (0, 1) found in: {contour_levels}"
+                    )
+            self.contour_levels = contour_levels
 
     @abstractmethod
     def plot(self, fisher: FisherMatrix, *args, **kwargs):
@@ -614,6 +638,7 @@ class FisherFigure1D(FisherBaseFigure):
         max_cols: Optional[int] = None,
         hspace: float = 0.5,
         wspace: float = 0.1,
+        contour_levels: Optional[Sequence[tuple[float, float]]] = None,
     ):
         """
         Constructor.
@@ -638,12 +663,22 @@ class FisherFigure1D(FisherBaseFigure):
             The amount of width reserved for space between subplots, expressed
             as a fraction of the average axis width.
 
+        contour_levels : array_like of 2-tuples, optional
+            the points at which the sigma level should be shaded, along with
+            the associated opacity (default: None). If not specified, defaults
+            to `[(1, 0.3), (2, 0.1)]`.
+
         Notes
         -----
         For the style sheet reference, please consult [the matplotlib
         documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
         """
-        super().__init__(options=options, wspace=wspace, hspace=hspace)
+        super().__init__(
+            options=options,
+            wspace=wspace,
+            hspace=hspace,
+            contour_levels=contour_levels,
+        )
         self.max_cols = max_cols
         self._ndim = 1
         self._hspace = hspace
@@ -802,24 +837,15 @@ class FisherFigure1D(FisherBaseFigure):
                     self.labels.append(kwargs["label"])
                     added = True
 
-                _add_shading_1d(
-                    fisher.fiducials[np.where(fisher.names == name)],
-                    fisher.constraints(name, marginalized=True),
-                    ax,
-                    alpha=0.3,
-                    ec=None,
-                    **kwargs,
-                )
-
-                _add_shading_1d(
-                    fisher.fiducials[np.where(fisher.names == name)],
-                    fisher.constraints(name, marginalized=True),
-                    ax,
-                    level=2,
-                    alpha=0.1,
-                    ec=None,
-                    **kwargs,
-                )
+                for contour_level in self.contour_levels:
+                    _add_shading_1d(
+                        fisher.fiducials[index],
+                        fisher.constraints(name, marginalized=True),
+                        ax,
+                        level=contour_level[0],
+                        alpha=contour_level[1],
+                        **kwargs,
+                    )
 
                 ax.autoscale()
                 ax.set_xlabel(latex_name)
@@ -1008,6 +1034,7 @@ class FisherFigure2D(FisherBaseFigure):
         wspace: float = 0,
         show_1d_curves: bool = False,
         show_joint_dist: bool = False,
+        contour_levels: Optional[Sequence[tuple[float, float]]] = None,
     ):
         """
         Constructor.
@@ -1037,6 +1064,11 @@ class FisherFigure2D(FisherBaseFigure):
             whether to plot the isocontours of the joint distribution (default:
             False)
 
+        contour_levels : array_like of 2-tuples, optional
+            the points at which the sigma level should be shaded, along with
+            the associated opacity (default: None). If not specified, defaults
+            to `[(1, 0.3), (2, 0.1)]`.
+
         Notes
         -----
         For the style sheet reference, please consult [the matplotlib
@@ -1048,7 +1080,12 @@ class FisherFigure2D(FisherBaseFigure):
         onto a parameter axis. For more details, see
         [arXiv:0906.0664](https://arxiv.org/abs/0906.0664), section 2.
         """
-        super().__init__(options=options, wspace=wspace, hspace=hspace)
+        super().__init__(
+            options=options,
+            wspace=wspace,
+            hspace=hspace,
+            contour_levels=contour_levels,
+        )
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
         self._ndim = 2
@@ -1294,6 +1331,7 @@ class FisherFigure2D(FisherBaseFigure):
         self,
         fisher: FisherMatrix,
         *args,
+        contour_levels: Optional[Sequence[tuple[float, float]]] = None,
         **kwargs,
     ):
         r"""
@@ -1420,9 +1458,9 @@ class FisherFigure2D(FisherBaseFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=1
+                        scaling_factor=self.contour_levels[0][0]
                         if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(1)),
+                        else np.sqrt(_get_chisq(self.contour_levels[0][0])),
                         fill=False,
                         zorder=20,
                         **kwargs,
@@ -1439,44 +1477,46 @@ class FisherFigure2D(FisherBaseFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=1
+                        scaling_factor=self.contour_levels[0][0]
                         if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(1)),
+                        else np.sqrt(_get_chisq(self.contour_levels[0][0])),
                         fill=True,
-                        alpha=0.2,
+                        alpha=self.contour_levels[0][1],
                         ec=None,
                         zorder=20,
                         **kwargs,
                     )
 
-                    # the 2-sigma
-                    plot_curve_2d(
-                        fisher,
-                        namex,
-                        namey,
-                        ax=ax[i, j],
-                        scaling_factor=2
-                        if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(2)),
-                        fill=False,
-                        zorder=20,
-                        **kwargs,
-                    )
-                    # same thing, but shaded
-                    plot_curve_2d(
-                        fisher,
-                        namex,
-                        namey,
-                        ax=ax[i, j],
-                        scaling_factor=2
-                        if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(2)),
-                        fill=True,
-                        alpha=0.1,
-                        ec=None,
-                        zorder=20,
-                        **kwargs,
-                    )
+                    for index in range(1, len(self.contour_levels)):
+                        # the 2-sigma
+                        plot_curve_2d(
+                            fisher,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=self.contour_levels[index][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels[index][0])),
+                            fill=False,
+                            zorder=20,
+                            **kwargs,
+                        )
+
+                        # same thing, but shaded
+                        plot_curve_2d(
+                            fisher,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=self.contour_levels[index][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels[index][0])),
+                            fill=True,
+                            alpha=self.contour_levels[index][1],
+                            ec=None,
+                            zorder=20,
+                            **kwargs,
+                        )
 
                 if i == j:
                     # plotting the 1D Gaussians
@@ -1487,6 +1527,19 @@ class FisherFigure2D(FisherBaseFigure):
                             ax=ax[i, i],
                             **kwargs,
                         )
+
+                        for contour_level in self.contour_levels:
+                            _add_shading_1d(
+                                fisher.fiducials[i],
+                                fisher.constraints(
+                                    name=namex,
+                                    marginalized=True,
+                                )[0],
+                                level=contour_level[0],
+                                ax=ax[i, i],
+                                alpha=contour_level[1],
+                                **kwargs,
+                            )
 
                     else:
                         if self.figure is None:
@@ -1575,6 +1628,22 @@ def _add_shading_1d(
     if ax is None:
         _, ax = plt.subplots()
 
+    # keyword args which have no effect on the plotting
+    unused_kwargs = [
+        "lw",
+        "linewidth",
+        "ec",
+        "edgecolor",
+        "fc",
+        "facecolor",
+    ]
+    for kwarg in unused_kwargs:
+        kwargs.pop(kwarg, None)
+
+    # the kwarg `color` supersedes `facecolor`, hence we need to remove it from
+    # the passed kwargs, and call `fill_between` with `facecolor=color`
+    color = kwargs.pop("color", None)
+
     x = np.ndarray.flatten(
         np.linspace(
             fiducial - level * sigma,
@@ -1588,6 +1657,8 @@ def _add_shading_1d(
         np.ndarray.flatten(
             np.array([norm.pdf(_, loc=fiducial, scale=sigma) for _ in x])
         ),
+        edgecolor=None,
+        facecolor=color,
         **kwargs,
     )
 

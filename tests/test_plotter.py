@@ -36,6 +36,45 @@ DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
 DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
 
 
+class TestFisherFigure:
+    """
+    Tests the `FisherFigure1D`/`FisherFigure2D` class in various ways
+    """
+
+    def test_contour_levels(self):
+        """
+        Test to make sure the contour levels parsing works
+        """
+        # wrong format (no alpha specified)
+        with pytest.raises(ValueError):
+            FisherFigure1D(
+                contour_levels=[1, 2, 3],
+            )
+
+        # wrong format (no alpha for second item)
+        with pytest.raises(ValueError):
+            FisherFigure1D(
+                contour_levels=[(1, 2), 3],
+            )
+
+        # negative contour level
+        with pytest.raises(ValueError):
+            FisherFigure1D(
+                contour_levels=[(-3, 2)],
+            )
+
+        # alpha outside the range (0, 1)
+        with pytest.raises(ValueError):
+            FisherFigure1D(
+                contour_levels=[(3, -1)],
+            )
+
+        # correct specification
+        FisherFigure1D(
+            contour_levels=[(1, 0.2), (2, 0.1)],
+        )
+
+
 @pytest.fixture
 def m1():
     names = list("abcde")

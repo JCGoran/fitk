@@ -339,6 +339,12 @@ def test_plot_1d_euclid3(euclid_opt):
     fp3 = FisherFigure1D()
     fp3.plot(
         euclid_opt.marginalize_over("Omegam", invert=True),
+        label=r"Parameters = $\Omega_\mathrm{m}$",
+    )
+
+    fp3.legend(
+        overwrite=True,
+        bbox_to_anchor=(0.1, 1.0),
     )
 
     fp3.set_label_params(fontsize=30)
@@ -431,6 +437,11 @@ def test_plot_2d_legend(euclid_opt):
 
     fp.legend()
 
+    fp.legend(
+        overwrite=True,
+        bbox_to_anchor=(0.2, 1),
+    )
+
     return fp.figure
 
 
@@ -514,6 +525,17 @@ def test_plot_2d_draw(euclid_opt):
         100 * np.sin(100 * np.linspace(0.3, 0.4, 100)),
         ls="--",
         label="sine function",
+    )
+
+    fp.draw(
+        "Omegam",
+        "Omegam",
+        "arrow",
+        euclid_opt.fiducials[np.where(euclid_opt.names == "Omegam")][0],
+        0,
+        0.05,
+        100,
+        label="arrow",
     )
 
     fp.legend()

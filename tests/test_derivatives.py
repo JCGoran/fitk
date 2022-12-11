@@ -12,7 +12,7 @@ import numpy as np
 import pytest
 
 # first party imports
-from fitk.fisher_derivative import D, FisherDerivative
+from fitk.fisher_derivative import D, FisherDerivative, matrix_element_from_input
 from fitk.fisher_utils import ValidationError, _expansion_coefficient
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
 
@@ -24,6 +24,75 @@ def test_expansion_coefficient():
     assert np.allclose(_expansion_coefficient(1, 3), 1 / 6)
     assert np.allclose(_expansion_coefficient(3, 2), 1 / 12)
     assert np.allclose(_expansion_coefficient(3, 3), 1 / 72)
+
+
+class TestMatrixElementFromInput:
+    """
+    Tests for `matrix_element_from_input`
+    """
+
+    def test_no_inputs(self):
+        """
+        Check that it raises an error when we only specify the covariance and
+        no derivatives.
+        """
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                np.diag([1, 2]),
+            )
+
+    def test_only_one_input(self):
+        """
+        Check that it raises an error if we only specify one derivative and not
+        the other.
+        """
+        covariance = np.diag([1, 2])
+        signal_derivative = np.array([1, 2, 3])
+        covariance_derivative = np.array([[1, 2], [2, 1]])
+
+        # only one signal derivative
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                covariance,
+                signal_derivative1=signal_derivative,
+            )
+
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                covariance,
+                signal_derivative1=signal_derivative,
+                covariance_derivative1=covariance_derivative,
+                covariance_derivative2=covariance_derivative,
+            )
+
+        # only one covariance derivative
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                covariance,
+                covariance_derivative1=covariance_derivative,
+            )
+
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                covariance,
+                signal_derivative1=signal_derivative,
+                signal_derivative2=signal_derivative,
+                covariance_derivative1=covariance_derivative,
+            )
+
+    def test_mismatching_sizes(self):
+        """
+        Check that it raises an error if the input has mismatching size
+        """
+        covariance = np.diag([1, 2])
+        signal_derivative = np.array([1, 2, 3])
+
+        with pytest.raises(ValueError):
+            matrix_element_from_input(
+                covariance,
+                signal_derivative1=signal_derivative,
+                signal_derivative2=signal_derivative,
+            )
 
 
 class LinearDerivative(FisherDerivative):

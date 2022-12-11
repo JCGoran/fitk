@@ -25,7 +25,12 @@ from scipy.stats import ortho_group
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
-from fitk.fisher_utils import MismatchingSizeError, ParameterNotFoundError
+from fitk.fisher_utils import (
+    MismatchingSizeError,
+    MismatchingValuesError,
+    ParameterNotFoundError,
+    math_mode,
+)
 
 DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
 DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
@@ -81,6 +86,30 @@ class TestFisherMatrix:
         # mismatching sizes
         with pytest.raises(MismatchingSizeError):
             FisherMatrix(np.diag([1, 2]), names=["a", "b", "c"])
+
+    def test_setters(self):
+        """
+        Test setters for `names`, `values`, `fiducials`, and `latex_names`.
+        """
+        fm = FisherMatrix(np.diag([1, 2, 3]))
+
+        with pytest.raises(MismatchingSizeError):
+            fm.names = ["a", "b"]
+
+        fm.names = ["a", "b", "c"]
+
+        with pytest.raises(MismatchingSizeError):
+            fm.latex_names = ["$a$", "$b$"]
+
+        fm.latex_names = math_mode(fm.names)
+
+        with pytest.raises(MismatchingSizeError):
+            fm.fiducials = [1, 2]
+
+        with pytest.raises(TypeError):
+            fm.fiducials = [1, "a", 2]
+
+        fm.fiducials = [1, 2, 3]
 
     def test_to_dict(self):
         """
@@ -260,6 +289,10 @@ class TestFisherMatrix:
         with pytest.raises(MismatchingSizeError):
             data["p1", "p2", "p3"] = 1
 
+        # the key is not an iterable
+        with pytest.raises(TypeError):
+            data[1] = 0
+
     def test_matrix(self):
         data = FisherMatrix(np.diag([1, 2, 3]))
         assert np.allclose(data.matrix, data.values)
@@ -322,6 +355,9 @@ class TestFisherMatrix:
 
         with pytest.raises(ValueError):
             data.constraints(p=-2)
+
+        with pytest.raises(ParameterNotFoundError):
+            data.constraints(name="asdf")
 
     def test_sort(self):
         m = FisherMatrix(
@@ -452,12 +488,29 @@ class TestFisherMatrix:
         with pytest.raises(ValueError):
             data_new = data.drop(*data.names)
 
+    def test_representations(self):
+        """
+        Tests `__repr__`, `__str__`, and `_repr_html_`
+        """
+        m = FisherMatrix(np.diag([1, 2]))
+        str(m)
+        repr(m)
+        m._repr_html_()
+
     def test_add(self):
         m1 = FisherMatrix(np.diag([1, 2, 3]))
         m2 = FisherMatrix(np.diag([6, 5, 4]))
         assert m1 + m2 == FisherMatrix(m1.values + m2.values)
         assert m1 + 3 == FisherMatrix(m1.values + 3)
         assert 3 + m1 == FisherMatrix(3 + m1.values)
+
+        # mismatching names
+        with pytest.raises(MismatchingValuesError):
+            m1 + FisherMatrix(m1.values, names=["a", "b", "c"])
+
+        # mismatching fiducials
+        with pytest.raises(MismatchingValuesError):
+            m1 + FisherMatrix(m1.values, fiducials=[1, 2, 3])
 
     def test_sub(self):
         m1 = FisherMatrix(np.diag([1, 2, 3]))
@@ -478,6 +531,12 @@ class TestFisherMatrix:
         r2 = FisherMatrix(m1.values * (1 / m1.values))
         assert r1 == r2
 
+        with pytest.raises(MismatchingValuesError):
+            m1 * FisherMatrix(np.diag([1, 2]), names=["a", "b"])
+
+        with pytest.raises(MismatchingValuesError):
+            m1 * FisherMatrix(np.diag([1, 2]), fiducials=[1, 2])
+
     def test_matmul(self):
         """
         Test for matrix multiplication.
@@ -487,6 +546,12 @@ class TestFisherMatrix:
 
         assert m1 @ m2 == FisherMatrix(m1.values @ m2.values)
         assert m2 @ m1 == FisherMatrix(m2.values @ m1.values)
+
+        with pytest.raises(MismatchingValuesError):
+            m1 @ FisherMatrix(np.diag([1, 2]), names=["a", "b"])
+
+        with pytest.raises(MismatchingValuesError):
+            m1 @ FisherMatrix(np.diag([1, 2]), fiducials=[1, 2])
 
     def test_truediv(self):
         """
@@ -499,6 +564,12 @@ class TestFisherMatrix:
         with pytest.raises(TypeError):
             2 / m
 
+        with pytest.raises(MismatchingValuesError):
+            m / FisherMatrix(np.diag([1, 2]), names=["a", "b"])
+
+        with pytest.raises(MismatchingValuesError):
+            m / FisherMatrix(np.diag([1, 2]), fiducials=[1, 2])
+
     def test_reparametrize(self):
         m = FisherMatrix([[2, -1], [-1, 3]])
         jacobian_m = np.array([[3, 2], [6, 7]])
@@ -510,6 +581,15 @@ class TestFisherMatrix:
         jac = [[1, 4], [3, 2]]
         m2_new = m2.reparametrize(jac, names=["a", "b"])
         assert np.allclose(m2_new.values, np.transpose(jac) @ m2.values @ jac)
+
+        with pytest.raises(MismatchingSizeError):
+            m.reparametrize(jac, names=["a"])
+
+        with pytest.raises(MismatchingSizeError):
+            m.reparametrize(jac, names=["a", "b"], latex_names=["a"])
+
+        with pytest.raises(MismatchingSizeError):
+            m.reparametrize(jac, fiducials=[1])
 
     @pytest.mark.xfail(reason="CosmicFish fails for some reason")
     def test_reparametrize_cf(self):

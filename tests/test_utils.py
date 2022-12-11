@@ -171,3 +171,6 @@ class TestFisherUtils:
         assert math_mode(list(arr)) == result
 
         assert math_mode(np.array(arr)) == result
+
+        with pytest.raises(TypeError):
+            math_mode(1)

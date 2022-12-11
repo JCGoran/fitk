@@ -386,7 +386,7 @@ class FisherMatrix:
             raise MismatchingSizeError(value, self)
         try:
             self._fiducials = np.array([float(_) for _ in value])
-        except TypeError as err:
+        except (TypeError, ValueError) as err:
             raise TypeError(err) from err
 
     @property
@@ -469,10 +469,6 @@ class FisherMatrix:
             latex_names=array(['a', '$b$', 'p3'], dtype=object),
             fiducials=array([0., 2., 0.]))
         """
-        # check uniqueness and size
-        if len(set(names)) != len(names):
-            raise MismatchingSizeError(set(names), names)
-
         if not ignore_errors:
             for name in names:
                 if name not in self.names:

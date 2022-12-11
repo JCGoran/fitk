@@ -87,6 +87,18 @@ class TestFisherMatrix:
         with pytest.raises(MismatchingSizeError):
             FisherMatrix(np.diag([1, 2]), names=["a", "b", "c"])
 
+    def test_iter(self):
+        """
+        Test iteration of the `FisherMatrix` class
+        """
+        fm = FisherMatrix(np.diag([1, 2]))
+
+        with pytest.raises(NotImplementedError):
+            iter(fm)
+
+        with pytest.raises(NotImplementedError):
+            list(fm)
+
     def test_setters(self):
         """
         Test setters for `names`, `values`, `fiducials`, and `latex_names`.

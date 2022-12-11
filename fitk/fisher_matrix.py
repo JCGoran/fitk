@@ -561,6 +561,12 @@ class FisherMatrix:
             f"    fiducials={self.fiducials})"
         )
 
+    def __iter__(self):
+        raise NotImplementedError(
+            f"Object of type `{self.__class__.__name__}` is not iterable; "
+            "use `<object>[<key>] to get or set elements of the object instead"
+        )
+
     def __getitem__(
         self,
         keys: Union[tuple[str, ...], slice],

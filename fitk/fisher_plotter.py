@@ -1331,7 +1331,6 @@ class FisherFigure2D(FisherBaseFigure):
         self,
         fisher: FisherMatrix,
         *args,
-        contour_levels: Optional[Sequence[tuple[float, float]]] = None,
         **kwargs,
     ):
         r"""

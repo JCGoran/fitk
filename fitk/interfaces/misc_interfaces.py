@@ -5,8 +5,6 @@ Various interfaces that do not belong to any particular third-party software
 # for compatibility with Python 3.7
 from __future__ import annotations
 
-from collections.abc import Collection
-
 # standard library imports
 from typing import Optional
 

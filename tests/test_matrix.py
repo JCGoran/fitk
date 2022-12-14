@@ -516,13 +516,24 @@ class TestFisherMatrix:
         assert m1 + 3 == FisherMatrix(m1.values + 3)
         assert 3 + m1 == FisherMatrix(3 + m1.values)
 
-        # mismatching names
-        with pytest.raises(MismatchingValuesError):
-            m1 + FisherMatrix(m1.values, names=["a", "b", "c"])
-
         # mismatching fiducials
         with pytest.raises(MismatchingValuesError):
             m1 + FisherMatrix(m1.values, fiducials=[1, 2, 3])
+
+        fm1 = FisherMatrix([[1, -2], [-2, 5]], names=["a", "b"])
+        fm2 = FisherMatrix(np.diag([3, 4, 6]), names=["a", "c", "d"])
+        result = fm1 + fm2
+
+        assert result == FisherMatrix(
+            [
+                [4, -2, 0, 0],
+                [-2, 5, 0, 0],
+                [0, 0, 4, 0],
+                [0, 0, 0, 6],
+            ],
+            names=["a", "b", "c", "d"],
+            latex_names=["p1", "p2", "p3", "p4"],
+        )
 
     def test_sub(self):
         m1 = FisherMatrix(np.diag([1, 2, 3]))

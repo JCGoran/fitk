@@ -10,7 +10,7 @@ from __future__ import annotations
 import copy
 import json
 from collections.abc import Collection, Mapping
-from itertools import permutations
+from itertools import permutations, product
 from numbers import Number
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -1123,32 +1123,93 @@ class FisherMatrix:
     ) -> FisherMatrix:
         """
         Returns the result of adding two Fisher objects.
+
+        Notes
+        -----
+        We can add or subtract Fisher objects which have different parameter
+        names.
+
+        Due to the peculiarities of Python's `set` built-in, the ordering of
+        names in the result is not guaranteed to be preserved, even for
+        identical inputs. This is not a problem though, since `__eq__` can
+        handle parameter shuffling, so if `m1` and `m2` are instances of
+        `FisherMatrix`, `m1 + m2 == m1 + m2` will always yield `True`.
         """
         if isinstance(other, self.__class__):
-            # make sure they have the right parameters
-            if set(other.names) != set(self.names):
-                raise MismatchingValuesError("parameter name", other.names, self.names)
+            values = np.zeros(
+                [len(self) + len(other) - len(set(self.names) & set(other.names))] * 2,
+                dtype=float,
+            )
 
-            index = get_index_of_other_array(self.names, other.names)
-
-            # make sure the fiducials match
-            fiducials = other.fiducials[index]
-
-            if not np.allclose(fiducials, self.fiducials):
-                raise MismatchingValuesError(
-                    "fiducial value", fiducials, self.fiducials
+            names = list(set(self.names) | set(other.names))
+            fiducials = []
+            latex_names = []
+            for name in names:
+                fiducial1 = (
+                    self.fiducials[np.where(self.names == name)][0]
+                    if name in self.names
+                    else None
+                )
+                fiducial2 = (
+                    other.fiducials[np.where(other.names == name)][0]
+                    if name in other.names
+                    else None
+                )
+                latex_name1 = (
+                    self.latex_names[np.where(self.names == name)][0]
+                    if name in self.names
+                    else None
+                )
+                latex_name2 = (
+                    other.latex_names[np.where(other.names == name)][0]
+                    if name in other.names
+                    else None
                 )
 
-            values = self.values + reindex_array(other.values, index)
+                if (
+                    fiducial1 is not None
+                    and fiducial2 is not None
+                    and not np.allclose(fiducial1, fiducial2)
+                ):
+                    raise MismatchingValuesError(
+                        "fiducial values", fiducial1, fiducial2
+                    )
 
+                fiducials.append(fiducial1 if fiducial1 is not None else fiducial2)
+                latex_names.append(
+                    latex_name1 if latex_name1 is not None else latex_name2
+                )
+
+            # TODO make this work for arbitrary number of dimensions
+            for (index1, name1), (index2, name2) in product(enumerate(names), repeat=2):
+                # case 1: the names are in both
+                if (
+                    name1 in self.names
+                    and name2 in self.names
+                    and name1 in other.names
+                    and name2 in other.names
+                ):
+                    values[index1, index2] = self[name1, name2] + other[name1, name2]
+                # case 2a: the names are in the left one only
+                elif name1 in self.names and name2 in self.names:
+                    values[index1, index2] = self[name1, name2]
+                # case 2b: the names are in the right one only
+                elif name1 in other.names and name2 in other.names:
+                    values[index1, index2] = other[name1, name2]
+                # case 3: one name is in one, but not the other
+                else:
+                    values[index1, index2] = 0
         else:
             values = self.values + other
+            names = self.names
+            fiducials = self.fiducials
+            latex_names = self.latex_names
 
         return self.__class__(
             values,
-            names=self.names,
-            latex_names=self.latex_names,
-            fiducials=self.fiducials,
+            names=names,
+            latex_names=latex_names,
+            fiducials=fiducials,
         )
 
     def __radd__(

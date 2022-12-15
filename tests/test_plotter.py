@@ -185,6 +185,20 @@ def test_plot_1d(m1, m2, m3):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
+def test_plot_1d_options(m1):
+    fp = FisherFigure1D(options={})
+
+    fp.plot(m1, label="first")
+    fp.legend()
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
 def test_plot_1d_cols(m1, m2, m3):
     fp = FisherFigure1D(max_cols=3, hspace=0.8)
 

@@ -63,7 +63,7 @@ class FisherBaseFigure(ABC):
         self._handles: MutableSequence[Artist] = []
         self._names = None
         self._labels: MutableSequence[str] = []
-        self._options: dict = get_default_rcparams()
+        self._options: dict = {}
         self._ndim: int = 0
         self._hspace = hspace
         self._wspace = wspace
@@ -71,43 +71,46 @@ class FisherBaseFigure(ABC):
         self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         self.current_color = iter(self.cycler)
 
-        if options and "style" in options:
-            style = options.pop("style")
-            # maybe it's one of the built-in styles
-            if style in plt.style.available:
-                self._options = {
-                    **plt.style.library[style],
-                    **get_default_rcparams(),
-                    **options,
-                }
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.library[style]
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
+        if options is None:
+            self._options = get_default_rcparams()
+        else:
+            if "style" in options:
+                style = options.pop("style")
+                # maybe it's one of the built-in styles
+                if style in plt.style.available:
+                    self._options = {
+                        **plt.style.library[style],
+                        **get_default_rcparams(),
+                        **options,
+                    }
+                    # we need to reset the color cycler
+                    self.cycler = (
+                        plt.style.library[style]
+                        .get(
+                            "axes.prop_cycle",
+                            plt.rcParams["axes.prop_cycle"],
+                        )
+                        .by_key()["color"]
                     )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
+                    self.current_color = iter(self.cycler)
 
-            # maybe it's a file
-            else:
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.core.rc_params_from_file(style)
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
+                # maybe it's a file
+                else:
+                    # we need to reset the color cycler
+                    self.cycler = (
+                        plt.style.core.rc_params_from_file(style)
+                        .get(
+                            "axes.prop_cycle",
+                            plt.rcParams["axes.prop_cycle"],
+                        )
+                        .by_key()["color"]
                     )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
+                    self.current_color = iter(self.cycler)
 
-                self._options = {
-                    **plt.style.core.rc_params_from_file(style),
-                    **options,
-                }
+                    self._options = {
+                        **plt.style.core.rc_params_from_file(style),
+                        **options,
+                    }
 
         # parse `contour_levels`
         if contour_levels is None:

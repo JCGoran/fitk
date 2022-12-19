@@ -11,7 +11,8 @@ import copy
 import os  # pylint: disable=unused-import
 from abc import ABC, abstractmethod
 from collections.abc import MutableSequence, Sequence
-from itertools import product
+from dataclasses import dataclass
+from itertools import islice, product
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -22,13 +23,32 @@ from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
+from matplotlib.patheffects import Normal, Stroke
 from matplotlib.ticker import Formatter, Locator
 from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import ParameterNotFoundError, get_default_rcparams, is_iterable
+from fitk.fisher_utils import (
+    MismatchingSizeError,
+    MismatchingValuesError,
+    ParameterNotFoundError,
+    float_to_latex,
+    get_default_rcparams,
+    is_iterable,
+)
+
+
+@dataclass
+class _TempContainer:
+    labels: Sequence[str]
+    colors: Sequence[str]
+    x_array: Sequence[Sequence[float]]
+    y_array: Sequence[Sequence[float]]
+    space_per_object: float
+    values_label: str
+    scale: str
 
 
 class EmptyFigureError(Exception):
@@ -59,7 +79,7 @@ class FisherBaseFigure(ABC):
         Constructor
         """
         self._figure = None
-        self._axes = None
+        self._axes: Optional[Sequence] = None
         self._handles: MutableSequence[Artist] = []
         self._names = None
         self._labels: MutableSequence[str] = []
@@ -584,6 +604,412 @@ class FisherBaseFigure(ABC):
                 self[nameiter].xaxis.set_minor_formatter(formatter)
             if self[nameiter] and which in ["both", "y"]:
                 self[nameiter].yaxis.set_minor_formatter(formatter)
+
+
+class FisherConstraintsFigure:
+    """
+    Container for plotting single-axis figures (`erorrbar`, `bar`, `barh`)
+    """
+
+    def __init__(
+        self,
+        options: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Constructor
+        """
+        self._figure = None
+        self._axis: Optional[Sequence] = None
+        self._handles: MutableSequence[Artist] = []
+        self._labels: MutableSequence[str] = []
+        self._options: dict = get_default_rcparams()
+
+        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+        self.current_color = iter(self.cycler)
+
+        if options and "style" in options:
+            style = options.pop("style")
+            # maybe it's one of the built-in styles
+            if style in plt.style.available:
+                self._options = {
+                    **plt.style.library[style],
+                    **get_default_rcparams(),
+                    **options,
+                }
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.library[style]
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+            # maybe it's a file
+            else:
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.core.rc_params_from_file(style)
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+                self._options = {
+                    **plt.style.core.rc_params_from_file(style),
+                    **options,
+                }
+
+    def savefig(
+        self,
+        path: Union[str, Path],
+        dpi: float = 300,
+        bbox_inches: Union[str, Bbox] = "tight",
+        **kwargs,
+    ):
+        """
+        Convenience wrapper for `figure.savefig`.
+
+        Parameters
+        ----------
+        path : Path or str
+            the path where to save the figure
+
+        dpi : float, optional
+            the resolution of the saved figure (default: 300)
+
+        bbox_inches : str or Bbox, optional
+            what is the bounding box for the figure (default: 'tight')
+
+        **kwargs
+            any other keyword arguments that should be passed to
+            `figure.savefig`
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if `plot` hasn't been called yet
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        self.figure.savefig(
+            path,
+            dpi=dpi,
+            bbox_inches=bbox_inches,
+            **kwargs,
+        )
+
+    @property
+    def options(self):
+        """
+        Returns the matplotlib options which were used for plotting.
+        """
+        return self._options
+
+    @property
+    def figure(self):
+        """
+        Returns the underlying figure, an instance of
+        `matplotlib.figure.Figure`.
+        """
+        return self._figure
+
+    @property
+    def axis(self):
+        """
+        Returns the axis of the figure.
+        """
+        return self._axis
+
+    def _parse_fractional_constraints(
+        self,
+        args: Sequence[FisherMatrix],
+        marginalized: bool = True,
+        colors: Optional[Sequence[str]] = None,
+        labels: Optional[Sequence[str]] = None,
+        values_label: Optional[str] = None,
+        percent: bool = False,
+        space: float = 0.3,
+        scale: str = "linear",
+    ):
+        # error handling
+        if not 0 <= space <= 1:
+            raise ValueError("The value of `space` must be in the open interval (0, 1)")
+
+        allowed_scales = ["linear", "log", "symlog"]
+        if scale not in allowed_scales:
+            raise ValueError(f"The value of `scale` must be one of: {allowed_scales}")
+
+        for arg in args:
+            if set(args[0].names) != set(arg.names):
+                raise MismatchingValuesError(
+                    "parameter name",
+                    args[0].names,
+                    arg.names,
+                )
+
+        # total number of parameters in the Fisher objects
+        size = len(args[0])
+
+        # the width or height of all columns for a single parameter
+        total_space = 1 - space
+
+        # the width or height of a single column for a single parameter
+        space_per_object = total_space / len(args)
+
+        if not colors:
+            colors = list(islice(self.current_color, len(args)))  # type: ignore
+        elif len(colors) != len(args):
+            raise MismatchingSizeError(colors, args)
+
+        if not labels:
+            labels = [""] * len(args)
+        elif len(labels) != len(args):
+            raise MismatchingSizeError(labels, args)
+
+        if not values_label:
+            if percent:
+                values_label = r"$\sigma / \theta_\mathrm{fid}\ (\%)$"
+            else:
+                values_label = r"$\sigma / \theta_\mathrm{fid}$"
+
+        return _TempContainer(
+            labels,
+            colors,  # type: ignore
+            [
+                [
+                    _ - total_space / 2 + (2 * index + 1) * space_per_object / 2
+                    for _ in range(size)
+                ]
+                for index, arg in enumerate(args)
+            ],
+            [
+                np.array(
+                    [
+                        arg.constraints(name=_, marginalized=marginalized)[0]
+                        for _ in arg.names
+                    ]
+                )
+                / np.array(
+                    [
+                        np.abs(fid) if not np.isclose(fid, 0) else 1
+                        for fid in arg.fiducials
+                    ]
+                )
+                for index, arg in enumerate(args)
+            ],
+            space_per_object=space_per_object,
+            values_label=values_label,
+            scale=scale,
+        )
+
+    def fractional_constraints_bar(
+        self,
+        args: Sequence[FisherMatrix],
+        marginalized: bool = True,
+        colors: Optional[Sequence[str]] = None,
+        labels: Optional[Sequence[str]] = None,
+        values_label: Optional[str] = None,
+        scale: str = "linear",
+        space: float = 0.3,
+        percent: bool = False,
+        **kwargs,
+    ):
+        r"""
+        Makes a vertical bar plot of the fractional constraints
+        """
+        size = len(args[0])
+        latex_names = args[0].latex_names
+
+        computed_parameters = self._parse_fractional_constraints(
+            args,
+            marginalized=marginalized,
+            colors=colors,
+            labels=labels,
+            scale=scale,
+            space=space,
+            values_label=values_label,
+            percent=percent,
+        )
+
+        with plt.rc_context(self.options):
+            fig, ax = plt.subplots()
+            for color, label, x, y in zip(
+                computed_parameters.colors,
+                computed_parameters.labels,
+                computed_parameters.x_array,
+                computed_parameters.y_array,
+            ):
+                ax.bar(
+                    x,
+                    y * 100 if percent else y,
+                    width=computed_parameters.space_per_object,
+                    color=color,
+                    label=label,
+                    **kwargs,
+                )
+                ax.bar(
+                    x,
+                    -(y * 100 if percent else y),
+                    width=computed_parameters.space_per_object,
+                    color=color,
+                    label=None,
+                    **kwargs,
+                )
+
+            limits = ax.get_xlim()
+            ax.hlines(0, limits[0], limits[-1], color="black", ls="--")
+            ax.set_xlim(*limits)
+
+            ax.set_yscale(computed_parameters.scale)
+
+            ax.set_xticks(range(size))
+            ax.set_xticklabels(latex_names)
+            ax.set_ylabel(computed_parameters.values_label)
+
+        self._figure = fig
+        self._axis = ax
+
+    def fractional_constraints_barh(
+        self,
+        args: Sequence[FisherMatrix],
+        marginalized: bool = True,
+        colors: Optional[Sequence[str]] = None,
+        labels: Optional[Sequence[str]] = None,
+        values_label: Optional[str] = None,
+        scale: str = "linear",
+        space: float = 0.3,
+        percent: bool = False,
+        **kwargs,
+    ):
+        r"""
+        Makes a horizontal bar plot of the fractional constraints
+        """
+        size = len(args[0])
+        latex_names = args[0].latex_names
+
+        computed_parameters = self._parse_fractional_constraints(
+            args,
+            marginalized=marginalized,
+            colors=colors,
+            labels=labels,
+            scale=scale,
+            space=space,
+            values_label=values_label,
+            percent=percent,
+        )
+
+        with plt.rc_context(self.options):
+            fig, ax = plt.subplots()
+            for color, label, x, y in zip(
+                computed_parameters.colors,
+                computed_parameters.labels,
+                computed_parameters.x_array,
+                computed_parameters.y_array,
+            ):
+                ax.barh(
+                    x,
+                    y * 100 if percent else y,
+                    height=computed_parameters.space_per_object,
+                    color=color,
+                    label=label,
+                    **kwargs,
+                )
+                ax.barh(
+                    x,
+                    -(y * 100 if percent else y),
+                    height=computed_parameters.space_per_object,
+                    color=color,
+                    label=None,
+                    **kwargs,
+                )
+
+            limits = ax.get_ylim()
+            ax.vlines(0, limits[0], limits[-1], color="black", ls="--")
+            ax.set_ylim(*limits)
+
+            ax.set_xscale(computed_parameters.scale)
+
+            ax.set_yticks(range(size))
+            ax.set_yticklabels(latex_names)
+            ax.set_xlabel(computed_parameters.values_label)
+
+        self._figure = fig
+        self._axis = ax
+
+    def errorbar(
+        self,
+        fisher: FisherMatrix,
+        marginalized: bool = True,
+        normalized: bool = False,
+        scale: str = "linear",
+        **kwargs,
+    ):
+        r"""
+        Makes an errorbar plot of constraints of the Fisher object parameters
+
+        Parameters
+        ----------
+        fisher
+            the object to plot
+
+        marginalized : bool, optional
+            whether the marginalized or the unmarginalized constraints should
+            be plotted (default: True)
+
+        normalized : bool, optional
+            whether the constraints should be normalized (default: False)
+
+        scale : str, {'linear', 'log'}
+            the scale to use for the y axis (default: 'linear')
+
+        **kwargs
+            any keyword arguments passed to `matplotlib.pyplot.plot`
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        Setup the plot:
+        >>> fig = FisherConstraintsFigure()
+        >>> fig.errorbar(FisherMatrix(np.diag([1, 2]) * 1e4, names=["a", "b"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$'], fiducials=[0.3, 0.7]), label="Fisher matrix")
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_errorbar.png",
+        ... dpi=150)
+
+        """
+        with plt.rc_context(self.options):
+            fig, ax = plt.subplots()
+            ax.errorbar(
+                range(len(fisher)),
+                fisher.fiducials,
+                yerr=fisher.constraints(marginalized=marginalized),
+                ls="",
+                capsize=3,
+                **kwargs,
+            )
+            if scale == "log":
+                ax.set_yscale(scale)
+            ax.set_ylabel(r"fiducials")
+            ax.set_xticks(range(len(fisher)))
+            ax.set_xticklabels(fisher.latex_names)
+            self._figure = fig
+            self._axes = np.array([ax])
 
 
 class FisherFigure1D(FisherBaseFigure):

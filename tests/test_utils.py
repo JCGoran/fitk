@@ -4,9 +4,6 @@ Tests of the utilities of FITK
 
 from __future__ import annotations
 
-# standard library imports
-from itertools import product
-
 # third-party imports
 import numpy as np
 import pytest
@@ -14,9 +11,6 @@ from scipy.stats import ortho_group
 
 # first party imports
 from fitk.fisher_utils import (
-    MismatchingSizeError,
-    MismatchingValuesError,
-    ParameterNotFoundError,
     find_diff_weights,
     float_to_latex,
     get_index_of_other_array,

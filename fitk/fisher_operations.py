@@ -17,7 +17,12 @@ import numpy as np
 
 # first party imports
 from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import MismatchingValuesError, process_units
+from fitk.fisher_utils import (
+    HTMLWrapper,
+    MismatchingValuesError,
+    make_html_table,
+    process_units,
+)
 
 
 def bayes_factor(
@@ -274,3 +279,24 @@ def kl_matrix(
         result[i, j] = kl_divergence(arg1, arg2, **kwargs)[0]
 
     return result
+
+
+def pprint_constraints(
+    *args: FisherMatrix,
+    orientation: str = "horizontal",
+    **kwargs,
+):
+    """
+    Shortcut for pretty printing constraints.
+    """
+    fmt_values = kwargs.pop("fmt_values", "{:.3f}")
+    title = kwargs.pop("title", None)
+
+    return HTMLWrapper(
+        make_html_table(
+            args[0].constraints(**kwargs),
+            names=args[0].latex_names,
+            fmt_values=fmt_values,
+            title=title,
+        )
+    )

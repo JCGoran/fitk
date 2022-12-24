@@ -814,6 +814,106 @@ class FisherConstraintsFigure:
             scale=scale,
         )
 
+    def bar(
+        self,
+        args: Sequence[FisherMatrix],
+        marginalized: bool = True,
+        colors: Optional[Sequence[str]] = None,
+        labels: Optional[Sequence[str]] = None,
+        values_label: Optional[str] = None,
+        scale: str = "linear",
+        space: float = 0.3,
+        **kwargs,
+    ):
+        r"""
+        Makes a vertical bar plot of the constraints
+        """
+        size = len(args[0])
+        latex_names = args[0].latex_names
+
+        # error handling
+        if not 0 <= space <= 1:
+            raise ValueError("The value of `space` must be in the open interval (0, 1)")
+
+        allowed_scales = ["linear", "log"]
+        if scale not in allowed_scales:
+            raise ValueError(f"The value of `scale` must be one of: {allowed_scales}")
+
+        for arg in args:
+            if set(args[0].names) != set(arg.names):
+                raise MismatchingValuesError(
+                    "parameter name",
+                    args[0].names,
+                    arg.names,
+                )
+
+        # the width or height of all columns for a single parameter
+        total_space = 1 - space
+
+        # the width or height of a single column for a single parameter
+        space_per_object = total_space / len(args)
+
+        if not colors:
+            colors = list(islice(self.current_color, len(args)))  # type: ignore
+        elif len(colors) != len(args):
+            raise MismatchingSizeError(colors, args)
+
+        if not labels:
+            labels = [""] * len(args)
+        elif len(labels) != len(args):
+            raise MismatchingSizeError(labels, args)
+
+        if not values_label:
+            values_label = r"$\theta$"
+
+        x_array = [
+            [
+                _ - total_space / 2 + (2 * index + 1) * space_per_object / 2
+                for _ in range(size)
+            ]
+            for index, arg in enumerate(args)
+        ]
+        y_array = [arg.fiducials for arg in args]
+        yerr_array = [
+            np.array(
+                [
+                    arg.constraints(name=_, marginalized=marginalized)[0]
+                    for _ in arg.names
+                ]
+            )
+            for index, arg in enumerate(args)
+        ]
+
+        with plt.rc_context(self.options):
+            fig, ax = plt.subplots()
+            for color, label, x, y, yerr in zip(
+                colors,  # type: ignore
+                labels,
+                x_array,
+                y_array,
+                yerr_array,
+            ):
+                ax.bar(
+                    x,
+                    y,
+                    width=space_per_object,
+                    color=color,
+                    label=label,
+                    yerr=yerr,
+                    capsize=space_per_object * 50,
+                    **kwargs,
+                )
+
+            if scale == "log":
+                ax.set_yscale(scale)
+
+            ax.set_xticks(range(size))
+            ax.set_xticklabels(latex_names)
+            ax.set_ylabel(values_label)
+
+        self._figure = fig
+        self._axis = ax
+
     def fractional_constraints_bar(
         self,
         args: Sequence[FisherMatrix],

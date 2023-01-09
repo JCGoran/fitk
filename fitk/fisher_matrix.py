@@ -767,7 +767,7 @@ class FisherMatrix:
             names = self.names[index]
         # the names themselves, in any order
         elif "key" in kwargs and set(kwargs["key"]) == set(self.names):
-            index = get_index_of_other_array(self.names, kwargs["key"])
+            index = get_index_of_other_array(kwargs["key"], self.names)
             names = self.names[index]
         # something that can be passed to `sorted`
         else:

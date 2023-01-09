@@ -21,6 +21,22 @@ from fitk.fisher_matrix import FisherMatrix
 from fitk.fisher_utils import ValidationError, find_diff_weights, is_iterable
 
 
+def _zero_out(array, threshold: float):
+    """
+    Returns the input array with elements smaller than `threshold` zeroed out.
+    """
+    # Create a copy of the input array
+    new_array = np.copy(array)
+
+    # Find the elements in the array that are below the threshold
+    below_threshold = np.abs(new_array) < threshold
+
+    # Replace those elements with 0
+    new_array[below_threshold] = 0
+
+    return new_array
+
+
 def _validate_derivatives(
     *args: D,
 ):
@@ -386,6 +402,7 @@ class FisherDerivative:
         self,
         method: str,
         *args: D,
+        rounding_threshold: float = 0.0,
         **kwargs,
     ):
         r"""
@@ -399,6 +416,10 @@ class FisherDerivative:
         *args
             the parameters (see description of `D`) for which we want to
             compute the derivatives
+
+        rounding_threshold, optional
+            the threshold for rounding the derivative, in case one knows from
+            other considerations that it should be zero (default: 0)
 
         **kwargs
             any keyword arguments passed to the method
@@ -421,6 +442,11 @@ class FisherDerivative:
             )
         _validate_derivatives(*args)
 
+        if rounding_threshold < 0:
+            raise ValueError(
+                "The value of the argument `rounding_threshold` must be positive or zero"
+            )
+
         parsed_args = _parse_derivatives(*args)
 
         weights_arr = [
@@ -441,22 +467,25 @@ class FisherDerivative:
         stencils = stencils[np.nonzero(weights)]
         weights = weights[np.nonzero(weights)]
 
-        return np.array(
-            np.sum(
-                [
-                    getattr(self, method)(
-                        *[
-                            (arg.name, arg.fiducial + arg.abs_step * p)
-                            for arg, p in zip(parsed_args, point)
-                        ],
-                        **kwargs,
-                    )
-                    * weight
-                    / denominator
-                    for point, weight in zip(stencils, weights)
-                ],
-                axis=0,
-            )
+        return _zero_out(
+            np.array(
+                np.sum(
+                    [
+                        getattr(self, method)(
+                            *[
+                                (arg.name, arg.fiducial + arg.abs_step * p)
+                                for arg, p in zip(parsed_args, point)
+                            ],
+                            **kwargs,
+                        )
+                        * weight
+                        / denominator
+                        for point, weight in zip(stencils, weights)
+                    ],
+                    axis=0,
+                )
+            ),
+            rounding_threshold,
         )
 
     def fisher_matrix(
@@ -464,6 +493,7 @@ class FisherDerivative:
         *args: D,
         parameter_dependence: str = "signal",
         external_covariance: Optional[Sequence[Sequence[float]]] = None,
+        rounding_threshold: float = 0.0,
         **kwargs,
     ):
         r"""
@@ -499,6 +529,10 @@ class FisherDerivative:
         external_covariance : array_like, optional
             the external covariance matrix to use when computing the result
             (default: None)
+
+        rounding_threshold, optional
+            the threshold for rounding the derivative, in case one knows from
+            other considerations that it should be zero (default: 0)
 
         **kwargs
             any other keyword arguments that should be passed to `signal` and
@@ -584,6 +618,7 @@ class FisherDerivative:
                         accuracy=arg.accuracy,
                         stencil=arg.stencil,
                     ),
+                    rounding_threshold=rounding_threshold,
                     **kwargs,
                 )
 
@@ -602,6 +637,7 @@ class FisherDerivative:
                         accuracy=arg.accuracy,
                         stencil=arg.stencil,
                     ),
+                    rounding_threshold=rounding_threshold,
                     **kwargs,
                 )
             else:

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.0"/>
+    <meta name="generator" content="pdoc 12.3.1"/>
     <title>fitk.fisher_plotter API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -227,7 +227,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">  32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">  33</span></a>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">  34</span></a><span class="k">class</span> <span class="nc">EmptyFigureError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">  35</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">  35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">  36</span></a><span class="sd">    Error raised when the figure is empty, i.e. `plot` was not called first.</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">  37</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">  38</span></a>
@@ -237,7 +237,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos">  42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">  43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos">  44</span></a><span class="k">class</span> <span class="nc">FisherBaseFigure</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">  45</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">  45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos">  46</span></a><span class="sd">    The abstract base class for plotting Fisher objects.</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">  47</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">  48</span></a>
@@ -250,7 +250,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">  55</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">  56</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">  57</span></a>    <span class="p">):</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">  58</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">  58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">  59</span></a><span class="sd">        Constructor</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">  60</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos">  61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span> <span class="o">=</span> <span class="kc">None</span>
@@ -332,21 +332,21 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-137"><a href="#L-137"><span class="linenos"> 137</span></a>
 </span><span id="L-138"><a href="#L-138"><span class="linenos"> 138</span></a>    <span class="nd">@abstractmethod</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos"> 139</span></a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fisher</span><span class="p">:</span> <span class="n">FisherMatrix</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos"> 140</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos"> 140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos"> 141</span></a><span class="sd">        Implements plotting of Fisher objects.</span>
 </span><span id="L-142"><a href="#L-142"><span class="linenos"> 142</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-143"><a href="#L-143"><span class="linenos"> 143</span></a>        <span class="k">return</span> <span class="bp">NotImplemented</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos"> 144</span></a>
 </span><span id="L-145"><a href="#L-145"><span class="linenos"> 145</span></a>    <span class="nd">@abstractmethod</span>
 </span><span id="L-146"><a href="#L-146"><span class="linenos"> 146</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos"> 147</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos"> 147</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos"> 148</span></a><span class="sd">        Implements element access.</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos"> 149</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos"> 150</span></a>        <span class="k">return</span> <span class="bp">NotImplemented</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos"> 151</span></a>
 </span><span id="L-152"><a href="#L-152"><span class="linenos"> 152</span></a>    <span class="nd">@property</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos"> 153</span></a>    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos"> 154</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos"> 154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos"> 155</span></a><span class="sd">        Returns the underlying figure, an instance of</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos"> 156</span></a><span class="sd">        `matplotlib.figure.Figure`.</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos"> 157</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -354,14 +354,14 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-159"><a href="#L-159"><span class="linenos"> 159</span></a>
 </span><span id="L-160"><a href="#L-160"><span class="linenos"> 160</span></a>    <span class="nd">@property</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos"> 161</span></a>    <span class="k">def</span> <span class="nf">axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos"> 162</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos"> 162</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos"> 163</span></a><span class="sd">        Returns the axes of the figure as a numpy array.</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos"> 164</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos"> 165</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos"> 166</span></a>
 </span><span id="L-167"><a href="#L-167"><span class="linenos"> 167</span></a>    <span class="nd">@property</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos"> 168</span></a>    <span class="k">def</span> <span class="nf">hspace</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos"> 169</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos"> 169</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-170"><a href="#L-170"><span class="linenos"> 170</span></a><span class="sd">        The amount of height reserved for space between subplots, expressed as</span>
 </span><span id="L-171"><a href="#L-171"><span class="linenos"> 171</span></a><span class="sd">        a fraction of the average axis height.</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos"> 172</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -369,7 +369,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-174"><a href="#L-174"><span class="linenos"> 174</span></a>
 </span><span id="L-175"><a href="#L-175"><span class="linenos"> 175</span></a>    <span class="nd">@property</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos"> 176</span></a>    <span class="k">def</span> <span class="nf">wspace</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos"> 177</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos"> 177</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos"> 178</span></a><span class="sd">        The amount of width reserved for space between subplots, expressed as a</span>
 </span><span id="L-179"><a href="#L-179"><span class="linenos"> 179</span></a><span class="sd">        fraction of the average axis width.</span>
 </span><span id="L-180"><a href="#L-180"><span class="linenos"> 180</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -377,34 +377,34 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-182"><a href="#L-182"><span class="linenos"> 182</span></a>
 </span><span id="L-183"><a href="#L-183"><span class="linenos"> 183</span></a>    <span class="nd">@property</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos"> 184</span></a>    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos"> 185</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos"> 185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-186"><a href="#L-186"><span class="linenos"> 186</span></a><span class="sd">        Returns the names of the original parameters plotted.</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos"> 187</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-188"><a href="#L-188"><span class="linenos"> 188</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span>
 </span><span id="L-189"><a href="#L-189"><span class="linenos"> 189</span></a>
 </span><span id="L-190"><a href="#L-190"><span class="linenos"> 190</span></a>    <span class="nd">@property</span>
 </span><span id="L-191"><a href="#L-191"><span class="linenos"> 191</span></a>    <span class="k">def</span> <span class="nf">handles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos"> 192</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos"> 192</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-193"><a href="#L-193"><span class="linenos"> 193</span></a><span class="sd">        Returns the handles of the currently drawn artists.</span>
 </span><span id="L-194"><a href="#L-194"><span class="linenos"> 194</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-195"><a href="#L-195"><span class="linenos"> 195</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handles</span>
 </span><span id="L-196"><a href="#L-196"><span class="linenos"> 196</span></a>
 </span><span id="L-197"><a href="#L-197"><span class="linenos"> 197</span></a>    <span class="nd">@property</span>
 </span><span id="L-198"><a href="#L-198"><span class="linenos"> 198</span></a>    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos"> 199</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos"> 199</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos"> 200</span></a><span class="sd">        Returns the legend labels of the currently drawn artists.</span>
 </span><span id="L-201"><a href="#L-201"><span class="linenos"> 201</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos"> 202</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos"> 203</span></a>
 </span><span id="L-204"><a href="#L-204"><span class="linenos"> 204</span></a>    <span class="nd">@property</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos"> 205</span></a>    <span class="k">def</span> <span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos"> 206</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos"> 206</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-207"><a href="#L-207"><span class="linenos"> 207</span></a><span class="sd">        Returns the matplotlib options which were used for plotting.</span>
 </span><span id="L-208"><a href="#L-208"><span class="linenos"> 208</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-209"><a href="#L-209"><span class="linenos"> 209</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span>
 </span><span id="L-210"><a href="#L-210"><span class="linenos"> 210</span></a>
 </span><span id="L-211"><a href="#L-211"><span class="linenos"> 211</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos"> 212</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos"> 212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-213"><a href="#L-213"><span class="linenos"> 213</span></a><span class="sd">        Returns the representation of the figure</span>
 </span><span id="L-214"><a href="#L-214"><span class="linenos"> 214</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-215"><a href="#L-215"><span class="linenos"> 215</span></a>        <span class="k">return</span> <span class="p">(</span>
@@ -415,7 +415,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-220"><a href="#L-220"><span class="linenos"> 220</span></a>        <span class="p">)</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos"> 221</span></a>
 </span><span id="L-222"><a href="#L-222"><span class="linenos"> 222</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos"> 223</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos"> 223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos"> 224</span></a><span class="sd">        Returns the string representation of the figure</span>
 </span><span id="L-225"><a href="#L-225"><span class="linenos"> 225</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-226"><a href="#L-226"><span class="linenos"> 226</span></a>        <span class="k">return</span> <span class="p">(</span>
@@ -430,7 +430,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-235"><a href="#L-235"><span class="linenos"> 235</span></a>        <span class="n">artist</span><span class="p">:</span> <span class="n">Artist</span><span class="p">,</span>
 </span><span id="L-236"><a href="#L-236"><span class="linenos"> 236</span></a>        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-237"><a href="#L-237"><span class="linenos"> 237</span></a>    <span class="p">):</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos"> 238</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos"> 238</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-239"><a href="#L-239"><span class="linenos"> 239</span></a><span class="sd">        This is a convenience function for correctly updating the legend after</span>
 </span><span id="L-240"><a href="#L-240"><span class="linenos"> 240</span></a><span class="sd">        directly plotting some artist via `&lt;instance&gt;[&lt;name(s)&gt;].&lt;method&gt;`</span>
 </span><span id="L-241"><a href="#L-241"><span class="linenos"> 241</span></a>
@@ -480,7 +480,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-285"><a href="#L-285"><span class="linenos"> 285</span></a>        <span class="n">bbox_inches</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">,</span>
 </span><span id="L-286"><a href="#L-286"><span class="linenos"> 286</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-287"><a href="#L-287"><span class="linenos"> 287</span></a>    <span class="p">):</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos"> 288</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-288"><a href="#L-288"><span class="linenos"> 288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-289"><a href="#L-289"><span class="linenos"> 289</span></a><span class="sd">        Convenience wrapper for `figure.savefig`.</span>
 </span><span id="L-290"><a href="#L-290"><span class="linenos"> 290</span></a>
 </span><span id="L-291"><a href="#L-291"><span class="linenos"> 291</span></a><span class="sd">        Parameters</span>
@@ -522,7 +522,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-327"><a href="#L-327"><span class="linenos"> 327</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-328"><a href="#L-328"><span class="linenos"> 328</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-329"><a href="#L-329"><span class="linenos"> 329</span></a>    <span class="p">):</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos"> 330</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos"> 330</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos"> 331</span></a><span class="sd">        Collectively sets both x and y label parameters.</span>
 </span><span id="L-332"><a href="#L-332"><span class="linenos"> 332</span></a>
 </span><span id="L-333"><a href="#L-333"><span class="linenos"> 333</span></a><span class="sd">        Parameters</span>
@@ -575,7 +575,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-380"><a href="#L-380"><span class="linenos"> 380</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-381"><a href="#L-381"><span class="linenos"> 381</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-382"><a href="#L-382"><span class="linenos"> 382</span></a>    <span class="p">):</span>
-</span><span id="L-383"><a href="#L-383"><span class="linenos"> 383</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos"> 383</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-384"><a href="#L-384"><span class="linenos"> 384</span></a><span class="sd">        Collectively sets both x and y tick parameters.</span>
 </span><span id="L-385"><a href="#L-385"><span class="linenos"> 385</span></a>
 </span><span id="L-386"><a href="#L-386"><span class="linenos"> 386</span></a><span class="sd">        Parameters</span>
@@ -626,7 +626,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-431"><a href="#L-431"><span class="linenos"> 431</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="L-432"><a href="#L-432"><span class="linenos"> 432</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-433"><a href="#L-433"><span class="linenos"> 433</span></a>    <span class="p">):</span>
-</span><span id="L-434"><a href="#L-434"><span class="linenos"> 434</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos"> 434</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-435"><a href="#L-435"><span class="linenos"> 435</span></a><span class="sd">        Sets the major locator for all of the axes.</span>
 </span><span id="L-436"><a href="#L-436"><span class="linenos"> 436</span></a>
 </span><span id="L-437"><a href="#L-437"><span class="linenos"> 437</span></a><span class="sd">        Parameters</span>
@@ -672,7 +672,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-477"><a href="#L-477"><span class="linenos"> 477</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="L-478"><a href="#L-478"><span class="linenos"> 478</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-479"><a href="#L-479"><span class="linenos"> 479</span></a>    <span class="p">):</span>
-</span><span id="L-480"><a href="#L-480"><span class="linenos"> 480</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-480"><a href="#L-480"><span class="linenos"> 480</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-481"><a href="#L-481"><span class="linenos"> 481</span></a><span class="sd">        Sets the minor locator for all of the axes.</span>
 </span><span id="L-482"><a href="#L-482"><span class="linenos"> 482</span></a>
 </span><span id="L-483"><a href="#L-483"><span class="linenos"> 483</span></a><span class="sd">        Parameters</span>
@@ -717,7 +717,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-522"><a href="#L-522"><span class="linenos"> 522</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="L-523"><a href="#L-523"><span class="linenos"> 523</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-524"><a href="#L-524"><span class="linenos"> 524</span></a>    <span class="p">):</span>
-</span><span id="L-525"><a href="#L-525"><span class="linenos"> 525</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-525"><a href="#L-525"><span class="linenos"> 525</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-526"><a href="#L-526"><span class="linenos"> 526</span></a><span class="sd">        Sets the major formatter for all of the axes.</span>
 </span><span id="L-527"><a href="#L-527"><span class="linenos"> 527</span></a>
 </span><span id="L-528"><a href="#L-528"><span class="linenos"> 528</span></a><span class="sd">        Parameters</span>
@@ -751,7 +751,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-556"><a href="#L-556"><span class="linenos"> 556</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="L-557"><a href="#L-557"><span class="linenos"> 557</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="L-558"><a href="#L-558"><span class="linenos"> 558</span></a>    <span class="p">):</span>
-</span><span id="L-559"><a href="#L-559"><span class="linenos"> 559</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-559"><a href="#L-559"><span class="linenos"> 559</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-560"><a href="#L-560"><span class="linenos"> 560</span></a><span class="sd">        Sets the minor formatter for all of the axes.</span>
 </span><span id="L-561"><a href="#L-561"><span class="linenos"> 561</span></a>
 </span><span id="L-562"><a href="#L-562"><span class="linenos"> 562</span></a><span class="sd">        Parameters</span>
@@ -782,7 +782,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-587"><a href="#L-587"><span class="linenos"> 587</span></a>
 </span><span id="L-588"><a href="#L-588"><span class="linenos"> 588</span></a>
 </span><span id="L-589"><a href="#L-589"><span class="linenos"> 589</span></a><span class="k">class</span> <span class="nc">FisherFigure1D</span><span class="p">(</span><span class="n">FisherBaseFigure</span><span class="p">):</span>
-</span><span id="L-590"><a href="#L-590"><span class="linenos"> 590</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-590"><a href="#L-590"><span class="linenos"> 590</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-591"><a href="#L-591"><span class="linenos"> 591</span></a><span class="sd">    Container for easy access to elements in the 1D plot.</span>
 </span><span id="L-592"><a href="#L-592"><span class="linenos"> 592</span></a>
 </span><span id="L-593"><a href="#L-593"><span class="linenos"> 593</span></a><span class="sd">    Examples</span>
@@ -838,7 +838,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-643"><a href="#L-643"><span class="linenos"> 643</span></a>        <span class="n">wspace</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
 </span><span id="L-644"><a href="#L-644"><span class="linenos"> 644</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-645"><a href="#L-645"><span class="linenos"> 645</span></a>    <span class="p">):</span>
-</span><span id="L-646"><a href="#L-646"><span class="linenos"> 646</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-646"><a href="#L-646"><span class="linenos"> 646</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-647"><a href="#L-647"><span class="linenos"> 647</span></a><span class="sd">        Constructor.</span>
 </span><span id="L-648"><a href="#L-648"><span class="linenos"> 648</span></a>
 </span><span id="L-649"><a href="#L-649"><span class="linenos"> 649</span></a><span class="sd">        Parameters</span>
@@ -886,7 +886,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-691"><a href="#L-691"><span class="linenos"> 691</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-692"><a href="#L-692"><span class="linenos"> 692</span></a>        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-693"><a href="#L-693"><span class="linenos"> 693</span></a>    <span class="p">):</span>
-</span><span id="L-694"><a href="#L-694"><span class="linenos"> 694</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-694"><a href="#L-694"><span class="linenos"> 694</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-695"><a href="#L-695"><span class="linenos"> 695</span></a><span class="sd">        Returns the axis associated to the name `key`.</span>
 </span><span id="L-696"><a href="#L-696"><span class="linenos"> 696</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-697"><a href="#L-697"><span class="linenos"> 697</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">:</span>
@@ -904,7 +904,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-709"><a href="#L-709"><span class="linenos"> 709</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="L-710"><a href="#L-710"><span class="linenos"> 710</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-711"><a href="#L-711"><span class="linenos"> 711</span></a>    <span class="p">):</span>
-</span><span id="L-712"><a href="#L-712"><span class="linenos"> 712</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-712"><a href="#L-712"><span class="linenos"> 712</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-713"><a href="#L-713"><span class="linenos"> 713</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="L-714"><a href="#L-714"><span class="linenos"> 714</span></a>
 </span><span id="L-715"><a href="#L-715"><span class="linenos"> 715</span></a><span class="sd">        Parameters</span>
@@ -967,7 +967,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-772"><a href="#L-772"><span class="linenos"> 772</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="L-773"><a href="#L-773"><span class="linenos"> 773</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-774"><a href="#L-774"><span class="linenos"> 774</span></a>    <span class="p">):</span>
-</span><span id="L-775"><a href="#L-775"><span class="linenos"> 775</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-775"><a href="#L-775"><span class="linenos"> 775</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-776"><a href="#L-776"><span class="linenos"> 776</span></a><span class="sd">        Plots the 1D curves of the Fisher objects.</span>
 </span><span id="L-777"><a href="#L-777"><span class="linenos"> 777</span></a>
 </span><span id="L-778"><a href="#L-778"><span class="linenos"> 778</span></a><span class="sd">        Parameters</span>
@@ -1077,7 +1077,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-882"><a href="#L-882"><span class="linenos"> 882</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
 </span><span id="L-883"><a href="#L-883"><span class="linenos"> 883</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-884"><a href="#L-884"><span class="linenos"> 884</span></a>    <span class="p">):</span>
-</span><span id="L-885"><a href="#L-885"><span class="linenos"> 885</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-885"><a href="#L-885"><span class="linenos"> 885</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-886"><a href="#L-886"><span class="linenos"> 886</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="L-887"><a href="#L-887"><span class="linenos"> 887</span></a>
 </span><span id="L-888"><a href="#L-888"><span class="linenos"> 888</span></a><span class="sd">        Parameters</span>
@@ -1141,7 +1141,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-946"><a href="#L-946"><span class="linenos"> 946</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
 </span><span id="L-947"><a href="#L-947"><span class="linenos"> 947</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-948"><a href="#L-948"><span class="linenos"> 948</span></a>    <span class="p">):</span>
-</span><span id="L-949"><a href="#L-949"><span class="linenos"> 949</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-949"><a href="#L-949"><span class="linenos"> 949</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-950"><a href="#L-950"><span class="linenos"> 950</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="L-951"><a href="#L-951"><span class="linenos"> 951</span></a><span class="sd">        options.</span>
 </span><span id="L-952"><a href="#L-952"><span class="linenos"> 952</span></a>
@@ -1177,7 +1177,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-982"><a href="#L-982"><span class="linenos"> 982</span></a>
 </span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a>
 </span><span id="L-984"><a href="#L-984"><span class="linenos"> 984</span></a><span class="k">class</span> <span class="nc">FisherFigure2D</span><span class="p">(</span><span class="n">FisherBaseFigure</span><span class="p">):</span>
-</span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-986"><a href="#L-986"><span class="linenos"> 986</span></a><span class="sd">    Container for easy access to elements in the 2D plot.</span>
 </span><span id="L-987"><a href="#L-987"><span class="linenos"> 987</span></a>
 </span><span id="L-988"><a href="#L-988"><span class="linenos"> 988</span></a><span class="sd">    Examples</span>
@@ -1234,7 +1234,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1039"><a href="#L-1039"><span class="linenos">1039</span></a>        <span class="n">show_joint_dist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 </span><span id="L-1040"><a href="#L-1040"><span class="linenos">1040</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-1041"><a href="#L-1041"><span class="linenos">1041</span></a>    <span class="p">):</span>
-</span><span id="L-1042"><a href="#L-1042"><span class="linenos">1042</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1042"><a href="#L-1042"><span class="linenos">1042</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1043"><a href="#L-1043"><span class="linenos">1043</span></a><span class="sd">        Constructor.</span>
 </span><span id="L-1044"><a href="#L-1044"><span class="linenos">1044</span></a>
 </span><span id="L-1045"><a href="#L-1045"><span class="linenos">1045</span></a><span class="sd">        Parameters</span>
@@ -1327,7 +1327,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1132"><a href="#L-1132"><span class="linenos">1132</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-1133"><a href="#L-1133"><span class="linenos">1133</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1134"><a href="#L-1134"><span class="linenos">1134</span></a>    <span class="p">):</span>
-</span><span id="L-1135"><a href="#L-1135"><span class="linenos">1135</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1135"><a href="#L-1135"><span class="linenos">1135</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1136"><a href="#L-1136"><span class="linenos">1136</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="L-1137"><a href="#L-1137"><span class="linenos">1137</span></a>
 </span><span id="L-1138"><a href="#L-1138"><span class="linenos">1138</span></a><span class="sd">        Parameters</span>
@@ -1404,7 +1404,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1209"><a href="#L-1209"><span class="linenos">1209</span></a>        <span class="n">yscale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.08</span><span class="p">,</span>
 </span><span id="L-1210"><a href="#L-1210"><span class="linenos">1210</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1211"><a href="#L-1211"><span class="linenos">1211</span></a>    <span class="p">):</span>
-</span><span id="L-1212"><a href="#L-1212"><span class="linenos">1212</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1212"><a href="#L-1212"><span class="linenos">1212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1213"><a href="#L-1213"><span class="linenos">1213</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="L-1214"><a href="#L-1214"><span class="linenos">1214</span></a><span class="sd">        options.</span>
 </span><span id="L-1215"><a href="#L-1215"><span class="linenos">1215</span></a>
@@ -1464,7 +1464,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1269"><a href="#L-1269"><span class="linenos">1269</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="L-1270"><a href="#L-1270"><span class="linenos">1270</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1271"><a href="#L-1271"><span class="linenos">1271</span></a>    <span class="p">):</span>
-</span><span id="L-1272"><a href="#L-1272"><span class="linenos">1272</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1272"><a href="#L-1272"><span class="linenos">1272</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1273"><a href="#L-1273"><span class="linenos">1273</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="L-1274"><a href="#L-1274"><span class="linenos">1274</span></a>
 </span><span id="L-1275"><a href="#L-1275"><span class="linenos">1275</span></a><span class="sd">        Parameters</span>
@@ -1531,7 +1531,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1336"><a href="#L-1336"><span class="linenos">1336</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="L-1337"><a href="#L-1337"><span class="linenos">1337</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1338"><a href="#L-1338"><span class="linenos">1338</span></a>    <span class="p">):</span>
-</span><span id="L-1339"><a href="#L-1339"><span class="linenos">1339</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1339"><a href="#L-1339"><span class="linenos">1339</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1340"><a href="#L-1340"><span class="linenos">1340</span></a><span class="sd">        Plots the 2D contours (and optionally 1D curves) of the Fisher objects.</span>
 </span><span id="L-1341"><a href="#L-1341"><span class="linenos">1341</span></a>
 </span><span id="L-1342"><a href="#L-1342"><span class="linenos">1342</span></a><span class="sd">        Parameters</span>
@@ -1764,7 +1764,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1569"><a href="#L-1569"><span class="linenos">1569</span></a>    <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 </span><span id="L-1570"><a href="#L-1570"><span class="linenos">1570</span></a>    <span class="n">df</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
 </span><span id="L-1571"><a href="#L-1571"><span class="linenos">1571</span></a><span class="p">):</span>
-</span><span id="L-1572"><a href="#L-1572"><span class="linenos">1572</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1572"><a href="#L-1572"><span class="linenos">1572</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1573"><a href="#L-1573"><span class="linenos">1573</span></a><span class="sd">    Returns $\Delta \chi^2$.</span>
 </span><span id="L-1574"><a href="#L-1574"><span class="linenos">1574</span></a><span class="sd">    To obtain the scaling coefficient $\alpha$, just take the square root of</span>
 </span><span id="L-1575"><a href="#L-1575"><span class="linenos">1575</span></a><span class="sd">    the output.</span>
@@ -1790,7 +1790,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1595"><a href="#L-1595"><span class="linenos">1595</span></a>    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-1596"><a href="#L-1596"><span class="linenos">1596</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1597"><a href="#L-1597"><span class="linenos">1597</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">Artist</span><span class="p">]:</span>
-</span><span id="L-1598"><a href="#L-1598"><span class="linenos">1598</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1598"><a href="#L-1598"><span class="linenos">1598</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1599"><a href="#L-1599"><span class="linenos">1599</span></a><span class="sd">    Adds a 1D Gaussian with marginalized constraints `sigma` close to fiducial</span>
 </span><span id="L-1600"><a href="#L-1600"><span class="linenos">1600</span></a><span class="sd">    value `fiducial` to axis `ax`.</span>
 </span><span id="L-1601"><a href="#L-1601"><span class="linenos">1601</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -1819,7 +1819,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1624"><a href="#L-1624"><span class="linenos">1624</span></a>    <span class="n">level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 </span><span id="L-1625"><a href="#L-1625"><span class="linenos">1625</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1626"><a href="#L-1626"><span class="linenos">1626</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">]:</span>
-</span><span id="L-1627"><a href="#L-1627"><span class="linenos">1627</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1627"><a href="#L-1627"><span class="linenos">1627</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1628"><a href="#L-1628"><span class="linenos">1628</span></a><span class="sd">    Add shading to a 1D axes.</span>
 </span><span id="L-1629"><a href="#L-1629"><span class="linenos">1629</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-1630"><a href="#L-1630"><span class="linenos">1630</span></a>    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1868,7 +1868,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1673"><a href="#L-1673"><span class="linenos">1673</span></a>    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-1674"><a href="#L-1674"><span class="linenos">1674</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1675"><a href="#L-1675"><span class="linenos">1675</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">Artist</span><span class="p">]:</span>
-</span><span id="L-1676"><a href="#L-1676"><span class="linenos">1676</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1676"><a href="#L-1676"><span class="linenos">1676</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1677"><a href="#L-1677"><span class="linenos">1677</span></a><span class="sd">    Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.</span>
 </span><span id="L-1678"><a href="#L-1678"><span class="linenos">1678</span></a>
 </span><span id="L-1679"><a href="#L-1679"><span class="linenos">1679</span></a><span class="sd">    Parameters</span>
@@ -1928,7 +1928,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1733"><a href="#L-1733"><span class="linenos">1733</span></a>    <span class="n">scaling_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 </span><span id="L-1734"><a href="#L-1734"><span class="linenos">1734</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="L-1735"><a href="#L-1735"><span class="linenos">1735</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">Artist</span><span class="p">]:</span>
-</span><span id="L-1736"><a href="#L-1736"><span class="linenos">1736</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1736"><a href="#L-1736"><span class="linenos">1736</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1737"><a href="#L-1737"><span class="linenos">1737</span></a><span class="sd">    Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.</span>
 </span><span id="L-1738"><a href="#L-1738"><span class="linenos">1738</span></a>
 </span><span id="L-1739"><a href="#L-1739"><span class="linenos">1739</span></a><span class="sd">    Parameters</span>
@@ -2010,7 +2010,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="L-1815"><a href="#L-1815"><span class="linenos">1815</span></a>    <span class="n">name1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-1816"><a href="#L-1816"><span class="linenos">1816</span></a>    <span class="n">name2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-1817"><a href="#L-1817"><span class="linenos">1817</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-</span><span id="L-1818"><a href="#L-1818"><span class="linenos">1818</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1818"><a href="#L-1818"><span class="linenos">1818</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1819"><a href="#L-1819"><span class="linenos">1819</span></a><span class="sd">    Constructs parameters for a Gaussian ellipse from the names.</span>
 </span><span id="L-1820"><a href="#L-1820"><span class="linenos">1820</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-1821"><a href="#L-1821"><span class="linenos">1821</span></a>    <span class="k">if</span> <span class="n">name1</span> <span class="o">==</span> <span class="n">name2</span><span class="p">:</span>
@@ -2057,7 +2057,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
     </div>
     <a class="headerlink" href="#EmptyFigureError"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="EmptyFigureError-35"><a href="#EmptyFigureError-35"><span class="linenos">35</span></a><span class="k">class</span> <span class="nc">EmptyFigureError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="EmptyFigureError-36"><a href="#EmptyFigureError-36"><span class="linenos">36</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="EmptyFigureError-36"><a href="#EmptyFigureError-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="EmptyFigureError-37"><a href="#EmptyFigureError-37"><span class="linenos">37</span></a><span class="sd">    Error raised when the figure is empty, i.e. `plot` was not called first.</span>
 </span><span id="EmptyFigureError-38"><a href="#EmptyFigureError-38"><span class="linenos">38</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="EmptyFigureError-39"><a href="#EmptyFigureError-39"><span class="linenos">39</span></a>
@@ -2112,7 +2112,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
     </div>
     <a class="headerlink" href="#FisherBaseFigure"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="FisherBaseFigure-45"><a href="#FisherBaseFigure-45"><span class="linenos"> 45</span></a><span class="k">class</span> <span class="nc">FisherBaseFigure</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-46"><a href="#FisherBaseFigure-46"><span class="linenos"> 46</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-46"><a href="#FisherBaseFigure-46"><span class="linenos"> 46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-47"><a href="#FisherBaseFigure-47"><span class="linenos"> 47</span></a><span class="sd">    The abstract base class for plotting Fisher objects.</span>
 </span><span id="FisherBaseFigure-48"><a href="#FisherBaseFigure-48"><span class="linenos"> 48</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-49"><a href="#FisherBaseFigure-49"><span class="linenos"> 49</span></a>
@@ -2125,7 +2125,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-56"><a href="#FisherBaseFigure-56"><span class="linenos"> 56</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-57"><a href="#FisherBaseFigure-57"><span class="linenos"> 57</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-58"><a href="#FisherBaseFigure-58"><span class="linenos"> 58</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-59"><a href="#FisherBaseFigure-59"><span class="linenos"> 59</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-59"><a href="#FisherBaseFigure-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-60"><a href="#FisherBaseFigure-60"><span class="linenos"> 60</span></a><span class="sd">        Constructor</span>
 </span><span id="FisherBaseFigure-61"><a href="#FisherBaseFigure-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-62"><a href="#FisherBaseFigure-62"><span class="linenos"> 62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2207,21 +2207,21 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-138"><a href="#FisherBaseFigure-138"><span class="linenos">138</span></a>
 </span><span id="FisherBaseFigure-139"><a href="#FisherBaseFigure-139"><span class="linenos">139</span></a>    <span class="nd">@abstractmethod</span>
 </span><span id="FisherBaseFigure-140"><a href="#FisherBaseFigure-140"><span class="linenos">140</span></a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fisher</span><span class="p">:</span> <span class="n">FisherMatrix</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-141"><a href="#FisherBaseFigure-141"><span class="linenos">141</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-141"><a href="#FisherBaseFigure-141"><span class="linenos">141</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-142"><a href="#FisherBaseFigure-142"><span class="linenos">142</span></a><span class="sd">        Implements plotting of Fisher objects.</span>
 </span><span id="FisherBaseFigure-143"><a href="#FisherBaseFigure-143"><span class="linenos">143</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-144"><a href="#FisherBaseFigure-144"><span class="linenos">144</span></a>        <span class="k">return</span> <span class="bp">NotImplemented</span>
 </span><span id="FisherBaseFigure-145"><a href="#FisherBaseFigure-145"><span class="linenos">145</span></a>
 </span><span id="FisherBaseFigure-146"><a href="#FisherBaseFigure-146"><span class="linenos">146</span></a>    <span class="nd">@abstractmethod</span>
 </span><span id="FisherBaseFigure-147"><a href="#FisherBaseFigure-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-148"><a href="#FisherBaseFigure-148"><span class="linenos">148</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-148"><a href="#FisherBaseFigure-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-149"><a href="#FisherBaseFigure-149"><span class="linenos">149</span></a><span class="sd">        Implements element access.</span>
 </span><span id="FisherBaseFigure-150"><a href="#FisherBaseFigure-150"><span class="linenos">150</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-151"><a href="#FisherBaseFigure-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="bp">NotImplemented</span>
 </span><span id="FisherBaseFigure-152"><a href="#FisherBaseFigure-152"><span class="linenos">152</span></a>
 </span><span id="FisherBaseFigure-153"><a href="#FisherBaseFigure-153"><span class="linenos">153</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-154"><a href="#FisherBaseFigure-154"><span class="linenos">154</span></a>    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-155"><a href="#FisherBaseFigure-155"><span class="linenos">155</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-155"><a href="#FisherBaseFigure-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-156"><a href="#FisherBaseFigure-156"><span class="linenos">156</span></a><span class="sd">        Returns the underlying figure, an instance of</span>
 </span><span id="FisherBaseFigure-157"><a href="#FisherBaseFigure-157"><span class="linenos">157</span></a><span class="sd">        `matplotlib.figure.Figure`.</span>
 </span><span id="FisherBaseFigure-158"><a href="#FisherBaseFigure-158"><span class="linenos">158</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -2229,14 +2229,14 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-160"><a href="#FisherBaseFigure-160"><span class="linenos">160</span></a>
 </span><span id="FisherBaseFigure-161"><a href="#FisherBaseFigure-161"><span class="linenos">161</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-162"><a href="#FisherBaseFigure-162"><span class="linenos">162</span></a>    <span class="k">def</span> <span class="nf">axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-163"><a href="#FisherBaseFigure-163"><span class="linenos">163</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-163"><a href="#FisherBaseFigure-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-164"><a href="#FisherBaseFigure-164"><span class="linenos">164</span></a><span class="sd">        Returns the axes of the figure as a numpy array.</span>
 </span><span id="FisherBaseFigure-165"><a href="#FisherBaseFigure-165"><span class="linenos">165</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-166"><a href="#FisherBaseFigure-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span>
 </span><span id="FisherBaseFigure-167"><a href="#FisherBaseFigure-167"><span class="linenos">167</span></a>
 </span><span id="FisherBaseFigure-168"><a href="#FisherBaseFigure-168"><span class="linenos">168</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-169"><a href="#FisherBaseFigure-169"><span class="linenos">169</span></a>    <span class="k">def</span> <span class="nf">hspace</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="FisherBaseFigure-170"><a href="#FisherBaseFigure-170"><span class="linenos">170</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-170"><a href="#FisherBaseFigure-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-171"><a href="#FisherBaseFigure-171"><span class="linenos">171</span></a><span class="sd">        The amount of height reserved for space between subplots, expressed as</span>
 </span><span id="FisherBaseFigure-172"><a href="#FisherBaseFigure-172"><span class="linenos">172</span></a><span class="sd">        a fraction of the average axis height.</span>
 </span><span id="FisherBaseFigure-173"><a href="#FisherBaseFigure-173"><span class="linenos">173</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -2244,7 +2244,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-175"><a href="#FisherBaseFigure-175"><span class="linenos">175</span></a>
 </span><span id="FisherBaseFigure-176"><a href="#FisherBaseFigure-176"><span class="linenos">176</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-177"><a href="#FisherBaseFigure-177"><span class="linenos">177</span></a>    <span class="k">def</span> <span class="nf">wspace</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="FisherBaseFigure-178"><a href="#FisherBaseFigure-178"><span class="linenos">178</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-178"><a href="#FisherBaseFigure-178"><span class="linenos">178</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-179"><a href="#FisherBaseFigure-179"><span class="linenos">179</span></a><span class="sd">        The amount of width reserved for space between subplots, expressed as a</span>
 </span><span id="FisherBaseFigure-180"><a href="#FisherBaseFigure-180"><span class="linenos">180</span></a><span class="sd">        fraction of the average axis width.</span>
 </span><span id="FisherBaseFigure-181"><a href="#FisherBaseFigure-181"><span class="linenos">181</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -2252,34 +2252,34 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-183"><a href="#FisherBaseFigure-183"><span class="linenos">183</span></a>
 </span><span id="FisherBaseFigure-184"><a href="#FisherBaseFigure-184"><span class="linenos">184</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-185"><a href="#FisherBaseFigure-185"><span class="linenos">185</span></a>    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-186"><a href="#FisherBaseFigure-186"><span class="linenos">186</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-186"><a href="#FisherBaseFigure-186"><span class="linenos">186</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-187"><a href="#FisherBaseFigure-187"><span class="linenos">187</span></a><span class="sd">        Returns the names of the original parameters plotted.</span>
 </span><span id="FisherBaseFigure-188"><a href="#FisherBaseFigure-188"><span class="linenos">188</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-189"><a href="#FisherBaseFigure-189"><span class="linenos">189</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span>
 </span><span id="FisherBaseFigure-190"><a href="#FisherBaseFigure-190"><span class="linenos">190</span></a>
 </span><span id="FisherBaseFigure-191"><a href="#FisherBaseFigure-191"><span class="linenos">191</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-192"><a href="#FisherBaseFigure-192"><span class="linenos">192</span></a>    <span class="k">def</span> <span class="nf">handles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-193"><a href="#FisherBaseFigure-193"><span class="linenos">193</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-193"><a href="#FisherBaseFigure-193"><span class="linenos">193</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-194"><a href="#FisherBaseFigure-194"><span class="linenos">194</span></a><span class="sd">        Returns the handles of the currently drawn artists.</span>
 </span><span id="FisherBaseFigure-195"><a href="#FisherBaseFigure-195"><span class="linenos">195</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-196"><a href="#FisherBaseFigure-196"><span class="linenos">196</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handles</span>
 </span><span id="FisherBaseFigure-197"><a href="#FisherBaseFigure-197"><span class="linenos">197</span></a>
 </span><span id="FisherBaseFigure-198"><a href="#FisherBaseFigure-198"><span class="linenos">198</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-199"><a href="#FisherBaseFigure-199"><span class="linenos">199</span></a>    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-200"><a href="#FisherBaseFigure-200"><span class="linenos">200</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-200"><a href="#FisherBaseFigure-200"><span class="linenos">200</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-201"><a href="#FisherBaseFigure-201"><span class="linenos">201</span></a><span class="sd">        Returns the legend labels of the currently drawn artists.</span>
 </span><span id="FisherBaseFigure-202"><a href="#FisherBaseFigure-202"><span class="linenos">202</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-203"><a href="#FisherBaseFigure-203"><span class="linenos">203</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
 </span><span id="FisherBaseFigure-204"><a href="#FisherBaseFigure-204"><span class="linenos">204</span></a>
 </span><span id="FisherBaseFigure-205"><a href="#FisherBaseFigure-205"><span class="linenos">205</span></a>    <span class="nd">@property</span>
 </span><span id="FisherBaseFigure-206"><a href="#FisherBaseFigure-206"><span class="linenos">206</span></a>    <span class="k">def</span> <span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-207"><a href="#FisherBaseFigure-207"><span class="linenos">207</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-207"><a href="#FisherBaseFigure-207"><span class="linenos">207</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-208"><a href="#FisherBaseFigure-208"><span class="linenos">208</span></a><span class="sd">        Returns the matplotlib options which were used for plotting.</span>
 </span><span id="FisherBaseFigure-209"><a href="#FisherBaseFigure-209"><span class="linenos">209</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-210"><a href="#FisherBaseFigure-210"><span class="linenos">210</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span>
 </span><span id="FisherBaseFigure-211"><a href="#FisherBaseFigure-211"><span class="linenos">211</span></a>
 </span><span id="FisherBaseFigure-212"><a href="#FisherBaseFigure-212"><span class="linenos">212</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-213"><a href="#FisherBaseFigure-213"><span class="linenos">213</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-213"><a href="#FisherBaseFigure-213"><span class="linenos">213</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-214"><a href="#FisherBaseFigure-214"><span class="linenos">214</span></a><span class="sd">        Returns the representation of the figure</span>
 </span><span id="FisherBaseFigure-215"><a href="#FisherBaseFigure-215"><span class="linenos">215</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-216"><a href="#FisherBaseFigure-216"><span class="linenos">216</span></a>        <span class="k">return</span> <span class="p">(</span>
@@ -2290,7 +2290,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-221"><a href="#FisherBaseFigure-221"><span class="linenos">221</span></a>        <span class="p">)</span>
 </span><span id="FisherBaseFigure-222"><a href="#FisherBaseFigure-222"><span class="linenos">222</span></a>
 </span><span id="FisherBaseFigure-223"><a href="#FisherBaseFigure-223"><span class="linenos">223</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FisherBaseFigure-224"><a href="#FisherBaseFigure-224"><span class="linenos">224</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-224"><a href="#FisherBaseFigure-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-225"><a href="#FisherBaseFigure-225"><span class="linenos">225</span></a><span class="sd">        Returns the string representation of the figure</span>
 </span><span id="FisherBaseFigure-226"><a href="#FisherBaseFigure-226"><span class="linenos">226</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-227"><a href="#FisherBaseFigure-227"><span class="linenos">227</span></a>        <span class="k">return</span> <span class="p">(</span>
@@ -2305,7 +2305,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-236"><a href="#FisherBaseFigure-236"><span class="linenos">236</span></a>        <span class="n">artist</span><span class="p">:</span> <span class="n">Artist</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-237"><a href="#FisherBaseFigure-237"><span class="linenos">237</span></a>        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-238"><a href="#FisherBaseFigure-238"><span class="linenos">238</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-239"><a href="#FisherBaseFigure-239"><span class="linenos">239</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-239"><a href="#FisherBaseFigure-239"><span class="linenos">239</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-240"><a href="#FisherBaseFigure-240"><span class="linenos">240</span></a><span class="sd">        This is a convenience function for correctly updating the legend after</span>
 </span><span id="FisherBaseFigure-241"><a href="#FisherBaseFigure-241"><span class="linenos">241</span></a><span class="sd">        directly plotting some artist via `&lt;instance&gt;[&lt;name(s)&gt;].&lt;method&gt;`</span>
 </span><span id="FisherBaseFigure-242"><a href="#FisherBaseFigure-242"><span class="linenos">242</span></a>
@@ -2355,7 +2355,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-286"><a href="#FisherBaseFigure-286"><span class="linenos">286</span></a>        <span class="n">bbox_inches</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-287"><a href="#FisherBaseFigure-287"><span class="linenos">287</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-288"><a href="#FisherBaseFigure-288"><span class="linenos">288</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-289"><a href="#FisherBaseFigure-289"><span class="linenos">289</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-289"><a href="#FisherBaseFigure-289"><span class="linenos">289</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-290"><a href="#FisherBaseFigure-290"><span class="linenos">290</span></a><span class="sd">        Convenience wrapper for `figure.savefig`.</span>
 </span><span id="FisherBaseFigure-291"><a href="#FisherBaseFigure-291"><span class="linenos">291</span></a>
 </span><span id="FisherBaseFigure-292"><a href="#FisherBaseFigure-292"><span class="linenos">292</span></a><span class="sd">        Parameters</span>
@@ -2397,7 +2397,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-328"><a href="#FisherBaseFigure-328"><span class="linenos">328</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-329"><a href="#FisherBaseFigure-329"><span class="linenos">329</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-330"><a href="#FisherBaseFigure-330"><span class="linenos">330</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-331"><a href="#FisherBaseFigure-331"><span class="linenos">331</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-331"><a href="#FisherBaseFigure-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-332"><a href="#FisherBaseFigure-332"><span class="linenos">332</span></a><span class="sd">        Collectively sets both x and y label parameters.</span>
 </span><span id="FisherBaseFigure-333"><a href="#FisherBaseFigure-333"><span class="linenos">333</span></a>
 </span><span id="FisherBaseFigure-334"><a href="#FisherBaseFigure-334"><span class="linenos">334</span></a><span class="sd">        Parameters</span>
@@ -2450,7 +2450,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-381"><a href="#FisherBaseFigure-381"><span class="linenos">381</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-382"><a href="#FisherBaseFigure-382"><span class="linenos">382</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-383"><a href="#FisherBaseFigure-383"><span class="linenos">383</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-384"><a href="#FisherBaseFigure-384"><span class="linenos">384</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-384"><a href="#FisherBaseFigure-384"><span class="linenos">384</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-385"><a href="#FisherBaseFigure-385"><span class="linenos">385</span></a><span class="sd">        Collectively sets both x and y tick parameters.</span>
 </span><span id="FisherBaseFigure-386"><a href="#FisherBaseFigure-386"><span class="linenos">386</span></a>
 </span><span id="FisherBaseFigure-387"><a href="#FisherBaseFigure-387"><span class="linenos">387</span></a><span class="sd">        Parameters</span>
@@ -2501,7 +2501,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-432"><a href="#FisherBaseFigure-432"><span class="linenos">432</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-433"><a href="#FisherBaseFigure-433"><span class="linenos">433</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-434"><a href="#FisherBaseFigure-434"><span class="linenos">434</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-435"><a href="#FisherBaseFigure-435"><span class="linenos">435</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-435"><a href="#FisherBaseFigure-435"><span class="linenos">435</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-436"><a href="#FisherBaseFigure-436"><span class="linenos">436</span></a><span class="sd">        Sets the major locator for all of the axes.</span>
 </span><span id="FisherBaseFigure-437"><a href="#FisherBaseFigure-437"><span class="linenos">437</span></a>
 </span><span id="FisherBaseFigure-438"><a href="#FisherBaseFigure-438"><span class="linenos">438</span></a><span class="sd">        Parameters</span>
@@ -2547,7 +2547,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-478"><a href="#FisherBaseFigure-478"><span class="linenos">478</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-479"><a href="#FisherBaseFigure-479"><span class="linenos">479</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-480"><a href="#FisherBaseFigure-480"><span class="linenos">480</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-481"><a href="#FisherBaseFigure-481"><span class="linenos">481</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-481"><a href="#FisherBaseFigure-481"><span class="linenos">481</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-482"><a href="#FisherBaseFigure-482"><span class="linenos">482</span></a><span class="sd">        Sets the minor locator for all of the axes.</span>
 </span><span id="FisherBaseFigure-483"><a href="#FisherBaseFigure-483"><span class="linenos">483</span></a>
 </span><span id="FisherBaseFigure-484"><a href="#FisherBaseFigure-484"><span class="linenos">484</span></a><span class="sd">        Parameters</span>
@@ -2592,7 +2592,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-523"><a href="#FisherBaseFigure-523"><span class="linenos">523</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-524"><a href="#FisherBaseFigure-524"><span class="linenos">524</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-525"><a href="#FisherBaseFigure-525"><span class="linenos">525</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-526"><a href="#FisherBaseFigure-526"><span class="linenos">526</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-526"><a href="#FisherBaseFigure-526"><span class="linenos">526</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-527"><a href="#FisherBaseFigure-527"><span class="linenos">527</span></a><span class="sd">        Sets the major formatter for all of the axes.</span>
 </span><span id="FisherBaseFigure-528"><a href="#FisherBaseFigure-528"><span class="linenos">528</span></a>
 </span><span id="FisherBaseFigure-529"><a href="#FisherBaseFigure-529"><span class="linenos">529</span></a><span class="sd">        Parameters</span>
@@ -2626,7 +2626,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure-557"><a href="#FisherBaseFigure-557"><span class="linenos">557</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-558"><a href="#FisherBaseFigure-558"><span class="linenos">558</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure-559"><a href="#FisherBaseFigure-559"><span class="linenos">559</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure-560"><a href="#FisherBaseFigure-560"><span class="linenos">560</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure-560"><a href="#FisherBaseFigure-560"><span class="linenos">560</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure-561"><a href="#FisherBaseFigure-561"><span class="linenos">561</span></a><span class="sd">        Sets the minor formatter for all of the axes.</span>
 </span><span id="FisherBaseFigure-562"><a href="#FisherBaseFigure-562"><span class="linenos">562</span></a>
 </span><span id="FisherBaseFigure-563"><a href="#FisherBaseFigure-563"><span class="linenos">563</span></a><span class="sd">        Parameters</span>
@@ -2680,7 +2680,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
 </span><span id="FisherBaseFigure.__init__-56"><a href="#FisherBaseFigure.__init__-56"><span class="linenos"> 56</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.__init__-57"><a href="#FisherBaseFigure.__init__-57"><span class="linenos"> 57</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.__init__-58"><a href="#FisherBaseFigure.__init__-58"><span class="linenos"> 58</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.__init__-59"><a href="#FisherBaseFigure.__init__-59"><span class="linenos"> 59</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.__init__-59"><a href="#FisherBaseFigure.__init__-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.__init__-60"><a href="#FisherBaseFigure.__init__-60"><span class="linenos"> 60</span></a><span class="sd">        Constructor</span>
 </span><span id="FisherBaseFigure.__init__-61"><a href="#FisherBaseFigure.__init__-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.__init__-62"><a href="#FisherBaseFigure.__init__-62"><span class="linenos"> 62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_figure</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2781,7 +2781,7 @@ See here for documentation of <code><a href="#FisherFigure1D">FisherFigure1D</a>
     <a class="headerlink" href="#FisherBaseFigure.plot"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="FisherBaseFigure.plot-139"><a href="#FisherBaseFigure.plot-139"><span class="linenos">139</span></a>    <span class="nd">@abstractmethod</span>
 </span><span id="FisherBaseFigure.plot-140"><a href="#FisherBaseFigure.plot-140"><span class="linenos">140</span></a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fisher</span><span class="p">:</span> <span class="n">FisherMatrix</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="FisherBaseFigure.plot-141"><a href="#FisherBaseFigure.plot-141"><span class="linenos">141</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.plot-141"><a href="#FisherBaseFigure.plot-141"><span class="linenos">141</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.plot-142"><a href="#FisherBaseFigure.plot-142"><span class="linenos">142</span></a><span class="sd">        Implements plotting of Fisher objects.</span>
 </span><span id="FisherBaseFigure.plot-143"><a href="#FisherBaseFigure.plot-143"><span class="linenos">143</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.plot-144"><a href="#FisherBaseFigure.plot-144"><span class="linenos">144</span></a>        <span class="k">return</span> <span class="bp">NotImplemented</span>
@@ -2916,7 +2916,7 @@ fraction of the average axis width.</p>
 </span><span id="FisherBaseFigure.add_artist_to_legend-236"><a href="#FisherBaseFigure.add_artist_to_legend-236"><span class="linenos">236</span></a>        <span class="n">artist</span><span class="p">:</span> <span class="n">Artist</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.add_artist_to_legend-237"><a href="#FisherBaseFigure.add_artist_to_legend-237"><span class="linenos">237</span></a>        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.add_artist_to_legend-238"><a href="#FisherBaseFigure.add_artist_to_legend-238"><span class="linenos">238</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.add_artist_to_legend-239"><a href="#FisherBaseFigure.add_artist_to_legend-239"><span class="linenos">239</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.add_artist_to_legend-239"><a href="#FisherBaseFigure.add_artist_to_legend-239"><span class="linenos">239</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.add_artist_to_legend-240"><a href="#FisherBaseFigure.add_artist_to_legend-240"><span class="linenos">240</span></a><span class="sd">        This is a convenience function for correctly updating the legend after</span>
 </span><span id="FisherBaseFigure.add_artist_to_legend-241"><a href="#FisherBaseFigure.add_artist_to_legend-241"><span class="linenos">241</span></a><span class="sd">        directly plotting some artist via `&lt;instance&gt;[&lt;name(s)&gt;].&lt;method&gt;`</span>
 </span><span id="FisherBaseFigure.add_artist_to_legend-242"><a href="#FisherBaseFigure.add_artist_to_legend-242"><span class="linenos">242</span></a>
@@ -3039,7 +3039,7 @@ the label for the artist</li>
 </span><span id="FisherBaseFigure.savefig-286"><a href="#FisherBaseFigure.savefig-286"><span class="linenos">286</span></a>        <span class="n">bbox_inches</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.savefig-287"><a href="#FisherBaseFigure.savefig-287"><span class="linenos">287</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.savefig-288"><a href="#FisherBaseFigure.savefig-288"><span class="linenos">288</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.savefig-289"><a href="#FisherBaseFigure.savefig-289"><span class="linenos">289</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.savefig-289"><a href="#FisherBaseFigure.savefig-289"><span class="linenos">289</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.savefig-290"><a href="#FisherBaseFigure.savefig-290"><span class="linenos">290</span></a><span class="sd">        Convenience wrapper for `figure.savefig`.</span>
 </span><span id="FisherBaseFigure.savefig-291"><a href="#FisherBaseFigure.savefig-291"><span class="linenos">291</span></a>
 </span><span id="FisherBaseFigure.savefig-292"><a href="#FisherBaseFigure.savefig-292"><span class="linenos">292</span></a><span class="sd">        Parameters</span>
@@ -3124,7 +3124,7 @@ what is the bounding box for the figure (default: 'tight')</li>
 </span><span id="FisherBaseFigure.set_label_params-328"><a href="#FisherBaseFigure.set_label_params-328"><span class="linenos">328</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_label_params-329"><a href="#FisherBaseFigure.set_label_params-329"><span class="linenos">329</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_label_params-330"><a href="#FisherBaseFigure.set_label_params-330"><span class="linenos">330</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_label_params-331"><a href="#FisherBaseFigure.set_label_params-331"><span class="linenos">331</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_label_params-331"><a href="#FisherBaseFigure.set_label_params-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_label_params-332"><a href="#FisherBaseFigure.set_label_params-332"><span class="linenos">332</span></a><span class="sd">        Collectively sets both x and y label parameters.</span>
 </span><span id="FisherBaseFigure.set_label_params-333"><a href="#FisherBaseFigure.set_label_params-333"><span class="linenos">333</span></a>
 </span><span id="FisherBaseFigure.set_label_params-334"><a href="#FisherBaseFigure.set_label_params-334"><span class="linenos">334</span></a><span class="sd">        Parameters</span>
@@ -3218,7 +3218,7 @@ for details</li>
 </span><span id="FisherBaseFigure.set_tick_params-381"><a href="#FisherBaseFigure.set_tick_params-381"><span class="linenos">381</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_tick_params-382"><a href="#FisherBaseFigure.set_tick_params-382"><span class="linenos">382</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_tick_params-383"><a href="#FisherBaseFigure.set_tick_params-383"><span class="linenos">383</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_tick_params-384"><a href="#FisherBaseFigure.set_tick_params-384"><span class="linenos">384</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_tick_params-384"><a href="#FisherBaseFigure.set_tick_params-384"><span class="linenos">384</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_tick_params-385"><a href="#FisherBaseFigure.set_tick_params-385"><span class="linenos">385</span></a><span class="sd">        Collectively sets both x and y tick parameters.</span>
 </span><span id="FisherBaseFigure.set_tick_params-386"><a href="#FisherBaseFigure.set_tick_params-386"><span class="linenos">386</span></a>
 </span><span id="FisherBaseFigure.set_tick_params-387"><a href="#FisherBaseFigure.set_tick_params-387"><span class="linenos">387</span></a><span class="sd">        Parameters</span>
@@ -3308,7 +3308,7 @@ parameters (such as 'fontsize', 'rotation', etc.)</li>
 </span><span id="FisherBaseFigure.set_major_locator-432"><a href="#FisherBaseFigure.set_major_locator-432"><span class="linenos">432</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_major_locator-433"><a href="#FisherBaseFigure.set_major_locator-433"><span class="linenos">433</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_major_locator-434"><a href="#FisherBaseFigure.set_major_locator-434"><span class="linenos">434</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_major_locator-435"><a href="#FisherBaseFigure.set_major_locator-435"><span class="linenos">435</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_major_locator-435"><a href="#FisherBaseFigure.set_major_locator-435"><span class="linenos">435</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_major_locator-436"><a href="#FisherBaseFigure.set_major_locator-436"><span class="linenos">436</span></a><span class="sd">        Sets the major locator for all of the axes.</span>
 </span><span id="FisherBaseFigure.set_major_locator-437"><a href="#FisherBaseFigure.set_major_locator-437"><span class="linenos">437</span></a>
 </span><span id="FisherBaseFigure.set_major_locator-438"><a href="#FisherBaseFigure.set_major_locator-438"><span class="linenos">438</span></a><span class="sd">        Parameters</span>
@@ -3392,7 +3392,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherBaseFigure.set_minor_locator-478"><a href="#FisherBaseFigure.set_minor_locator-478"><span class="linenos">478</span></a>        <span class="n">locator</span><span class="p">:</span> <span class="n">Locator</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_minor_locator-479"><a href="#FisherBaseFigure.set_minor_locator-479"><span class="linenos">479</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_minor_locator-480"><a href="#FisherBaseFigure.set_minor_locator-480"><span class="linenos">480</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_minor_locator-481"><a href="#FisherBaseFigure.set_minor_locator-481"><span class="linenos">481</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_minor_locator-481"><a href="#FisherBaseFigure.set_minor_locator-481"><span class="linenos">481</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_minor_locator-482"><a href="#FisherBaseFigure.set_minor_locator-482"><span class="linenos">482</span></a><span class="sd">        Sets the minor locator for all of the axes.</span>
 </span><span id="FisherBaseFigure.set_minor_locator-483"><a href="#FisherBaseFigure.set_minor_locator-483"><span class="linenos">483</span></a>
 </span><span id="FisherBaseFigure.set_minor_locator-484"><a href="#FisherBaseFigure.set_minor_locator-484"><span class="linenos">484</span></a><span class="sd">        Parameters</span>
@@ -3475,7 +3475,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherBaseFigure.set_major_formatter-523"><a href="#FisherBaseFigure.set_major_formatter-523"><span class="linenos">523</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_major_formatter-524"><a href="#FisherBaseFigure.set_major_formatter-524"><span class="linenos">524</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_major_formatter-525"><a href="#FisherBaseFigure.set_major_formatter-525"><span class="linenos">525</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_major_formatter-526"><a href="#FisherBaseFigure.set_major_formatter-526"><span class="linenos">526</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_major_formatter-526"><a href="#FisherBaseFigure.set_major_formatter-526"><span class="linenos">526</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_major_formatter-527"><a href="#FisherBaseFigure.set_major_formatter-527"><span class="linenos">527</span></a><span class="sd">        Sets the major formatter for all of the axes.</span>
 </span><span id="FisherBaseFigure.set_major_formatter-528"><a href="#FisherBaseFigure.set_major_formatter-528"><span class="linenos">528</span></a>
 </span><span id="FisherBaseFigure.set_major_formatter-529"><a href="#FisherBaseFigure.set_major_formatter-529"><span class="linenos">529</span></a><span class="sd">        Parameters</span>
@@ -3547,7 +3547,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherBaseFigure.set_minor_formatter-557"><a href="#FisherBaseFigure.set_minor_formatter-557"><span class="linenos">557</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">Formatter</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_minor_formatter-558"><a href="#FisherBaseFigure.set_minor_formatter-558"><span class="linenos">558</span></a>        <span class="n">which</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 </span><span id="FisherBaseFigure.set_minor_formatter-559"><a href="#FisherBaseFigure.set_minor_formatter-559"><span class="linenos">559</span></a>    <span class="p">):</span>
-</span><span id="FisherBaseFigure.set_minor_formatter-560"><a href="#FisherBaseFigure.set_minor_formatter-560"><span class="linenos">560</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherBaseFigure.set_minor_formatter-560"><a href="#FisherBaseFigure.set_minor_formatter-560"><span class="linenos">560</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherBaseFigure.set_minor_formatter-561"><a href="#FisherBaseFigure.set_minor_formatter-561"><span class="linenos">561</span></a><span class="sd">        Sets the minor formatter for all of the axes.</span>
 </span><span id="FisherBaseFigure.set_minor_formatter-562"><a href="#FisherBaseFigure.set_minor_formatter-562"><span class="linenos">562</span></a>
 </span><span id="FisherBaseFigure.set_minor_formatter-563"><a href="#FisherBaseFigure.set_minor_formatter-563"><span class="linenos">563</span></a><span class="sd">        Parameters</span>
@@ -3616,7 +3616,7 @@ which axis to change (default: 'both')</li>
     </div>
     <a class="headerlink" href="#FisherFigure1D"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="FisherFigure1D-590"><a href="#FisherFigure1D-590"><span class="linenos">590</span></a><span class="k">class</span> <span class="nc">FisherFigure1D</span><span class="p">(</span><span class="n">FisherBaseFigure</span><span class="p">):</span>
-</span><span id="FisherFigure1D-591"><a href="#FisherFigure1D-591"><span class="linenos">591</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-591"><a href="#FisherFigure1D-591"><span class="linenos">591</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-592"><a href="#FisherFigure1D-592"><span class="linenos">592</span></a><span class="sd">    Container for easy access to elements in the 1D plot.</span>
 </span><span id="FisherFigure1D-593"><a href="#FisherFigure1D-593"><span class="linenos">593</span></a>
 </span><span id="FisherFigure1D-594"><a href="#FisherFigure1D-594"><span class="linenos">594</span></a><span class="sd">    Examples</span>
@@ -3672,7 +3672,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-644"><a href="#FisherFigure1D-644"><span class="linenos">644</span></a>        <span class="n">wspace</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
 </span><span id="FisherFigure1D-645"><a href="#FisherFigure1D-645"><span class="linenos">645</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure1D-646"><a href="#FisherFigure1D-646"><span class="linenos">646</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-647"><a href="#FisherFigure1D-647"><span class="linenos">647</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-647"><a href="#FisherFigure1D-647"><span class="linenos">647</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-648"><a href="#FisherFigure1D-648"><span class="linenos">648</span></a><span class="sd">        Constructor.</span>
 </span><span id="FisherFigure1D-649"><a href="#FisherFigure1D-649"><span class="linenos">649</span></a>
 </span><span id="FisherFigure1D-650"><a href="#FisherFigure1D-650"><span class="linenos">650</span></a><span class="sd">        Parameters</span>
@@ -3720,7 +3720,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-692"><a href="#FisherFigure1D-692"><span class="linenos">692</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="FisherFigure1D-693"><a href="#FisherFigure1D-693"><span class="linenos">693</span></a>        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FisherFigure1D-694"><a href="#FisherFigure1D-694"><span class="linenos">694</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-695"><a href="#FisherFigure1D-695"><span class="linenos">695</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-695"><a href="#FisherFigure1D-695"><span class="linenos">695</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-696"><a href="#FisherFigure1D-696"><span class="linenos">696</span></a><span class="sd">        Returns the axis associated to the name `key`.</span>
 </span><span id="FisherFigure1D-697"><a href="#FisherFigure1D-697"><span class="linenos">697</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-698"><a href="#FisherFigure1D-698"><span class="linenos">698</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">:</span>
@@ -3738,7 +3738,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-710"><a href="#FisherFigure1D-710"><span class="linenos">710</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure1D-711"><a href="#FisherFigure1D-711"><span class="linenos">711</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D-712"><a href="#FisherFigure1D-712"><span class="linenos">712</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-713"><a href="#FisherFigure1D-713"><span class="linenos">713</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-713"><a href="#FisherFigure1D-713"><span class="linenos">713</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-714"><a href="#FisherFigure1D-714"><span class="linenos">714</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="FisherFigure1D-715"><a href="#FisherFigure1D-715"><span class="linenos">715</span></a>
 </span><span id="FisherFigure1D-716"><a href="#FisherFigure1D-716"><span class="linenos">716</span></a><span class="sd">        Parameters</span>
@@ -3801,7 +3801,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-773"><a href="#FisherFigure1D-773"><span class="linenos">773</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure1D-774"><a href="#FisherFigure1D-774"><span class="linenos">774</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D-775"><a href="#FisherFigure1D-775"><span class="linenos">775</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-776"><a href="#FisherFigure1D-776"><span class="linenos">776</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-776"><a href="#FisherFigure1D-776"><span class="linenos">776</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-777"><a href="#FisherFigure1D-777"><span class="linenos">777</span></a><span class="sd">        Plots the 1D curves of the Fisher objects.</span>
 </span><span id="FisherFigure1D-778"><a href="#FisherFigure1D-778"><span class="linenos">778</span></a>
 </span><span id="FisherFigure1D-779"><a href="#FisherFigure1D-779"><span class="linenos">779</span></a><span class="sd">        Parameters</span>
@@ -3911,7 +3911,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-883"><a href="#FisherFigure1D-883"><span class="linenos">883</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
 </span><span id="FisherFigure1D-884"><a href="#FisherFigure1D-884"><span class="linenos">884</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D-885"><a href="#FisherFigure1D-885"><span class="linenos">885</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-886"><a href="#FisherFigure1D-886"><span class="linenos">886</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-886"><a href="#FisherFigure1D-886"><span class="linenos">886</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-887"><a href="#FisherFigure1D-887"><span class="linenos">887</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="FisherFigure1D-888"><a href="#FisherFigure1D-888"><span class="linenos">888</span></a>
 </span><span id="FisherFigure1D-889"><a href="#FisherFigure1D-889"><span class="linenos">889</span></a><span class="sd">        Parameters</span>
@@ -3975,7 +3975,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D-947"><a href="#FisherFigure1D-947"><span class="linenos">947</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
 </span><span id="FisherFigure1D-948"><a href="#FisherFigure1D-948"><span class="linenos">948</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D-949"><a href="#FisherFigure1D-949"><span class="linenos">949</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D-950"><a href="#FisherFigure1D-950"><span class="linenos">950</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D-950"><a href="#FisherFigure1D-950"><span class="linenos">950</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D-951"><a href="#FisherFigure1D-951"><span class="linenos">951</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="FisherFigure1D-952"><a href="#FisherFigure1D-952"><span class="linenos">952</span></a><span class="sd">        options.</span>
 </span><span id="FisherFigure1D-953"><a href="#FisherFigure1D-953"><span class="linenos">953</span></a>
@@ -4109,7 +4109,7 @@ which axis to change (default: 'both')</li>
 </span><span id="FisherFigure1D.__init__-644"><a href="#FisherFigure1D.__init__-644"><span class="linenos">644</span></a>        <span class="n">wspace</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
 </span><span id="FisherFigure1D.__init__-645"><a href="#FisherFigure1D.__init__-645"><span class="linenos">645</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure1D.__init__-646"><a href="#FisherFigure1D.__init__-646"><span class="linenos">646</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D.__init__-647"><a href="#FisherFigure1D.__init__-647"><span class="linenos">647</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D.__init__-647"><a href="#FisherFigure1D.__init__-647"><span class="linenos">647</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D.__init__-648"><a href="#FisherFigure1D.__init__-648"><span class="linenos">648</span></a><span class="sd">        Constructor.</span>
 </span><span id="FisherFigure1D.__init__-649"><a href="#FisherFigure1D.__init__-649"><span class="linenos">649</span></a>
 </span><span id="FisherFigure1D.__init__-650"><a href="#FisherFigure1D.__init__-650"><span class="linenos">650</span></a><span class="sd">        Parameters</span>
@@ -4206,7 +4206,7 @@ documentation</a>.</p>
 </span><span id="FisherFigure1D.draw-710"><a href="#FisherFigure1D.draw-710"><span class="linenos">710</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure1D.draw-711"><a href="#FisherFigure1D.draw-711"><span class="linenos">711</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D.draw-712"><a href="#FisherFigure1D.draw-712"><span class="linenos">712</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D.draw-713"><a href="#FisherFigure1D.draw-713"><span class="linenos">713</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D.draw-713"><a href="#FisherFigure1D.draw-713"><span class="linenos">713</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D.draw-714"><a href="#FisherFigure1D.draw-714"><span class="linenos">714</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="FisherFigure1D.draw-715"><a href="#FisherFigure1D.draw-715"><span class="linenos">715</span></a>
 </span><span id="FisherFigure1D.draw-716"><a href="#FisherFigure1D.draw-716"><span class="linenos">716</span></a><span class="sd">        Parameters</span>
@@ -4311,7 +4311,7 @@ the name of the method which we want to plot (such as <code><a href="#FisherFigu
 </span><span id="FisherFigure1D.plot-773"><a href="#FisherFigure1D.plot-773"><span class="linenos">773</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure1D.plot-774"><a href="#FisherFigure1D.plot-774"><span class="linenos">774</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D.plot-775"><a href="#FisherFigure1D.plot-775"><span class="linenos">775</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D.plot-776"><a href="#FisherFigure1D.plot-776"><span class="linenos">776</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D.plot-776"><a href="#FisherFigure1D.plot-776"><span class="linenos">776</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D.plot-777"><a href="#FisherFigure1D.plot-777"><span class="linenos">777</span></a><span class="sd">        Plots the 1D curves of the Fisher objects.</span>
 </span><span id="FisherFigure1D.plot-778"><a href="#FisherFigure1D.plot-778"><span class="linenos">778</span></a>
 </span><span id="FisherFigure1D.plot-779"><a href="#FisherFigure1D.plot-779"><span class="linenos">779</span></a><span class="sd">        Parameters</span>
@@ -4452,7 +4452,7 @@ the name of the method which we want to plot (such as <code><a href="#FisherFigu
 </span><span id="FisherFigure1D.legend-883"><a href="#FisherFigure1D.legend-883"><span class="linenos">883</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
 </span><span id="FisherFigure1D.legend-884"><a href="#FisherFigure1D.legend-884"><span class="linenos">884</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D.legend-885"><a href="#FisherFigure1D.legend-885"><span class="linenos">885</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D.legend-886"><a href="#FisherFigure1D.legend-886"><span class="linenos">886</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D.legend-886"><a href="#FisherFigure1D.legend-886"><span class="linenos">886</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D.legend-887"><a href="#FisherFigure1D.legend-887"><span class="linenos">887</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="FisherFigure1D.legend-888"><a href="#FisherFigure1D.legend-888"><span class="linenos">888</span></a>
 </span><span id="FisherFigure1D.legend-889"><a href="#FisherFigure1D.legend-889"><span class="linenos">889</span></a><span class="sd">        Parameters</span>
@@ -4561,7 +4561,7 @@ the location of where to place the legend (default: <code>[0.5, 1]</code>)</li>
 </span><span id="FisherFigure1D.set_title-947"><a href="#FisherFigure1D.set_title-947"><span class="linenos">947</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
 </span><span id="FisherFigure1D.set_title-948"><a href="#FisherFigure1D.set_title-948"><span class="linenos">948</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure1D.set_title-949"><a href="#FisherFigure1D.set_title-949"><span class="linenos">949</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure1D.set_title-950"><a href="#FisherFigure1D.set_title-950"><span class="linenos">950</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure1D.set_title-950"><a href="#FisherFigure1D.set_title-950"><span class="linenos">950</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure1D.set_title-951"><a href="#FisherFigure1D.set_title-951"><span class="linenos">951</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="FisherFigure1D.set_title-952"><a href="#FisherFigure1D.set_title-952"><span class="linenos">952</span></a><span class="sd">        options.</span>
 </span><span id="FisherFigure1D.set_title-953"><a href="#FisherFigure1D.set_title-953"><span class="linenos">953</span></a>
@@ -4663,7 +4663,7 @@ the y position of the title (default: <code>1.2</code>)</li>
     </div>
     <a class="headerlink" href="#FisherFigure2D"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="FisherFigure2D-985"><a href="#FisherFigure2D-985"><span class="linenos"> 985</span></a><span class="k">class</span> <span class="nc">FisherFigure2D</span><span class="p">(</span><span class="n">FisherBaseFigure</span><span class="p">):</span>
-</span><span id="FisherFigure2D-986"><a href="#FisherFigure2D-986"><span class="linenos"> 986</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-986"><a href="#FisherFigure2D-986"><span class="linenos"> 986</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-987"><a href="#FisherFigure2D-987"><span class="linenos"> 987</span></a><span class="sd">    Container for easy access to elements in the 2D plot.</span>
 </span><span id="FisherFigure2D-988"><a href="#FisherFigure2D-988"><span class="linenos"> 988</span></a>
 </span><span id="FisherFigure2D-989"><a href="#FisherFigure2D-989"><span class="linenos"> 989</span></a><span class="sd">    Examples</span>
@@ -4720,7 +4720,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-1040"><a href="#FisherFigure2D-1040"><span class="linenos">1040</span></a>        <span class="n">show_joint_dist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1041"><a href="#FisherFigure2D-1041"><span class="linenos">1041</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1042"><a href="#FisherFigure2D-1042"><span class="linenos">1042</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D-1043"><a href="#FisherFigure2D-1043"><span class="linenos">1043</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-1043"><a href="#FisherFigure2D-1043"><span class="linenos">1043</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-1044"><a href="#FisherFigure2D-1044"><span class="linenos">1044</span></a><span class="sd">        Constructor.</span>
 </span><span id="FisherFigure2D-1045"><a href="#FisherFigure2D-1045"><span class="linenos">1045</span></a>
 </span><span id="FisherFigure2D-1046"><a href="#FisherFigure2D-1046"><span class="linenos">1046</span></a><span class="sd">        Parameters</span>
@@ -4813,7 +4813,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-1133"><a href="#FisherFigure2D-1133"><span class="linenos">1133</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1134"><a href="#FisherFigure2D-1134"><span class="linenos">1134</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1135"><a href="#FisherFigure2D-1135"><span class="linenos">1135</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D-1136"><a href="#FisherFigure2D-1136"><span class="linenos">1136</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-1136"><a href="#FisherFigure2D-1136"><span class="linenos">1136</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-1137"><a href="#FisherFigure2D-1137"><span class="linenos">1137</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="FisherFigure2D-1138"><a href="#FisherFigure2D-1138"><span class="linenos">1138</span></a>
 </span><span id="FisherFigure2D-1139"><a href="#FisherFigure2D-1139"><span class="linenos">1139</span></a><span class="sd">        Parameters</span>
@@ -4890,7 +4890,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-1210"><a href="#FisherFigure2D-1210"><span class="linenos">1210</span></a>        <span class="n">yscale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.08</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1211"><a href="#FisherFigure2D-1211"><span class="linenos">1211</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1212"><a href="#FisherFigure2D-1212"><span class="linenos">1212</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D-1213"><a href="#FisherFigure2D-1213"><span class="linenos">1213</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-1213"><a href="#FisherFigure2D-1213"><span class="linenos">1213</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-1214"><a href="#FisherFigure2D-1214"><span class="linenos">1214</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="FisherFigure2D-1215"><a href="#FisherFigure2D-1215"><span class="linenos">1215</span></a><span class="sd">        options.</span>
 </span><span id="FisherFigure2D-1216"><a href="#FisherFigure2D-1216"><span class="linenos">1216</span></a>
@@ -4950,7 +4950,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-1270"><a href="#FisherFigure2D-1270"><span class="linenos">1270</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1271"><a href="#FisherFigure2D-1271"><span class="linenos">1271</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1272"><a href="#FisherFigure2D-1272"><span class="linenos">1272</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D-1273"><a href="#FisherFigure2D-1273"><span class="linenos">1273</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-1273"><a href="#FisherFigure2D-1273"><span class="linenos">1273</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-1274"><a href="#FisherFigure2D-1274"><span class="linenos">1274</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="FisherFigure2D-1275"><a href="#FisherFigure2D-1275"><span class="linenos">1275</span></a>
 </span><span id="FisherFigure2D-1276"><a href="#FisherFigure2D-1276"><span class="linenos">1276</span></a><span class="sd">        Parameters</span>
@@ -5017,7 +5017,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D-1337"><a href="#FisherFigure2D-1337"><span class="linenos">1337</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1338"><a href="#FisherFigure2D-1338"><span class="linenos">1338</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D-1339"><a href="#FisherFigure2D-1339"><span class="linenos">1339</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D-1340"><a href="#FisherFigure2D-1340"><span class="linenos">1340</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D-1340"><a href="#FisherFigure2D-1340"><span class="linenos">1340</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D-1341"><a href="#FisherFigure2D-1341"><span class="linenos">1341</span></a><span class="sd">        Plots the 2D contours (and optionally 1D curves) of the Fisher objects.</span>
 </span><span id="FisherFigure2D-1342"><a href="#FisherFigure2D-1342"><span class="linenos">1342</span></a>
 </span><span id="FisherFigure2D-1343"><a href="#FisherFigure2D-1343"><span class="linenos">1343</span></a><span class="sd">        Parameters</span>
@@ -5346,7 +5346,7 @@ the y position of the title (default: <code>1.2</code>)</li>
 </span><span id="FisherFigure2D.__init__-1040"><a href="#FisherFigure2D.__init__-1040"><span class="linenos">1040</span></a>        <span class="n">show_joint_dist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 </span><span id="FisherFigure2D.__init__-1041"><a href="#FisherFigure2D.__init__-1041"><span class="linenos">1041</span></a>        <span class="n">contour_levels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure2D.__init__-1042"><a href="#FisherFigure2D.__init__-1042"><span class="linenos">1042</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D.__init__-1043"><a href="#FisherFigure2D.__init__-1043"><span class="linenos">1043</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D.__init__-1043"><a href="#FisherFigure2D.__init__-1043"><span class="linenos">1043</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D.__init__-1044"><a href="#FisherFigure2D.__init__-1044"><span class="linenos">1044</span></a><span class="sd">        Constructor.</span>
 </span><span id="FisherFigure2D.__init__-1045"><a href="#FisherFigure2D.__init__-1045"><span class="linenos">1045</span></a>
 </span><span id="FisherFigure2D.__init__-1046"><a href="#FisherFigure2D.__init__-1046"><span class="linenos">1046</span></a><span class="sd">        Parameters</span>
@@ -5464,7 +5464,7 @@ onto a parameter axis. For more details, see
 </span><span id="FisherFigure2D.legend-1133"><a href="#FisherFigure2D.legend-1133"><span class="linenos">1133</span></a>        <span class="n">bbox_to_anchor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="FisherFigure2D.legend-1134"><a href="#FisherFigure2D.legend-1134"><span class="linenos">1134</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D.legend-1135"><a href="#FisherFigure2D.legend-1135"><span class="linenos">1135</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D.legend-1136"><a href="#FisherFigure2D.legend-1136"><span class="linenos">1136</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D.legend-1136"><a href="#FisherFigure2D.legend-1136"><span class="linenos">1136</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D.legend-1137"><a href="#FisherFigure2D.legend-1137"><span class="linenos">1137</span></a><span class="sd">        Creates a legend on the figure.</span>
 </span><span id="FisherFigure2D.legend-1138"><a href="#FisherFigure2D.legend-1138"><span class="linenos">1138</span></a>
 </span><span id="FisherFigure2D.legend-1139"><a href="#FisherFigure2D.legend-1139"><span class="linenos">1139</span></a><span class="sd">        Parameters</span>
@@ -5587,7 +5587,7 @@ the location of where to place the legend (default: None, picked by
 </span><span id="FisherFigure2D.set_title-1210"><a href="#FisherFigure2D.set_title-1210"><span class="linenos">1210</span></a>        <span class="n">yscale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.08</span><span class="p">,</span>
 </span><span id="FisherFigure2D.set_title-1211"><a href="#FisherFigure2D.set_title-1211"><span class="linenos">1211</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D.set_title-1212"><a href="#FisherFigure2D.set_title-1212"><span class="linenos">1212</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D.set_title-1213"><a href="#FisherFigure2D.set_title-1213"><span class="linenos">1213</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D.set_title-1213"><a href="#FisherFigure2D.set_title-1213"><span class="linenos">1213</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D.set_title-1214"><a href="#FisherFigure2D.set_title-1214"><span class="linenos">1214</span></a><span class="sd">        Thin wrapper for setting the title of the figure with the correct</span>
 </span><span id="FisherFigure2D.set_title-1215"><a href="#FisherFigure2D.set_title-1215"><span class="linenos">1215</span></a><span class="sd">        options.</span>
 </span><span id="FisherFigure2D.set_title-1216"><a href="#FisherFigure2D.set_title-1216"><span class="linenos">1216</span></a>
@@ -5689,7 +5689,7 @@ the y position of the title (default: <code>1.08</code>)</li>
 </span><span id="FisherFigure2D.draw-1270"><a href="#FisherFigure2D.draw-1270"><span class="linenos">1270</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure2D.draw-1271"><a href="#FisherFigure2D.draw-1271"><span class="linenos">1271</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D.draw-1272"><a href="#FisherFigure2D.draw-1272"><span class="linenos">1272</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D.draw-1273"><a href="#FisherFigure2D.draw-1273"><span class="linenos">1273</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D.draw-1273"><a href="#FisherFigure2D.draw-1273"><span class="linenos">1273</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D.draw-1274"><a href="#FisherFigure2D.draw-1274"><span class="linenos">1274</span></a><span class="sd">        Implements drawing of other objects on the axis.</span>
 </span><span id="FisherFigure2D.draw-1275"><a href="#FisherFigure2D.draw-1275"><span class="linenos">1275</span></a>
 </span><span id="FisherFigure2D.draw-1276"><a href="#FisherFigure2D.draw-1276"><span class="linenos">1276</span></a><span class="sd">        Parameters</span>
@@ -5800,7 +5800,7 @@ the name of the method which we want to plot (such as <code><a href="#FisherFigu
 </span><span id="FisherFigure2D.plot-1337"><a href="#FisherFigure2D.plot-1337"><span class="linenos">1337</span></a>        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
 </span><span id="FisherFigure2D.plot-1338"><a href="#FisherFigure2D.plot-1338"><span class="linenos">1338</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="FisherFigure2D.plot-1339"><a href="#FisherFigure2D.plot-1339"><span class="linenos">1339</span></a>    <span class="p">):</span>
-</span><span id="FisherFigure2D.plot-1340"><a href="#FisherFigure2D.plot-1340"><span class="linenos">1340</span></a>        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FisherFigure2D.plot-1340"><a href="#FisherFigure2D.plot-1340"><span class="linenos">1340</span></a><span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="FisherFigure2D.plot-1341"><a href="#FisherFigure2D.plot-1341"><span class="linenos">1341</span></a><span class="sd">        Plots the 2D contours (and optionally 1D curves) of the Fisher objects.</span>
 </span><span id="FisherFigure2D.plot-1342"><a href="#FisherFigure2D.plot-1342"><span class="linenos">1342</span></a>
 </span><span id="FisherFigure2D.plot-1343"><a href="#FisherFigure2D.plot-1343"><span class="linenos">1343</span></a><span class="sd">        Parameters</span>
@@ -6125,7 +6125,7 @@ the Fisher object which we want to plot</li>
 </span><span id="plot_curve_1d-1674"><a href="#plot_curve_1d-1674"><span class="linenos">1674</span></a>    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="plot_curve_1d-1675"><a href="#plot_curve_1d-1675"><span class="linenos">1675</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="plot_curve_1d-1676"><a href="#plot_curve_1d-1676"><span class="linenos">1676</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">Artist</span><span class="p">]:</span>
-</span><span id="plot_curve_1d-1677"><a href="#plot_curve_1d-1677"><span class="linenos">1677</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="plot_curve_1d-1677"><a href="#plot_curve_1d-1677"><span class="linenos">1677</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="plot_curve_1d-1678"><a href="#plot_curve_1d-1678"><span class="linenos">1678</span></a><span class="sd">    Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.</span>
 </span><span id="plot_curve_1d-1679"><a href="#plot_curve_1d-1679"><span class="linenos">1679</span></a>
 </span><span id="plot_curve_1d-1680"><a href="#plot_curve_1d-1680"><span class="linenos">1680</span></a><span class="sd">    Parameters</span>
@@ -6253,7 +6253,7 @@ the artist itself.</li>
 </span><span id="plot_curve_2d-1734"><a href="#plot_curve_2d-1734"><span class="linenos">1734</span></a>    <span class="n">scaling_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 </span><span id="plot_curve_2d-1735"><a href="#plot_curve_2d-1735"><span class="linenos">1735</span></a>    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 </span><span id="plot_curve_2d-1736"><a href="#plot_curve_2d-1736"><span class="linenos">1736</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">Artist</span><span class="p">]:</span>
-</span><span id="plot_curve_2d-1737"><a href="#plot_curve_2d-1737"><span class="linenos">1737</span></a>    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="plot_curve_2d-1737"><a href="#plot_curve_2d-1737"><span class="linenos">1737</span></a><span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="plot_curve_2d-1738"><a href="#plot_curve_2d-1738"><span class="linenos">1738</span></a><span class="sd">    Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.</span>
 </span><span id="plot_curve_2d-1739"><a href="#plot_curve_2d-1739"><span class="linenos">1739</span></a>
 </span><span id="plot_curve_2d-1740"><a href="#plot_curve_2d-1740"><span class="linenos">1740</span></a><span class="sd">    Parameters</span>

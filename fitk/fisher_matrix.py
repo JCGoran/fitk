@@ -774,7 +774,7 @@ class FisherMatrix:
             if "key" in kwargs and not callable(kwargs["key"]):
                 raise TypeError(f"`key={kwargs['key']}` is not callable")
             names = sorted(self.names, **kwargs)
-            index = get_index_of_other_array(self.names, names)
+            index = get_index_of_other_array(names, self.names)
 
         latex_names = self.latex_names[index]
         fiducials = self.fiducials[index]

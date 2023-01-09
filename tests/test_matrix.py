@@ -379,8 +379,8 @@ class TestFisherMatrix:
         )
 
         assert m.sort() == FisherMatrix(
-            [[33, 31, 32], [13, 11, 12], [23, 21, 22]],
-            fiducials=[1, -1, 0],
+            [[22, 23, 21], [32, 33, 31], [12, 13, 11]],
+            fiducials=[0, 1, -1],
             names=["p1", "p2", "p3"],
             latex_names=["p1", "p2", "p3"],
         )

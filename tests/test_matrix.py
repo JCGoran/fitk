@@ -416,6 +416,12 @@ class TestFisherMatrix:
             np.diag([1, 5, 3]), names=["p3", "p2", "p1"], fiducials=[2, 1, 0]
         )
 
+        fm = FisherMatrix(np.diag([1, 2, 3, 4]), names=["b1", "b2", "f1", "f2"])
+        assert np.all(
+            fm.sort(key=["f1", "b1", "f2", "b2"]).names
+            == np.array(["f1", "b1", "f2", "b2"])
+        )
+
     def test_eq(self):
         assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(
             np.diag([2, 1]),

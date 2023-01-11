@@ -144,7 +144,7 @@ def matrix_element_from_input(
             "or neither of them should be None"
         )
 
-    inverse_covariance_matrix = np.linalg.inv(covariance)
+    inverse_covariance_matrix = np.linalg.inv(np.array(covariance))
 
     # part which contains signal dependance on the parameters
     signal_dependence = 0

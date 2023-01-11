@@ -30,7 +30,9 @@ def bayes_factor(
     Returns the expected Bayes factor for a nested model (base model $M_B$ and
     extended model $M_E$), defined as:
     $$
-        \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2} \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}{\sqrt{\mathrm{det} \mathsf{F}_B}}
+        \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2}
+        \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}
+        {\sqrt{\mathrm{det} \mathsf{F}_B}}
         \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
         \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
     $$

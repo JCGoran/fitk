@@ -918,10 +918,10 @@ class FisherMatrix:
             )
 
         if ignore_errors:
-            names = np.array([name for name in names if name in self.names])
+            names = tuple(np.array([name for name in names if name in self.names]))
 
         if invert is True:
-            names = set(names) ^ set(self.names)
+            names = tuple(set(names) ^ set(self.names))
 
         if set(names) == set(self.names):
             raise ValueError("Unable to remove all parameters")
@@ -938,7 +938,7 @@ class FisherMatrix:
 
         fiducials = np.delete(self.fiducials, index)
         latex_names = np.delete(self.latex_names, index)
-        names = np.delete(self.names, index)
+        names = tuple(np.delete(self.names, index))
 
         return self.__class__(
             values,
@@ -1576,7 +1576,7 @@ class FisherMatrix:
             fiducials=self.fiducials,
         )
         if invert is True:
-            names = set(names) ^ set(self.names)
+            names = tuple(set(names) ^ set(self.names))
         fisher = inv.drop(*names, ignore_errors=ignore_errors)
         return self.__class__(
             fisher.inverse(),

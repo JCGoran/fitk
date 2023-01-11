@@ -120,10 +120,10 @@ class FisherBaseFigure(ABC):
                 contour_levels = [
                     (float(level), float(alpha)) for level, alpha in contour_levels
                 ]
-            except Exception:
+            except Exception as exc:
                 raise ValueError(
                     f"The object {contour_levels} cannot be converted to a list of 2-tuples"
-                )
+                ) from exc
             for level, alpha in contour_levels:
                 if level < 0:
                     raise ValueError(
@@ -879,7 +879,7 @@ class FisherFigure1D(FisherBaseFigure):
         *args: Artist,
         overwrite: bool = False,
         loc: Union[str, tuple[float, float]] = "lower center",
-        bbox_to_anchor: Any = [0.5, 1],
+        bbox_to_anchor: Any = (0.5, 1),
         **kwargs,
     ):
         """

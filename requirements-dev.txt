@@ -1,0 +1,11 @@
+black
+pytest
+pylint
+mypy
+jupyterlab
+cosmicfish @ git+https://github.com/jcgoran/cosmicfish@feature/pip-install
+vermin
+pytest-cov
+coverage
+pdoc
+pytest-mpl

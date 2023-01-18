@@ -54,7 +54,7 @@ jobs:
       - name: Install dev dependencies
         run: |
           source .venv/bin/activate
-          python -m pip install setuptools wheel pytest pytest-cov pytest-mpl==0.15.0 coverage git+https://github.com/jcgoran/cosmicfish@feature/pip-install
+          python -m pip install -r requirements.txt -r requirements-dev.txt
       #----------------------------------------------
       #    add matrix specifics and run test suite
       #----------------------------------------------

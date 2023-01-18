@@ -12,9 +12,9 @@ import numpy as np
 import pytest
 
 # first party imports
-from fitk.fisher_derivative import D, FisherDerivative, matrix_element_from_input
-from fitk.fisher_utils import ValidationError, _expansion_coefficient
+from fitk.derivatives import D, FisherDerivative, matrix_element_from_input
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
+from fitk.utilities import ValidationError, _expansion_coefficient
 
 
 def test_expansion_coefficient():

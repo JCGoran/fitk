@@ -89,7 +89,7 @@ class ParameterNotFoundError(ValueError):
 class ValidationError(Exception):
     """
     Error raised when
-    `fitk.fisher_derivative.FisherDerivative.validate_parameters` fails.
+    `fitk.derivatives.FisherDerivative.validate_parameter` fails.
     """
 
     def __init__(self, parameter):

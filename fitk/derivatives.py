@@ -17,8 +17,8 @@ from typing import Optional
 import numpy as np
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import ValidationError, find_diff_weights, is_iterable
+from fitk.tensors import FisherMatrix
+from fitk.utilities import ValidationError, find_diff_weights, is_iterable
 
 
 def _zero_out(array, threshold: float):
@@ -495,7 +495,7 @@ class FisherDerivative:
         external_covariance: Optional[Sequence[Sequence[float]]] = None,
         rounding_threshold: float = 0.0,
         **kwargs,
-    ):
+    ) -> FisherMatrix:
         r"""
         Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
         The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
@@ -540,7 +540,7 @@ class FisherDerivative:
 
         Returns
         -------
-        fitk.fisher_matrix.FisherMatrix
+        FisherMatrix
             the Fisher object with corresponding names and fiducials
 
         Warns

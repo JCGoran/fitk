@@ -13,7 +13,7 @@ import numpy as np
 from scipy.integrate import quad
 
 # first party imports
-from fitk.fisher_derivative import D, FisherDerivative
+from fitk.derivatives import D, FisherDerivative
 
 
 def _hubble(config: dict):

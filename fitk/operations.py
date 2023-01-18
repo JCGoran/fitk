@@ -16,8 +16,8 @@ from typing import Optional
 import numpy as np
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
+from fitk.tensors import FisherMatrix
+from fitk.utilities import (
     HTMLWrapper,
     MismatchingValuesError,
     make_html_table,

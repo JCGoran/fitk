@@ -21,7 +21,7 @@ else:
     IMPORT_SUCCESS = True
 
 # first party imports
-from fitk.fisher_derivative import FisherDerivative
+from fitk.derivatives import FisherDerivative
 
 
 def _parse_and_set_args(

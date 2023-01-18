@@ -20,7 +20,7 @@ import numpy as np
 from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
-from fitk.fisher_utils import (
+from fitk.utilities import (
     FisherEncoder,
     MismatchingSizeError,
     MismatchingValuesError,

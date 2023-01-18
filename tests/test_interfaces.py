@@ -15,8 +15,8 @@ try:
 except Exception:
     pass
 from fitk import D, FisherMatrix
-from fitk.fisher_utils import find_diff_weights
 from fitk.interfaces.coffe_interfaces import CoffeMultipolesDerivative
+from fitk.utilities import find_diff_weights
 
 COFFE_SETTINGS = {
     "omega_m": 0.32,

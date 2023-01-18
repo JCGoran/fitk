@@ -11,9 +11,9 @@ from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
 from cosmicfish_pylib.fisher_operations import information_gain
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
-from fitk.fisher_utils import MismatchingValuesError
+from fitk.operations import bayes_factor, kl_divergence, kl_matrix
+from fitk.tensors import FisherMatrix
+from fitk.utilities import MismatchingValuesError
 
 
 class TestFisherOperations:

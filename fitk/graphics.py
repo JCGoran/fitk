@@ -1,4 +1,11 @@
 """
+<style>
+a[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+</style>
+
 Submodule for plotting of Fisher objects.
 See here for documentation of `FisherFigure1D` and `FisherFigure2D`.
 """
@@ -29,8 +36,8 @@ from matplotlib.transforms import Bbox
 from scipy.stats import chi2, norm
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_utils import (
+from fitk.tensors import FisherMatrix
+from fitk.utilities import (
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
@@ -368,9 +375,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
 
         **kwargs
             any keyword arguments that are also valid for
-            `matplotlib.text.Text`, see [the
-            documentation](https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text)
-            for details
+            `matplotlib.text.Text`, see <a
+            href="https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text"
+            target="_blank" rel="noopener noreferrer">the matplotlib
+            documentation</a> for details
 
         Returns
         -------
@@ -1089,8 +1097,10 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
 
         Notes
         -----
-        For the style sheet reference, please consult [the matplotlib
-        documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
+        For the style sheet reference, please consult <a
+        href="https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html"
+        target="_blank" rel="noreferrer noopener">the matplotlib
+        documentation</a>.
         """
         super().__init__(
             options=options,
@@ -1490,8 +1500,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
         Notes
         -----
-        For the style sheet reference, please consult [the matplotlib
-        documentation](https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html).
+        For the style sheet reference, please consult <a
+        href="https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html"
+        target="_blank" rel="noreferrer noopener">the matplotlib
+        documentation</a>.
 
         **Regarding `show_joint_dist`**: this argument specifies whether we
         wish to plot the p-value of the *joint* distribution, or the p-value of

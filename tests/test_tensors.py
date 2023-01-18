@@ -24,8 +24,8 @@ from cosmicfish_pylib.fisher_operations import (
 from scipy.stats import ortho_group
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix, _process_fisher_mapping
-from fitk.fisher_utils import (
+from fitk.tensors import FisherMatrix, _process_fisher_mapping
+from fitk.utilities import (
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,

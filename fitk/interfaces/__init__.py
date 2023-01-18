@@ -11,7 +11,7 @@ installed separately by the user.
 
 ### Computation of custom derivatives
 To define a new interface for computing derivatives, one should define a class
-that inherits from `fitk.fisher_derivative.FisherDerivative`, and implements
+that inherits from `fitk.derivatives.FisherDerivative`, and implements
 either the `signal` or the `covariance` methods (or both); below outlines the
 steps to create an interface of your own using a minimal amount of code:
 

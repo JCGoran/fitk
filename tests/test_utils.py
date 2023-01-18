@@ -10,7 +10,7 @@ import pytest
 from scipy.stats import ortho_group
 
 # first party imports
-from fitk.fisher_utils import (
+from fitk.utilities import (
     find_diff_weights,
     float_to_latex,
     get_index_of_other_array,

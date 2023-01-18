@@ -1,4 +1,10 @@
 r"""
+<style>
+a[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+</style>
 ### FITK - Fisher Information ToolKit, version $VERSION
 
 # What is it?
@@ -16,13 +22,9 @@ in the following way:
 
 The most important classes are:
 
-- [`FisherMatrix`](fitk/fisher_matrix.html#FisherMatrix): for manipulating
-  Fisher matrices
-- [`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D) and
-  [`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D): for plotting
-  Fisher matrices
-- [`FisherDerivative`](fitk/fisher_derivative.html#FisherDerivative) and
-  [`D`](fitk/fisher_derivative.html#D): for computing derivatives and Fisher
+- `fitk.tensors.FisherMatrix`: for manipulating Fisher matrices
+- `fitk.graphics.FisherFigure1D` and `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
+- `fitk.derivatives.FisherDerivative` and `fitk.derivatives.D`: for computing derivatives and Fisher
   matrices using finite differences
 
 See the "Submodules" list in the sidebar for more info on the available classes
@@ -32,7 +34,7 @@ and methods.
 
 ## ...make a Fisher matrix?
 
-Use the [`FisherMatrix`](fitk/fisher_matrix.html#FisherMatrix) class for this.
+Use the `fitk.tensors.FisherMatrix` class for this.
 There are several options you can use:
 
 1. with default names (`p1`, ..., `pn`) and fiducials (all zeros):
@@ -48,10 +50,10 @@ There are several options you can use:
 
 ## ...sort a matrix according to some criterion?
 
-Use the [`sort`](fitk/fisher_matrix.html#FisherMatrix.sort) method, which
-returns a new Fisher matrix.
-It works the same way as the Python built-in function `sorted`, but notably
-also has some convenience shortcuts:
+Use the `fitk.tensors.FisherMatrix.sort` method, which returns a new Fisher
+matrix.  It works the same way as the Python built-in function
+<a class="external" href="https://docs.python.org/3/library/functions.html#sorted" target="_blank" rel="noreferrer noopener">`sorted`</a>, but
+notably also has some convenience shortcuts:
 
 1. sort according to names (alphabetically)
 >>> my_matrix.sort()
@@ -76,9 +78,9 @@ You can use the following code:
 
 ## ...delete a parameter?
 
-Use the [`drop`](fitk/fisher_matrix.html#FisherMatrix.drop) method, which
-returns the new matrix with those parameters dropped (it does *not* modify the
-original matrix in-place!), like:
+Use the `fitk.tensors.FisherMatrix.drop` method, which returns the new matrix
+with those parameters dropped (it does *not* modify the original matrix
+in-place!), like:
 
 >>> new_matrix = my_matrix.drop('a', 'b') # drops parameters 'a' and 'b'
 
@@ -93,8 +95,8 @@ simply be ignored.
 
 ## ...rename a parameter?
 
-Use the [`rename`](fitk/fisher_matrix.html#FisherMatrix.rename) method, which
-returns the new Fisher matrix with those names:
+Use the `fitk.tensors.FisherMatrix.rename` method, which returns the new Fisher
+matrix with those names:
 >>> my_matrix.rename({'a' : 'q'})
 
 or, if you want to also specify new LaTeX names and fiducials:
@@ -105,10 +107,8 @@ otherwise an error is raised.
 
 ## ...marginalize over some parameters?
 
-Use the
-[`marginalize_over`](fitk/fisher_matrix.html#FisherMatrix.marginalize_over)
-method, which returns a new Fisher matrix, with those parameters marginalized
-over:
+Use the `fitk.tensors.FisherMatrix.marginalize_over` method, which returns a
+new Fisher matrix, with those parameters marginalized over:
 >>> my_matrix.marginalize_over('a', 'b') # marginalizes over parameters 'a' and 'b'
 
 If you want to marginalize over parameters *except* the ones listed, use
@@ -117,9 +117,8 @@ If you want to marginalize over parameters *except* the ones listed, use
 
 ## ...make a coordinate change/transformation?
 
-Use the [`reparametrize`](fitk/fisher_matrix.html#FisherMatrix.reparametrize)
-method, which allows you to specify the Jacobian of transformation, and returns
-the new Fisher matrix:
+Use the `fitk.tensors.FisherMatrix.reparametrize` method, which allows you to
+specify the Jacobian of transformation, and returns the new Fisher matrix:
 >>> my_matrix.reparametrize(my_jacobian)
 
 You can also specify the new names, fiducials, and LaTeX names if you want by
@@ -131,8 +130,8 @@ matrix.
 
 ## ...verify that the Fisher matrix is valid?
 
-Use the [`is_valid`](fitk/fisher_matrix.html#FisherMatrix.is_valid) method,
-which returns a boolean reporting whether the matrix is a Fisher matrix:
+Use the `fitk.tensors.FisherMatrix.is_valid` method, which returns a boolean
+reporting whether the matrix is a Fisher matrix:
 
 >>> my_matrix.is_valid()
 
@@ -158,8 +157,8 @@ matrix?](#retrieveadd-a-value-for-a-specific-element-in-the-matrix)
 
 ## ...compute constraints?
 
-Use the [`constraints`](fitk/fisher_matrix.html#FisherMatrix.constraints)
-method, which returns the constraints as a numpy array:
+Use the `fitk.tensors.FisherMatrix.constraints` method, which returns the
+constraints as a numpy array:
 >>> my_matrix.constraints()
 
 By default, the constraints returned are the 1$\sigma$ marginalized ones; if
@@ -170,7 +169,7 @@ the above.
 
 ## ...save a matrix to a file?
 
-Use the [`to_file`](fitk/fisher_matrix.html#FisherMatrix.to_file) method:
+Use the `fitk.tensors.FisherMatrix.to_file` method:
 >>> my_matrix.to_file('example_matrix.json')
 
 You can optionally specify metadata by passing `metadata=[VALUE]`, where
@@ -178,9 +177,10 @@ You can optionally specify metadata by passing `metadata=[VALUE]`, where
 
 ## ...read a matrix from a file?
 
-Use the [`from_file`](fitk/fisher_matrix.html#FisherMatrix.from_file) method
-(note that it's a class method, so you need to use the name of the *class*, not
-the *instance of that class*):
+Use the `fitk.tensors.FisherMatrix.from_file` method (note that it's a <a
+href="https://docs.python.org/3/library/functions.html#classmethod"
+target="_blank" rel="noreferrer noopener">class method</a>, so you need to use
+the name of the *class*, not the *instance of that class*):
 >>> FisherMatrix.from_file('example_matrix.json')
 
 Note that any metadata (see also: [...save a matrix to a
@@ -196,9 +196,7 @@ stored in the result.
 
 ## ...compute the figure of merit (FoM)?
 
-Use the
-[`figure_of_merit`](fitk/fisher_matrix.html#FisherMatrix.figure_of_merit)
-method:
+Use the `fitk.tensors.FisherMatrix.figure_of_merit` method:
 >>> my_matrix.figure_of_merit()
 
 See the linked method for details on how the FoM is computed.
@@ -213,8 +211,7 @@ be as simple as:
 >>> interface = MyInterface()
 
 The Fisher matrix with some parameter `a` can then be obtained using the
-[`fisher_matrix`](fitk/fisher_derivative.html#FisherDerivative.fisher_matrix)
-method:
+`fitk.derivatives.FisherDerivative.fisher_matrix` method:
 >>> my_matrix = interface.fisher_matrix(D('a', fiducial=0, abs_step=1e-3))
 
 The method takes an optional `parameter_dependence` argument, which specifies
@@ -235,57 +232,54 @@ and the derivatives can be obtained with:
 
 ## ...make a 1D plot of marginalized parameters?
 
-Use the [`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D) class for
-that:
+Use the `fitk.graphics.FisherFigure1D` class for that:
 >>> fig = FisherFigure1D()
 
 Then, to actually plot the matrix on the canvas, use
-[`plot`](fitk/fisher_plotter.html#FisherFigure1D.plot):
+`fitk.graphics.FisherFigure1D.plot`:
 >>> fig.plot(my_matrix)
 
-Note that `plot` accepts the most frequently used arguments from
-[`matplotlib.pyplot.plot`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html),
-such as `ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`),
-`label`, as well as many others.
+Note that `fitk.graphics.FisherFigure1D.plot` accepts the most frequently used
+arguments from <a
+href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
+target="_blank" rel="noopener noreferrer">`matplotlib.pyplot.plot`</a>, such as
+`ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`), `label`, as
+well as many others.
 
 ## ...make a triangle plot/make a 2D plot?
 
-Use the [`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D) class for
-that:
+Use the `fitk.graphics.FisherFigure2D` class for that:
 >>> fig = FisherFigure2D()
 
 You can optionally specify `show_1d_curves=True` to show the marginalized 1D
 curves.
 
 Then, to actually plot the matrix on the canvas, use
-[`plot`](fitk/fisher_plotter.html#FisherFigure2D.plot):
+`fitk.graphics.FisherFigure2D.plot`:
 >>> fig.plot(my_matrix)
 
 Note that `plot` accepts the most frequently used arguments from
-[`matplotlib.pyplot.plot`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html),
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html" target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.plot`</a>,
 such as `ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`),
 `label`, as well as many others.
 
 ## ...add a legend to the plot?
 
-Use the `legend` method of
-[`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D.legend)/[`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D.legend):
+Use the `legend` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.FisherFigure2D`:
 >>> fig.legend()
 
 ## ...add a title to the plot?
 
-Use the `set_title` method of
-[`FisherFigure1D`](fitk/fisher_plotter.html#FisherFigure1D.set_title)/[`FisherFigure2D`](fitk/fisher_plotter.html#FisherFigure2D.set_title):
+Use the `set_title` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.FisherFigure2D`:
 >>> fig.set_title('Example plot')
 
 ## ...save the plot?
 
-Use the [`savefig`](fitk/fisher_plotter.html#FisherBaseFigure.savefig) method
-of `FisherFigure1D`/`FisherFigure2D`:
+Use the `savefig` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.FisherFigure2D`:
 >>> fig.savefig('my_figure.pdf')
 
 It takes exactly the same arguments as
-[`matplotlib.pyplot.savefig`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html),
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html" target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.savefig`</a>,
 with minimal changes to defaults for nicer outputs.
 """
 
@@ -297,9 +291,9 @@ __version__ = (
     .strip()
 )
 
-from fitk import fisher_operations, fisher_utils, interfaces
-from fitk.fisher_derivative import D, FisherDerivative
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_operations import bayes_factor, kl_divergence, kl_matrix
-from fitk.fisher_plotter import FisherConstraintsFigure, FisherFigure1D, FisherFigure2D
-from fitk.fisher_utils import math_mode
+from fitk import interfaces, operations, utilities
+from fitk.derivatives import D, FisherDerivative
+from fitk.graphics import FisherConstraintsFigure, FisherFigure1D, FisherFigure2D
+from fitk.operations import bayes_factor, kl_divergence, kl_matrix
+from fitk.tensors import FisherMatrix
+from fitk.utilities import math_mode

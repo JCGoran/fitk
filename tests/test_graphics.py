@@ -21,8 +21,7 @@ from matplotlib import ticker
 from scipy.stats import norm
 
 # first party imports
-from fitk.fisher_matrix import FisherMatrix
-from fitk.fisher_plotter import (
+from fitk.graphics import (
     EmptyFigureError,
     FisherFigure1D,
     FisherFigure2D,
@@ -30,7 +29,8 @@ from fitk.fisher_plotter import (
     plot_curve_1d,
     plot_curve_2d,
 )
-from fitk.fisher_utils import ParameterNotFoundError
+from fitk.tensors import FisherMatrix
+from fitk.utilities import ParameterNotFoundError
 
 DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
 DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))

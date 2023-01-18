@@ -7,7 +7,7 @@ parse_docs(){
     package_version="$(cat "fitk/VERSION.txt")"
     sed -i 's/\$VERSION/'"${package_version}"'/g' "${init_path}"
 
-    module="fitk/fisher_plotter.py"
+    module="fitk/graphics.py"
     file_content="$(cat "${module}")"
     TEMP_IMAGE_DIR="$(mktemp -d -p .)"
     export TEMP_IMAGE_DIR
@@ -25,7 +25,7 @@ parse_docs(){
     fi
 
     # restore the module file
-    printf '%s\n' "${file_content}" > "fitk/fisher_plotter.py"
+    printf '%s\n' "${file_content}" > "${module}"
 
     # restore the init file
     printf '%s\n' "${init_content}" > "${init_path}"

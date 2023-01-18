@@ -19,9 +19,9 @@ parse_docs(){
     done
     if [ "$1" = '-i' ]
     then
-        python3 -m pdoc -h 0.0.0.0 --docformat numpy --math fitk
+        python3 -m pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
     else
-        python3 -m pdoc --docformat numpy --math -o docs/ fitk
+        python3 -m pdoc --docformat numpy --math -o docs/ -t templates/ fitk
     fi
 
     # restore the module file

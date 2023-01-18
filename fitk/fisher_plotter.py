@@ -51,6 +51,143 @@ class _TempContainer:
     scale: str
 
 
+class _FisherBaseFigure:
+    def __init__(
+        self,
+        options: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Constructor
+        """
+        self._figure = None
+        self._axes: Optional[Union[Axes, Sequence[Axes]]] = None
+        self._handles: MutableSequence[Artist] = []
+        self._labels: MutableSequence[str] = []
+        self._options: dict = get_default_rcparams()
+
+        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+        self.current_color = iter(self.cycler)
+
+        if options and "style" in options:
+            style = options.pop("style")
+            # maybe it's one of the built-in styles
+            if style in plt.style.available:
+                self._options = {
+                    **plt.style.library[style],
+                    **get_default_rcparams(),
+                    **options,
+                }
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.library[style]
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+            # maybe it's a file
+            else:
+                # we need to reset the color cycler
+                self.cycler = (
+                    plt.style.core.rc_params_from_file(style)
+                    .get(
+                        "axes.prop_cycle",
+                        plt.rcParams["axes.prop_cycle"],
+                    )
+                    .by_key()["color"]
+                )
+                self.current_color = iter(self.cycler)
+
+                self._options = {
+                    **plt.style.core.rc_params_from_file(style),
+                    **options,
+                }
+
+    @property
+    def options(self):
+        """
+        Returns the matplotlib options which were used for plotting.
+        """
+        return self._options
+
+    @property
+    def axes(self):
+        """
+        Returns the axes of the figure as a numpy array.
+        """
+        return self._axes
+
+    @property
+    def figure(self):
+        """
+        Returns the underlying figure, an instance of
+        `matplotlib.figure.Figure`.
+        """
+        return self._figure
+
+    @property
+    def handles(self):
+        """
+        Returns the handles of the currently drawn artists.
+        """
+        return self._handles
+
+    @property
+    def labels(self):
+        """
+        Returns the legend labels of the currently drawn artists.
+        """
+        return self._labels
+
+    def savefig(
+        self,
+        path: Union[str, Path],
+        dpi: float = 300,
+        bbox_inches: Union[str, Bbox] = "tight",
+        **kwargs,
+    ):
+        """
+        Convenience wrapper for `figure.savefig`.
+
+        Parameters
+        ----------
+        path : Path or str
+            the path where to save the figure
+
+        dpi : float, optional
+            the resolution of the saved figure (default: 300)
+
+        bbox_inches : str or Bbox, optional
+            what is the bounding box for the figure (default: 'tight')
+
+        **kwargs
+            any other keyword arguments that should be passed to
+            `figure.savefig`
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if `plot` hasn't been called yet
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        self.figure.savefig(
+            path,
+            dpi=dpi,
+            bbox_inches=bbox_inches,
+            **kwargs,
+        )
+
+
 class EmptyFigureError(Exception):
     """
     Error raised when the figure is empty, i.e. `plot` was not called first.
@@ -61,7 +198,7 @@ class EmptyFigureError(Exception):
         super().__init__(self.message)
 
 
-class FisherBaseFigure(ABC):
+class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
     """
     The abstract base class for plotting Fisher objects.
     """
@@ -78,59 +215,13 @@ class FisherBaseFigure(ABC):
         """
         Constructor
         """
-        self._figure = None
-        self._axes: Optional[Sequence] = None
-        self._handles: MutableSequence[Artist] = []
         self._names = None
-        self._labels: MutableSequence[str] = []
         self._options: dict = {}
         self._ndim: int = 0
         self._hspace = hspace
         self._wspace = wspace
 
-        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-        self.current_color = iter(self.cycler)
-
-        if options is None:
-            self._options = get_default_rcparams()
-        else:
-            if "style" in options:
-                style = options.pop("style")
-                # maybe it's one of the built-in styles
-                if style in plt.style.available:
-                    self._options = {
-                        **plt.style.library[style],
-                        **get_default_rcparams(),
-                        **options,
-                    }
-                    # we need to reset the color cycler
-                    self.cycler = (
-                        plt.style.library[style]
-                        .get(
-                            "axes.prop_cycle",
-                            plt.rcParams["axes.prop_cycle"],
-                        )
-                        .by_key()["color"]
-                    )
-                    self.current_color = iter(self.cycler)
-
-                # maybe it's a file
-                else:
-                    # we need to reset the color cycler
-                    self.cycler = (
-                        plt.style.core.rc_params_from_file(style)
-                        .get(
-                            "axes.prop_cycle",
-                            plt.rcParams["axes.prop_cycle"],
-                        )
-                        .by_key()["color"]
-                    )
-                    self.current_color = iter(self.cycler)
-
-                    self._options = {
-                        **plt.style.core.rc_params_from_file(style),
-                        **options,
-                    }
+        super().__init__(options=options, **kwargs)
 
         # parse `contour_levels`
         if contour_levels is None:
@@ -170,21 +261,6 @@ class FisherBaseFigure(ABC):
         return NotImplemented
 
     @property
-    def figure(self):
-        """
-        Returns the underlying figure, an instance of
-        `matplotlib.figure.Figure`.
-        """
-        return self._figure
-
-    @property
-    def axes(self):
-        """
-        Returns the axes of the figure as a numpy array.
-        """
-        return self._axes
-
-    @property
     def hspace(self) -> float:
         """
         The amount of height reserved for space between subplots, expressed as
@@ -207,33 +283,12 @@ class FisherBaseFigure(ABC):
         """
         return self._names
 
-    @property
-    def handles(self):
-        """
-        Returns the handles of the currently drawn artists.
-        """
-        return self._handles
-
-    @property
-    def labels(self):
-        """
-        Returns the legend labels of the currently drawn artists.
-        """
-        return self._labels
-
-    @property
-    def options(self):
-        """
-        Returns the matplotlib options which were used for plotting.
-        """
-        return self._options
-
     def __repr__(self):
         """
         Returns the representation of the figure
         """
         return (
-            f"<FisherFigure(\n"
+            f"<{self.__class__.__name__}(\n"
             f"    names={repr(self.names)},\n"
             f"    figure={repr(self.figure)},\n"
             f"    axes={repr(self.axes)})>"
@@ -244,7 +299,7 @@ class FisherBaseFigure(ABC):
         Returns the string representation of the figure
         """
         return (
-            f"FisherFigure(\n"
+            f"{self.__class__.__name__}(\n"
             f"    names={str(self.names)},\n"
             f"    figure={str(self.figure)},\n"
             f"    axes={str(self.axes)})"
@@ -297,50 +352,6 @@ class FisherBaseFigure(ABC):
         """
         self.labels.append(label)
         self.handles.append(artist)
-
-    def savefig(
-        self,
-        path: Union[str, Path],
-        dpi: float = 300,
-        bbox_inches: Union[str, Bbox] = "tight",
-        **kwargs,
-    ):
-        """
-        Convenience wrapper for `figure.savefig`.
-
-        Parameters
-        ----------
-        path : Path or str
-            the path where to save the figure
-
-        dpi : float, optional
-            the resolution of the saved figure (default: 300)
-
-        bbox_inches : str or Bbox, optional
-            what is the bounding box for the figure (default: 'tight')
-
-        **kwargs
-            any other keyword arguments that should be passed to
-            `figure.savefig`
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        EmptyFigureError
-            if `plot` hasn't been called yet
-        """
-        if not self.figure:
-            raise EmptyFigureError
-
-        self.figure.savefig(
-            path,
-            dpi=dpi,
-            bbox_inches=bbox_inches,
-            **kwargs,
-        )
 
     def set_label_params(
         self,
@@ -606,131 +617,10 @@ class FisherBaseFigure(ABC):
                 self[nameiter].yaxis.set_minor_formatter(formatter)
 
 
-class FisherConstraintsFigure:
+class FisherConstraintsFigure(_FisherBaseFigure):
     """
     Container for plotting single-axis figures (`erorrbar`, `bar`, `barh`)
     """
-
-    def __init__(
-        self,
-        options: Optional[dict] = None,
-        **kwargs,
-    ):
-        """
-        Constructor
-        """
-        self._figure = None
-        self._axis: Optional[Sequence] = None
-        self._handles: MutableSequence[Artist] = []
-        self._labels: MutableSequence[str] = []
-        self._options: dict = get_default_rcparams()
-
-        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-        self.current_color = iter(self.cycler)
-
-        if options and "style" in options:
-            style = options.pop("style")
-            # maybe it's one of the built-in styles
-            if style in plt.style.available:
-                self._options = {
-                    **plt.style.library[style],
-                    **get_default_rcparams(),
-                    **options,
-                }
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.library[style]
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
-                    )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
-
-            # maybe it's a file
-            else:
-                # we need to reset the color cycler
-                self.cycler = (
-                    plt.style.core.rc_params_from_file(style)
-                    .get(
-                        "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
-                    )
-                    .by_key()["color"]
-                )
-                self.current_color = iter(self.cycler)
-
-                self._options = {
-                    **plt.style.core.rc_params_from_file(style),
-                    **options,
-                }
-
-    def savefig(
-        self,
-        path: Union[str, Path],
-        dpi: float = 300,
-        bbox_inches: Union[str, Bbox] = "tight",
-        **kwargs,
-    ):
-        """
-        Convenience wrapper for `figure.savefig`.
-
-        Parameters
-        ----------
-        path : Path or str
-            the path where to save the figure
-
-        dpi : float, optional
-            the resolution of the saved figure (default: 300)
-
-        bbox_inches : str or Bbox, optional
-            what is the bounding box for the figure (default: 'tight')
-
-        **kwargs
-            any other keyword arguments that should be passed to
-            `figure.savefig`
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        EmptyFigureError
-            if `plot` hasn't been called yet
-        """
-        if not self.figure:
-            raise EmptyFigureError
-
-        self.figure.savefig(
-            path,
-            dpi=dpi,
-            bbox_inches=bbox_inches,
-            **kwargs,
-        )
-
-    @property
-    def options(self):
-        """
-        Returns the matplotlib options which were used for plotting.
-        """
-        return self._options
-
-    @property
-    def figure(self):
-        """
-        Returns the underlying figure, an instance of
-        `matplotlib.figure.Figure`.
-        """
-        return self._figure
-
-    @property
-    def axis(self):
-        """
-        Returns the axis of the figure.
-        """
-        return self._axis
 
     def _parse_fractional_constraints(
         self,
@@ -1112,7 +1002,7 @@ class FisherConstraintsFigure:
             self._axes = np.array([ax])
 
 
-class FisherFigure1D(FisherBaseFigure):
+class FisherFigure1D(_FisherMultipleAxesFigure):
     r"""
     Container for easy access to elements in the 1D plot.
 
@@ -1507,7 +1397,7 @@ class FisherFigure1D(FisherBaseFigure):
             return self.figure.suptitle(*args, x=x, y=y, **kwargs)
 
 
-class FisherFigure2D(FisherBaseFigure):
+class FisherFigure2D(_FisherMultipleAxesFigure):
     r"""
     Container for easy access to elements in the 2D plot.
 

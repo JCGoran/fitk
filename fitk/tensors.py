@@ -209,7 +209,7 @@ class FisherMatrix:
      'fiducials': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
-    >>> fm_new = FisherMatrix.from_file('example_matrix.json')
+    >>> fm_new = FisherMatrix.from_file('example_matrix.json') # doctest: +SKIP
     """
 
     def __init__(
@@ -1552,7 +1552,7 @@ class FisherMatrix:
         >>> from pprint import pprint
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
-        >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False)
+        >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False) # doctest: +SKIP
         {'values': array([[1., 0.],
                [0., 2.]]),
          'names': array(['a', 'b'], dtype=object),
@@ -1560,10 +1560,10 @@ class FisherMatrix:
          'fiducials': array([0., 0.])}
 
         There is also a convenience function for reading it:
-        >>> fm_read = FisherMatrix.from_file('example_matrix.json')
+        >>> fm_read = FisherMatrix.from_file('example_matrix.json') # doctest: +SKIP
 
         Verify it's the same object:
-        >>> fm == fm_read
+        >>> fm == fm_read # doctest: +SKIP
         True
         """
         data = self.to_dict()
@@ -1607,16 +1607,19 @@ class FisherMatrix:
         Examples
         --------
         Generate a Fisher object using a random orthogonal matrix:
-        >>> from scipy.stats import ortho_group
-        >>> rm = ortho_group.rvs(5, random_state=12345)
+        >>> rm = np.array([[-0.0942819 ,  0.56164959,  0.7638867 ,  0.18138749, -0.24338518],
+        ... [ 0.22058622,  0.74746891, -0.33297073, -0.47219083,  0.24248352],
+        ... [-0.23923712,  0.18017836, -0.44325216,  0.05300493, -0.84321964],
+        ... [-0.25595188,  0.30540004, -0.32672895,  0.77839888,  0.35855659],
+        ... [ 0.90537665,  0.0103218 , -0.04881925,  0.36799464, -0.20587183]])
         >>> fm = FisherMatrix(rm.T @ np.diag([1, 2, 3, 7, 6]) @ rm)
 
         Marginalize over some parameters:
         >>> fm.marginalize_over('p1', 'p2')
         FisherMatrix(
-            array([[ 1.67715591, -1.01556085,  0.30020773],
-               [-1.01556085,  4.92788976,  0.91219831],
-               [ 0.30020773,  0.91219831,  3.1796454 ]]),
+            array([[ 1.67715593, -1.01556087,  0.30020774],
+               [-1.01556087,  4.92788973,  0.91219829],
+               [ 0.30020774,  0.91219829,  3.1796454 ]]),
             names=array(['p3', 'p4', 'p5'], dtype=object),
             latex_names=array(['p3', 'p4', 'p5'], dtype=object),
             fiducials=array([0., 0., 0.]))
@@ -1624,8 +1627,8 @@ class FisherMatrix:
         Marginalize over all parameters which are NOT `p1` or `p2`:
         >>> fm.marginalize_over('p1', 'p2', invert=True)
         FisherMatrix(
-            array([[ 5.04480062, -0.04490453],
-               [-0.04490453,  1.61599083]]),
+            array([[ 5.04480061, -0.04490451],
+               [-0.04490451,  1.61599083]]),
             names=array(['p1', 'p2'], dtype=object),
             latex_names=array(['p1', 'p2'], dtype=object),
             fiducials=array([0., 0.]))

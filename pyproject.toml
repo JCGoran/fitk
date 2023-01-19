@@ -7,9 +7,18 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"
-numpy = "*"
-scipy = "*"
-matplotlib = "*"
+numpy = [
+    {version = "1.21.6", python = "==3.7"},
+    {version = ">1.22", python = ">=3.8"}
+]
+scipy = [
+    {version = "1.7.3", python = "==3.7"},
+    {version = ">1.7.3", python = ">=3.8"}
+]
+matplotlib = [
+    {version = "^3.5", python = "<3.11"},
+    {version = "^3.6", python = ">=3.11"}
+]
 
 [tool.poetry.dev-dependencies]
 black = "*"

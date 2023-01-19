@@ -7,6 +7,7 @@ code
 from __future__ import annotations
 
 # standard library imports
+import re
 from typing import Optional
 
 # third party imports
@@ -215,3 +216,181 @@ class CoffeMultipolesDerivative(FisherDerivative):
             f"URL: {self.__url__}\n"
             f"Interface maintainer(s): {self.__maintainers__}"
         )
+
+
+class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
+    r"""
+    Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and
+    $\tilde{b}$ parametrization.
+
+    The valid parameters are:
+    * $\tilde{f}$ - `f[N]`, where `[N]` is a number from 1 to the number of
+    redshift bins
+    * $\tilde{b}$ - `b[N]`, where `[N]` is a number from 1 to the number of
+    redshift bins
+
+    Notes
+    -----
+    Just like for `CoffeMultipolesDerivative`, one can set the configuration in
+    the constructor by specifying the `config` argument
+    """
+
+    def validate_parameter(self, arg) -> bool:
+        if re.search(r"^[bf][1-9][0-9]*$", arg.name) and int(arg.name[1:]) in range(
+            1, len(self.config["z_mean"]) + 1
+        ):
+            return True
+        return False
+
+    def covariance(
+        self,
+        *args,
+        **kwargs,
+    ):
+        return super().covariance()
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        cosmo = _parse_and_set_args(**self.config)
+
+        def monopole(b: float, f: float):
+            return (
+                (b**2 + 2 * b * f / 3 + f**2 / 5)
+                * np.array([cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep])
+                / cosmo.sigma8**2
+            )
+
+        def quadrupole(b: float, f: float):
+            return (
+                -(4 * b * f / 3 + 4 * f**2 / 7)
+                * np.array([cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep])
+                / cosmo.sigma8**2
+            )
+
+        def hexadecapole(b: float, f: float):
+            return (
+                (8 * f**2 / 35)
+                * np.array([cosmo.integral(r=_, l=4, n=0) for _ in cosmo.sep])
+                / cosmo.sigma8**2
+            )
+
+        multipoles = {0: monopole, 2: quadrupole, 4: hexadecapole}
+
+        b_array = np.array(
+            [
+                cosmo.galaxy_bias1(_) * cosmo.growth_factor(_) * cosmo.sigma8
+                for _ in cosmo.z_mean
+            ]
+        )
+        f_array = np.array(
+            [
+                cosmo.growth_rate(_) * cosmo.growth_factor(_) * cosmo.sigma8
+                for _ in cosmo.z_mean
+            ]
+        )
+
+        for arg in args:
+            name, value = arg
+            if name[0] == "b":
+                b_array[int(name[1:]) - 1] = value
+            elif name[0] == "f":
+                f_array[int(name[1:]) - 1] = value
+
+        return np.array(
+            [
+                np.array(
+                    [
+                        [
+                            item(b, f)
+                            for key, item in multipoles.items()
+                            if key in cosmo.l
+                        ]
+                        for b, f in zip(b_array, f_array)
+                    ]
+                )
+            ]
+        ).flatten()
+
+
+class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
+    r"""
+    Class for computing the derivatives of the 2PCF w.r.t. the galaxy bias in
+    each redshift bin.
+
+    The valid parameters are:
+    * $b_n$ - `b[N]`, where `[N]` is a number from 1 to the number of
+    redshift bins
+
+    Notes
+    -----
+    Just like for `CoffeMultipolesDerivative`, one can set the configuration in
+    the constructor by specifying the `config` argument
+    """
+
+    def validate_parameter(self, arg) -> bool:
+        if re.search(r"^b[1-9][0-9]*$", arg.name) and int(arg.name[1:]) in range(
+            1, len(self.config["z_mean"]) + 1
+        ):
+            return True
+        return False
+
+    def covariance(
+        self,
+        *args,
+        **kwargs,
+    ):
+        return super().covariance()
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        cosmo = _parse_and_set_args(**self.config)
+
+        def monopole(b: float, f: float):
+            return (b**2 + 2 * b * f / 3 + f**2 / 5) * np.array(
+                [cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep]
+            )
+
+        def quadrupole(b: float, f: float):
+            return -(4 * b * f / 3 + 4 * f**2 / 7) * np.array(
+                [cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep]
+            )
+
+        def hexadecapole(b: float, f: float):
+            return (8 * f**2 / 35) * np.array(
+                [cosmo.integral(r=_, l=4, n=0) for _ in cosmo.sep]
+            )
+
+        multipoles = {0: monopole, 2: quadrupole, 4: hexadecapole}
+
+        b_array = np.array(
+            [cosmo.galaxy_bias1(_) * cosmo.growth_factor(_) for _ in cosmo.z_mean]
+        )
+        f_array = np.array(
+            [cosmo.growth_rate(_) * cosmo.growth_factor(_) for _ in cosmo.z_mean]
+        )
+
+        for arg in args:
+            name, value = arg
+            if name[0] == "b":
+                b_array[int(name[1:]) - 1] = value
+
+        return np.array(
+            [
+                np.array(
+                    [
+                        [
+                            item(b, f)
+                            for key, item in multipoles.items()
+                            if key in cosmo.l
+                        ]
+                        for b, f in zip(b_array, f_array)
+                    ]
+                )
+            ]
+        ).flatten()

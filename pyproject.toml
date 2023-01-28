@@ -32,6 +32,8 @@ pytest-cov = "*"
 coverage = "*"
 pdoc = "*"
 pytest-mpl = "*"
+packaging = "*"
+importlib-metadata = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

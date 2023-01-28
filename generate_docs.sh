@@ -1,4 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+
+# script for generating docs for the current module using the pdoc module
+
+set -eu
 
 parse_docs(){
     # need to substitute the version in the init file
@@ -11,29 +15,30 @@ parse_docs(){
     file_content="$(cat "${module}")"
     TEMP_IMAGE_DIR="$(mktemp -d -p .)"
     export TEMP_IMAGE_DIR
-    python3 -m doctest "${module}"
+
+    # delete the image dir in any case
+    # restore the module file
+    # restore the init file
+    trap 'rm -fr ${TEMP_IMAGE_DIR}; printf "%s\n" "${file_content}" > "${module}"; printf "%s\n" "${init_content}" > "${init_path}"' EXIT INT
+
+    python3 -m poetry run pytest --doctest-modules "${module}"
     for image in ${TEMP_IMAGE_DIR}/*
     do
         base_image="$(basename ${image})"
         sed -i 's?\$IMAGE_PATH\/'${base_image}'?'"data:image/png;base64,$(base64 -w 0 ${image})"'?g' "${module}"
     done
-    if [ "$1" = '-i' ]
+    if [ "${1:-}" = '-i' ]
     then
-        python3 -m pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
+        python3 -m poetry run pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
     else
-        python3 -m pdoc --docformat numpy --math -o docs/ -t templates/ fitk
+        python3 -m poetry run pdoc --docformat numpy --math -o docs/ -t templates/ fitk
     fi
 
-    # restore the module file
-    printf '%s\n' "${file_content}" > "${module}"
-
-    # restore the init file
-    printf '%s\n' "${init_content}" > "${init_path}"
-
-    # delete the image dir
-    trap 'rm -fr ${TEMP_IMAGE_DIR}' EXIT
+    printf 'The documentation can be found under docs/index.html\n'
 
     return 0
 }
 
 parse_docs "$@"
+
+set +eu

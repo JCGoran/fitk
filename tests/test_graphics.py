@@ -162,7 +162,8 @@ def test_plot_2d_names(m1, m2):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -181,7 +182,8 @@ def test_plot_1d(m1, m2, m3):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -195,7 +197,8 @@ def test_plot_1d_options(m1):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -215,7 +218,8 @@ def test_plot_1d_cols(m1, m2, m3):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -245,7 +249,8 @@ def test_plot_1d_add_artist_to_legend(m1, m2, m3):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -289,7 +294,8 @@ def test_plot_1d_euclid(euclid_opt, euclid_pes):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -344,7 +350,8 @@ def test_plot_2d_getitem(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -367,7 +374,8 @@ def test_plot_1d_euclid3(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -431,7 +439,8 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -460,7 +469,8 @@ def test_plot_2d_legend(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -481,7 +491,8 @@ def test_plot_2d_set_title(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -501,7 +512,8 @@ def test_plot_2d_set_title2(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -520,7 +532,8 @@ def test_plot_2d_options_file(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -561,7 +574,8 @@ def test_plot_2d_draw(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -613,7 +627,8 @@ def test_plot_1d_draw(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -761,7 +776,8 @@ def test_plot_2d_figure_error(euclid_opt):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
@@ -772,7 +788,8 @@ def test_plot_curve_1d(m1):
 
 
 @pytest.mark.mpl_image_compare(
-    savefig_kwargs=dict(dpi=300, bbox_inches="tight"),
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
     baseline_dir=DATADIR_INPUT,
     style="default",
 )

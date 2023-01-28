@@ -351,7 +351,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_add_artist_to_legend1.png",
         ... dpi=150)
 
-        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_add_artist_to_legend1.png"
+        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_add_artist_to_legend1.png">
 
         Notes
         -----
@@ -1056,7 +1056,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure1d_example1.png",
     ... dpi=150)
 
-    <img width="100%" src="$IMAGE_PATH/fisher_figure1d_example1.png"
+    <img width="100%" src="$IMAGE_PATH/fisher_figure1d_example1.png">
     """
 
     def __init__(
@@ -1453,7 +1453,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_example1.png",
     ... dpi=150)
 
-    <img width="100%" src="$IMAGE_PATH/fisher_figure2d_example1.png"
+    <img width="100%" src="$IMAGE_PATH/fisher_figure2d_example1.png">
     """
 
     def __init__(
@@ -1795,7 +1795,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_plot_example.png",
         ... dpi=150)
 
-        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_plot_example.png"
+        <img width="100%" src="$IMAGE_PATH/fisher_figure2d_plot_example.png">
         """
         size = len(fisher)
 
@@ -2142,7 +2142,7 @@ def plot_curve_1d(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_1d_example1.png",
     ... dpi=100)
 
-    <img width="100%" src="$IMAGE_PATH/plot_curve_1d_example1.png"
+    <img width="100%" src="$IMAGE_PATH/plot_curve_1d_example1.png">
     """
     if ax is None:
         _, ax = plt.subplots()
@@ -2211,7 +2211,7 @@ def plot_curve_2d(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_2d_example1.png",
     ... dpi=100)
 
-    <img width="100%" src="$IMAGE_PATH/plot_curve_2d_example1.png"
+    <img width="100%" src="$IMAGE_PATH/plot_curve_2d_example1.png">
 
     Notes
     -----

@@ -78,6 +78,17 @@ Documentation which can be browsed locally can be generated using:
 ./generate_docs.sh
 ```
 
+#### Versioning
+
+You can change the version of the package consistently using:
+
+```plaintext
+./change_version.py
+```
+
+and follow the prompts.
+If you require further info on the capabilities of the script, run the above with the `-h` flag.
+
 ### License
 
 MIT

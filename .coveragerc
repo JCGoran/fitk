@@ -3,3 +3,4 @@ source=fitk
 omit =
     fitk/interfaces/coffe_interfaces.py
     tests/test_interfaces.py
+    change_version.py

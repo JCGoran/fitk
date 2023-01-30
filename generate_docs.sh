@@ -34,7 +34,8 @@ parse_docs(){
         python3 -m poetry run pdoc --docformat numpy --math -o docs/ -t templates/ fitk
     fi
 
-    printf 'The documentation can be found under docs/index.html\n'
+    printf 'The documentation can be found under: \n'
+    printf '\t%s\n' "${PWD}/docs/index.html"
 
     return 0
 }

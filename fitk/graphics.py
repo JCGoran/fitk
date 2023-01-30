@@ -7,7 +7,7 @@ a[target="_blank"]::after {
 </style>
 
 Submodule for plotting of Fisher objects.
-See here for documentation of `FisherFigure1D` and `FisherFigure2D`.
+See here for documentation of `FisherFigure1D`, `FisherFigure2D`, and `FisherConstraintsFigure`.
 """
 
 # needed for compatibility with Python 3.7
@@ -633,7 +633,8 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
 
 class FisherConstraintsFigure(_FisherBaseFigure):
     """
-    Container for plotting single-axis figures (`erorrbar`, `bar`, `barh`)
+    Container for plotting single-axis figures (`plot_absolute_constraints` and
+    `plot_relative_constraints`)
     """
 
     def _parse_fractional_constraints(
@@ -718,19 +719,111 @@ class FisherConstraintsFigure(_FisherBaseFigure):
             scale=scale,
         )
 
-    def bar(
+    def plot_absolute_constraints(
         self,
         args: Sequence[FisherMatrix],
+        kind: str,
         marginalized: bool = True,
         colors: Optional[Sequence[str]] = None,
         labels: Optional[Sequence[str]] = None,
         values_label: Optional[str] = None,
         scale: str = "linear",
         space: float = 0.3,
+        capsize: Optional[float] = None,
         **kwargs,
     ):
         r"""
-        Makes a vertical bar plot of the constraints
+        Makes a plot of the constraints of the Fisher matrices
+
+        Parameters
+        ----------
+        args : FisherMatrix
+            the Fisher matrices for which we want to plot the constraints
+
+        kind : str, {'bar', 'barh', 'errorbar'}
+            the kind of plot we want (vertical bar, horizontal bar, errorbar)
+
+        marginalized : bool, optional
+            whether the marginalized or the unmarginalized constraints should
+            be plotted (default: True)
+
+        colors : array_like of str, optional
+            the colors to use for the plotting (default: default matplotlib
+            colors)
+
+        labels : array_like of str, optional
+            the labels for the Fisher matrices (default: None)
+
+        values_label : str, optional
+            the label for the axis containing the constraints (default:
+            `$\theta_\mathrm{fid}$`)
+
+        scale : str, {'linear', 'log'}
+            the scale used for the y axis (default: 'linear')
+
+        space : float, optional
+            the space reserved between the bars (default: 0.3)
+
+        capsize : float, optional
+            the width of the errorbars (default: none, that is, determined
+            automatically)
+
+        **kwargs
+            any keyword arguments passed to <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html"
+            target="_blank" rel=noreferrer
+            noopener>`matplotlib.pyplot.bar`</a>, or <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.barh.html"
+            target="_blank" rel=noreferrer
+            noopener>`matplotlib.pyplot.barh`</a>, or <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html"
+            target="_blank" rel=noreferrer
+            noopener>`matplotlib.pyplot.errorbar`</a>.
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        Define some Fisher matrices:
+        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.3, 0.7, 0.96])
+        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
+
+        Make a vertical bar plot:
+        >>> fig = FisherConstraintsFigure()
+        >>> fig.plot_absolute_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
+        >>> _ = fig.figure.legend()
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_bar.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_bar.png">
+
+        Make a horizontal bar plot:
+        >>> fig = FisherConstraintsFigure()
+        >>> fig.plot_absolute_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
+        >>> _ = fig.figure.legend()
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_barh.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_barh.png">
+
+        Make an errobar plot:
+        >>> fig = FisherConstraintsFigure()
+        >>> fig.plot_absolute_constraints([fm1, fm2], 'errorbar', labels=['Fisher 1', 'Fisher 2'], capsize=4)
+        >>> _ = fig.figure.legend()
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_errorbar.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_errorbar.png">
         """
         size = len(args[0])
         latex_names = args[0].latex_names
@@ -768,7 +861,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
             raise MismatchingSizeError(labels, args)
 
         if not values_label:
-            values_label = r"$\theta$"
+            values_label = r"$\theta_\mathrm{fid}$"
 
         x_array = [
             [
@@ -788,6 +881,41 @@ class FisherConstraintsFigure(_FisherBaseFigure):
             for index, arg in enumerate(args)
         ]
 
+        # TODO: maybe put this in a class so validation is easier
+        options = {
+            "bar": {
+                "parameters_scale": "x",
+                "values_scale": "y",
+                "error_name": "yerr",
+                "extra_kwargs": {
+                    "capsize": total_space * 60 / len(args) / size,
+                    "width": space_per_object,
+                },
+            },
+            "barh": {
+                "parameters_scale": "y",
+                "values_scale": "x",
+                "error_name": "xerr",
+                "extra_kwargs": {
+                    "capsize": total_space * 60 / len(args) / size,
+                    "height": space_per_object,
+                },
+            },
+            "errorbar": {
+                "parameters_scale": "x",
+                "values_scale": "y",
+                "error_name": "yerr",
+                "extra_kwargs": {
+                    "capsize": total_space * 120 / len(args) / size,
+                    "ls": kwargs.pop("ls", ""),
+                    "marker": kwargs.pop("marker", "o"),
+                },
+            },
+        }
+
+        if capsize is not None:
+            options[kind]["extra_kwargs"]["capsize"] = capsize  # type: ignore
+
         with plt.rc_context(self.options):
             fig, ax = plt.subplots()
             for color, label, x, y, yerr in zip(
@@ -797,30 +925,31 @@ class FisherConstraintsFigure(_FisherBaseFigure):
                 y_array,
                 yerr_array,
             ):
-                ax.bar(
+                getattr(ax, kind)(
                     x,
                     y,
-                    width=space_per_object,
                     color=color,
                     label=label,
-                    yerr=yerr,
-                    capsize=space_per_object * 50,
+                    **{options[kind]["error_name"]: yerr},
+                    **options[kind]["extra_kwargs"],
                     **kwargs,
                 )
 
-            if scale == "log":
-                ax.set_yscale(scale)
+            ax.set_yscale(scale)
 
-            ax.set_xticks(range(size))
-            ax.set_xticklabels(latex_names)
-            ax.set_ylabel(values_label)
+            getattr(ax, f'set_{options[kind]["parameters_scale"]}ticks')(range(size))
+            getattr(ax, f'set_{options[kind]["parameters_scale"]}ticklabels')(
+                latex_names
+            )
+            getattr(ax, f'set_{options[kind]["values_scale"]}label')(values_label)
 
         self._figure = fig
-        self._axis = ax
+        self._axes = ax
 
-    def fractional_constraints_bar(
+    def plot_relative_constraints(
         self,
         args: Sequence[FisherMatrix],
+        kind: str,
         marginalized: bool = True,
         colors: Optional[Sequence[str]] = None,
         labels: Optional[Sequence[str]] = None,
@@ -831,155 +960,44 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         **kwargs,
     ):
         r"""
-        Makes a vertical bar plot of the fractional constraints
-        """
-        size = len(args[0])
-        latex_names = args[0].latex_names
-
-        computed_parameters = self._parse_fractional_constraints(
-            args,
-            marginalized=marginalized,
-            colors=colors,
-            labels=labels,
-            scale=scale,
-            space=space,
-            values_label=values_label,
-            percent=percent,
-        )
-
-        with plt.rc_context(self.options):
-            fig, ax = plt.subplots()
-            for color, label, x, y in zip(
-                computed_parameters.colors,
-                computed_parameters.labels,
-                computed_parameters.x_array,
-                computed_parameters.y_array,
-            ):
-                ax.bar(
-                    x,
-                    y * 100 if percent else y,
-                    width=computed_parameters.space_per_object,
-                    color=color,
-                    label=label,
-                    **kwargs,
-                )
-                ax.bar(
-                    x,
-                    -(y * 100 if percent else y),
-                    width=computed_parameters.space_per_object,
-                    color=color,
-                    label=None,
-                    **kwargs,
-                )
-
-            limits = ax.get_xlim()
-            ax.hlines(0, limits[0], limits[-1], color="black", ls="--")
-            ax.set_xlim(*limits)
-
-            ax.set_yscale(computed_parameters.scale)
-
-            ax.set_xticks(range(size))
-            ax.set_xticklabels(latex_names)
-            ax.set_ylabel(computed_parameters.values_label)
-
-        self._figure = fig
-        self._axis = ax
-
-    def fractional_constraints_barh(
-        self,
-        args: Sequence[FisherMatrix],
-        marginalized: bool = True,
-        colors: Optional[Sequence[str]] = None,
-        labels: Optional[Sequence[str]] = None,
-        values_label: Optional[str] = None,
-        scale: str = "linear",
-        space: float = 0.3,
-        percent: bool = False,
-        **kwargs,
-    ):
-        r"""
-        Makes a horizontal bar plot of the fractional constraints
-        """
-        size = len(args[0])
-        latex_names = args[0].latex_names
-
-        computed_parameters = self._parse_fractional_constraints(
-            args,
-            marginalized=marginalized,
-            colors=colors,
-            labels=labels,
-            scale=scale,
-            space=space,
-            values_label=values_label,
-            percent=percent,
-        )
-
-        with plt.rc_context(self.options):
-            fig, ax = plt.subplots()
-            for color, label, x, y in zip(
-                computed_parameters.colors,
-                computed_parameters.labels,
-                computed_parameters.x_array,
-                computed_parameters.y_array,
-            ):
-                ax.barh(
-                    x,
-                    y * 100 if percent else y,
-                    height=computed_parameters.space_per_object,
-                    color=color,
-                    label=label,
-                    **kwargs,
-                )
-                ax.barh(
-                    x,
-                    -(y * 100 if percent else y),
-                    height=computed_parameters.space_per_object,
-                    color=color,
-                    label=None,
-                    **kwargs,
-                )
-
-            limits = ax.get_ylim()
-            ax.vlines(0, limits[0], limits[-1], color="black", ls="--")
-            ax.set_ylim(*limits)
-
-            ax.set_xscale(computed_parameters.scale)
-
-            ax.set_yticks(range(size))
-            ax.set_yticklabels(latex_names)
-            ax.set_xlabel(computed_parameters.values_label)
-
-        self._figure = fig
-        self._axis = ax
-
-    def errorbar(
-        self,
-        fisher: FisherMatrix,
-        marginalized: bool = True,
-        normalized: bool = False,
-        scale: str = "linear",
-        **kwargs,
-    ):
-        r"""
-        Makes an errorbar plot of constraints of the Fisher object parameters
+        Makes a plot of the constraints (relative to the fiducial) of the
+        Fisher matrices
 
         Parameters
         ----------
-        fisher
-            the object to plot
+        args : array_like of FisherMatrix
+            the Fisher matrices for which we want to plot the constraints
 
         marginalized : bool, optional
             whether the marginalized or the unmarginalized constraints should
             be plotted (default: True)
 
-        normalized : bool, optional
-            whether the constraints should be normalized (default: False)
+        colors : array_like of str, optional
+            the colors to use for the plotting (default: default matplotlib
+            colors)
+
+        labels : array_like of str, optional
+            the labels for the Fisher matrices (default: None)
+
+        values_label : str, optional
+            the label for the values, that is, the y axis (default: `$\sigma /
+            \theta_\mathrm{fid}$` if `percent` is false, otherwise `$\sigma /
+            \theta_\mathrm{fid}\ (\%)$`
 
         scale : str, {'linear', 'log'}
-            the scale to use for the y axis (default: 'linear')
+            the scale used for the y axis (default: 'linear')
+
+        space : float, optional
+            the space reserved between the bars (default: 0.3)
+
+        percent : bool, optional
+            whether to plot in percentage units (default: false)
 
         **kwargs
-            any keyword arguments passed to `matplotlib.pyplot.plot`
+            any keyword arguments passed to
+            <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html"
+            target="_blank" rel=noreferrer noopener>`matplotlib.pyplot.bar`</a>
 
         Returns
         -------
@@ -987,33 +1005,113 @@ class FisherConstraintsFigure(_FisherBaseFigure):
 
         Examples
         --------
-        Setup the plot:
+        Define some Fisher matrices:
+        >>> fm1 = FisherMatrix(np.diag([1, 2, 3]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.3, 0.7, 0.96])
+        >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
+
+        Make a vertical bar plot:
         >>> fig = FisherConstraintsFigure()
-        >>> fig.errorbar(FisherMatrix(np.diag([1, 2]) * 1e4, names=["a", "b"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$'], fiducials=[0.3, 0.7]), label="Fisher matrix")
+        >>> fig.plot_relative_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
+        >>> _ = fig.figure.legend()
 
         Save it to a file:
         >>> fig.savefig(
-        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_errorbar.png",
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_relative_constraints_bar.png",
         ... dpi=150)
 
+        <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_relative_constraints_bar.png">
+
+        Make a horizontal bar plot:
+        >>> fig = FisherConstraintsFigure()
+        >>> fig.plot_relative_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
+        >>> _ = fig.figure.legend()
+
+        Save it to a file:
+        >>> fig.savefig(
+        ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_relative_constraints_barh.png",
+        ... dpi=150)
+
+        <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_relative_constraints_barh.png">
         """
+        size = len(args[0])
+        latex_names = args[0].latex_names
+
+        computed_parameters = self._parse_fractional_constraints(
+            args,
+            marginalized=marginalized,
+            colors=colors,
+            labels=labels,
+            scale=scale,
+            space=space,
+            values_label=values_label,
+            percent=percent,
+        )
+
+        # TODO: maybe put this in a class so validation is easier
+        options = {
+            "bar": {
+                "parameters_scale": "x",
+                "values_scale": "y",
+                "lines_prefix": "h",
+                "extra_kwargs": {
+                    "width": computed_parameters.space_per_object,
+                },
+            },
+            "barh": {
+                "parameters_scale": "y",
+                "values_scale": "x",
+                "lines_prefix": "v",
+                "extra_kwargs": {
+                    "height": computed_parameters.space_per_object,
+                },
+            },
+        }
+
         with plt.rc_context(self.options):
             fig, ax = plt.subplots()
-            ax.errorbar(
-                range(len(fisher)),
-                fisher.fiducials,
-                yerr=fisher.constraints(marginalized=marginalized),
-                ls="",
-                capsize=3,
-                **kwargs,
+            for color, label, x, y in zip(
+                computed_parameters.colors,
+                computed_parameters.labels,
+                computed_parameters.x_array,
+                computed_parameters.y_array,
+            ):
+                getattr(ax, kind)(
+                    x,
+                    y * 100 if percent else y,
+                    color=color,
+                    label=label,
+                    **options[kind]["extra_kwargs"],
+                    **kwargs,
+                )
+                getattr(ax, kind)(
+                    x,
+                    -(y * 100 if percent else y),
+                    color=color,
+                    label=None,
+                    **options[kind]["extra_kwargs"],
+                    **kwargs,
+                )
+
+            limits = getattr(ax, f'get_{options[kind]["parameters_scale"]}lim')()
+
+            getattr(ax, f'{options[kind]["lines_prefix"]}lines')(
+                0, limits[0], limits[-1], color="black", ls="--"
             )
-            if scale == "log":
-                ax.set_yscale(scale)
-            ax.set_ylabel(r"fiducials")
-            ax.set_xticks(range(len(fisher)))
-            ax.set_xticklabels(fisher.latex_names)
-            self._figure = fig
-            self._axes = np.array([ax])
+            getattr(ax, f'set_{options[kind]["parameters_scale"]}lim')(*limits)
+            getattr(ax, f'set_{options[kind]["values_scale"]}scale')(
+                computed_parameters.scale
+            )
+
+            getattr(ax, f'set_{options[kind]["parameters_scale"]}ticks')(range(size))
+            getattr(ax, f'set_{options[kind]["parameters_scale"]}ticklabels')(
+                latex_names
+            )
+            getattr(ax, f'set_{options[kind]["values_scale"]}label')(
+                computed_parameters.values_label
+            )
+
+        self._figure = fig
+        self._axes = ax
 
 
 class FisherFigure1D(_FisherMultipleAxesFigure):

@@ -131,8 +131,10 @@ class _FisherBaseFigure:
     @property
     def figure(self):
         """
-        Returns the underlying figure, an instance of
-        `matplotlib.figure.Figure`.
+        Returns the underlying figure, an instance of <a
+        href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure"
+        target="_blank" rel="noreferrer
+        noopener">`matplotlib.figure.Figure`</a>.
         """
         return self._figure
 
@@ -158,7 +160,9 @@ class _FisherBaseFigure:
         **kwargs,
     ):
         """
-        Convenience wrapper for `figure.savefig`.
+        Convenience wrapper for <a
+        href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
+        target="_blank" rel="noreferrer noopener">`figure.savefig`</a>.
 
         Parameters
         ----------

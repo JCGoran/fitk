@@ -23,6 +23,7 @@ from scipy.stats import norm
 # first party imports
 from fitk.graphics import (
     EmptyFigureError,
+    FisherConstraintsFigure,
     FisherFigure1D,
     FisherFigure2D,
     _get_ellipse,
@@ -30,7 +31,11 @@ from fitk.graphics import (
     plot_curve_2d,
 )
 from fitk.tensors import FisherMatrix
-from fitk.utilities import ParameterNotFoundError
+from fitk.utilities import (
+    MismatchingSizeError,
+    MismatchingValuesError,
+    ParameterNotFoundError,
+)
 
 DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
 DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
@@ -806,3 +811,147 @@ def test_plot_curve_2d(m1):
 def test_ellipse(m1):
     with pytest.raises(ValueError):
         _get_ellipse(m1, "omegam", "omegam")
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_absolute_constraints(euclid_opt, euclid_pes):
+    euclid_opt = euclid_opt[:7]
+    euclid_pes = euclid_pes[:7]
+    euclid1 = euclid_pes / 5
+    euclid2 = 3 * euclid_pes
+    fig = FisherConstraintsFigure()
+
+    fig.plot_absolute_constraints(
+        [euclid_opt, euclid_pes, euclid1, euclid2],
+        "bar",
+    )
+
+    # kwarg `space` outside of allowed range
+    with pytest.raises(ValueError):
+        fig.plot_absolute_constraints(
+            [euclid_opt],
+            "bar",
+            space=1.3,
+        )
+
+    # mismatching number of parameters in the Fisher matrices
+    with pytest.raises(MismatchingValuesError):
+        fig.plot_absolute_constraints(
+            [euclid_opt, euclid_pes.drop(euclid_pes.names[0])],
+            "bar",
+        )
+
+    # mismatching number of labels
+    with pytest.raises(MismatchingSizeError):
+        fig.plot_absolute_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            labels=["first"],
+        )
+
+    # mismatching number of colors
+    with pytest.raises(MismatchingSizeError):
+        fig.plot_absolute_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            colors=["blue"],
+        )
+
+    # invalid scale
+    with pytest.raises(ValueError):
+        fig.plot_absolute_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            scale="asdf",
+        )
+
+    return fig.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_relative_constraints(euclid_opt, euclid_pes):
+    euclid_opt = euclid_opt[:7]
+    euclid_pes = euclid_pes[:7]
+    euclid1 = euclid_pes / 5
+    euclid2 = 3 * euclid_pes
+    fig = FisherConstraintsFigure()
+
+    fig.plot_relative_constraints(
+        [euclid_opt, euclid_pes, euclid1, euclid2],
+        "bar",
+    )
+
+    # kwarg `scale` outside of allowed range
+    with pytest.raises(ValueError):
+        fig.plot_relative_constraints(
+            [euclid_opt],
+            "bar",
+            space=1.3,
+        )
+
+    # not the same parameters
+    with pytest.raises(MismatchingValuesError):
+        temp = euclid_pes[:]
+        temp.names[0] = "asdf"
+        fig.plot_relative_constraints(
+            [euclid_opt, temp],
+            "bar",
+        )
+
+    # mismatching number of labels
+    with pytest.raises(MismatchingSizeError):
+        fig.plot_relative_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            labels=["first"],
+        )
+
+    # mismatching number of colors
+    with pytest.raises(MismatchingSizeError):
+        fig.plot_relative_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            colors=["blue"],
+        )
+
+    # invalid scale
+    with pytest.raises(ValueError):
+        fig.plot_relative_constraints(
+            [euclid_opt, euclid_pes],
+            "bar",
+            scale="asdf",
+        )
+
+    return fig.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_relative_constraints_percent(euclid_opt, euclid_pes):
+    euclid_opt = euclid_opt[:7]
+    euclid_pes = euclid_pes[:7]
+    euclid1 = euclid_pes / 5
+    euclid2 = 3 * euclid_pes
+    fig = FisherConstraintsFigure()
+
+    fig.plot_relative_constraints(
+        [euclid_opt, euclid_pes, euclid1, euclid2],
+        "bar",
+        percent=True,
+    )
+
+    return fig.figure

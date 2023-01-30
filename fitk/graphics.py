@@ -186,7 +186,7 @@ class _FisherBaseFigure:
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -201,11 +201,13 @@ class _FisherBaseFigure:
 
 class EmptyFigureError(Exception):
     """
-    Error raised when the figure is empty, i.e. `plot` was not called first.
+    Error raised when the figure is empty
     """
 
     def __init__(self):
-        self.message = "No parameters on the figure; did you forget to call `plot`?"
+        self.message = (
+            "The figure is empty; make sure to call one of the plotting methods before"
+        )
         super().__init__(self.message)
 
 
@@ -391,7 +393,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -442,7 +444,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -492,7 +494,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -538,7 +540,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -583,7 +585,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -617,7 +619,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1165,7 +1167,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -1342,7 +1344,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1402,7 +1404,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1595,7 +1597,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1667,7 +1669,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1730,7 +1732,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `plot` hasn't been called yet
+            if `figure` is not set
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(

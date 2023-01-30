@@ -8,7 +8,9 @@ from __future__ import annotations
 
 # standard library imports
 import re
-from typing import Optional
+import warnings
+from dataclasses import dataclass
+from typing import Optional, Sequence
 
 # third party imports
 import numpy as np
@@ -224,10 +226,10 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     $\tilde{b}$ parametrization.
 
     The valid parameters are:
-    * $\tilde{f}$ - `f[N]`, where `[N]` is a number from 1 to the number of
-    redshift bins
-    * $\tilde{b}$ - `b[N]`, where `[N]` is a number from 1 to the number of
-    redshift bins
+    * $\tilde{f}$ - `f[N]`, the parameter $\sigma_8(z) D_1(z)$ in a redshift
+    bin, where `[N]` is a number from 1 to the number of redshift bins
+    * $\tilde{b}$ - `b[N]`, the parameter $b(z) D_1(z)$ in a redshift bin,
+    where `[N]` is a number from 1 to the number of redshift bins
 
     Notes
     -----
@@ -315,34 +317,56 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
         ).flatten()
 
 
+@dataclass
+class _BiasParameter:
+    longname: str
+    shortname: str
+    values: Optional[Sequence[float]] = None
+
+
 class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     r"""
-    Class for computing the derivatives of the 2PCF w.r.t. the galaxy bias in
-    each redshift bin.
+    Class for computing the derivatives of the 2PCF w.r.t. the galaxy,
+    magnification, and evolution bias parameters in each redshift bin.
 
     The valid parameters are:
-    * $b_n$ - `b[N]`, where `[N]` is a number from 1 to the number of
-    redshift bins
+    * $b_n$ - `b[N]`, the galaxy bias in a redshift bin, where `[N]` is a
+    number from 1 to the number of redshift bins
+    * $s_n$ - `s[N]`, the magnification bias in a redshift bin, where `[N]` is
+    a number from 1 to the number of redshift bins
+    * $e_n$ - `e[N]`, the evolution bias in a redshift bin, where `[N]` is a
+    number from 1 to the number of redshift bins
+
+    Warns
+    -----
+    UserWarning
+        if `has_density=True` or `has_rsd=True` and `has_flatsky_local=False`
+        in the configuration
+
+    UserWarning
+        if `has_lensing=True` and `has_flatsky_nonlocal=False` or
+        `has_flatsky_local_nonlocal=False` in the configuration
 
     Notes
     -----
     Just like for `CoffeMultipolesDerivative`, one can set the configuration in
-    the constructor by specifying the `config` argument
+    the constructor by specifying the `config` argument.
+    If the biases are set for two populations, the second population is ignored.
     """
+    _allowed_biases = [
+        _BiasParameter(longname="galaxy", shortname="b"),
+        _BiasParameter(longname="magnification", shortname="s"),
+        # TODO implement evolution bias
+        # _BiasParameter(longname="evolution", shortname="e"),
+    ]
 
     def validate_parameter(self, arg) -> bool:
-        if re.search(r"^b[1-9][0-9]*$", arg.name) and int(arg.name[1:]) in range(
-            1, len(self.config["z_mean"]) + 1
-        ):
+        valid_shortnames = "".join([_.shortname for _ in self._allowed_biases])
+        if re.search(rf"^[{valid_shortnames}][1-9][0-9]*$", arg.name) and int(
+            arg.name[1:]
+        ) in range(1, len(self.config["z_mean"]) + 1):
             return True
         return False
-
-    def covariance(
-        self,
-        *args,
-        **kwargs,
-    ):
-        return super().covariance()
 
     def signal(
         self,
@@ -351,46 +375,68 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     ):
         cosmo = _parse_and_set_args(**self.config)
 
-        def monopole(b: float, f: float):
-            return (b**2 + 2 * b * f / 3 + f**2 / 5) * np.array(
-                [cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep]
+        # checking if we are indeed using the flat-sky approximation
+        if (cosmo.has_rsd or cosmo.has_rsd) and not cosmo.has_flatsky_local:
+            warnings.warn(
+                "You have chosen to compute the derivative w.r.t. the bias "
+                "including density or RSD, but have not specified `has_flatsky_local=True`; "
+                "the computation will continue, but your results may not be consistent!"
             )
 
-        def quadrupole(b: float, f: float):
-            return -(4 * b * f / 3 + 4 * f**2 / 7) * np.array(
-                [cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep]
+        if cosmo.has_lensing and not (
+            cosmo.has_flatsky_local_nonlocal and cosmo.has_flatsky_nonlocal
+        ):
+            warnings.warn(
+                "You have chosen to compute the derivative w.r.t. the bias including lensing, "
+                "but have not specified `has_flatsky_local_nonlocal=True` or "
+                "`has_flatsky_nonlocal=True`; "
+                "the computation will continue, but your results may not be consistent!"
             )
 
-        def hexadecapole(b: float, f: float):
-            return (8 * f**2 / 35) * np.array(
-                [cosmo.integral(r=_, l=4, n=0) for _ in cosmo.sep]
-            )
-
-        multipoles = {0: monopole, 2: quadrupole, 4: hexadecapole}
-
-        b_array = np.array(
-            [cosmo.galaxy_bias1(_) * cosmo.growth_factor(_) for _ in cosmo.z_mean]
-        )
-        f_array = np.array(
-            [cosmo.growth_rate(_) * cosmo.growth_factor(_) for _ in cosmo.z_mean]
-        )
+        for index, bias in enumerate(self._allowed_biases):
+            self._allowed_biases[index].values = [
+                getattr(
+                    cosmo,
+                    f"{bias.longname}_bias1",
+                )(z)
+                for z in cosmo.z_mean
+            ]
 
         for arg in args:
             name, value = arg
-            if name[0] == "b":
-                b_array[int(name[1:]) - 1] = value
+            for index, bias in enumerate(self._allowed_biases):
+                if name[0] == bias.shortname:
+                    self._allowed_biases[index].values[int(name[1:]) - 1] = value
 
-        return np.array(
-            [
-                np.array(
+        interp_size_limit = 5
+
+        if len(cosmo.z_mean) < interp_size_limit:
+            redshifts = np.concatenate(
+                [
+                    np.linspace(0, cosmo.z_mean[0] * (1 - 1e-3), interp_size_limit),
+                    cosmo.z_mean,
+                    np.linspace(cosmo.z_mean[-1] * (1 + 1e-3), 10, interp_size_limit),
+                ]
+            )
+            for index, bias in enumerate(self._allowed_biases):
+                self._allowed_biases[index].values = np.concatenate(
                     [
-                        [
-                            item(b, f)
-                            for key, item in multipoles.items()
-                            if key in cosmo.l
-                        ]
-                        for b, f in zip(b_array, f_array)
+                        np.full(interp_size_limit, bias.values[0]),
+                        bias.values,
+                        np.full(interp_size_limit, bias.values[-1]),
                     ]
                 )
-            ]
-        ).flatten()
+
+        for index, bias in enumerate(self._allowed_biases):
+            getattr(cosmo, f"set_{bias.longname}_bias1")(
+                redshifts,
+                bias.values,
+            )
+            getattr(cosmo, f"set_{bias.longname}_bias2")(
+                redshifts,
+                bias.values,
+            )
+
+        return np.array(
+            [_.value for _ in cosmo.compute_multipoles_bulk()],
+        )

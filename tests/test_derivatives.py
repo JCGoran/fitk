@@ -46,7 +46,7 @@ class TestMatrixElementFromInput:
         Check that it raises an error if we only specify one derivative and not
         the other.
         """
-        covariance = np.diag([1, 2])
+        covariance = np.linalg.inv(np.diag([1, 2]))
         signal_derivative = np.array([1, 2, 3])
         covariance_derivative = np.array([[1, 2], [2, 1]])
 
@@ -84,7 +84,7 @@ class TestMatrixElementFromInput:
         """
         Check that it raises an error if the input has mismatching size
         """
-        covariance = np.diag([1, 2])
+        covariance = np.linalg.inv(np.diag([1, 2]))
         signal_derivative = np.array([1, 2, 3])
 
         with pytest.raises(ValueError):

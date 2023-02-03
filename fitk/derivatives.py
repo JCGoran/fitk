@@ -73,7 +73,7 @@ def _parse_derivatives(*args: D):
 
 
 def matrix_element_from_input(
-    covariance: Collection[Collection[float]],
+    inverse_covariance: Collection[Collection[float]],
     signal_derivative1: Optional[Collection[float]] = None,
     signal_derivative2: Optional[Collection[float]] = None,
     covariance_derivative1: Optional[Collection[Collection[float]]] = None,
@@ -84,8 +84,8 @@ def matrix_element_from_input(
 
     Parameters
     ----------
-    covariance : array_like of float
-        the covariance matrix of the system
+    inverse_covariance : array_like of float
+        the inverse of the covariance matrix of the system
 
     signal_derivative1 : array_like of float, optional
         the derivative of the signal w.r.t. the first parameter
@@ -121,7 +121,7 @@ def matrix_element_from_input(
 
     Notes
     -----
-    The signal and the covariance must be shape-compatible.
+    The signal and the inverse covariance must be shape-compatible.
 
     This convenience method is useful if one has already computed the
     derivatives, and wishes to get the Fisher matrix element without using
@@ -131,6 +131,7 @@ def matrix_element_from_input(
     signal_derivative2 = np.array(signal_derivative2)
     covariance_derivative1 = np.array(covariance_derivative1)
     covariance_derivative2 = np.array(covariance_derivative2)
+    inverse_covariance = np.array(inverse_covariance)
 
     if (
         not signal_derivative1.any()
@@ -160,15 +161,11 @@ def matrix_element_from_input(
             "or neither of them should be None"
         )
 
-    inverse_covariance_matrix = np.linalg.inv(np.array(covariance))
-
     # part which contains signal dependance on the parameters
     signal_dependence = 0
 
     if signal_derivative1.any():
-        signal_dependence = (
-            signal_derivative1 @ inverse_covariance_matrix @ signal_derivative2
-        )
+        signal_dependence = signal_derivative1 @ inverse_covariance @ signal_derivative2
 
     # part which contains covariance dependance on the parameters
     covariance_dependence = 0
@@ -176,9 +173,9 @@ def matrix_element_from_input(
     if covariance_derivative1.any():
         covariance_dependence = (
             np.trace(
-                inverse_covariance_matrix
+                inverse_covariance
                 @ covariance_derivative1
-                @ inverse_covariance_matrix
+                @ inverse_covariance
                 @ covariance_derivative2
             )
             / 2
@@ -647,7 +644,7 @@ class FisherDerivative:
 
         for (i, arg1), (j, arg2) in product(enumerate(args), repeat=2):
             fisher_matrix[i, j] = matrix_element_from_input(
-                covariance_matrix,
+                inverse_covariance_matrix,
                 signal_derivative1=signal_derivative[arg1.name],
                 signal_derivative2=signal_derivative[arg2.name],
                 covariance_derivative1=covariance_derivative[arg1.name],

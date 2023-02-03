@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
+from matplotlib.collections import LineCollection
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.patheffects import Normal, Stroke
@@ -1303,6 +1304,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         self,
         fisher: FisherMatrix,
         *args,
+        mark_fiducials: Union[bool, dict] = False,
         **kwargs,
     ):
         """
@@ -1312,6 +1314,17 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         ----------
         fisher
             the Fisher object which we want to plot
+
+        mark_fiducials : bool or dict, optional
+            whether or not the fiducials should be marked on the plots
+            (default: False). If set to `True`, uses `linestyles='--'` and
+            `colors='black'` as the default. If a dictionary, accepts the same
+            keyword arguments as <a
+            href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.Collection"
+            target="_blank" rel="noreferrer
+            noopener">`matplotlib.collections.Collection`</a>.
+            If an empty dictionary, uses the default style (determined
+            automatically).
 
         **kwargs
             any keyword arguments used for plotting (same as `plot_curve_1d`)
@@ -1392,6 +1405,18 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
                 ax.set_ylim(0, ax.get_ylim()[-1])
 
                 ax.set_yticks([])
+
+                # marking the fiducials
+                if not mark_fiducials is False:
+                    if mark_fiducials is True:
+                        mark_fiducials = dict(linestyles="--", colors="black")
+
+                    _mark_fiducial_1d(
+                        fisher,
+                        fisher.names[index],
+                        ax,
+                        **mark_fiducials,
+                    )
 
             # remove any axes which are not drawn
             if not full:
@@ -1869,6 +1894,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         self,
         fisher: FisherMatrix,
         *args,
+        mark_fiducials: Union[bool, dict] = False,
         **kwargs,
     ):
         r"""
@@ -1878,6 +1904,17 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         ----------
         fisher : FisherMatrix
             the Fisher object which we want to plot
+
+        mark_fiducials : bool or dict, optional
+            whether or not the fiducials should be marked on the plots
+            (default: False). If set to `True`, uses `linestyles='--'` and
+            `colors='black'` as the default. If a dictionary, accepts the same
+            keyword arguments as <a
+            href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.Collection"
+            target="_blank" rel="noreferrer
+            noopener">`matplotlib.collections.Collection`</a>.
+            If an empty dictionary, uses the default style (determined
+            automatically).
 
         **kwargs
             any keyword arguments used for plotting (same as `plot_curve_2d`)
@@ -2092,6 +2129,33 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
                         ax[i, i].set_yticks([])
                         ax[i, i].set_yticklabels([])
+
+                        # marking the fiducials (1D)
+                        if not mark_fiducials is False:
+                            if mark_fiducials is True:
+                                mark_fiducials = dict(linestyles="--", colors="black")
+
+                            _mark_fiducial_1d(
+                                fisher,
+                                fisher.names[i],
+                                ax[i, i],
+                                **mark_fiducials,
+                            )
+
+                    else:
+                        # marking the fiducials (2D)
+                        if not mark_fiducials is False:
+                            if mark_fiducials is True:
+                                mark_fiducials = dict(linestyles="--", colors="black")
+
+                            _mark_fiducial_2d(
+                                fisher,
+                                fisher.names[i],
+                                fisher.names[j],
+                                ax[i, j],
+                                **mark_fiducials,
+                            )
+
                 except AttributeError:
                     pass
 
@@ -2381,3 +2445,73 @@ def _get_ellipse(
     )
 
     return a, b, angle
+
+
+def _mark_fiducial_1d(
+    fisher: FisherMatrix,
+    name: str,
+    ax: Axes,
+    npoints: int = 100,
+    autolim: bool = False,
+    **kwargs,
+):
+    # only need to draw a vertical line on 1D plots
+    x_vline = np.repeat(
+        fisher.fiducials[np.where(name == fisher.names)][0],
+        npoints,
+    )
+
+    y_vline = np.linspace(0, 1e5, npoints)
+
+    vline = LineCollection(
+        [np.column_stack((x_vline, y_vline))],
+        **kwargs,
+    )
+
+    ax.add_collection(vline, autolim=autolim)
+
+
+def _mark_fiducial_2d(
+    fisher: FisherMatrix,
+    name1: str,
+    name2: str,
+    ax: Axes,
+    npoints: int = 100,
+    autolim: bool = False,
+    **kwargs,
+):
+    index1 = np.where(fisher.names == name1)[0]
+    index2 = np.where(fisher.names == name2)[0]
+    fiducial1 = fisher.fiducials[index1]
+    fiducial2 = fisher.fiducials[index2]
+
+    # drawing the horizontal line
+    x_hline = np.linspace(
+        fiducial2 - fisher.constraints(name2, sigma=100)[0],
+        fiducial2 + fisher.constraints(name2, sigma=100)[0],
+        npoints,
+    )
+    y_hline = np.repeat(fiducial1, npoints)
+
+    hline = LineCollection(
+        [np.column_stack((x_hline, y_hline))],
+        **kwargs,
+    )
+
+    ax.add_collection(hline, autolim=autolim)
+
+    # drawing the vertical line
+    x_vline = np.repeat(fiducial2, npoints)
+
+    y_vline = np.linspace(
+        fiducial1 - fisher.constraints(name1, sigma=100)[0],
+        fiducial1 + fisher.constraints(name1, sigma=100)[0],
+        npoints,
+    )
+
+    vline = LineCollection(
+        [np.column_stack((x_vline, y_vline))],
+        **kwargs,
+    )
+
+    ax.add_collection(vline, autolim=autolim)

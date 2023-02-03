@@ -176,8 +176,14 @@ def test_plot_1d(m1, m2, m3):
     fp = FisherFigure1D()
 
     fp.plot(m1, label="first")
-    fp.plot(m2, label="second", ls="--")
-    fp.plot(m3, label="third", ls=":", color="red")
+    fp.plot(m2, label="second", ls="--", mark_fiducials=True)
+    fp.plot(
+        m3,
+        label="third",
+        ls=":",
+        color="red",
+        mark_fiducials=dict(ls="--", color="black", lw=1),
+    )
 
     fp.legend(ncol=3, bbox_to_anchor=[0.5, 1])
     fp.set_major_locator(ticker.MaxNLocator(3))
@@ -407,13 +413,7 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
     fp.plot(
         fm_pessimistic,
         label="pessimistic",
-    )
-
-    fp.plot(
-        fm_optimistic,
-        ls="--",
-        color="red",
-        label="optimistic",
+        mark_fiducials=True,
     )
 
     fm_shifted = fm_pessimistic
@@ -428,8 +428,15 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
         ls=":",
         color="green",
         label="shifted",
+        mark_fiducials=dict(linestyles="-.", linewidths=1, colors="orange"),
     )
 
+    fp.plot(
+        fm_optimistic,
+        ls="--",
+        color="red",
+        label="optimistic",
+    )
     fp.legend(fontsize=20)
     fp.set_label_params(fontsize=30)
     fp.set_tick_params(fontsize=8)

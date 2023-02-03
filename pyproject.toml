@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fitk"
-version = "0.6.dev4"
+version = "0.6.dev5"
 description = "The Fisher Information ToolKit"
 authors = ["JCGoran <goran.jelic-cizmek@unige.ch>"]
 license = "MIT"

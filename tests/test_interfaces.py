@@ -8,14 +8,18 @@ from collections.abc import Collection
 from typing import Any
 
 import numpy as np
+import pytest
 from scipy.linalg import block_diag
 
 try:
     import coffe
-except Exception:
+except ImportError:
     pass
 from fitk import D, FisherMatrix
-from fitk.interfaces.coffe_interfaces import CoffeMultipolesDerivative
+from fitk.interfaces.coffe_interfaces import (
+    CoffeMultipolesBiasDerivative,
+    CoffeMultipolesDerivative,
+)
 from fitk.utilities import find_diff_weights
 
 COFFE_SETTINGS = {
@@ -32,6 +36,7 @@ COFFE_SETTINGS = {
     "pixelsize": [5],
     "has_density": True,
     "has_rsd": True,
+    "has_flatsky_local": True,
 }
 COFFE_REDSHIFTS = np.array([0, 0.5, 1, 1.5, 2])
 COFFE_GALAXY_BIAS1 = np.array([np.sqrt(1 + _) for _ in COFFE_REDSHIFTS])
@@ -278,3 +283,105 @@ class TestCoffeInterfaces:
             names=[_.name for _ in parameters],
             fiducials=[_.fiducial for _ in parameters],
         )
+
+
+class TestBiasInterface:
+    """
+    Tests for the `CoffeMultipolesBiasDerivative` class
+    """
+
+    def test_derivative(self):
+        """
+        Test for the `derivative` method
+        """
+        l = [0, 2]
+        z_mean = [1, 1.2, 1.5]
+        deltaz = [0.1, 0.1, 0.1]
+        cosmo = coffe.Coffe(**COFFE_SETTINGS)
+        cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
+        cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
+        cosmo.l = l
+        cosmo.z_mean = z_mean
+        cosmo.deltaz = deltaz
+
+        derivative = CoffeMultipolesBiasDerivative(
+            config={
+                "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
+                "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
+                **COFFE_SETTINGS,
+                "l": l,
+                "z_mean": z_mean,
+                "deltaz": deltaz,
+            }
+        )
+
+        for index, redshift in enumerate(cosmo.z_mean):
+
+            result = derivative.derivative(
+                "signal",
+                D(
+                    f"b{index + 1}",
+                    cosmo.galaxy_bias1(redshift),
+                    abs_step=1e-4,
+                    accuracy=2,
+                ),
+                rounding_threshold=1e-10,
+            )
+
+            benchmark = np.concatenate(
+                [
+                    cosmo.growth_factor(redshift) ** 2
+                    * (
+                        2 * cosmo.galaxy_bias1(redshift)
+                        + 2 * cosmo.growth_rate(redshift) / 3
+                    )
+                    * np.array([cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep]),
+                    -cosmo.growth_factor(redshift) ** 2
+                    * (4 * cosmo.growth_rate(redshift) / 3)
+                    * np.array([cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep]),
+                ]
+            )
+
+            assert np.allclose(
+                result[np.nonzero(result)],
+                benchmark,
+                rtol=1e-3,
+            )
+
+    def test_warning_flatsky_local(self):
+        """
+        Check that the code shows a warning when not using the flat-sky
+        approximation (for local terms)
+        """
+        derivative = CoffeMultipolesBiasDerivative(
+            config={
+                "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
+                "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
+                **COFFE_SETTINGS,
+                "has_flatsky_local": False,
+            }
+        )
+
+        with pytest.warns(UserWarning):
+            derivative.signal()
+
+    def test_warning_flatsky_nonlocal(self):
+        """
+        Check that the code shows a warning when not using the flat-sky
+        approximation (for non-local terms)
+        """
+
+        derivative = CoffeMultipolesBiasDerivative(
+            config={
+                "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
+                "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
+                **COFFE_SETTINGS,
+                "has_lensing": True,
+                "has_flatsky_nonlocal": False,
+                "has_density": False,
+                "has_rsd": False,
+            }
+        )
+
+        with pytest.warns(UserWarning):
+            derivative.signal()

@@ -23,7 +23,7 @@ from scipy.stats import norm
 # first party imports
 from fitk.graphics import (
     EmptyFigureError,
-    FisherConstraintsFigure,
+    FisherBarFigure,
     FisherFigure1D,
     FisherFigure2D,
     _get_ellipse,
@@ -824,7 +824,7 @@ def test_absolute_constraints(euclid_opt, euclid_pes):
     euclid_pes = euclid_pes[:7]
     euclid1 = euclid_pes / 5
     euclid2 = 3 * euclid_pes
-    fig = FisherConstraintsFigure()
+    fig = FisherBarFigure()
 
     fig.plot_absolute_constraints(
         [euclid_opt, euclid_pes, euclid1, euclid2],
@@ -884,7 +884,7 @@ def test_relative_constraints(euclid_opt, euclid_pes):
     euclid_pes = euclid_pes[:7]
     euclid1 = euclid_pes / 5
     euclid2 = 3 * euclid_pes
-    fig = FisherConstraintsFigure()
+    fig = FisherBarFigure()
 
     fig.plot_relative_constraints(
         [euclid_opt, euclid_pes, euclid1, euclid2],
@@ -946,7 +946,7 @@ def test_relative_constraints_percent(euclid_opt, euclid_pes):
     euclid_pes = euclid_pes[:7]
     euclid1 = euclid_pes / 5
     euclid2 = 3 * euclid_pes
-    fig = FisherConstraintsFigure()
+    fig = FisherBarFigure()
 
     fig.plot_relative_constraints(
         [euclid_opt, euclid_pes, euclid1, euclid2],

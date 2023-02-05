@@ -23,7 +23,7 @@ in the following way:
 The most important classes are:
 
 - `fitk.tensors.FisherMatrix`: for manipulating Fisher matrices
-- `fitk.graphics.FisherConstraintsFigure`, `fitk.graphics.FisherFigure1D`, and `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
+- `fitk.graphics.FisherBarFigure`, `fitk.graphics.FisherFigure1D`, and `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
 - `fitk.derivatives.FisherDerivative` and `fitk.derivatives.D`: for computing derivatives and Fisher
   matrices using finite differences
 
@@ -294,7 +294,7 @@ __version__ = (
 from fitk import interfaces, operations, utilities
 from fitk.derivatives import D, FisherDerivative
 from fitk.graphics import (
-    FisherConstraintsFigure,
+    FisherBarFigure,
     FisherFigure1D,
     FisherFigure2D,
 )

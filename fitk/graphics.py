@@ -7,7 +7,7 @@ a[target="_blank"]::after {
 </style>
 
 Submodule for plotting of Fisher objects.
-See here for documentation of `FisherFigure1D`, `FisherFigure2D`, and `FisherConstraintsFigure`.
+See here for documentation of `FisherFigure1D`, `FisherFigure2D`, and `FisherBarFigure`.
 """
 
 # needed for compatibility with Python 3.7
@@ -631,10 +631,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
                 self[nameiter].yaxis.set_minor_formatter(formatter)
 
 
-class FisherConstraintsFigure(_FisherBaseFigure):
+class FisherBarFigure(_FisherBaseFigure):
     """
-    Container for plotting single-axis figures (`plot_absolute_constraints` and
-    `plot_relative_constraints`)
+    Container for plotting single-axis bar-like figures
+    (`plot_absolute_constraints` and `plot_relative_constraints`)
     """
 
     def _parse_fractional_constraints(
@@ -790,7 +790,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
 
         Make a vertical bar plot:
-        >>> fig = FisherConstraintsFigure()
+        >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
@@ -802,7 +802,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_bar.png">
 
         Make a horizontal bar plot:
-        >>> fig = FisherConstraintsFigure()
+        >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
@@ -814,7 +814,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_barh.png">
 
         Make an errobar plot:
-        >>> fig = FisherConstraintsFigure()
+        >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'errorbar', labels=['Fisher 1', 'Fisher 2'], capsize=4)
         >>> _ = fig.figure.legend()
 
@@ -1010,7 +1010,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
 
         Make a vertical bar plot:
-        >>> fig = FisherConstraintsFigure()
+        >>> fig = FisherBarFigure()
         >>> fig.plot_relative_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
@@ -1022,7 +1022,7 @@ class FisherConstraintsFigure(_FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_relative_constraints_bar.png">
 
         Make a horizontal bar plot:
-        >>> fig = FisherConstraintsFigure()
+        >>> fig = FisherBarFigure()
         >>> fig.plot_relative_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 

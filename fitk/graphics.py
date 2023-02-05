@@ -737,7 +737,7 @@ class FisherBarFigure(_FisherBaseFigure):
 
         Parameters
         ----------
-        args : FisherMatrix
+        args : array_like of FisherMatrix
             the Fisher matrices for which we want to plot the constraints
 
         kind : str, {'bar', 'barh', 'errorbar'}
@@ -967,6 +967,9 @@ class FisherBarFigure(_FisherBaseFigure):
         ----------
         args : array_like of FisherMatrix
             the Fisher matrices for which we want to plot the constraints
+
+        kind : str, {'bar', 'barh', 'errorbar'}
+            the kind of plot we want (vertical bar, horizontal bar, errorbar)
 
         marginalized : bool, optional
             whether the marginalized or the unmarginalized constraints should

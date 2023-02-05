@@ -62,7 +62,8 @@ def _parse_and_set_args(
 
 class CoffeMultipolesDerivative(FisherDerivative):
     r"""
-    Computes the derivative of the multipoles of the 2PCF w.r.t. parameters
+    Class for computing the derivatives of the multipoles of the 2PCF w.r.t.
+    cosmological parameters defined in the COFFE code.
 
     Examples
     --------
@@ -74,8 +75,9 @@ class CoffeMultipolesDerivative(FisherDerivative):
     ... config=dict(omega_m=0.32, sep=[10, 20, 30], l=[0], pixelsize=[5],
     ... number_density1=[1e-3], number_density2=[1e-3], fsky=[0.3]))
 
-    Compute the derivative of the signal (multipoles of 2PCF) w.r.t. $h$ with a
-    fiducial value of $0.67$ and an absolute step size $10^{-3}$:
+    Compute the first derivative of the signal (multipoles of 2PCF), using a
+    fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
+    $0.67$ and an absolute step size $10^{-3}$:
     >>> cosmo.derivative('signal', D('h', 0.67, 1e-3))
 
     Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
@@ -223,7 +225,17 @@ class CoffeMultipolesDerivative(FisherDerivative):
 class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     r"""
     Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and
-    $\tilde{b}$ parametrization.
+    $\tilde{b}$ parametrization, which are defined as:
+
+    $$
+        \tilde{f}(z) = f(z) \sigma_8(z),
+        \quad
+        \tilde{b}(z) = b(z) \sigma_8(z)
+    $$
+
+    where $f(z)$ is the growth rate of matter, $b(z)$ is the linear galaxy
+    bias, and $\sigma_8(z)$ is the size of the redshift-dependent matter
+    perturbation at 8 $\mathrm{Mpc}/h$.
 
     The valid parameters are:
     * $\tilde{f}$ - `f[N]`, the parameter $\sigma_8(z) D_1(z)$ in a redshift
@@ -234,7 +246,14 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     Notes
     -----
     Just like for `CoffeMultipolesDerivative`, one can set the configuration in
-    the constructor by specifying the `config` argument
+    the constructor by specifying the `config` argument.
+
+    Only density and RSD effects are taken into account when computing the
+    signal.
+
+    The covariance is assumed to be parameter-independent.
+
+    If the biases are set for two populations, the second population is ignored.
     """
 
     def validate_parameter(self, arg) -> bool:
@@ -351,6 +370,7 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     -----
     Just like for `CoffeMultipolesDerivative`, one can set the configuration in
     the constructor by specifying the `config` argument.
+
     If the biases are set for two populations, the second population is ignored.
     """
     _allowed_biases = [

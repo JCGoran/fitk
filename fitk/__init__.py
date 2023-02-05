@@ -18,14 +18,15 @@ Throughout the documentation, it is assumed that the modules are imported
 in the following way:
 
 >>> import numpy as np
->>> from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, D, FisherDerivative
+>>> from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, FisherBarFigure, D, FisherDerivative
 
 The most important classes are:
 
 - `fitk.tensors.FisherMatrix`: for manipulating Fisher matrices
-- `fitk.graphics.FisherBarFigure`, `fitk.graphics.FisherFigure1D`, and `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
-- `fitk.derivatives.FisherDerivative` and `fitk.derivatives.D`: for computing derivatives and Fisher
-  matrices using finite differences
+- `fitk.graphics.FisherBarFigure`, `fitk.graphics.FisherFigure1D`, and
+  `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
+- `fitk.derivatives.FisherDerivative` and `fitk.derivatives.D`: for computing
+  derivatives and Fisher matrices using finite differences
 
 See the "Submodules" list in the sidebar for more info on the available classes
 and methods.
@@ -51,9 +52,10 @@ There are several options you can use:
 ## ...sort a matrix according to some criterion?
 
 Use the `fitk.tensors.FisherMatrix.sort` method, which returns a new Fisher
-matrix.  It works the same way as the Python built-in function
-<a class="external" href="https://docs.python.org/3/library/functions.html#sorted" target="_blank" rel="noreferrer noopener">`sorted`</a>, but
-notably also has some convenience shortcuts:
+matrix. It works the same way as the Python built-in function <a
+class="external" href="https://docs.python.org/3/library/functions.html#sorted"
+target="_blank" rel="noreferrer noopener">`sorted`</a>, but notably also has
+some convenience shortcuts:
 
 1. sort according to names (alphabetically)
 >>> my_matrix.sort()
@@ -258,10 +260,11 @@ Then, to actually plot the matrix on the canvas, use
 `fitk.graphics.FisherFigure2D.plot`:
 >>> fig.plot(my_matrix)
 
-Note that `plot` accepts the most frequently used arguments from
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html" target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.plot`</a>,
-such as `ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`),
-`label`, as well as many others.
+Note that `plot` accepts the most frequently used arguments from <a
+href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
+target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.plot`</a>, such as
+`ls` (or `linestyle`), `c` (or `color`), `lw` (or `linewidth`), `label`, as
+well as many others.
 
 ## ...add a legend to the plot?
 
@@ -278,9 +281,10 @@ Use the `set_title` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.F
 Use the `savefig` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.FisherFigure2D`:
 >>> fig.savefig('my_figure.pdf')
 
-It takes exactly the same arguments as
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html" target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.savefig`</a>,
-with minimal changes to defaults for nicer outputs.
+It takes exactly the same arguments as <a
+href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html"
+target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.savefig`</a>, with
+minimal changes to defaults for nicer outputs.
 """
 
 from pathlib import Path
@@ -293,11 +297,7 @@ __version__ = (
 
 from fitk import interfaces, operations, utilities
 from fitk.derivatives import D, FisherDerivative
-from fitk.graphics import (
-    FisherBarFigure,
-    FisherFigure1D,
-    FisherFigure2D,
-)
+from fitk.graphics import FisherBarFigure, FisherFigure1D, FisherFigure2D
 from fitk.operations import bayes_factor, kl_divergence, kl_matrix
 from fitk.tensors import FisherMatrix
 from fitk.utilities import math_mode

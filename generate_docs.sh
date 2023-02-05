@@ -21,7 +21,14 @@ parse_docs(){
     # restore the init file
     trap 'rm -fr ${TEMP_IMAGE_DIR}; printf "%s\n" "${file_content}" > "${module}"; printf "%s\n" "${init_content}" > "${init_path}"' EXIT INT
 
-    python3 -m poetry run pytest --doctest-modules "${module}"
+    if ! python3 -m poetry > /dev/null 2>&1
+    then
+        launcher=''
+    else
+        launcher='poetry run'
+    fi
+
+    python3 -m ${launcher} pytest --doctest-modules "${module}"
     for image in ${TEMP_IMAGE_DIR}/*
     do
         base_image="$(basename ${image})"
@@ -29,9 +36,9 @@ parse_docs(){
     done
     if [ "${1:-}" = '-i' ]
     then
-        python3 -m poetry run pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
+        python3 -m ${launcher} pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
     else
-        python3 -m poetry run pdoc --docformat numpy --math -o docs/ -t templates/ fitk
+        python3 -m ${launcher} pdoc --docformat numpy --math -o docs/ -t templates/ fitk
     fi
 
     printf 'The documentation can be found under: \n'

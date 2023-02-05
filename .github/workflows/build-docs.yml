@@ -25,7 +25,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python3 -m pip install pdoc matplotlib numpy scipy wheel setuptools
+        python3 -m pip install pdoc matplotlib numpy scipy wheel setuptools poetry pytest
         python3 -m pip install .
 
     # Build the site

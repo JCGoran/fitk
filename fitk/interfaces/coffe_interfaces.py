@@ -460,3 +460,77 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
         return np.array(
             [_.value for _ in cosmo.compute_multipoles_bulk()],
         )
+
+    def covariance(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        cosmo = _parse_and_set_args(**self.config)
+
+        for index, bias in enumerate(self._allowed_biases):
+            self._allowed_biases[index].values = [
+                getattr(
+                    cosmo,
+                    f"{bias.longname}_bias1",
+                )(z)
+                for z in cosmo.z_mean
+            ]
+
+        for arg in args:
+            name, value = arg
+            for index, bias in enumerate(self._allowed_biases):
+                if name[0] == bias.shortname:
+                    self._allowed_biases[index].values[int(name[1:]) - 1] = value
+
+        interp_size_limit = 5
+
+        if len(cosmo.z_mean) < interp_size_limit:
+            redshifts = np.concatenate(
+                [
+                    np.linspace(0, cosmo.z_mean[0] * (1 - 1e-3), interp_size_limit),
+                    cosmo.z_mean,
+                    np.linspace(cosmo.z_mean[-1] * (1 + 1e-3), 10, interp_size_limit),
+                ]
+            )
+            for index, bias in enumerate(self._allowed_biases):
+                self._allowed_biases[index].values = np.concatenate(
+                    [
+                        np.full(interp_size_limit, bias.values[0]),
+                        bias.values,
+                        np.full(interp_size_limit, bias.values[-1]),
+                    ]
+                )
+
+        for index, bias in enumerate(self._allowed_biases):
+            getattr(cosmo, f"set_{bias.longname}_bias1")(
+                redshifts,
+                bias.values,
+            )
+            getattr(cosmo, f"set_{bias.longname}_bias2")(
+                redshifts,
+                bias.values,
+            )
+
+        covariance = cosmo.compute_covariance_bulk()
+
+        result = block_diag(
+            *[
+                np.reshape(
+                    [
+                        _.value
+                        for _ in covariance[
+                            i : i + len(cosmo.sep) ** 2 * len(cosmo.l) ** 2
+                        ]
+                    ],
+                    (len(cosmo.sep) * len(cosmo.l), len(cosmo.sep) * len(cosmo.l)),
+                )
+                for i in range(
+                    0,
+                    len(covariance),
+                    len(cosmo.sep) ** 2 * len(cosmo.l) ** 2,
+                )
+            ]
+        )
+
+        return result

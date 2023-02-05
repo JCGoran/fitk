@@ -83,7 +83,7 @@ installed separately by the user.</p>
 <h3 id="computation-of-custom-derivatives">Computation of custom derivatives</h3>
 
 <p>To define a new interface for computing derivatives, one should define a class
-that inherits from <code><a href="fisher_derivative.html#FisherDerivative">fitk.fisher_derivative.FisherDerivative</a></code>, and implements
+that inherits from <code><a href="derivatives.html#FisherDerivative">fitk.derivatives.FisherDerivative</a></code>, and implements
 either the <code>signal</code> or the <code>covariance</code> methods (or both); below outlines the
 steps to create an interface of your own using a minimal amount of code:</p>
 
@@ -164,7 +164,7 @@ stored as a boolean) to the constructor of the class, and then only raise the
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">### Computation of custom derivatives</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">To define a new interface for computing derivatives, one should define a class</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">that inherits from `fitk.fisher_derivative.FisherDerivative`, and implements</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">that inherits from `fitk.derivatives.FisherDerivative`, and implements</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">either the `signal` or the `covariance` methods (or both); below outlines the</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">steps to create an interface of your own using a minimal amount of code:</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>

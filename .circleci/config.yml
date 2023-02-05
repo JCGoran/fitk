@@ -32,7 +32,10 @@ jobs:
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
-          command: poetry export --dev > requirements.txt && pip install -r requirements.txt && python3 -m pytest -k 'not test_interfaces'
+          command: |
+            # we don't need any other dependencies
+            python3 -m pip install matplotlib scipy numpy pytest git+https://github.com/jcgoran/cosmicfish@feature/pip-install
+            python3 -m pytest -k 'not test_interfaces'
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows

@@ -92,7 +92,6 @@ class TestCoffeInterfaces:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
             for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-
                 cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
@@ -168,7 +167,6 @@ class TestCoffeInterfaces:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
             for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-
                 cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
@@ -249,7 +247,6 @@ class TestCoffeInterfaces:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
             for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-
                 cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
@@ -372,7 +369,6 @@ class TestTildeInterface:
                     * cosmo.sigma8,
                 ],
             ):
-
                 result = derivative.derivative(
                     "signal",
                     D(
@@ -437,7 +433,6 @@ class TestBiasInterface:
         )
 
         for index, redshift in enumerate(cosmo.z_mean):
-
             result = derivative.derivative(
                 "signal",
                 D(

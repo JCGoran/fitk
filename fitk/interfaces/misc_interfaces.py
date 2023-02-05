@@ -17,7 +17,6 @@ from fitk.derivatives import D, FisherDerivative
 
 
 def _hubble(config: dict):
-
     hubble_zero = 1 / 3000  # in units h/Mpc
 
     return hubble_zero * np.sqrt(
@@ -29,7 +28,6 @@ def _hubble(config: dict):
 def _luminosity_distance(
     config: dict,
 ):
-
     integrand = lambda zp: (1 + zp) / _hubble({**config, "z": zp})
 
     return np.array([quad(integrand, 0, _)[0] for _ in config["z"]])
@@ -39,7 +37,6 @@ def _validate_config(
     old_config: dict,
     new_config: dict,
 ):
-
     for key in new_config:
         if key not in old_config:
             raise KeyError(

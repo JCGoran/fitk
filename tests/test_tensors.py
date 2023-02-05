@@ -423,7 +423,10 @@ class TestFisherMatrix:
         )
 
     def test_eq(self):
-        assert FisherMatrix(np.diag([1, 2]), names=list("ba"),) == FisherMatrix(
+        assert FisherMatrix(
+            np.diag([1, 2]),
+            names=list("ba"),
+        ) == FisherMatrix(
             np.diag([2, 1]),
             names=list("ab"),
         )

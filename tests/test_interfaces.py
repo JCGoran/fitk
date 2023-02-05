@@ -19,6 +19,7 @@ from fitk import D, FisherMatrix
 from fitk.interfaces.coffe_interfaces import (
     CoffeMultipolesBiasDerivative,
     CoffeMultipolesDerivative,
+    CoffeMultipolesTildeDerivative,
 )
 from fitk.utilities import find_diff_weights
 
@@ -283,6 +284,126 @@ class TestCoffeInterfaces:
             names=[_.name for _ in parameters],
             fiducials=[_.fiducial for _ in parameters],
         )
+
+
+class TestTildeInterface:
+    """
+    Tests for the `CoffeMultipolesTildeDerivative` class
+    """
+
+    @staticmethod
+    def monopole_derivative_f(b: float, f: float, cosmo):
+        return (
+            (2 * b / 3 + 2 * f / 5)
+            * np.array([cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep])
+            / cosmo.sigma8**2
+        )
+
+    @staticmethod
+    def monopole_derivative_b(b: float, f: float, cosmo):
+        return (
+            (2 * b + 2 * f / 3)
+            * np.array([cosmo.integral(r=_, l=0, n=0) for _ in cosmo.sep])
+            / cosmo.sigma8**2
+        )
+
+    @staticmethod
+    def quadrupole_derivative_f(b: float, f: float, cosmo):
+        return (
+            -(4 * b / 3 + 8 * f / 7)
+            * np.array([cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep])
+            / cosmo.sigma8**2
+        )
+
+    @staticmethod
+    def quadrupole_derivative_b(b: float, f: float, cosmo):
+        return (
+            -(4 * f / 3)
+            * np.array([cosmo.integral(r=_, l=2, n=0) for _ in cosmo.sep])
+            / cosmo.sigma8**2
+        )
+
+    @staticmethod
+    def hexadecapole_derivative_f(b: float, f: float, cosmo):
+        return (
+            (16 * f / 35)
+            * np.array([cosmo.integral(r=_, l=4, n=0) for _ in cosmo.sep])
+            / cosmo.sigma8**2
+        )
+
+    @staticmethod
+    def hexadecapole_derivative_b(b: float, f: float, cosmo):
+        return [0 for _ in cosmo.sep]
+
+    def test_derivative(self):
+        """
+        Test for the `derivative` method
+        """
+        l = [0, 2, 4]
+        z_mean = [1, 1.2, 1.5]
+        deltaz = [0.1, 0.1, 0.1]
+        cosmo = coffe.Coffe(**COFFE_SETTINGS)
+        cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
+        cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
+        cosmo.l = l
+        cosmo.z_mean = z_mean
+        cosmo.deltaz = deltaz
+
+        derivative = CoffeMultipolesTildeDerivative(
+            config={
+                "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
+                "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
+                **COFFE_SETTINGS,
+                "l": l,
+                "z_mean": z_mean,
+                "deltaz": deltaz,
+            }
+        )
+
+        for index, redshift in enumerate(cosmo.z_mean):
+            for name, value in zip(
+                ["b", "f"],
+                [
+                    cosmo.galaxy_bias1(redshift)
+                    * cosmo.growth_factor(redshift)
+                    * cosmo.sigma8,
+                    cosmo.growth_rate(redshift)
+                    * cosmo.growth_factor(redshift)
+                    * cosmo.sigma8,
+                ],
+            ):
+
+                result = derivative.derivative(
+                    "signal",
+                    D(
+                        f"{name}{index + 1}",
+                        value,
+                        abs_step=1e-4,
+                        accuracy=2,
+                    ),
+                    rounding_threshold=1e-10,
+                )
+
+                benchmark = np.concatenate(
+                    [
+                        getattr(self, f"{multipole}_derivative_{name}")(
+                            cosmo.galaxy_bias1(redshift)
+                            * cosmo.growth_factor(redshift)
+                            * cosmo.sigma8,
+                            cosmo.growth_rate(redshift)
+                            * cosmo.growth_factor(redshift)
+                            * cosmo.sigma8,
+                            cosmo,
+                        )
+                        for multipole in ["monopole", "quadrupole", "hexadecapole"]
+                    ]
+                )
+
+                assert np.allclose(
+                    result[np.nonzero(result)],
+                    benchmark[np.nonzero(benchmark)],
+                    rtol=1e-3,
+                )
 
 
 class TestBiasInterface:

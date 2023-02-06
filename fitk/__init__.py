@@ -66,8 +66,7 @@ some convenience shortcuts:
 3. sort according to LaTeX names (alphabetically)
 >>> my_matrix.sort(key='latex_names')
 
-4. sort according names according to some order (invalid names will raise an
-error)
+4. sort according to names in some order (invalid names will raise an error)
 >>> my_matrix.sort(key=['b', 'a', 'c'])
 
 5. sort according to indices (0-based) of the names
@@ -230,7 +229,22 @@ be as simple as:
 >>> interface = MyInterface()
 
 and the derivatives can be obtained with:
->>> derivative = interface.derivative(D('a', fiducial=0, abs_step=1e-3))
+>>> derivative = interface.derivative('signal', D('a', fiducial=0, abs_step=1e-3))
+
+The first argument can either be the string `signal` or `covariance`, while the
+rest are a list of derivatives you wish to compute.
+
+## ...compute the Fisher matrix from raw derivatives?
+
+Assuming that you have your derivatives of the signal, and the covariance, as
+arrays, you can use `fitk.derivatives.matrix_element_from_input` to get an
+element of the Fisher matrix:
+>>> matrix_element_from_input(inverse_covariance, signal_derivative1, signal_derivative2)
+
+Of course, if you instead have the derivatives of the covariance, you can use:
+>>> matrix_element_from_input(inverse_covariance, covariance_derivative1=covariance_derivative1, covariance_derivative2=covariance_derivative2)
+
+Note that the first argument is always the *inverse* of the covariance.
 
 ## ...make a 1D plot of marginalized parameters?
 
@@ -270,6 +284,15 @@ well as many others.
 
 Use the `legend` method of `fitk.graphics.FisherFigure1D` or `fitk.graphics.FisherFigure2D`:
 >>> fig.legend()
+
+## ...mark the fiducials on the plot?
+
+Call the `plot` method of `fitk.graphics.FisherFigure1D` or
+`fitk.graphics.FisherFigure2D` with the keyword argument `mark_fiducials=True`,
+or `mark_fiducials={...}`, where the `...` denote any keyword arguments to <a
+href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.Collection"
+target="_blank" rel="noopener
+noreferrer">`matplotlib.collections.Collection`</a>.
 
 ## ...add a title to the plot?
 

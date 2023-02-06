@@ -5,11 +5,9 @@ Various tests for the `fitk` module.
 from __future__ import annotations
 
 # standard library imports
-import os
 from pathlib import Path
 
 # third party imports
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
@@ -37,8 +35,8 @@ from fitk.utilities import (
     ParameterNotFoundError,
 )
 
-DATADIR_INPUT = Path(os.path.join(os.path.dirname(__file__), "data_input"))
-DATADIR_OUTPUT = Path(os.path.join(os.path.dirname(__file__), "data_output"))
+DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
+DATADIR_OUTPUT = Path(__file__).resolve().parent / "data_output"
 
 
 class TestFisherFigure:

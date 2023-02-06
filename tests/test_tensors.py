@@ -6,11 +6,9 @@ from __future__ import annotations
 
 # standard library imports
 import json
-import os
-from itertools import product
+from pathlib import Path
 
 # third-party imports
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_derived import fisher_derived as CFFisherDerived
@@ -32,8 +30,8 @@ from fitk.utilities import (
     math_mode,
 )
 
-DATADIR_INPUT = os.path.join(os.path.dirname(__file__), "data_input")
-DATADIR_OUTPUT = os.path.join(os.path.dirname(__file__), "data_output")
+DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
+DATADIR_OUTPUT = Path(__file__).resolve().parent / "data_output"
 
 
 class TestFisherMatrix:
@@ -51,11 +49,7 @@ class TestFisherMatrix:
 
     def test_init(self):
         # a file
-        FisherMatrix(
-            np.loadtxt(
-                os.path.join(DATADIR_INPUT, "test_numpy_matrix.dat"), comments="#"
-            )
-        )
+        FisherMatrix(np.loadtxt(DATADIR_INPUT / "test_numpy_matrix.dat", comments="#"))
         # a 2D array
         FisherMatrix(np.diag([1, 2, 3]))
 
@@ -153,28 +147,24 @@ class TestFisherMatrix:
             r"$\beta_\mathrm{IA}$",
         ]
         fm = FisherMatrix(
-            np.loadtxt(
-                os.path.join(DATADIR_INPUT, "test_numpy_matrix.dat"), comments="#"
-            ),
+            np.loadtxt(DATADIR_INPUT / "test_numpy_matrix.dat", comments="#"),
             names=names,
             latex_names=latex_names,
             fiducials=fiducials,
         )
         fm.to_file(
-            os.path.join(DATADIR_OUTPUT, "test_numpy_matrix.json"),
+            DATADIR_OUTPUT / "test_numpy_matrix.json",
             metadata={
                 "comment": "Fisher matrix forecast from Euclid IST:F paper",
                 "url_arxiv": "https://arxiv.org/abs/1910.09273",
                 "url_github": "https://github.com/euclidist-forecasting/fisher_for_public/blob/94bdfd09b26e4bed3654c0b95f4a2fb1f0cb192e/All_Results/optimistic/flat/EuclidISTF_WL_w0wa_flat_optimistic.txt",
             },
         )
-        fm_read = FisherMatrix.from_file(
-            os.path.join(DATADIR_OUTPUT, "test_numpy_matrix.json")
-        )
+        fm_read = FisherMatrix.from_file(DATADIR_OUTPUT / "test_numpy_matrix.json")
         assert fm == fm_read
 
     def test_from_file(self):
-        fm = FisherMatrix.from_file(os.path.join(DATADIR_INPUT, "test_matrix.json"))
+        fm = FisherMatrix.from_file(DATADIR_INPUT / "test_matrix.json")
         assert fm == FisherMatrix(
             np.diag([2, 1, 3]),
             names=list("bac"),
@@ -184,7 +174,7 @@ class TestFisherMatrix:
 
     def test_from_dict(self):
         with open(
-            os.path.join(DATADIR_INPUT, "test_matrix.json"), "r", encoding="utf-8"
+            DATADIR_INPUT / "test_matrix.json", "r", encoding="utf-8"
         ) as file_handle:
             data = json.loads(file_handle.read())
 

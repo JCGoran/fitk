@@ -2455,6 +2455,9 @@ def _mark_fiducial_1d(
     autolim: bool = False,
     **kwargs,
 ):
+    # always put the fiducials on top (unless specified otherwise)
+    zorder = kwargs.pop("zorder", 999)
+
     # only need to draw a vertical line on 1D plots
     x_vline = np.repeat(
         fisher.fiducials[np.where(name == fisher.names)][0],
@@ -2465,6 +2468,7 @@ def _mark_fiducial_1d(
 
     vline = LineCollection(
         [np.column_stack((x_vline, y_vline))],
+        zorder=zorder,
         **kwargs,
     )
 
@@ -2480,6 +2484,9 @@ def _mark_fiducial_2d(
     autolim: bool = False,
     **kwargs,
 ):
+    # always put the fiducials on top (unless specified otherwise)
+    zorder = kwargs.pop("zorder", 999)
+
     index1 = np.where(fisher.names == name1)[0]
     index2 = np.where(fisher.names == name2)[0]
     fiducial1 = fisher.fiducials[index1]
@@ -2495,6 +2502,7 @@ def _mark_fiducial_2d(
 
     hline = LineCollection(
         [np.column_stack((x_hline, y_hline))],
+        zorder=zorder,
         **kwargs,
     )
 
@@ -2511,6 +2519,7 @@ def _mark_fiducial_2d(
 
     vline = LineCollection(
         [np.column_stack((x_vline, y_vline))],
+        zorder=zorder,
         **kwargs,
     )
 

@@ -36,9 +36,9 @@ parse_docs(){
     done
     if [ "${1:-}" = '-i' ]
     then
-        python3 -m ${launcher} pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ fitk
+        python3 -m ${launcher} pdoc -h 0.0.0.0 --docformat numpy --math -t templates/ ./fitk
     else
-        python3 -m ${launcher} pdoc --docformat numpy --math -o docs/ -t templates/ fitk
+        python3 -m ${launcher} pdoc --docformat numpy --math -o docs/ -t templates/ ./fitk
     fi
 
     printf 'The documentation can be found under: \n'

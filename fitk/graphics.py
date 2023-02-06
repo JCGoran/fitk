@@ -241,24 +241,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         if contour_levels is None:
             self.contour_levels = [(1.0, 0.3), (2.0, 0.1)]
         else:
-            try:
-                contour_levels = [
-                    (float(level), float(alpha)) for level, alpha in contour_levels
-                ]
-            except Exception as exc:
-                raise ValueError(
-                    f"The object {contour_levels} cannot be converted to a list of 2-tuples"
-                ) from exc
-            for level, alpha in contour_levels:
-                if level < 0:
-                    raise ValueError(
-                        f"Negative contour level found in: {contour_levels}"
-                    )
-                if not 0 <= alpha <= 1:
-                    raise ValueError(
-                        f"Opacity value outside of (0, 1) found in: {contour_levels}"
-                    )
-            self.contour_levels = contour_levels
+            self.contour_levels = _parse_contour_levels(contour_levels)
 
     @abstractmethod
     def plot(self, fisher: FisherMatrix, *args, **kwargs):
@@ -1596,6 +1579,8 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         show_1d_curves: bool = False,
         show_joint_dist: bool = False,
         contour_levels: Optional[Sequence[tuple[float, float]]] = None,
+        contour_levels_1d: Optional[Sequence[tuple[float, float]]] = None,
+        contour_levels_2d: Optional[Sequence[tuple[float, float]]] = None,
     ):
         """
         Constructor.
@@ -1630,6 +1615,16 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
             the associated opacity (default: None). If not specified, defaults
             to `[(1, 0.3), (2, 0.1)]`.
 
+        contour_levels_1d : array_like of 2-tuples, optional
+            the points at which the sigma level should be shaded (on the 1D
+            plots), along with the associated opacity (default: None). If not
+            specified, defaults to `[(1, 0.3), (2, 0.1)]`.
+
+        contour_levels_2d : array_like of 2-tuples, optional
+            the points at which the sigma level should be shaded (on the 2D
+            plots), along with the associated opacity (default: None). If not
+            specified, defaults to `[(1, 0.3), (2, 0.1)]`.
+
         Notes
         -----
         For the style sheet reference, please consult <a
@@ -1652,6 +1647,16 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         self.show_1d_curves = show_1d_curves
         self.show_joint_dist = show_joint_dist
         self._ndim = 2
+
+        if contour_levels_1d is None:
+            self.contour_levels_1d = self.contour_levels
+        else:
+            self.contour_levels_1d = _parse_contour_levels(contour_levels_1d)
+
+        if contour_levels_2d is None:
+            self.contour_levels_2d = self.contour_levels
+        else:
+            self.contour_levels_2d = _parse_contour_levels(contour_levels_2d)
 
     def __getitem__(
         self,
@@ -2032,9 +2037,9 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=self.contour_levels[0][0]
+                        scaling_factor=self.contour_levels_2d[0][0]
                         if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(self.contour_levels[0][0])),
+                        else np.sqrt(_get_chisq(self.contour_levels_2d[0][0])),
                         fill=False,
                         zorder=20,
                         **kwargs,
@@ -2051,11 +2056,11 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=self.contour_levels[0][0]
+                        scaling_factor=self.contour_levels_2d[0][0]
                         if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(self.contour_levels[0][0])),
+                        else np.sqrt(_get_chisq(self.contour_levels_2d[0][0])),
                         fill=True,
-                        alpha=self.contour_levels[0][1],
+                        alpha=self.contour_levels_2d[0][1],
                         ec=None,
                         zorder=20,
                         **kwargs,
@@ -2068,9 +2073,9 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                             namex,
                             namey,
                             ax=ax[i, j],
-                            scaling_factor=self.contour_levels[index][0]
+                            scaling_factor=self.contour_levels_2d[index][0]
                             if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels[index][0])),
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
                             fill=False,
                             zorder=20,
                             **kwargs,
@@ -2082,11 +2087,11 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                             namex,
                             namey,
                             ax=ax[i, j],
-                            scaling_factor=self.contour_levels[index][0]
+                            scaling_factor=self.contour_levels_2d[index][0]
                             if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels[index][0])),
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
                             fill=True,
-                            alpha=self.contour_levels[index][1],
+                            alpha=self.contour_levels_2d[index][1],
                             ec=None,
                             zorder=20,
                             **kwargs,
@@ -2102,7 +2107,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                             **kwargs,
                         )
 
-                        for contour_level in self.contour_levels:
+                        for contour_level in self.contour_levels_1d:
                             _add_shading_1d(
                                 fisher.fiducials[i],
                                 fisher.constraints(
@@ -2131,7 +2136,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         ax[i, i].set_yticklabels([])
 
                         # marking the fiducials (1D)
-                        if not mark_fiducials is False:
+                        if mark_fiducials is not False:
                             if mark_fiducials is True:
                                 mark_fiducials = dict(linestyles="--", colors="black")
 
@@ -2144,7 +2149,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
                     else:
                         # marking the fiducials (2D)
-                        if not mark_fiducials is False:
+                        if mark_fiducials is not False:
                             if mark_fiducials is True:
                                 mark_fiducials = dict(linestyles="--", colors="black")
 
@@ -2524,3 +2529,23 @@ def _mark_fiducial_2d(
     )
 
     ax.add_collection(vline, autolim=autolim)
+
+
+def _parse_contour_levels(contour_levels: Sequence[tuple[float, float]]):
+    try:
+        contour_levels = [
+            (float(level), float(alpha)) for level, alpha in contour_levels
+        ]
+    except Exception as exc:
+        raise ValueError(
+            f"The object {contour_levels} cannot be converted to a list of 2-tuples"
+        ) from exc
+    for level, alpha in contour_levels:
+        if level < 0:
+            raise ValueError(f"Negative contour level found in: {contour_levels}")
+        if not 0 <= alpha <= 1:
+            raise ValueError(
+                f"Opacity value outside of (0, 1) found in: {contour_levels}"
+            )
+
+    return contour_levels

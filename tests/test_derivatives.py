@@ -434,6 +434,8 @@ class TestMiscDerivatives:
         sn.config = dict(z=[0.5, 1, 1.5], sigma=[1, 1, 1])
         fm = sn.fisher_matrix(
             D("omega_m", 0.32, 1e-3),
+            kwargs_signal={"sample_kwarg": "sample_value"},
+            kwargs_covariance={"sample_kwarg": "sample_value"},
         )
 
         with pytest.raises(KeyError):

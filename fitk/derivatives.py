@@ -491,7 +491,8 @@ class FisherDerivative:
         parameter_dependence: str = "signal",
         external_covariance: Optional[Sequence[Sequence[float]]] = None,
         rounding_threshold: float = 0.0,
-        **kwargs,
+        kwargs_signal: Optional[dict] = None,
+        kwargs_covariance: Optional[dict] = None,
     ) -> FisherMatrix:
         r"""
         Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
@@ -531,9 +532,13 @@ class FisherDerivative:
             the threshold for rounding the derivative, in case one knows from
             other considerations that it should be zero (default: 0)
 
-        **kwargs
-            any other keyword arguments that should be passed to `signal` and
-            `covariance`
+        kwargs_signal : dict, optional
+            any keyword arguments that should be passed to `signal` (default:
+            None)
+
+        kwargs_covariance : dict, optional
+            any keyword arguments that should be passed to `covariance`
+            (default: None)
 
         Returns
         -------
@@ -568,6 +573,12 @@ class FisherDerivative:
         fiducials = np.array([_.fiducial for _ in args])
         latex_names = np.array([_.latex_name for _ in args])
 
+        if kwargs_signal is None:
+            kwargs_signal = {}
+
+        if kwargs_covariance is None:
+            kwargs_covariance = {}
+
         for arg in args:
             if not self.validate_parameter(arg):
                 raise ValidationError(arg)
@@ -589,12 +600,16 @@ class FisherDerivative:
                     "`external_covariance` has no effect if `parameter_dependence` "
                     f"is set to '{parameter_dependence}'"
                 )
-                covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
+                covariance_matrix = self.covariance(
+                    *zip(names, fiducials), **kwargs_covariance
+                )
 
             else:
                 covariance_matrix = external_covariance
         else:
-            covariance_matrix = self.covariance(*zip(names, fiducials), **kwargs)
+            covariance_matrix = self.covariance(
+                *zip(names, fiducials), **kwargs_covariance
+            )
 
         inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
@@ -616,7 +631,7 @@ class FisherDerivative:
                         stencil=arg.stencil,
                     ),
                     rounding_threshold=rounding_threshold,
-                    **kwargs,
+                    **kwargs_signal,
                 )
 
         covariance_derivative = {}
@@ -635,7 +650,7 @@ class FisherDerivative:
                         stencil=arg.stencil,
                     ),
                     rounding_threshold=rounding_threshold,
-                    **kwargs,
+                    **kwargs_covariance,
                 )
             else:
                 covariance_derivative[arg.name] = np.zeros(covariance_shape)

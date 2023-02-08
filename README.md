@@ -1,6 +1,7 @@
 ## FITK - the Fisher Information ToolKit
 [![codecov](https://codecov.io/gh/JCGoran/fitk/branch/master/graph/badge.svg?token=NX9WRX89SI)](https://codecov.io/gh/JCGoran/fitk)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/JCGoran/fitk/tree/master.svg?style=shield&circle-token=5cc8653735b0092318b9790720101eaa4c568c10)](https://dl.circleci.com/status-badge/redirect/gh/JCGoran/fitk/tree/master)
+[![python - versions](https://img.shields.io/static/v1?label=python&message=3.7+|+3.8+|+3.9+|+3.10+|+3.11&color=1182C2)](https://test.pypi.org/project/fitk/)
 
 Fitk is a Python package for manipulating and plotting of Fisher information matrices.
 

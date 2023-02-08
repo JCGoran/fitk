@@ -427,6 +427,15 @@ class TestFisherDerivative:
         with pytest.raises(ValidationError):
             g.fisher_matrix(D(name="asdf", fiducial=0, abs_step=1e-3))
 
+    def test_rounding_threshold_validation(self):
+        """
+        Test to make sure that the validation of `rounding_threshold` kwarg
+        works.
+        """
+        g = GaussianDerivative({"mu": 1, "sigma": 1})
+        with pytest.raises(ValueError):
+            g.derivative("signal", D("mu", 1.2, 1e-3), rounding_threshold=-1)
+
 
 class TestMiscDerivatives:
     def test_supernova_derivative(self):

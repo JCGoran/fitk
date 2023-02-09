@@ -729,3 +729,29 @@ class TestFisherMatrix:
             fisher1.figure_of_correlation(),
             -np.log(np.sqrt(np.linalg.det(fisher1.correlation_matrix()))),
         )
+
+    def test_fiducial(self):
+        """
+        Test for the `fiducial` method
+        """
+        fm = FisherMatrix(np.diag([1, 2]), names=["a", "b"], fiducials=[2, 3])
+
+        assert np.allclose(fm.fiducial("b"), 3)
+
+        with pytest.raises(ParameterNotFoundError):
+            fm.fiducial("asdf")
+
+    def test_latex_name(self):
+        """
+        Test for the `latex_name` method
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2]),
+            names=["a", "b"],
+            latex_names=[r"$\mathbf{A}$", r"$\mathbf{B}$"],
+        )
+
+        assert fm.latex_name("b") == r"$\mathbf{B}$"
+
+        with pytest.raises(ParameterNotFoundError):
+            fm.latex_name("asdf")

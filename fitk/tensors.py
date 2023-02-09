@@ -680,6 +680,54 @@ class FisherMatrix:
 
         self._values = copy.deepcopy(temp_data)
 
+    def fiducial(self, name: str) -> float:
+        r"""
+        Returns the value of the fiducial associated to the parameter `name`.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if the name is not in the Fisher object
+
+        Examples
+        --------
+        Set a Fisher matrix:
+        >>> fm = FisherMatrix(np.diag([1, 2]),
+        ... names=['a', 'b'], fiducials=[2, 3])
+
+        Get the value of the fiducial associated to parameter `b`:
+        >>> fm.fiducial('b')
+        3.0
+        """
+        if name not in self.names:
+            raise ParameterNotFoundError(name, self.names)
+
+        return self.fiducials[np.where(self.names == name)][0]
+
+    def latex_name(self, name: str) -> str:
+        r"""
+        Returns the LaTeX name associated to the parameter `name`.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if the name is not in the Fisher object
+
+        Examples
+        --------
+        Set a Fisher matrix:
+        >>> fm = FisherMatrix(np.diag([1, 2]),
+        ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
+
+        Get the LaTeX name associated to parameter `b`:
+        >>> fm.latex_name('b')
+        '$\\mathbf{B}$'
+        """
+        if name not in self.names:
+            raise ParameterNotFoundError(name, self.names)
+
+        return self.latex_names[np.where(self.names == name)][0]
+
     def is_valid(self):
         """
         Checks whether the values make a valid Fisher object.

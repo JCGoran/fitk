@@ -2048,7 +2048,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                 if i < j and self.figure is None:
                     # calling `remove()` is better than `axis("off")` because
                     # then we obtain the proper bounding box
-                    ax[i, j].remove()
+                    try:
+                        ax[i, j].remove()
+                    except KeyError:
+                        pass
 
                 # plotting the 2D contours
                 elif i > j:
@@ -2146,7 +2149,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
                     else:
                         if self.figure is None:
-                            ax[i, i].remove()
+                            try:
+                                ax[i, i].remove()
+                            except KeyError:
+                                pass
 
             # set automatic limits
             for i, j in product(range(size), repeat=2):

@@ -9,6 +9,7 @@ from __future__ import annotations
 # standard library imports
 import copy
 import json
+import warnings
 from collections.abc import Collection, Mapping
 from itertools import permutations, product
 from numbers import Number
@@ -17,6 +18,7 @@ from typing import Any, Optional, Union
 
 # third party imports
 import numpy as np
+import sympy
 from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
@@ -34,6 +36,142 @@ from fitk.utilities import (
     make_default_names,
     reindex_array,
 )
+
+
+def _jacobian(
+    params: dict[str, float],
+    transformation: dict[str, str],
+):
+    r"""
+    Returns the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the
+    transformation as a matrix
+    """
+    # remove any identity maps, since we insert those later anyway
+    transformation = {
+        key: value for key, value in transformation.items() if key != value
+    }
+
+    old_params = set(sympy.symbols(list(params)))
+
+    removed_params = set(sympy.symbols(list(transformation)))
+
+    new_params = {
+        symbol
+        for value in transformation.values()
+        for symbol in sympy.sympify(value).free_symbols
+    }
+
+    if any(param in removed_params for param in new_params):
+        raise ValueError("Parameter cannot be on both sides of the mapping")
+
+    # the new parameters can contain the old ones if the old ones are not
+    # present in the keys of the dictionary
+    new_params = new_params | (old_params - removed_params)
+
+    old_params_list = list(old_params)
+    new_params_list = list(new_params)
+
+    # edge case: there are more new parameters than there are old ones
+    if len(new_params_list) > len(old_params_list):
+        raise ValueError(
+            f"Cannot have more new parameters (size={len(new_params_list)}) "
+            f"than old ones (size={len(old_params_list)})"
+        )
+
+    # we fill the transformation with identity maps for implicitly transformed
+    # parameters
+    for param in new_params_list:
+        if param not in removed_params and param in old_params:
+            transformation[param.name] = param.name
+
+    # this is necessary because otherwise the ordering of the old parameters is
+    # messed up
+    transformation = {key: transformation[key] for key in params}
+
+    # we need to obtain the new fiducial from the old one; since the
+    # equations are not necessarily solvable analytically, we we first
+    # plug in the values of the old fiducials
+    equations = [
+        sympy.Eq(
+            sympy.sympify(value).subs(
+                [(name.name, params[name.name]) for name in old_params_list]
+            ),
+            params[key],
+        )
+        for key, value in transformation.items()
+    ]
+
+    # remove any trivial equations
+    equations = [
+        _ for _ in equations if not isinstance(_, sympy.logic.boolalg.BooleanTrue)
+    ]
+
+    # TODO handle the case when we have less new parameters than old ones
+
+    # case 1: the solutions are obtainable analytically, and we use
+    # `solve`
+    try:
+        solution = sympy.solve(
+            equations,
+            new_params_list,
+            dict=True,
+        )
+
+    # case 2: `solve` has failed, so we use numerical methods instead
+    # with `nsolve`
+    except NotImplementedError:
+        equation_parameters = [
+            _
+            for _ in new_params_list
+            if _ in {symbol for __ in equations for symbol in __.free_symbols}
+        ]
+
+        # TODO find a more clever initial guess
+        solution = sympy.nsolve(
+            equations,
+            equation_parameters,
+            [1] * len(equation_parameters),
+            dict=True,
+        )
+
+    if not solution:
+        raise ValueError(
+            f"Unable to solve system of equations {equations} over the real numbers"
+        )
+
+    if isinstance(solution, list):
+        if len(solution) > 1:
+            warnings.warn(
+                "Multiple solutions for new fiducials found; using the first one, "
+                "if you want to customize this behavior, pass XYZ"
+            )
+
+        solution = solution[0]
+
+    # getting the symbolic Jacobian
+    jacobian_symbolic = sympy.Matrix(
+        [sympy.sympify(expr) for expr in transformation.values()]
+    ).jacobian(new_params_list)
+
+    # evaluating the symbolic Jacobian at the new fiducials
+    jacobian_numeric = np.array(
+        jacobian_symbolic.evalf(
+            subs={
+                **solution,
+                **params,
+            }
+        ),
+        dtype=float,
+    )
+
+    new_fiducials = [
+        solution[key] if key in solution else params[key.name]
+        for key in new_params_list
+    ]
+
+    new_names = [item.name for item in new_params_list]
+
+    return (new_names, new_fiducials, jacobian_numeric)
 
 
 def _parse_sigma(
@@ -1583,6 +1721,60 @@ class FisherMatrix:
         """
         return self.__mul__(other)
 
+    def reparametrize_symbolic(
+        self,
+        jacobian: dict[str, str],
+        latex_names: Optional[dict[str, str]] = None,
+    ) -> FisherMatrix:
+        r"""
+        Parameters
+        ----------
+        jacobian : mapping
+            a mapping between the old and new parameters (or new and old ones)
+
+        latex_names : mapping, optional
+            a dictionary with the names of new paramters as keys, and LaTeX
+            names of new parameters as values (default: None). If None, uses
+            the old names
+
+        See also
+        --------
+        `reparametrize` : the numerical version of this method
+        """
+        # check that the keys of the dictionary are present in the names
+        for key in jacobian:
+            if key not in self.names:
+                raise ParameterNotFoundError(key, self.names)
+
+        # check that we can "sympify" all of the expressions
+        for value in jacobian.values():
+            try:
+                sympy.sympify(value)
+            except sympy.SympifyError as err:
+                raise sympy.SympifyError(err) from err
+
+        names_new, fiducials_new, jacobian = _jacobian(
+            dict(zip(self.names, self.fiducials)),
+            jacobian,
+        )
+
+        latex_names_new = [
+            self.latex_name(key) if key in self.names else key for key in names_new
+        ]
+
+        if latex_names is not None:
+            latex_names_new = [
+                latex_names[key] if key in latex_names else key
+                for key in latex_names_new
+            ]
+
+        return self.reparametrize(
+            jacobian,
+            names=names_new,
+            fiducials=fiducials_new,
+            latex_names=latex_names_new,
+        )
+
     def reparametrize(
         self,
         jacobian,
@@ -1614,13 +1806,17 @@ class FisherMatrix:
 
         fiducials : array_like of float, optional
             the new values of the fiducials (default: None). If None, defaults
-            to old values.
+            to the old values of the fiducials.
 
         Returns
         -------
         FisherMatrix
             The new Fisher object with the specified names, LaTeX names, and
             fiducials.
+
+        See also
+        --------
+        `reparametrize_symbolic` : the symbolic version of this method
 
         Examples
         --------

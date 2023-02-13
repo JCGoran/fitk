@@ -22,7 +22,7 @@ from cosmicfish_pylib.fisher_operations import (
 from scipy.stats import ortho_group
 
 # first party imports
-from fitk.tensors import FisherMatrix, _process_fisher_mapping
+from fitk.tensors import FisherMatrix, _jacobian, _process_fisher_mapping
 from fitk.utilities import (
     MismatchingSizeError,
     MismatchingValuesError,
@@ -33,6 +33,17 @@ from fitk.utilities import (
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 DATADIR_OUTPUT = Path(__file__).resolve().parent / "data_output"
+
+
+def test_transformation():
+    r"""
+    Test for the function `_jacobian`
+    """
+    names = ["omega_m", "omega_b", "h"]
+    h = 0.67
+    fiducials = [0.3 * h**2, 0.05 * h**2, h]
+    transformation = {"omega_m": "Omega_m * h**2", "omega_b": "Omega_b * h **2"}
+    result = _jacobian(dict(zip(names, fiducials)), transformation)
 
 
 class TestFisherMatrix:
@@ -622,6 +633,64 @@ class TestFisherMatrix:
 
         with pytest.raises(MismatchingSizeError):
             m.reparametrize(jac, fiducials=[1])
+
+    def test_reparametrize_symbolic(self):
+        """
+        Check that the SymPy computation of the Jacobian works
+        """
+        m = FisherMatrix(
+            np.diag([1, 2, 3, 10]),
+            names=["omega_a", "omega_b", "c", "q"],
+            fiducials=[0.21, 0.035, 0.7, 2],
+        )
+
+        new_names = ["Omega_a", "Omega_b", "c", "q"]
+
+        new_fiducials = [
+            m.fiducial("omega_a") / m.fiducial("c") ** 2,
+            m.fiducial("omega_b") / m.fiducial("c") ** 2,
+            m.fiducial("c"),
+            m.fiducial("q"),
+        ]
+
+        jacobian = np.array(
+            [
+                [
+                    m.fiducial("c") ** 2,
+                    0,
+                    2 * m.fiducial("omega_a") / m.fiducial("c"),
+                    0,
+                ],
+                [
+                    0,
+                    m.fiducial("c") ** 2,
+                    2 * m.fiducial("omega_b") / m.fiducial("c"),
+                    0,
+                ],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+
+        benchmark = m.reparametrize(
+            jacobian,
+            names=new_names,
+            fiducials=new_fiducials,
+        )
+
+        result = m.reparametrize_symbolic(
+            {
+                "omega_b": "Omega_b * c**2",
+                "omega_a": "Omega_a * c**2",
+            },
+            latex_names={"Omega_b": r"$\Omega_b$"},
+        ).sort(key=benchmark.names)
+
+        assert np.all(benchmark.names == result.names)
+
+        assert np.allclose(benchmark.fiducials, result.fiducials)
+
+        assert result == benchmark
 
     @pytest.mark.xfail(reason="CosmicFish fails for some reason")
     def test_reparametrize_cf(self):

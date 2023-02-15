@@ -9,7 +9,7 @@ from __future__ import annotations
 # standard library imports
 import warnings
 from collections.abc import Collection, Sequence
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from itertools import product
 from typing import Optional
 
@@ -65,7 +65,10 @@ def _parse_derivatives(*args: D):
         # in case the argument repeats, we just increase the order of the
         # derivative
         if arg in parsed_args:
-            parsed_args[parsed_args.index(arg)].order += arg.order
+            parsed_args[parsed_args.index(arg)] = D(
+                order=arg.order + parsed_args[parsed_args.index(arg)].order,
+                **{key: value for key, value in asdict(arg).items() if key != "order"},
+            )
         else:
             parsed_args.append(arg)
 
@@ -184,7 +187,7 @@ def matrix_element_from_input(
     return covariance_dependence + signal_dependence
 
 
-@dataclass
+@dataclass(frozen=True)
 class D:
     """
     Class for describing information about a derivative of a parameter using
@@ -284,16 +287,16 @@ class D:
 
         if self.kind == "center":
             npoints = (2 * np.floor((self.order + 1) / 2) - 2 + self.accuracy) // 2
-            self.stencil = np.arange(-npoints, npoints + 1, 1)
+            super().__setattr__("stencil", np.arange(-npoints, npoints + 1, 1))
         elif self.kind == "forward":
             npoints = self.accuracy + self.order
-            self.stencil = np.arange(0, npoints + 1)
+            super().__setattr__("stencil", np.arange(0, npoints + 1))
         else:
             npoints = self.accuracy + self.order
-            self.stencil = np.arange(-npoints, 1)
+            super().__setattr__("stencil", np.arange(-npoints, 1))
 
         if not self.latex_name:
-            self.latex_name = self.name
+            super().__setattr__("latex_name", self.name)
 
 
 class FisherDerivative:

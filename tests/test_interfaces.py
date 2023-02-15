@@ -21,6 +21,7 @@ from fitk.interfaces.coffe_interfaces import (
     CoffeMultipolesDerivative,
     CoffeMultipolesTildeDerivative,
 )
+from fitk.utilities import P
 from fitk.utilities import find_diff_weights
 
 COFFE_SETTINGS = {
@@ -83,7 +84,7 @@ class TestCoffeInterfaces:
         Testing the derivatives of the multipoles of COFFE
         """
         parameters = [
-            D(name=_, fiducial=COFFE_SETTINGS[_], abs_step=1e-3, accuracy=2)
+            D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
                 "omega_m",
             ]
@@ -91,8 +92,12 @@ class TestCoffeInterfaces:
         for parameter in parameters:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
-            for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-                cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
+            for value in (
+                parameter.parameter.fiducial + parameter.stencil * parameter.abs_step
+            ):
+                cosmo = coffe.Coffe(
+                    **{**COFFE_SETTINGS, parameter.parameter.name: value}
+                )
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
 
@@ -158,7 +163,7 @@ class TestCoffeInterfaces:
         Testing the derivatives of the covariance of multipoles of COFFE
         """
         parameters = [
-            D(name=_, fiducial=COFFE_SETTINGS[_], abs_step=1e-3, accuracy=2)
+            D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
                 "omega_m",
             ]
@@ -166,8 +171,12 @@ class TestCoffeInterfaces:
         for parameter in parameters:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
-            for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-                cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
+            for value in (
+                parameter.parameter.fiducial + parameter.stencil * parameter.abs_step
+            ):
+                cosmo = coffe.Coffe(
+                    **{**COFFE_SETTINGS, parameter.parameter.name: value}
+                )
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
 
@@ -214,7 +223,7 @@ class TestCoffeInterfaces:
         Tests the full Fisher matrix obtained using multipoles from COFFE
         """
         parameters = [
-            D(name=_, fiducial=COFFE_SETTINGS[_], abs_step=1e-3, accuracy=2)
+            D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
                 "omega_m",
                 "h",
@@ -246,8 +255,12 @@ class TestCoffeInterfaces:
         for parameter in parameters:
             weights = find_diff_weights(parameter.stencil)
             benchmarks: list[Collection[float]] = []
-            for value in parameter.fiducial + parameter.stencil * parameter.abs_step:
-                cosmo = coffe.Coffe(**{**COFFE_SETTINGS, parameter.name: value})
+            for value in (
+                parameter.parameter.fiducial + parameter.stencil * parameter.abs_step
+            ):
+                cosmo = coffe.Coffe(
+                    **{**COFFE_SETTINGS, parameter.parameter.name: value}
+                )
                 cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
                 cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
 
@@ -255,7 +268,7 @@ class TestCoffeInterfaces:
                     np.array([_.value for _ in cosmo.compute_multipoles_bulk()])
                 )
 
-            derivative[parameter.name] = np.sum(
+            derivative[parameter.parameter.name] = np.sum(
                 [b * w / parameter.abs_step for b, w in zip(benchmarks, weights)],
                 axis=0,
             )
@@ -278,8 +291,8 @@ class TestCoffeInterfaces:
 
         assert result == FisherMatrix(
             np.array(fisher_matrix).reshape(len(parameters), len(parameters)),
-            names=[_.name for _ in parameters],
-            fiducials=[_.fiducial for _ in parameters],
+            names=[_.parameter.name for _ in parameters],
+            fiducials=[_.parameter.fiducial for _ in parameters],
         )
 
 
@@ -372,8 +385,11 @@ class TestTildeInterface:
                 result = derivative.derivative(
                     "signal",
                     D(
-                        f"{name}{index + 1}",
-                        value,
+                        P(
+                            f"{name}{index + 1}",
+                            value,
+                            rf"${name}_{index + 1}",
+                        ),
                         abs_step=1e-4,
                         accuracy=2,
                     ),
@@ -436,8 +452,11 @@ class TestBiasInterface:
             result = derivative.derivative(
                 "signal",
                 D(
-                    f"b{index + 1}",
-                    cosmo.galaxy_bias1(redshift),
+                    P(
+                        f"b{index + 1}",
+                        cosmo.galaxy_bias1(redshift),
+                        latex_name=rf"$b_{index + 1}$",
+                    ),
                     abs_step=1e-4,
                     accuracy=2,
                 ),

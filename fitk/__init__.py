@@ -29,10 +29,11 @@ Throughout the documentation, it is assumed that the modules are imported
 in the following way:
 
 >>> import numpy as np
->>> from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, FisherBarFigure, D, FisherDerivative
+>>> from fitk import P, FisherMatrix, FisherFigure1D, FisherFigure2D, FisherBarFigure, D, FisherDerivative
 
 The most important classes are:
 
+- `fitk.utilities.P`: for specifying Fisher parameters
 - `fitk.tensors.FisherMatrix`: for manipulating Fisher matrices
 - `fitk.graphics.FisherBarFigure`, `fitk.graphics.FisherFigure1D`, and
   `fitk.graphics.FisherFigure2D`: for plotting Fisher matrices
@@ -230,7 +231,7 @@ be as simple as:
 
 The Fisher matrix with some parameter `a` can then be obtained using the
 `fitk.derivatives.FisherDerivative.fisher_matrix` method:
->>> my_matrix = interface.fisher_matrix(D('a', fiducial=0, abs_step=1e-3))
+>>> my_matrix = interface.fisher_matrix(D(P('a', fiducial=0), abs_step=1e-3))
 
 The method takes an optional `parameter_dependence` argument, which specifies
 whether the signal or the covariance are parameter-dependent (or both), the
@@ -246,7 +247,7 @@ be as simple as:
 >>> interface = MyInterface()
 
 and the derivatives can be obtained with:
->>> derivative = interface.derivative('signal', D('a', fiducial=0, abs_step=1e-3))
+>>> derivative = interface.derivative('signal', D(P('a', fiducial=0), abs_step=1e-3))
 
 The first argument can either be the string `signal` or `covariance`, while the
 rest are a list of derivatives you wish to compute.
@@ -364,4 +365,4 @@ from fitk.derivatives import D, FisherDerivative
 from fitk.graphics import FisherBarFigure, FisherFigure1D, FisherFigure2D
 from fitk.operations import bayes_factor, kl_divergence, kl_matrix
 from fitk.tensors import FisherMatrix
-from fitk.utilities import math_mode
+from fitk.utilities import P, math_mode

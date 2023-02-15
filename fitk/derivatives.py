@@ -18,6 +18,7 @@ import numpy as np
 
 # first party imports
 from fitk.tensors import FisherMatrix
+from fitk.utilities import P
 from fitk.utilities import ValidationError, find_diff_weights, is_iterable
 
 
@@ -192,11 +193,8 @@ class D:
 
     Parameters
     ----------
-    name
-        the name of the parameter w.r.t. which we take the derivative
-
-    fiducial
-        the point where we want to compute the derivative
+    parameter
+        the instance of `P` for which we want to compute the derivative
 
     abs_step
         the absolute step size for computing the derivative
@@ -214,10 +212,6 @@ class D:
         the custom stencil used for computing the derivative (default: None).
         If specified, the arguments `accuracy` and `kind` are ignored.
 
-    latex_name, optional
-        the display name of the parameter. If not specified, equals to name
-        (default: None)
-
     Raises
     ------
     ValueError
@@ -232,20 +226,17 @@ class D:
         if the value of `stencil` is not an iterable
     """
 
-    name: str
-    fiducial: float
+    parameter: P
     abs_step: float
     order: int = 1
     accuracy: int = 4
     kind: str = "center"
     stencil: Optional[Collection[float]] = None
-    latex_name: Optional[str] = None
 
     def __eq__(self, other):
         return (
             isinstance(other, self.__class__)
-            and self.name == other.name
-            and np.allclose(self.fiducial, other.fiducial)
+            and self.parameter == other.parameter
             and np.allclose(self.abs_step, other.abs_step)
             and np.allclose(self.order, other.order)
             and self.kind == other.kind
@@ -292,9 +283,6 @@ class D:
             npoints = self.accuracy + self.order
             self.stencil = np.arange(-npoints, 1)
 
-        if not self.latex_name:
-            self.latex_name = self.name
-
 
 class FisherDerivative:
     r"""
@@ -316,7 +304,7 @@ class FisherDerivative:
 
     def validate_parameter(
         self,
-        arg: D,
+        arg: P,
     ) -> bool:
         """
         Placeholder method used for validating a parameter when calling
@@ -326,7 +314,7 @@ class FisherDerivative:
         Parameters
         ----------
         arg
-            the parameter (see description of `D`) which we want to validate
+            the parameter (see description of `P`) which we want to validate
 
         Returns
         -------
@@ -470,7 +458,10 @@ class FisherDerivative:
                     [
                         getattr(self, method)(
                             *[
-                                (arg.name, arg.fiducial + arg.abs_step * p)
+                                (
+                                    arg.parameter.name,
+                                    arg.parameter.fiducial + arg.abs_step * p,
+                                )
                                 for arg, p in zip(parsed_args, point)
                             ],
                             **kwargs,
@@ -569,9 +560,9 @@ class FisherDerivative:
         """
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early
-        names = np.array([_.name for _ in args])
-        fiducials = np.array([_.fiducial for _ in args])
-        latex_names = np.array([_.latex_name for _ in args])
+        names = np.array([_.parameter.name for _ in args])
+        fiducials = np.array([_.parameter.fiducial for _ in args])
+        latex_names = np.array([_.parameter.latex_name for _ in args])
 
         if kwargs_signal is None:
             kwargs_signal = {}
@@ -580,8 +571,8 @@ class FisherDerivative:
             kwargs_covariance = {}
 
         for arg in args:
-            if not self.validate_parameter(arg):
-                raise ValidationError(arg)
+            if not self.validate_parameter(arg.parameter):
+                raise ValidationError(arg.parameter)
 
         if external_covariance is not None:
             if not (
@@ -620,11 +611,10 @@ class FisherDerivative:
         # TODO parallelize
         for arg in args:
             if parameter_dependence in ["signal", "both"]:
-                signal_derivative[arg.name] = self.derivative(
+                signal_derivative[arg.parameter.name] = self.derivative(
                     "signal",
                     D(
-                        name=arg.name,
-                        fiducial=arg.fiducial,
+                        parameter=arg.parameter,
                         abs_step=arg.abs_step,
                         kind=arg.kind,
                         accuracy=arg.accuracy,
@@ -639,11 +629,10 @@ class FisherDerivative:
         # TODO parallelize
         for arg in args:
             if parameter_dependence in ["covariance", "both"]:
-                covariance_derivative[arg.name] = self.derivative(
+                covariance_derivative[arg.parameter.name] = self.derivative(
                     "covariance",
                     D(
-                        name=arg.name,
-                        fiducial=arg.fiducial,
+                        parameter=arg.parameter,
                         abs_step=arg.abs_step,
                         kind=arg.kind,
                         accuracy=arg.accuracy,
@@ -653,17 +642,17 @@ class FisherDerivative:
                     **kwargs_covariance,
                 )
             else:
-                covariance_derivative[arg.name] = np.zeros(covariance_shape)
+                covariance_derivative[arg.parameter.name] = np.zeros(covariance_shape)
 
         fisher_matrix = np.zeros([len(args)] * 2)
 
         for (i, arg1), (j, arg2) in product(enumerate(args), repeat=2):
             fisher_matrix[i, j] = matrix_element_from_input(
                 inverse_covariance_matrix,
-                signal_derivative1=signal_derivative[arg1.name],
-                signal_derivative2=signal_derivative[arg2.name],
-                covariance_derivative1=covariance_derivative[arg1.name],
-                covariance_derivative2=covariance_derivative[arg2.name],
+                signal_derivative1=signal_derivative[arg1.parameter.name],
+                signal_derivative2=signal_derivative[arg2.parameter.name],
+                covariance_derivative1=covariance_derivative[arg1.parameter.name],
+                covariance_derivative2=covariance_derivative[arg2.parameter.name],
             )
 
         return FisherMatrix(

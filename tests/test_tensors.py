@@ -26,6 +26,7 @@ from fitk.tensors import FisherMatrix, _process_fisher_mapping
 from fitk.utilities import (
     MismatchingSizeError,
     MismatchingValuesError,
+    P,
     ParameterNotFoundError,
     math_mode,
 )

@@ -24,6 +24,7 @@ from fitk.utilities import (
     FisherEncoder,
     MismatchingSizeError,
     MismatchingValuesError,
+    P,
     ParameterNotFoundError,
     get_index_of_other_array,
     is_iterable,
@@ -312,7 +313,6 @@ class FisherMatrix:
 
         self._size = np.shape(self._values)[0]
         self._ndim = np.ndim(self._values)
-
         # setting the fiducials
         if fiducials is None:
             self._fiducials = np.zeros(self._size, dtype=float)

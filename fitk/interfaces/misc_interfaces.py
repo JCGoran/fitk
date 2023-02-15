@@ -14,6 +14,7 @@ from scipy.integrate import quad
 
 # first party imports
 from fitk.derivatives import D, FisherDerivative
+from fitk.utilities import P
 
 
 def _hubble(config: dict):
@@ -65,18 +66,18 @@ class SupernovaDerivative(FisherDerivative):
     >>> sn = SupernovaDerivative()
 
     Compute the derivative of the signal w.r.t. $\Omega_\mathrm{m}$:
-    >>> sn.derivative('signal', D(name='omega_m', fiducial=0.32, abs_step=1e-3))
+    >>> sn.derivative('signal', D(P(name='omega_m', fiducial=0.32), abs_step=1e-3))
     array([-3.17838358])
 
     Compute the mixed derivative of the signal w.r.t. both $\Omega_\mathrm{m}$
     and $w$:
-    >>> sn.derivative('signal', D('omega_m', 0.32, 1e-3), D('w', -1, 1e-3))
+    >>> sn.derivative('signal', D(P('omega_m', 0.32), 1e-3), D(P('w', -1), 1e-3))
     array([2.94319875])
 
     Compute the Fisher with $\Omega_\mathrm{m}$ and $w$ as parameters:
     >>> fm1 = sn.fisher_matrix(
-    ... D('omega_m', 0.32, 1e-3, latex_name=r'$\Omega_\mathrm{m}$'),
-    ... D('w', -1, 1e-3, latex_name='$w$'))
+    ... D(P('omega_m', 0.32, latex_name=r'$\Omega_\mathrm{m}$'), 1e-3),
+    ... D(P('w', -1, latex_name='$w$'), 1e-3))
     >>> fm1
     FisherMatrix(
         array([[10.1021222 ,  3.13019854],
@@ -87,8 +88,8 @@ class SupernovaDerivative(FisherDerivative):
 
     Finally, check that we don't alter the result by using a smaller stepsize:
     >>> fm2 = sn.fisher_matrix(
-    ... D('omega_m', 0.32, 1e-4, latex_name=r'$\Omega_\mathrm{m}$'),
-    ... D('w', -1, 1e-4, latex_name='$w$'))
+    ... D(P('omega_m', 0.32, latex_name=r'$\Omega_\mathrm{m}$'), 1e-4),
+    ... D(P('w', -1, latex_name='$w$'), 1e-4))
     >>> fm2 == fm1
     True
     """

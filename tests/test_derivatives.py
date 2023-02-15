@@ -14,6 +14,7 @@ import pytest
 # first party imports
 from fitk.derivatives import D, FisherDerivative, matrix_element_from_input
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
+from fitk.utilities import P
 from fitk.utilities import ValidationError, _expansion_coefficient
 
 
@@ -113,7 +114,7 @@ class GaussianDerivative(FisherDerivative):
     def __init__(self, config=None):
         self.config = config if config is not None else {"mu": 1.0, "sigma": 1.0}
 
-    def validate_parameter(self, arg: D):
+    def validate_parameter(self, arg: P):
         if arg.name not in ["mu", "sigma"]:
             return False
 
@@ -209,43 +210,43 @@ class TestFisherDerivative:
     def test_D(self):
         # unknown kind of difference
         with pytest.raises(ValueError):
-            D("a", 1, 1e-3, kind="asdf")
+            D(P("a", 1), 1e-3, kind="asdf")
 
         # abs_step < 0
         with pytest.raises(ValueError):
-            D("a", 1, -1e-3)
+            D(P("a", 1), -1e-3)
 
         # accuracy not at least first order
         with pytest.raises(ValueError):
-            D("a", 1, 1e-3, accuracy=0)
+            D(P("a", 1), 1e-3, accuracy=0)
 
         # stencil is not an iterable
         with pytest.raises(TypeError):
-            D("a", 1, 1e-3, stencil=1)
+            D(P("a", 1), 1e-3, stencil=1)
 
         # stencil is not in increasing order
         with pytest.raises(ValueError):
-            D("a", 1, 1e-3, stencil=[0, -1, 3, 4])
+            D(P("a", 1), 1e-3, stencil=[0, -1, 3, 4])
 
         # valid stencil
-        D("a", 1, 1e-3, stencil=[-3, -1, 0, 2])
+        D(P("a", 1), 1e-3, stencil=[-3, -1, 0, 2])
 
     def test_abc(self):
         # we cannot use `FisherDerivative` class (but can instantiate it)
         fd = FisherDerivative()
         with pytest.raises(NotImplementedError):
-            fd.derivative("signal", D("omega_m", 0.32, abs_step=1e-3))
+            fd.derivative("signal", D(P("omega_m", 0.32), abs_step=1e-3))
 
     def test_first_derivative(self):
         lin = LinearDerivative()
 
-        lin.derivative("signal", D("x", 1, 1e-3))
+        lin.derivative("signal", D(P("x", 1), 1e-3))
 
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
-                g.derivative("signal", D(name="mu", fiducial=value, abs_step=1e-4)),
+                g.derivative("signal", D(P(name="mu", fiducial=value), abs_step=1e-4)),
                 g.first_derivative_wrt_mu(value, 1),
             )
 
@@ -254,7 +255,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="mu", fiducial=value, abs_step=1e-4, kind="forward"),
+                    D(P(name="mu", fiducial=value), abs_step=1e-4, kind="forward"),
                 ),
                 g.first_derivative_wrt_mu(value, 1),
             )
@@ -264,7 +265,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="mu", fiducial=value, abs_step=1e-4, kind="backward"),
+                    D(P(name="mu", fiducial=value), abs_step=1e-4, kind="backward"),
                 ),
                 g.first_derivative_wrt_mu(value, 1),
             )
@@ -274,7 +275,7 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="sigma", fiducial=value, abs_step=1e-4, kind="forward"),
+                    D(P(name="sigma", fiducial=value), abs_step=1e-4, kind="forward"),
                 ),
                 g.first_derivative_wrt_sigma(1, value),
             )
@@ -284,22 +285,22 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="sigma", fiducial=value, abs_step=1e-4, kind="backward"),
+                    D(P(name="sigma", fiducial=value), abs_step=1e-4, kind="backward"),
                 ),
                 g.first_derivative_wrt_sigma(1, value),
             )
 
         # non-existing parameter (implementation dependent!)
         with pytest.raises(ValueError):
-            g.derivative("signal", D("a", 1, 1e-2))
+            g.derivative("signal", D(P("a", 1), 1e-2))
 
         # same as above, but for covariance
         with pytest.raises(ValueError):
-            g.derivative("covariance", D("a", 1, 1e-2))
+            g.derivative("covariance", D(P("a", 1), 1e-2))
 
         # it should not be possible to call the derivative function itself
         with pytest.raises(ValueError):
-            g.derivative("derivative", D(name="sigma", fiducial=1, abs_step=1e-4))
+            g.derivative("derivative", D(P(name="sigma", fiducial=1), abs_step=1e-4))
 
     def test_second_derivative(self):
         g = GaussianDerivative({"mu": 1, "sigma": 1})
@@ -307,7 +308,7 @@ class TestFisherDerivative:
         for value in np.linspace(-3, 3, 100):
             assert np.allclose(
                 g.derivative(
-                    "signal", D(name="mu", fiducial=value, abs_step=1e-4, order=2)
+                    "signal", D(P(name="mu", fiducial=value), abs_step=1e-4, order=2)
                 ),
                 g.second_derivative_wrt_mu(value, 1),
             )
@@ -315,8 +316,8 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="mu", fiducial=value, abs_step=1e-4),
-                    D(name="mu", fiducial=value, abs_step=1e-4),
+                    D(P(name="mu", fiducial=value), abs_step=1e-4),
+                    D(P(name="mu", fiducial=value), abs_step=1e-4),
                 ),
                 g.second_derivative_wrt_mu(value, 1),
             )
@@ -325,8 +326,13 @@ class TestFisherDerivative:
             assert np.allclose(
                 g.derivative(
                     "signal",
-                    D(name="mu", fiducial=mu, abs_step=1e-5, order=1, accuracy=2),
-                    D(name="sigma", fiducial=sigma, abs_step=1e-5, order=1, accuracy=2),
+                    D(P(name="mu", fiducial=mu), abs_step=1e-5, order=1, accuracy=2),
+                    D(
+                        P(name="sigma", fiducial=sigma),
+                        abs_step=1e-5,
+                        order=1,
+                        accuracy=2,
+                    ),
                 ),
                 g.mixed_derivative(mu, sigma),
                 rtol=1e-3,
@@ -337,16 +343,14 @@ class TestFisherDerivative:
                 g.derivative(
                     "signal",
                     D(
-                        name="mu",
-                        fiducial=mu,
+                        P(name="mu", fiducial=mu),
                         abs_step=1e-5,
                         order=1,
                         kind="forward",
                         accuracy=2,
                     ),
                     D(
-                        name="sigma",
-                        fiducial=sigma,
+                        P(name="sigma", fiducial=sigma),
                         abs_step=1e-5,
                         accuracy=2,
                         order=1,
@@ -359,28 +363,28 @@ class TestFisherDerivative:
 
         # order of the combined derivative requested is too high
         with pytest.raises(ValueError):
-            g.derivative("signal", D(name="mu", fiducial=2, abs_step=1e-5, order=11))
+            g.derivative("signal", D(P(name="mu", fiducial=2), abs_step=1e-5, order=11))
 
     def test_fisher_matrix(self):
         lin = LinearDerivative()
 
         # cannot compute the Fisher matrix if covariance is not implemented
         with pytest.raises(NotImplementedError):
-            lin.fisher_matrix(D("x", 1, 1e-3))
+            lin.fisher_matrix(D(P("x", 1), 1e-3))
 
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         assert np.allclose(
-            g.derivative("covariance", D(name="mu", fiducial=1, abs_step=1e-3)), 0
+            g.derivative("covariance", D(P(name="mu", fiducial=1), abs_step=1e-3)), 0
         )
 
         assert g.fisher_matrix(
-            D(name="mu", fiducial=1, abs_step=1e-3),
-            D(name="sigma", fiducial=0.5, abs_step=1e-3),
+            D(P(name="mu", fiducial=1), abs_step=1e-3),
+            D(P(name="sigma", fiducial=0.5), abs_step=1e-3),
             parameter_dependence="signal",
         ) == g.fisher_matrix(
-            D(name="mu", fiducial=1, abs_step=1e-3),
-            D(name="sigma", fiducial=0.5, abs_step=1e-3),
+            D(P(name="mu", fiducial=1), abs_step=1e-3),
+            D(P(name="sigma", fiducial=0.5), abs_step=1e-3),
             parameter_dependence="both",
         )
 
@@ -388,32 +392,32 @@ class TestFisherDerivative:
         # `external_covariance` is defined, but `covariance` was not overridden
         assert np.allclose(
             lin.fisher_matrix(
-                D(name="x", fiducial=1, abs_step=1e-3),
+                D(P(name="x", fiducial=1), abs_step=1e-3),
                 external_covariance=[[1]],
             ).values,
             lin.derivative(
                 "signal",
-                D(name="x", fiducial=1, abs_step=1e-3),
+                D(P(name="x", fiducial=1), abs_step=1e-3),
             ),
         )
 
         # wrong dimension of `external_covariance`
         with pytest.raises(ValueError):
             lin.fisher_matrix(
-                D(name="x", fiducial=1, abs_step=1e-3),
+                D(P(name="x", fiducial=1), abs_step=1e-3),
                 external_covariance=[[1, 2, 3], [4, 5, 6]],
             )
 
         # wrong dimension of `external_covariance`
         with pytest.raises(ValueError):
             lin.fisher_matrix(
-                D(name="x", fiducial=1, abs_step=1e-3),
+                D(P(name="x", fiducial=1), abs_step=1e-3),
                 external_covariance=[1, 2],
             )
 
         with pytest.warns(UserWarning):
             g.fisher_matrix(
-                D(name="mu", fiducial=1, abs_step=1e-3),
+                D(P(name="mu", fiducial=1), abs_step=1e-3),
                 parameter_dependence="both",
                 external_covariance=[[1]],
             )
@@ -425,7 +429,7 @@ class TestFisherDerivative:
         g = GaussianDerivative({"mu": 1, "sigma": 1})
 
         with pytest.raises(ValidationError):
-            g.fisher_matrix(D(name="asdf", fiducial=0, abs_step=1e-3))
+            g.fisher_matrix(D(P(name="asdf", fiducial=0), abs_step=1e-3))
 
     def test_rounding_threshold_validation(self):
         """
@@ -434,7 +438,7 @@ class TestFisherDerivative:
         """
         g = GaussianDerivative({"mu": 1, "sigma": 1})
         with pytest.raises(ValueError):
-            g.derivative("signal", D("mu", 1.2, 1e-3), rounding_threshold=-1)
+            g.derivative("signal", D(P("mu", 1.2), 1e-3), rounding_threshold=-1)
 
 
 class TestMiscDerivatives:
@@ -442,7 +446,7 @@ class TestMiscDerivatives:
         sn = SupernovaDerivative(config=dict(omega_m=0.3))
         sn.config = dict(z=[0.5, 1, 1.5], sigma=[1, 1, 1])
         fm = sn.fisher_matrix(
-            D("omega_m", 0.32, 1e-3),
+            D(P("omega_m", 0.32), 1e-3),
             kwargs_signal={"sample_kwarg": "sample_value"},
             kwargs_covariance={"sample_kwarg": "sample_value"},
         )

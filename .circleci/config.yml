@@ -34,7 +34,7 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             # we don't need any other dependencies
-            python3 -m pip install matplotlib scipy numpy pytest git+https://github.com/jcgoran/cosmicfish@feature/pip-install
+            python3 -m pip install matplotlib scipy numpy pytest pytest-mpl git+https://github.com/jcgoran/cosmicfish@feature/pip-install
             python3 -m pytest -k 'not test_interfaces'
 
 # Invoke jobs via workflows

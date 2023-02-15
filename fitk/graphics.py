@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any, Optional, Union
 
 # third party imports
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.artist import Artist
@@ -74,24 +75,24 @@ class _FisherBaseFigure:
         self._labels: MutableSequence[str] = []
         self._options: dict = get_default_rcparams()
 
-        self.cycler = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+        self.cycler = mpl.rcParams["axes.prop_cycle"].by_key()["color"]
         self.current_color = iter(self.cycler)
 
         if options and "style" in options:
             style = options.pop("style")
             # maybe it's one of the built-in styles
-            if style in plt.style.available:
+            if style in mpl.style.available:
                 self._options = {
-                    **plt.style.library[style],
+                    **mpl.style.library[style],
                     **get_default_rcparams(),
                     **options,
                 }
                 # we need to reset the color cycler
                 self.cycler = (
-                    plt.style.library[style]
+                    mpl.style.library[style]
                     .get(
                         "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
+                        mpl.rcParams["axes.prop_cycle"],
                     )
                     .by_key()["color"]
                 )
@@ -101,17 +102,17 @@ class _FisherBaseFigure:
             else:
                 # we need to reset the color cycler
                 self.cycler = (
-                    plt.style.core.rc_params_from_file(style)
+                    mpl.rc_params_from_file(style)
                     .get(
                         "axes.prop_cycle",
-                        plt.rcParams["axes.prop_cycle"],
+                        mpl.rcParams["axes.prop_cycle"],
                     )
                     .by_key()["color"]
                 )
                 self.current_color = iter(self.cycler)
 
                 self._options = {
-                    **plt.style.core.rc_params_from_file(style),
+                    **mpl.rc_params_from_file(style),
                     **options,
                 }
 

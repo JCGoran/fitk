@@ -38,8 +38,12 @@ def _parse_and_set_args(
     special_kwargs = (
         "galaxy_bias1",
         "galaxy_bias2",
+        "galaxy_bias3",
+        "galaxy_bias4",
         "magnification_bias1",
         "magnification_bias2",
+        "evolution_bias1",
+        "evolution_bias2",
     )
 
     bias = {}
@@ -376,8 +380,7 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     _allowed_biases = [
         _BiasParameter(longname="galaxy", shortname="b"),
         _BiasParameter(longname="magnification", shortname="s"),
-        # TODO implement evolution bias
-        # _BiasParameter(longname="evolution", shortname="e"),
+        _BiasParameter(longname="evolution", shortname="e"),
     ]
 
     def validate_parameter(self, arg) -> bool:
@@ -396,10 +399,12 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
         cosmo = _parse_and_set_args(**self.config)
 
         # checking if we are indeed using the flat-sky approximation
-        if (cosmo.has_rsd or cosmo.has_rsd) and not cosmo.has_flatsky_local:
+        if (
+            cosmo.has_rsd or cosmo.has_rsd or cosmo.has_d1
+        ) and not cosmo.has_flatsky_local:
             warnings.warn(
                 "You have chosen to compute the derivative w.r.t. the bias "
-                "including density or RSD, but have not specified `has_flatsky_local=True`; "
+                "including local contributions, but have not specified `has_flatsky_local=True`; "
                 "the computation will continue, but your results may not be consistent!"
             )
 
@@ -407,10 +412,11 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
             cosmo.has_flatsky_local_nonlocal and cosmo.has_flatsky_nonlocal
         ):
             warnings.warn(
-                "You have chosen to compute the derivative w.r.t. the bias including lensing, "
-                "but have not specified `has_flatsky_local_nonlocal=True` or "
-                "`has_flatsky_nonlocal=True`; "
-                "the computation will continue, but your results may not be consistent!"
+                "You have chosen to compute the derivative w.r.t."
+                "the bias including non-local contibutions, but have not "
+                "specified `has_flatsky_local_nonlocal=True` or "
+                "`has_flatsky_nonlocal=True`; the computation will "
+                "continue, but your results may not be consistent!"
             )
 
         for index, bias in enumerate(self._allowed_biases):
@@ -456,6 +462,18 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
                 redshifts,
                 bias.values,
             )
+
+        # set the third and fourth galaxy biases as well
+        for index, bias in enumerate(self._allowed_biases):
+            if bias.longname == "galaxy":
+                getattr(cosmo, f"set_{bias.longname}_bias3")(
+                    redshifts,
+                    bias.values,
+                )
+                getattr(cosmo, f"set_{bias.longname}_bias4")(
+                    redshifts,
+                    bias.values,
+                )
 
         return np.array(
             [_.value for _ in cosmo.compute_multipoles_bulk()],
@@ -511,6 +529,18 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
                 redshifts,
                 bias.values,
             )
+
+        # set the third and fourth galaxy biases as well
+        for index, bias in enumerate(self._allowed_biases):
+            if bias.longname == "galaxy":
+                getattr(cosmo, f"set_{bias.longname}_bias3")(
+                    redshifts,
+                    bias.values,
+                )
+                getattr(cosmo, f"set_{bias.longname}_bias4")(
+                    redshifts,
+                    bias.values,
+                )
 
         covariance = cosmo.compute_covariance_bulk()
 

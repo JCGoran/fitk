@@ -741,6 +741,13 @@ class TestFisherMatrix:
         with pytest.raises(ParameterNotFoundError):
             fm.fiducial("asdf")
 
+        with pytest.raises(ParameterNotFoundError):
+            fm.set_fiducial("q", 10)
+
+        fm.set_fiducial("a", 6)
+
+        assert np.allclose(fm.fiducials, [6, 3])
+
     def test_latex_name(self):
         """
         Test for the `latex_name` method
@@ -755,3 +762,10 @@ class TestFisherMatrix:
 
         with pytest.raises(ParameterNotFoundError):
             fm.latex_name("asdf")
+
+        with pytest.raises(ParameterNotFoundError):
+            fm.set_latex_name("asdf", "y")
+
+        fm.set_latex_name("b", "q")
+
+        assert np.all(fm.latex_names == np.array([r"$\mathbf{A}$", "q"]))

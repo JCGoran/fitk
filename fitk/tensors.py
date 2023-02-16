@@ -691,7 +691,7 @@ class FisherMatrix:
 
         Examples
         --------
-        Set a Fisher matrix:
+        Create a Fisher matrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
@@ -704,6 +704,36 @@ class FisherMatrix:
 
         return self.fiducials[np.where(self.names == name)][0]
 
+    def set_fiducial(self, name: str, value: float):
+        """
+        Sets the fiducial of parameter `name`.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if the name is not in the Fisher object
+
+        Examples
+        --------
+        Create a Fisher matrix:
+        >>> fm = FisherMatrix(np.diag([1, 2]),
+        ... names=['a', 'b'], fiducials=[2, 3])
+
+        Set the value of the fiducial associated to parameter `b`:
+        >>> fm.set_fiducial('b', 4)
+        >>> fm
+        FisherMatrix(
+            array([[1., 0.],
+               [0., 2.]]),
+            names=array(['a', 'b'], dtype=object),
+            latex_names=array(['a', 'b'], dtype=object),
+            fiducials=array([2., 4.]))
+        """
+        if name not in self.names:
+            raise ParameterNotFoundError(name, self.names)
+
+        self.fiducials[np.where(self.names == name)[0]] = value
+
     def latex_name(self, name: str) -> str:
         r"""
         Returns the LaTeX name associated to the parameter `name`.
@@ -715,7 +745,7 @@ class FisherMatrix:
 
         Examples
         --------
-        Set a Fisher matrix:
+        Create a Fisher matrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
 
@@ -727,6 +757,36 @@ class FisherMatrix:
             raise ParameterNotFoundError(name, self.names)
 
         return self.latex_names[np.where(self.names == name)][0]
+
+    def set_latex_name(self, name: str, value: str):
+        r"""
+        Sets the LaTeX name of parameter `name`.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if the name is not in the Fisher object
+
+        Examples
+        --------
+        Create a Fisher matrix:
+        >>> fm = FisherMatrix(np.diag([1, 2]),
+        ... names=['a', 'b'], fiducials=[2, 3])
+
+        Set the value of the fiducial associated to parameter `b`:
+        >>> fm.set_latex_name('b', r'$\mathcal{B}$')
+        >>> fm
+        FisherMatrix(
+            array([[1., 0.],
+               [0., 2.]]),
+            names=array(['a', 'b'], dtype=object),
+            latex_names=array(['a', '$\\mathcal{B}$'], dtype=object),
+            fiducials=array([2., 3.]))
+        """
+        if name not in self.names:
+            raise ParameterNotFoundError(name, self.names)
+
+        self.latex_names[np.where(self.names == name)[0]] = value
 
     def is_valid(self):
         """

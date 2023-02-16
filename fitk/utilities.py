@@ -34,7 +34,7 @@ def is_iterable(value):
     try:
         _ = iter(value)
         return True
-    except TypeError:
+    except (TypeError, NotImplementedError):
         return False
 
 

@@ -26,6 +26,7 @@ from fitk.utilities import (
     MismatchingValuesError,
     ParameterNotFoundError,
     get_index_of_other_array,
+    is_iterable,
     is_positive_semidefinite,
     is_square,
     is_symmetric,
@@ -834,6 +835,14 @@ class FisherMatrix:
         FisherMatrix
             the Fisher object with sorted names
 
+        Raises
+        ------
+        ValueError
+            if `key` does not match the names of the Fisher object
+
+        TypeError
+            if `key` is not a callable
+
         Examples
         --------
         Define a Fisher matrix:
@@ -861,10 +870,21 @@ class FisherMatrix:
             fiducials=array([8., 3., 7.]))
         """
         allowed_keys = ("fiducials", "latex_names")
+
+        # something that can be passed to `sorted`
+        if ("key" not in kwargs) or ("key" in kwargs and callable(kwargs["key"])):
+            names = sorted(self.names, **kwargs)
+            index = get_index_of_other_array(names, self.names)
+
         # an integer index
-        if "key" in kwargs and all(hasattr(_, "__index__") for _ in kwargs["key"]):
+        if (
+            "key" in kwargs
+            and is_iterable(kwargs["key"])
+            and all(hasattr(_, "__index__") for _ in kwargs["key"])
+        ):
             index = np.array(kwargs["key"], dtype=int)
             names = self.names[index]
+
         # either 'fiducials' or 'latex_names'
         elif (
             "key" in kwargs
@@ -875,16 +895,24 @@ class FisherMatrix:
             if "reversed" in kwargs and kwargs["reversed"] is True:
                 index = np.flip(index)
             names = self.names[index]
+
         # the names themselves, in any order
-        elif "key" in kwargs and set(kwargs["key"]) == set(self.names):
+        elif "key" in kwargs and is_iterable(kwargs["key"]):
+            if set(kwargs["key"]) != set(self.names):
+                raise ValueError(
+                    f"The object '{kwargs['key']}' appears to be an iterable, "
+                    f"but does not contain all of the names in the Fisher object ({self.names}); "
+                    "if you meant to sort by the names, make sure they are all in the passed array!"
+                )
             index = get_index_of_other_array(kwargs["key"], self.names)
             names = self.names[index]
-        # something that can be passed to `sorted`
-        else:
-            if "key" in kwargs and not callable(kwargs["key"]):
-                raise TypeError(f"`key={kwargs['key']}` is not callable")
-            names = sorted(self.names, **kwargs)
-            index = get_index_of_other_array(names, self.names)
+
+        # something else should throw an error
+        elif "key" in kwargs:
+            raise TypeError(
+                f"The object {kwargs['key']} is not a callable, a list of names, "
+                f"or one of {allowed_keys}"
+            )
 
         latex_names = self.latex_names[index]
         fiducials = self.fiducials[index]

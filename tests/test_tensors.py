@@ -396,7 +396,12 @@ class TestFisherMatrix:
 
         # not one of special options, nor a callable
         with pytest.raises(TypeError):
-            m.sort(key="not callable")
+            m.sort(key=1)
+
+        # special case: `is_iterable` should catch the `NotImplementedError`
+        # thrown by `iter(FisherMatrix)`
+        with pytest.raises(TypeError):
+            m.sort(key=m)
 
         assert m.sort(key="fiducials") == FisherMatrix(
             np.diag([3, 5, 1]), names=["p1", "p2", "p3"], fiducials=[0, 1, 2]
@@ -411,6 +416,10 @@ class TestFisherMatrix:
             fm.sort(key=["f1", "b1", "f2", "b2"]).names
             == np.array(["f1", "b1", "f2", "b2"])
         )
+
+        # is an iterable, but doesn't have the correct names
+        with pytest.raises(ValueError):
+            m.sort(key=["a", "b", "c"])
 
     def test_eq(self):
         assert FisherMatrix(

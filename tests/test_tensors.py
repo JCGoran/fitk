@@ -729,3 +729,11 @@ class TestFisherMatrix:
             fisher1.figure_of_correlation(),
             -np.log(np.sqrt(np.linalg.det(fisher1.correlation_matrix()))),
         )
+
+    def test_contains(self):
+        """
+        Check that `FisherMatrix` supports `[PARAM] in [MATRIX]` syntax
+        """
+        matrix = FisherMatrix(np.diag([1, 2, 3]))
+
+        assert "p1" in matrix

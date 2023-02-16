@@ -567,6 +567,11 @@ class FisherMatrix:
             "use `<object>[<key>] to get or set elements of the object instead"
         )
 
+    def __contains__(self, other):
+        if other in self.names:
+            return True
+        return False
+
     def __getitem__(
         self,
         keys: Union[tuple[str, ...], slice],

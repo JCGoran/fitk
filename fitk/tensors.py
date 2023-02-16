@@ -1,4 +1,11 @@
 """
+<style>
+a[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+</style>
+
 Submodule for performing operations on Fisher objects.
 See here for documentation of `FisherMatrix`.
 """
@@ -707,7 +714,9 @@ class FisherMatrix:
         Parameters
         ----------
         **kwargs
-            all of the other keyword arguments for the Python builtin `sorted`.
+            all of the other keyword arguments for the Python builtin <a
+            href="https://docs.python.org/3/library/functions.html#sorted"
+            target="_blank" rel="noopener noreferrer">`sorted`</a>.
             If none are specified, will sort according to the names of the parameters.
             In the special case that the value of the keyword `key` is set to
             either `'fiducials'` or `'latex_names'`, it will sort according to those.

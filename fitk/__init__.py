@@ -308,6 +308,30 @@ It takes exactly the same arguments as <a
 href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html"
 target="_blank" rel="noreferrer noopener">`matplotlib.pyplot.savefig`</a>, with
 minimal changes to defaults for nicer outputs.
+
+## ...use `fitk` with other plotting libraries?
+
+### With <a href="https://samreay.github.io/ChainConsumer/" target="_blank" rel="noopener noreferrer">ChainConsumer</a>
+
+Make a Fisher matrix:
+>>> fm = FisherMatrix(...)
+
+Add it to ChainConsumer as a covariance:
+>>> c = ChainConsumer()
+>>> c.add_covariance(fm.fiducials, fm.inverse(), parameters=fm.names, name="Cov")
+
+### With <a href="https://getdist.readthedocs.io/" target="_blank" rel="noopener noreferrer">GetDist</a>
+
+Make a Fisher matrix:
+>>> fm = FisherMatrix(...)
+
+Add it as an N-dimensional Gaussian:
+>>> from getdist.gaussian_mixtures import GaussianND
+>>> gauss = GaussianND(
+...    fm.fiducials,
+...    fm.inverse(),
+...    names=fm.latex_names,
+...)
 """
 
 from pathlib import Path

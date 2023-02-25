@@ -82,8 +82,9 @@ def bayes_factor(
 
     Notes
     -----
-    For more details, see
-    [arXiv:astro-ph/0703191](https://arxiv.org/abs/astro-ph/0703191), eq. (14).
+    For more details, see <a href="https://arxiv.org/abs/astro-ph/0703191"
+    target="_blank" rel="noopener noreferrer">arXiv:astro-ph/0703191</a>, eq.
+    (14).
 
     Internally, the method first computes the logarithm of the Bayes factor to prevent
     numerical over- and underflow, and returns the exponential of that result.
@@ -165,8 +166,9 @@ def kl_divergence(
         the information units in which to output the result (default in bits).
         Can be either `'b'` (bits) or `'B'` (bytes), with an optional SI (such
         as `'MB'`) or binary (such as `'MiB'`) prefix. Please consult the table
-        at the [Wikipedia article](https://en.wikipedia.org/wiki/Binary_prefix)
-        for more details.
+        at the <a href="https://en.wikipedia.org/wiki/Binary_prefix"
+        target="_blank" rel="noopener noreferrer">Wikipedia article</a> for
+        more details.
 
     Returns
     -------
@@ -184,8 +186,8 @@ def kl_divergence(
 
     Notes
     -----
-    For more details, see [arXiv:1402.3593](https://arxiv.org/abs/1402.3593),
-    section 3.
+    For more details, see <a href="https://arxiv.org/abs/1402.3593"
+    target="_blank" rel="noopener noreferrer">arXiv:1402.3593</a>, section 3.
     """
     if set(fisher1.names) != set(fisher2.names):
         raise MismatchingValuesError("parameter name", fisher1.names, fisher2.names)
@@ -270,8 +272,8 @@ def kl_matrix(
 
     Notes
     -----
-    For more details, see
-    [arXiv:1703.01271](https://arxiv.org/abs/1703.01271), section 4.
+    For more details, see <a href="https://arxiv.org/abs/1703.01271"
+    target="_blank" rel="noopener noreferrer">arXiv:1703.01271</a>, section 4.
     """
     shape = np.repeat(len(args), 2)
     result = np.zeros(shape)

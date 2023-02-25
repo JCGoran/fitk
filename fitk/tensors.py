@@ -1544,9 +1544,10 @@ class FisherMatrix:
         """
         Returns a new Fisher object with parameters `names`, which are
         related to the old ones via the transformation `jacobian`.
-        See the [Wikipedia
-        article](https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization)
-        for more information.
+        See the <a
+        href="https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization"
+        target="_blank" rel="noopener noreferrer">Wikipedia article</a> for
+        more information.
 
         Parameters
         ----------

@@ -144,8 +144,9 @@ class CoffeMultipolesDerivative(FisherDerivative):
         The size of the output is $\text{size}(r) \times \text{size}(\ell)
         \times \text{size}(\bar{z})$.
 
-        For more details on the exact theoetical modelling used, see
-        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
+        For more details on the exact theoetical modelling used, see <a
+        href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
+        noreferrer">arXiv:1806.11090</a>, section 2.
         """
         cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:
@@ -182,8 +183,9 @@ class CoffeMultipolesDerivative(FisherDerivative):
             \end{pmatrix}
         $$
 
-        For more details on the exact theoretical modelling used, see
-        [arXiv:1806.11090](https://arxiv.org/abs/1806.11090), section 2.
+        For more details on the exact theoetical modelling used, see <a
+        href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
+        noreferrer">arXiv:1806.11090</a>, section 2.
         """
         cosmo = _parse_and_set_args(**self.config)
         for arg, value in args:

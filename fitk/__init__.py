@@ -325,7 +325,7 @@ Add it as an N-dimensional Gaussian:
 ...    fm.fiducials,
 ...    fm.inverse(),
 ...    names=fm.latex_names,
-...)
+... )
 """
 
 from pathlib import Path

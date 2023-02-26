@@ -157,7 +157,8 @@ class _FisherBaseFigure:
         """
         Convenience wrapper for <a
         href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
-        target="_blank" rel="noreferrer noopener">`figure.savefig`</a>.
+        target="_blank" rel="noreferrer
+        noopener">`matplotlib.figure.Figure.savefig`</a>.
 
         Parameters
         ----------
@@ -171,8 +172,10 @@ class _FisherBaseFigure:
             what is the bounding box for the figure (default: 'tight')
 
         **kwargs
-            any other keyword arguments that should be passed to
-            `figure.savefig`
+            any other keyword arguments that should be passed to <a
+            href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
+            target="_blank" rel="noreferrer
+            noopener">`matplotlib.figure.Figure.savefig`</a>
 
         Returns
         -------
@@ -358,11 +361,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
             which axis to change (default: 'both')
 
         **kwargs
-            any keyword arguments that are also valid for
-            `matplotlib.text.Text`, see <a
+            any keyword arguments that are also valid for <a
             href="https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text"
-            target="_blank" rel="noopener noreferrer">the matplotlib
-            documentation</a> for details
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.text.Text`</a>.
 
         Returns
         -------
@@ -460,7 +462,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Parameters
         ----------
         locator
-            the instance of `matplotlib.ticker.Locator` to use.
+            the instance of <a
+            href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.ticker.Locator`</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -506,7 +511,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Parameters
         ----------
         locator
-            the instance of `matplotlib.ticker.Locator` to use.
+            the instance of <a
+            href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.ticker.Locator`</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -551,7 +559,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Parameters
         ----------
         formatter
-            the instance of `matplotlib.ticker.Formatter` to use.
+            the instance of <a
+            href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Formatter"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.ticker.Formatter`</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -585,7 +596,10 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Parameters
         ----------
         formatter
-            the instance of `matplotlib.ticker.Formatter` to use.
+            the instance of <a
+            href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Formatter"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.ticker.Formatter`</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -1160,9 +1174,11 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         options : dict, optional
             the dictionary containing the options for plotting. If the special
             key 'style' is present, it attempts to use that plotting style (can
-            be one of the outputs of `matplotlib.pyplot.style.available`, or a
-            path to a file. If using a file, does not use the default rc
-            parameters).
+            be one of the outputs of <a
+            href="https://matplotlib.org/stable/api/style_api.html#matplotlib.style.matplotlib.style.available"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.style.available`</a>, or a path to a file.
+            If using a file, does not use the default rc parameters).
 
         max_cols : int, optional
             the maximum number of columns in the final plot
@@ -1221,7 +1237,8 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Implements drawing of other objects on the axis.
+        Implements drawing of other objects on the axis where the parameter
+        `name` has already been plotted.
 
         Parameters
         ----------
@@ -1229,8 +1246,11 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
             the name (label) of the parameter where we want to draw
 
         method : str
-            the name of the method which we want to plot (such as `plot`,
-            `scatter`, etc.)
+            the name of the method which we want to plot (such as <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
+            target="_blank" rel="noopener noreferrer">`plot`</a>, <a
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html"
+            target="_blank" rel="noopener noreferrer">`scatter`</a>, etc.)
 
         *args
             any positional arguments passed to the method (usually some data)
@@ -1241,12 +1261,15 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         Returns
         -------
         Artist
-            the artist that was drawn on the figure
+            the artist that was drawn on the axis
 
         Raises
         ------
         EmptyFigureError
             if `figure` is not set
+
+        AttributeError
+            if `method` is not a valid plotting method
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -1584,9 +1607,11 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         options : dict, optional
             the dictionary containing the options for plotting. If the special
             key 'style' is present, it attempts to use that plotting style (can
-            be one of the outputs of `matplotlib.pyplot.style.available`, or a
-            path to a file. If using a file, does not use the default rc
-            parameters).
+            be one of the outputs of <a
+            href="https://matplotlib.org/stable/api/style_api.html#matplotlib.style.matplotlib.style.available"
+            target="_blank" rel="noopener
+            noreferrer">`matplotlib.style.available`</a>, or a path to a file.
+            If using a file, does not use the default rc parameters).
 
         hspace : float, optional
             The amount of height reserved for space between subplots, expressed
@@ -1629,8 +1654,9 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **Regarding `show_joint_dist`**: this argument specifies whether we
         wish to plot the p-value of the *joint* distribution, or the p-value of
         the probability of a single parameter lying within the bounds projected
-        onto a parameter axis. For more details, see
-        [arXiv:0906.0664](https://arxiv.org/abs/0906.0664), section 2.
+        onto a parameter axis. For more details, see <a
+        href="https://arxiv.org/abs/0906.0664" target="_blank" rel="noopener
+        noreferrer">arXiv:0906.0664</a>, section 2.
         """
         super().__init__(
             options=options,
@@ -1829,7 +1855,8 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Implements drawing of other objects on the axis.
+        Implements drawing of other objects on the axis where the parameters
+        `name1` and `name2` have already been plotted.
 
         Parameters
         ----------
@@ -1852,12 +1879,15 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         Returns
         -------
         Artist
-            the artist that was drawn on the figure
+            the artist that was drawn on the axis
 
         Raises
         ------
         EmptyFigureError
             if `figure` is not set
+
+        AttributeError
+            if `method` is not a valid plotting method
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(
@@ -2287,7 +2317,9 @@ def plot_curve_1d(
         plots to a new figure.
 
     **kwargs
-        any keyword arguments passed to `matplotlib.pyplot.plot`
+        any keyword arguments passed to <a
+        href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
+        target="_blank" rel="noopener noreferrer">`matplotlib.pyplot.plot`</a>.
 
     Returns
     -------
@@ -2350,7 +2382,10 @@ def plot_curve_2d(
         plots to a new figure.
 
     **kwargs
-        any keyword arguments passed to `matplotlib.patches.Ellipse`
+        any keyword arguments passed to <a
+        href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Ellipse.html"
+        target="_blank" rel="noopener
+        noreferrer">`matplotlib.patches.Ellipse`</a>.
 
     Returns
     -------

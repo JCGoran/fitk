@@ -5,6 +5,7 @@ Custom script for changing the version of the current package
 """
 
 import argparse
+import shutil
 import subprocess
 import sys
 import warnings
@@ -91,7 +92,7 @@ examples:
 
         subprocess.run(
             [
-                "python3",
+                sys.executable,
                 "-m",
                 "poetry",
                 "version",
@@ -101,10 +102,15 @@ examples:
         )
 
         if parsed_args.git:
+            git_location = shutil.which("git")
+            git_location = (
+                git_location if git_location is not None else "/usr/bin/python3"
+            )
+
             # the script should fail if the working tree is not clean
             is_clean = subprocess.run(
                 [
-                    "git",
+                    git_location,
                     "diff",
                     "--staged",
                 ],
@@ -116,9 +122,10 @@ examples:
                     "The current git staging area is not empty, "
                     "please unstage any changes using `git reset .` before continuing"
                 )
+
             subprocess.run(
                 [
-                    "git",
+                    git_location,
                     "add",
                     "--update",
                     "--",
@@ -127,9 +134,10 @@ examples:
                 ],
                 check=True,
             )
+
             subprocess.run(
                 [
-                    "git",
+                    git_location,
                     "commit",
                     "--message",
                     "Bumped version",
@@ -138,7 +146,7 @@ examples:
             )
             subprocess.run(
                 [
-                    "git",
+                    git_location,
                     "tag",
                     str(new_version),
                 ],

@@ -505,6 +505,27 @@ def test_plot_2d_contours(euclid_opt):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
+def test_plot_2d_mark_fiducials(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D(
+        show_joint_dist=True,
+        show_1d_curves=True,
+    )
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+        label="Euclid",
+        mark_fiducials=True,
+    )
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
 def test_plot_2d_set_title(euclid_opt):
     # add just one element
     fp = FisherFigure2D()

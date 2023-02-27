@@ -58,10 +58,8 @@ def _set_limits_2d(*, ax, size: int):
 
 def _rescale_limits_2d(
     *,
-    fisher: FisherMatrix,
     ax,
     size: int,
-    mark_fiducials: Union[bool, dict] = False,
 ):
     for i, j in product(range(size), repeat=2):
         try:
@@ -72,31 +70,48 @@ def _rescale_limits_2d(
                 ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
                 ax[i, i].set_yticks([])
                 ax[i, i].set_yticklabels([])
+        except AttributeError:
+            pass
 
+
+def _mark_fiducials(
+    *,
+    fisher: FisherMatrix,
+    ax,
+    size: int,
+    mark_fiducials: Union[bool, dict] = False,
+):
+    for i, j in product(range(size), repeat=2):
+        try:
+            if i == j:
                 # marking the fiducials (1D)
                 if mark_fiducials is not False:
                     if mark_fiducials is True:
-                        mark_fiducials = dict(linestyles="--", colors="black")
+                        mark_fiducials_1d = dict(linestyles="--", colors="black")
+                    else:
+                        mark_fiducials_1d = mark_fiducials
 
                     _mark_fiducial_1d(
                         fisher,
                         fisher.names[i],
                         ax[i, i],
-                        **mark_fiducials,
+                        **mark_fiducials_1d,
                     )
 
             else:
                 # marking the fiducials (2D)
                 if mark_fiducials is not False:
                     if mark_fiducials is True:
-                        mark_fiducials = dict(linestyles="--", colors="black")
+                        mark_fiducials_2d = dict(linestyles="--", colors="black")
+                    else:
+                        mark_fiducials_2d = mark_fiducials
 
                     _mark_fiducial_2d(
                         fisher,
                         fisher.names[i],
                         fisher.names[j],
                         ax[i, j],
-                        **mark_fiducials,
+                        **mark_fiducials_2d,
                     )
 
         except AttributeError:
@@ -2206,7 +2221,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                                 pass
 
             # set automatic limits
-            _rescale_limits_2d(
+            _rescale_limits_2d(ax=ax, size=size)
+
+            # marking the fiducials
+            _mark_fiducials(
                 fisher=fisher,
                 ax=ax,
                 size=size,

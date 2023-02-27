@@ -484,6 +484,27 @@ def test_plot_2d_legend(euclid_opt):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
+def test_plot_2d_contours(euclid_opt):
+    # add just one element
+    fp = FisherFigure2D(
+        contour_levels_1d=[(1, 0.3)],
+        contour_levels_2d=[(1, 0.2)],
+        show_joint_dist=True,
+    )
+    fp.plot(
+        euclid_opt.marginalize_over("Omegam", "Omegab", invert=True),
+        label="Euclid",
+    )
+
+    return fp.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
 def test_plot_2d_set_title(euclid_opt):
     # add just one element
     fp = FisherFigure2D()

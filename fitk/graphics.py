@@ -2093,7 +2093,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         **kwargs,
                     )
 
-                    for index in range(1, len(self.contour_levels)):
+                    for index in range(1, len(self.contour_levels_2d)):
                         # the 2-sigma
                         plot_curve_2d(
                             fisher,

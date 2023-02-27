@@ -130,25 +130,26 @@ reporting whether the matrix is a Fisher matrix:
 
 >>> my_matrix.is_valid()
 
-## ...retrieve/add a value for a specific element in the matrix?
+## ...get/set a value for a specific element in the matrix?
 
 You can use the element accessor `[]`.
 
-For instance, the below outputs the off-diagonal element corresponding to parameters 'a' and 'b':
+For instance, the below gets the off-diagonal element corresponding to
+parameters 'a' and 'b':
 >>> my_matrix['a', 'b']
 
 while the below sets its value:
 >>> my_matrix['a', 'b'] = 5
 
-Note that the transpose element (in this case, `('b', 'a')`) is automatically
-updated to keep the Fisher matrix symmetric.
+Note that when setting a value, the transpose element (in this case, `('b',
+'a')`) is automatically updated to keep the Fisher matrix symmetric.
 
 ## ...add a Gaussian prior for a specific parameter?
 
 Since this is equivalent to adding $1 / \sigma^2$ to the diagonal element
-corresponding to that parameter, see: [...retrieve/add a value for a specific
+corresponding to that parameter, see: [...get/set a value for a specific
 element in the
-matrix?](#retrieveadd-a-value-for-a-specific-element-in-the-matrix)
+matrix?](#getset-a-value-for-a-specific-element-in-the-matrix)
 
 ## ...compute constraints?
 
@@ -161,6 +162,11 @@ you want the unmarginalized ones, pass `marginalized=False` to the above.
 Furthermore, if you want to compute the constraints at a certain threshold
 (like a $p$-value or a $\sigma$ value), pass `p=[VALUE]` or `sigma=[VALUE]` to
 the above.
+
+## ...compute the covariance matrix of the parameters?
+
+Use the `fitk.tensors.FisherMatrix.inverse` method, which returns the covariance of the parameters as a square numpy array:
+>>> my_matrix.inverse()
 
 ## ...save a matrix to a file?
 

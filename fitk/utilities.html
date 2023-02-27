@@ -225,7 +225,7 @@
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">):</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
@@ -910,7 +910,7 @@ representation as available.</p>
 </span><span id="is_iterable-35"><a href="#is_iterable-35"><span class="linenos">35</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="is_iterable-36"><a href="#is_iterable-36"><span class="linenos">36</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="is_iterable-37"><a href="#is_iterable-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="is_iterable-38"><a href="#is_iterable-38"><span class="linenos">38</span></a>    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="is_iterable-38"><a href="#is_iterable-38"><span class="linenos">38</span></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">):</span>
 </span><span id="is_iterable-39"><a href="#is_iterable-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 

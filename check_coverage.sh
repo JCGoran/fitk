@@ -2,14 +2,20 @@
 
 # script for generating a code coverage report for fitk
 
-set -eu
+set -eux
 
 check_coverage(){
+    if ! python3 -m poetry > /dev/null 2>&1
+    then
+        launcher=''
+    else
+        launcher='poetry run'
+    fi
     if [ "${1:-}" = '-i' ] || [ "${1:-}" = '--images' ]
     then
-        command="python3 -m poetry run pytest --mpl --doctest-modules --mpl-generate-summary=html -k 'not test_interfaces and not __init__.py and not interfaces' --cov=./ --cov-report=html tests/ fitk/"
+        command="python3 -m ${launcher} pytest --mpl --doctest-modules --mpl-generate-summary=html -k 'not test_interfaces and not __init__.py and not interfaces' --cov=./ --cov-report=html tests/ fitk/"
     else
-        command="python3 -m poetry run pytest --doctest-modules -k 'not test_interfaces and not __init__.py and not interfaces' --cov=./ --cov-report=html tests/ fitk/"
+        command="python3 -m ${launcher} pytest --doctest-modules -k 'not test_interfaces and not __init__.py and not interfaces' --cov=./ --cov-report=html tests/ fitk/"
     fi
     if ! eval "${command}"
     then
@@ -23,4 +29,4 @@ check_coverage(){
 
 check_coverage "${1:-}"
 
-set +eu
+set +eux

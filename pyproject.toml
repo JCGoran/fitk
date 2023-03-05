@@ -4,6 +4,7 @@ version = "0.6.6"
 description = "The Fisher Information ToolKit"
 authors = ["JCGoran <goran.jelic-cizmek@unige.ch>"]
 license = "MIT"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"

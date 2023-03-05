@@ -1,9 +1,10 @@
 ## FITK - the Fisher Information ToolKit
 [![codecov](https://codecov.io/gh/JCGoran/fitk/branch/master/graph/badge.svg?token=NX9WRX89SI)](https://codecov.io/gh/JCGoran/fitk)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/JCGoran/fitk/tree/master.svg?style=shield&circle-token=5cc8653735b0092318b9790720101eaa4c568c10)](https://dl.circleci.com/status-badge/redirect/gh/JCGoran/fitk/tree/master)
-[![python - versions](https://img.shields.io/static/v1?label=python&message=3.7+|+3.8+|+3.9+|+3.10+|+3.11&color=1182C2)](https://test.pypi.org/project/fitk/)
+[![python - versions](https://img.shields.io/pypi/pyversions/fitk)](https://pypi.org/project/fitk/)
+[![CodeFactor](https://www.codefactor.io/repository/github/jcgoran/fitk/badge)](https://www.codefactor.io/repository/github/jcgoran/fitk)
 
-Fitk is a Python package for manipulating and plotting of Fisher information matrices.
+Fitk is a Python package for computing, manipulating, and plotting of Fisher information matrices.
 
 ### Installation
 
@@ -24,71 +25,15 @@ pip install git+https://github.com/JCGoran/fitk
 
 ### Usage
 
-The simplest way to use it is to load the core functions and classes:
+For various examples on how to use FITK, as well as the latest API, please refer to [the main docs](https://jcgoran.github.io/fitk/).
 
-```python
-import numpy as np
-from fitk import FisherMatrix, FisherFigure1D, FisherFigure2D, FisherBarFigure
-```
+### Issues
 
-For the (extensive) documentation, refer to [the main docs](https://jcgoran.github.io/fitk/fitk.html).
+If you encounter any bugs running the code, or have a suggestion for new functionality, please open up a new issue [on GitHub](https://github.com/JCGoran/fitk/issues/).
 
-### Development
+### Contributing
 
-Development of fitk is done using Poetry for Python.
-If you have it installed, all you need to do is:
-
-```plaintext
-python3 -m poetry install
-```
-
-and you should be good to go.
-
-#### Testing
-
-To make sure nothing was broken during development, run:
-
-```plaintext
-./check_coverage.sh
-```
-
-In case you modified the `graphics` module, if you would like to check whether your changes differ compared to the benchmark images, you may run:
-
-```plaintext
-./check_coverage.sh --images
-```
-
-instead.
-
-Should any of the tests fail, you need to fix them first.
-
-#### Adding new features
-
-If implementing new features, please create corresponding tests as to keep the code coverage approximately constant.
-If you are implementing features in the `graphics` module, you can generate the new benchmark images using:
-
-```plaintext
-./generate_test_images.sh
-```
-
-#### Generating documentation
-
-Documentation which can be browsed locally can be generated using:
-
-```plaintext
-./generate_docs.sh
-```
-
-#### Versioning
-
-You can change the version of the package consistently using:
-
-```plaintext
-./change_version.py
-```
-
-and follow the prompts.
-If you require further info on the capabilities of the script, run the above with the `-h` flag.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### License
 

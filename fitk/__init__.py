@@ -3,8 +3,25 @@ r"""
 
 # What is it?
 
-FITK is a Python package for computing, manipulating, and plotting Fisher-like
-objects (mostly matrices).
+FITK is a Python package for computing, manipulating, and plotting Fisher
+matrices.
+
+# Installation
+
+FITK is available on [PyPI](https://pypi.org/project/fitk/), and can be
+installed via `pip`:
+
+```sh
+pip install fitk
+```
+
+# Bug reports and feature requests
+
+Development of FITK is currently done [on
+GitHub](https://github.com/JCGoran/fitk/), and if you encounter any bugs in the
+package, or would like to ask for new features (or submit your own), please
+open an [issue](https://github.com/JCGoran/fitk/issues/) or a [pull
+request](https://github.com/JCGoran/fitk/pulls/).
 
 # Notes
 

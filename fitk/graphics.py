@@ -498,6 +498,9 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         ------
         EmptyFigureError
             if `figure` is not set
+
+        ValueError
+            if `which` is not one of the allowed values
         """
         if not self.figure:
             raise EmptyFigureError
@@ -509,7 +512,9 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         }
 
         if which not in allowed_axis:
-            raise ValueError
+            raise ValueError(
+                f"Argument `which={which}` is not one of {list(allowed_axis.keys())}"
+            )
 
         for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter]:

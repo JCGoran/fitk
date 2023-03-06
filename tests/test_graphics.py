@@ -426,7 +426,7 @@ def test_plot_2d_euclid(euclid_opt, euclid_pes):
         ls=":",
         color="green",
         label="shifted",
-        mark_fiducials=dict(linestyles="-.", linewidths=1, colors="orange"),
+        mark_fiducials=dict(linestyle="-.", linewidth=1, color="orange"),
     )
 
     fp.plot(

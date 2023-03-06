@@ -22,7 +22,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
-from matplotlib.collections import LineCollection
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from matplotlib.patheffects import Normal, Stroke
@@ -1317,14 +1316,13 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
 
         mark_fiducials : bool or dict, optional
             whether or not the fiducials should be marked on the plots
-            (default: False). If set to `True`, uses `linestyles='--'` and
-            `colors='black'` as the default. If a dictionary, accepts the same
+            (default: False). If set to `True`, uses `linestyle='--'` and
+            `color='black'` as the default. If a dictionary, accepts the same
             keyword arguments as <a
-            href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.Collection"
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvline.html#matplotlib.axes.Axes.axvline"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.collections.Collection`</a>.
-            If an empty dictionary, uses the default style (determined
-            automatically).
+            noopener">`matplotlib.axes.Axes.axvline`</a>.  If an empty
+            dictionary, uses the default style (determined automatically).
 
         **kwargs
             any keyword arguments used for plotting (same as `plot_curve_1d`)
@@ -1409,7 +1407,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
                 # marking the fiducials
                 if not mark_fiducials is False:
                     if mark_fiducials is True:
-                        mark_fiducials = dict(linestyles="--", colors="black")
+                        mark_fiducials = dict(linestyle="--", color="black")
 
                     _mark_fiducial_1d(
                         fisher,
@@ -1936,14 +1934,13 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
         mark_fiducials : bool or dict, optional
             whether or not the fiducials should be marked on the plots
-            (default: False). If set to `True`, uses `linestyles='--'` and
-            `colors='black'` as the default. If a dictionary, accepts the same
+            (default: False). If set to `True`, uses `linestyle='--'` and
+            `color='black'` as the default. If a dictionary, accepts the same
             keyword arguments as <a
-            href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.Collection"
+            href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvline.html#matplotlib.axes.Axes.axvline"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.collections.Collection`</a>.
-            If an empty dictionary, uses the default style (determined
-            automatically).
+            noopener">`matplotlib.axes.Axes.axvline`</a>.  If an empty
+            dictionary, uses the default style (determined automatically).
 
         **kwargs
             any keyword arguments used for plotting (same as `plot_curve_2d`)
@@ -2168,7 +2165,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         # marking the fiducials (1D)
                         if mark_fiducials is not False:
                             if mark_fiducials is True:
-                                mark_fiducials = dict(linestyles="--", colors="black")
+                                mark_fiducials = dict(linestyle="--", color="black")
 
                             _mark_fiducial_1d(
                                 fisher,
@@ -2181,7 +2178,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         # marking the fiducials (2D)
                         if mark_fiducials is not False:
                             if mark_fiducials is True:
-                                mark_fiducials = dict(linestyles="--", colors="black")
+                                mark_fiducials = dict(linestyle="--", color="black")
 
                             _mark_fiducial_2d(
                                 fisher,
@@ -2491,28 +2488,18 @@ def _mark_fiducial_1d(
     fisher: FisherMatrix,
     name: str,
     ax: Axes,
-    npoints: int = 100,
-    autolim: bool = False,
     **kwargs,
 ):
     # always put the fiducials on top (unless specified otherwise)
     zorder = kwargs.pop("zorder", 999)
 
-    # only need to draw a vertical line on 1D plots
-    x_vline = np.repeat(
+    ax.axvline(
         fisher.fiducials[np.where(name == fisher.names)][0],
-        npoints,
-    )
-
-    y_vline = np.linspace(0, 1e5, npoints)
-
-    vline = LineCollection(
-        [np.column_stack((x_vline, y_vline))],
+        0,
+        1,
         zorder=zorder,
         **kwargs,
     )
-
-    ax.add_collection(vline, autolim=autolim)
 
 
 def _mark_fiducial_2d(
@@ -2520,8 +2507,6 @@ def _mark_fiducial_2d(
     name1: str,
     name2: str,
     ax: Axes,
-    npoints: int = 100,
-    autolim: bool = False,
     **kwargs,
 ):
     # always put the fiducials on top (unless specified otherwise)
@@ -2532,38 +2517,21 @@ def _mark_fiducial_2d(
     fiducial1 = fisher.fiducials[index1]
     fiducial2 = fisher.fiducials[index2]
 
-    # drawing the horizontal line
-    x_hline = np.linspace(
-        fiducial2 - fisher.constraints(name2, sigma=100)[0],
-        fiducial2 + fisher.constraints(name2, sigma=100)[0],
-        npoints,
-    )
-    y_hline = np.repeat(fiducial1, npoints)
-
-    hline = LineCollection(
-        [np.column_stack((x_hline, y_hline))],
+    ax.axhline(
+        fiducial1,
+        0,
+        1,
         zorder=zorder,
         **kwargs,
     )
 
-    ax.add_collection(hline, autolim=autolim)
-
-    # drawing the vertical line
-    x_vline = np.repeat(fiducial2, npoints)
-
-    y_vline = np.linspace(
-        fiducial1 - fisher.constraints(name1, sigma=100)[0],
-        fiducial1 + fisher.constraints(name1, sigma=100)[0],
-        npoints,
-    )
-
-    vline = LineCollection(
-        [np.column_stack((x_vline, y_vline))],
+    ax.axvline(
+        fiducial2,
+        0,
+        1,
         zorder=zorder,
         **kwargs,
     )
-
-    ax.add_collection(vline, autolim=autolim)
 
 
 def _parse_contour_levels(contour_levels: Sequence[tuple[float, float]]):

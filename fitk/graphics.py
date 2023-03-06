@@ -41,6 +41,67 @@ from fitk.utilities import (
 )
 
 
+def _set_limits_2d(*, ax, size: int):
+    for i, j in product(range(size), repeat=2):
+        if i == j:
+            ax[i, i].set_yticks([])
+            ax[i, i].set_yticklabels([])
+            if i < size - 1:
+                ax[i, i].get_xaxis().set_visible(False)
+        if i > 0 and 0 < j < size - 1:
+            ax[i, j].set_yticks([])
+            ax[i, j].set_yticklabels([])
+        if i > j and i != size - 1:
+            ax[i, j].get_xaxis().set_visible(False)
+
+
+def _rescale_limits_2d(
+    *,
+    fisher: FisherMatrix,
+    ax,
+    size: int,
+    mark_fiducials: Union[bool, dict] = False,
+):
+    for i, j in product(range(size), repeat=2):
+        try:
+            ax[i, j].relim()
+            ax[i, j].autoscale_view()
+            if i == j:
+                ax[i, i].autoscale()
+                ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
+                ax[i, i].set_yticks([])
+                ax[i, i].set_yticklabels([])
+
+                # marking the fiducials (1D)
+                if mark_fiducials is not False:
+                    if mark_fiducials is True:
+                        mark_fiducials = dict(linestyle="--", color="black")
+
+                    _mark_fiducial_1d(
+                        fisher,
+                        fisher.names[i],
+                        ax[i, i],
+                        **mark_fiducials,
+                    )
+
+            else:
+                # marking the fiducials (2D)
+                if mark_fiducials is not False:
+                    if mark_fiducials is True:
+                        mark_fiducials = dict(linestyle="--", color="black")
+
+                    _mark_fiducial_2d(
+                        fisher,
+                        fisher.names[i],
+                        fisher.names[j],
+                        ax[i, j],
+                        **mark_fiducials,
+                    )
+
+        except AttributeError:
+            pass
+
+
 @dataclass
 class _TempContainer:
     labels: Sequence[str]
@@ -2010,17 +2071,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                 )
 
             # set automatic limits
-            for i, j in product(range(size), repeat=2):
-                if i == j:
-                    ax[i, i].set_yticks([])
-                    ax[i, i].set_yticklabels([])
-                    if i < size - 1:
-                        ax[i, i].get_xaxis().set_visible(False)
-                if i > 0 and 0 < j < size - 1:
-                    ax[i, j].set_yticks([])
-                    ax[i, j].set_yticklabels([])
-                if i > j and i != size - 1:
-                    ax[i, j].get_xaxis().set_visible(False)
+            _set_limits_2d(ax=ax, size=size)
 
             # flag for whether the current artist has already been added to the
             # legend handle
@@ -2152,44 +2203,12 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                                 pass
 
             # set automatic limits
-            for i, j in product(range(size), repeat=2):
-                try:
-                    ax[i, j].relim()
-                    ax[i, j].autoscale_view()
-                    if i == j:
-                        ax[i, i].autoscale()
-                        ax[i, i].set_ylim(0, ax[i, i].get_ylim()[-1])
-                        ax[i, i].set_yticks([])
-                        ax[i, i].set_yticklabels([])
-
-                        # marking the fiducials (1D)
-                        if mark_fiducials is not False:
-                            if mark_fiducials is True:
-                                mark_fiducials = dict(linestyle="--", color="black")
-
-                            _mark_fiducial_1d(
-                                fisher,
-                                fisher.names[i],
-                                ax[i, i],
-                                **mark_fiducials,
-                            )
-
-                    else:
-                        # marking the fiducials (2D)
-                        if mark_fiducials is not False:
-                            if mark_fiducials is True:
-                                mark_fiducials = dict(linestyle="--", color="black")
-
-                            _mark_fiducial_2d(
-                                fisher,
-                                fisher.names[i],
-                                fisher.names[j],
-                                ax[i, j],
-                                **mark_fiducials,
-                            )
-
-                except AttributeError:
-                    pass
+            _rescale_limits_2d(
+                fisher=fisher,
+                ax=ax,
+                size=size,
+                mark_fiducials=mark_fiducials,
+            )
 
         self._figure = fig
         self._axes = ax

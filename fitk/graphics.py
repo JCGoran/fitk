@@ -244,14 +244,14 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         """
         Implements plotting of Fisher objects.
         """
-        return NotImplemented
+        return NotImplemented  # pragma: no cover
 
     @abstractmethod
     def __getitem__(self, key):
         """
         Implements element access.
         """
-        return NotImplemented
+        return NotImplemented  # pragma: no cover
 
     @property
     def hspace(self) -> float:

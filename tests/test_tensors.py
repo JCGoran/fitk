@@ -778,3 +778,7 @@ class TestFisherMatrix:
         fm.set_latex_name("b", "q")
 
         assert np.all(fm.latex_names == np.array([r"$\mathbf{A}$", "q"]))
+
+    def test_eigenvectors(self):
+        fm = FisherMatrix(np.diag([1, 2, 3]))
+        assert np.allclose(fm.eigenvectors(), np.linalg.eigh(fm.values)[-1])

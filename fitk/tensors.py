@@ -35,6 +35,33 @@ from fitk.utilities import (
 )
 
 
+def _parse_sigma(
+    sigma: Optional[float] = None,
+    p: Optional[float] = None,
+):
+    if sigma is not None and p is not None:
+        raise ValueError(
+            "Cannot specify both `p` and `sigma` simultaneously; "
+            "please specify at most one of those"
+        )
+
+    if p is not None:
+        if not 0 < p < 1:
+            raise ValueError(
+                f"The value of `p` {p} is outside of the allowed range (0, 1)"
+            )
+        sigma = np.sqrt(2) * erfinv(p)
+    elif sigma is None:
+        sigma = 1
+
+    if sigma <= 0:
+        raise ValueError(
+            f"The value of `sigma` {sigma} is outside of the allowed range (0, infinify)"
+        )
+
+    return sigma
+
+
 def _process_fisher_mapping(value: Mapping) -> dict[str, Union[str, float]]:
     """
     Processes a mapping/dict and returns the sanitized output.
@@ -1217,25 +1244,7 @@ class FisherMatrix:
         >>> m.constraints('p1', p=0.682689) # p-value roughly equal to 1 sigma
         array([0.67419918])
         """
-        if sigma is not None and p is not None:
-            raise ValueError(
-                "Cannot specify both `p` and `sigma` simultaneously; "
-                "please specify at most one of those"
-            )
-
-        if p is not None:
-            if not 0 < p < 1:
-                raise ValueError(
-                    f"The value of `p` {p} is outside of the allowed range (0, 1)"
-                )
-            sigma = np.sqrt(2) * erfinv(p)
-        elif sigma is None:
-            sigma = 1
-
-        if sigma <= 0:
-            raise ValueError(
-                f"The value of `sigma` {sigma} is outside of the allowed range (0, infinify)"
-            )
+        sigma = _parse_sigma(sigma, p)
 
         if marginalized:
             inv = self.__class__(

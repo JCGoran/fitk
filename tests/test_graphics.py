@@ -24,6 +24,8 @@ from fitk.graphics import (
     FisherBarFigure,
     FisherFigure1D,
     FisherFigure2D,
+    _add_plot_1d,
+    _add_shading_1d,
     _get_ellipse,
     plot_curve_1d,
     plot_curve_2d,
@@ -76,6 +78,13 @@ class TestFisherFigure:
         FisherFigure1D(
             contour_levels=[(1, 0.2), (2, 0.1)],
         )
+
+    def test_set_tick_params(self):
+        ff = FisherFigure1D()
+
+        ff.plot(FisherMatrix(np.diag([1, 2])))
+        with pytest.raises(ValueError):
+            ff.set_tick_params(which="asdf")
 
 
 @pytest.fixture
@@ -1002,3 +1011,33 @@ def test_relative_constraints_percent(euclid_opt, euclid_pes):
     )
 
     return fig.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_add_plot_1d(euclid_opt):
+    fig, ax, handle = _add_plot_1d(
+        fiducial=euclid_opt.fiducial(euclid_opt.names[0]) * (1 + 0.5),
+        sigma=euclid_opt.constraints(name=euclid_opt.names[0])[0] * 0.5,
+    )
+
+    return fig
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_add_shading_1d(euclid_opt):
+    fig, ax = _add_shading_1d(
+        fiducial=euclid_opt.fiducial(euclid_opt.names[0]) * (1 + 0.5),
+        sigma=euclid_opt.constraints(name=euclid_opt.names[0])[0] * 0.5,
+    )
+
+    return fig

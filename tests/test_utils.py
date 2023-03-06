@@ -11,6 +11,7 @@ from scipy.stats import ortho_group
 
 # first party imports
 from fitk.utilities import (
+    HTMLWrapper,
     find_diff_weights,
     float_to_latex,
     get_index_of_other_array,
@@ -19,6 +20,7 @@ from fitk.utilities import (
     is_square,
     is_symmetric,
     make_default_names,
+    make_html_table,
     math_mode,
     process_units,
     reindex_array,
@@ -168,3 +170,14 @@ class TestFisherUtils:
 
         with pytest.raises(TypeError):
             math_mode(1)
+
+    def test_make_html_table(self):
+        values = [[1, 2], [3, 4]]
+        no_title = make_html_table(values)
+        with_title = make_html_table(values, title="example")
+
+
+class TestHTMLWrapper:
+    def test_init(self):
+        result = HTMLWrapper("asdf")
+        result._repr_html_()

@@ -504,27 +504,32 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         if not self.figure:
             raise EmptyFigureError
 
+        allowed_axis: dict[str, list[str]] = {
+            "both": ["x", "y"],
+            "x": ["x"],
+            "y": ["y"],
+        }
+
+        if which not in allowed_axis:
+            raise ValueError
+
         for nameiter in product(self.names, repeat=self._ndim):
-            if self[nameiter] and which in ["both", "x"]:
-                for item in self[nameiter].get_xticklabels():
-                    for key, value in kwargs.items():
-                        getattr(item, f"set_{key}")(value)
-            if self[nameiter] and which in ["both", "y"]:
-                for item in self[nameiter].get_yticklabels():
-                    for key, value in kwargs.items():
-                        getattr(item, f"set_{key}")(value)
+            if self[nameiter]:
+                for axis in allowed_axis[which]:
+                    for item in getattr(self[nameiter], f"get_{axis}ticklabels")():
+                        for key, value in kwargs.items():
+                            getattr(item, f"set_{key}")(value)
+
             # also alter any exponential offsets
             for key, value in kwargs.items():
-                if self[nameiter] and which in ["both", "x"]:
-                    getattr(
-                        self[nameiter].get_xaxis().get_offset_text(),
-                        f"set_{key}",
-                    )(value)
-                if self[nameiter] and which in ["both", "y"]:
-                    getattr(
-                        self[nameiter].get_yaxis().get_offset_text(),
-                        f"set_{key}",
-                    )(value)
+                if self[nameiter]:
+                    for axis in allowed_axis[which]:
+                        getattr(
+                            getattr(
+                                self[nameiter], f"get_{axis}axis"
+                            )().get_offset_text(),
+                            f"set_{key}",
+                        )(value)
 
     def set_major_locator(
         self,

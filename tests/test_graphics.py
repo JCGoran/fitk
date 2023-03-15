@@ -1041,3 +1041,33 @@ def test_add_shading_1d(euclid_opt):
     )
 
     return fig
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_absolute_constraints_ordering():
+    fm1 = FisherMatrix([[1, 0], [0, 3]], names=["a", "b"], fiducials=[1, 2])
+    fm2 = FisherMatrix([[3.1, 0], [0, 0.9]], names=["b", "a"], fiducials=[2, 1])
+    ff = FisherBarFigure()
+    ff.plot_absolute_constraints([fm1, fm2], kind="bar")
+
+    return ff.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_plot_relative_constraints_ordering():
+    fm1 = FisherMatrix([[1, 0], [0, 3]], names=["a", "b"], fiducials=[1, 2])
+    fm2 = FisherMatrix([[3.1, 0], [0, 0.9]], names=["b", "a"], fiducials=[2, 1])
+    ff = FisherBarFigure()
+    ff.plot_relative_constraints([fm1, fm2], kind="bar")
+
+    return ff.figure

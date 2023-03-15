@@ -739,6 +739,9 @@ class FisherBarFigure(_FisherBaseFigure):
                     arg.names,
                 )
 
+        # reordering to match the first one
+        args = [arg.sort(key=args[0].names) for arg in args]
+
         # total number of parameters in the Fisher objects
         size = len(args[0])
 
@@ -918,6 +921,9 @@ class FisherBarFigure(_FisherBaseFigure):
                     args[0].names,
                     arg.names,
                 )
+
+        # reordering to match the first one
+        args = [arg.sort(key=args[0].names) for arg in args]
 
         # the width or height of all columns for a single parameter
         total_space = 1 - space

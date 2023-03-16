@@ -15,6 +15,45 @@ rel="noopener noreferrer">PyPI</a>, and can be installed via `pip`:
 pip install fitk
 ```
 
+In case you want to also install the various third-party software for which
+there are interfaces for computing derivatives with FITK, you can instead do:
+
+```sh
+pip install fitk[[INTERFACE]]
+```
+
+where `[INTERFACE]` is one of the [supported third-party
+software](fitk/interfaces.html). In case you want to try to install all of the
+supported third-party software at once, you can run:
+
+```sh
+pip install fitk[interfaces]
+```
+
+# Quickstart
+
+Load the core modules:
+>>> from fitk import FisherMatrix, FisherFigure2D, D, P
+
+Load one of the [supported interfaces](fitk/interfaces.html):
+>>> from fitk.interfaces.coffe_interfaces import CoffeMultipolesDerivative
+
+Set up an instance of the interface:
+>>> config = CoffeMultipolesDerivative()
+
+Compute some Fisher matrices:
+>>> fm = config.fisher_matrix(
+... D(P(name='omega_m', fiducial=0.3), abs_step=1e-3),
+... D(P(name='omega_baryon', fiducial=0.04), abs_step=1e-3),
+... )
+
+Note that the matrix can easily be saved for later:
+>>> fm.to_file('fisher_matrix_example.json', metadata={'comment': 'Example Fisher matrix'})
+
+Plot some contours of the resulting matrix:
+>>> ff = FisherFigure2D(show_1d_curves=True, show_joint_dist=True)
+>>> ff.plot(fm, label='COFFE forecast example')
+
 # Bug reports and feature requests
 
 Development of FITK is currently done <a

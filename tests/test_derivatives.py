@@ -14,8 +14,24 @@ import pytest
 # first party imports
 from fitk.derivatives import D, FisherDerivative, matrix_element_from_input
 from fitk.interfaces.misc_interfaces import SupernovaDerivative
-from fitk.utilities import P
-from fitk.utilities import ValidationError, _expansion_coefficient
+from fitk.utilities import P, ValidationError, _expansion_coefficient
+
+
+def test_srt():
+    """
+    Check for str of `FisherDerivative`
+    """
+    fd = FisherDerivative()
+    assert str(fd) == "\n".join(
+        [
+            f"{fd.__class__.__name__}(",
+            f"\tsoftware name(s): {fd.software_names},",
+            f"\tinterface version: {fd.version},",
+            f"\tauthors: {fd.authors},",
+            f"\tURL(s): {fd.urls}",
+            ")",
+        ]
+    )
 
 
 def test_expansion_coefficient():

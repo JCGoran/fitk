@@ -291,6 +291,25 @@ class FisherDerivative:
     array that is shape-compatible with the output of the `signal` method.
     """
 
+    name: Optional[str] = None
+    """The name of the software which we are interfacing"""
+    version: Optional[str] = None
+    """The version of the interface"""
+    authors: Optional[list[dict[str, str]]] = None
+    """The list of authors of the interface"""
+    urls: Optional[dict[str, str]] = None
+    """Any URL(s) to the original software"""
+
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"\tsoftware name: {self.name},\n"
+            f"\tinterface version: {self.version},\n"
+            f"\tauthors: {self.authors},\n"
+            f"\tURL(s): {self.urls}\n"
+            ")"
+        )
+
     def __init__(self, *args, **kwargs):
         """
         Create an instance.

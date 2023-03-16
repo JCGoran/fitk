@@ -1,6 +1,6 @@
 """
-This module defines interfaces to various third-party software with which
-one can compute Fisher matrices using finite differences.
+This module defines interfaces to various third-party software with which one
+can compute Fisher matrices.
 
 ### Important notice
 Due to the complexities involved in distributing software that is not under
@@ -8,6 +8,21 @@ direct control of the developers/maintainers of `fitk` (version, installation,
 license issues, etc.), any external, third-party software (such as cosmological
 codes) is *not* bundled with `fitk` (i.e. installed automatically), and must be
 installed separately by the user.
+
+### List of interfaces
+
+#### <a href="https://github.com/lesgourg/class_public" target="_blank" rel="noopener noreferrer">CLASS</a>
+
+- installable with `pip install fitk[classy]`
+- for documentation of available interfaces, see `fitk.interfaces.classy_interfaces`
+
+#### <a href="https://github.com/JCGoran/coffe" target="_blank" rel="noopener noreferrer">COFFE</a>
+
+- installable with `pip install fitk[coffe]` (only on Linux; for other
+  platforms, see <a
+  href="https://github.com/JCGoran/coffe#development-version-including-non-linux-machines"
+  target="_blank" rel="noopener noreferrer">here</a>)
+- for documentation of available interfaces, see `fitk.interfaces.coffe_interfaces`
 
 ### Computation of custom derivatives
 To define a new interface for computing derivatives, one should define a class

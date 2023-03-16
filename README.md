@@ -6,6 +6,14 @@
 
 Fitk is a Python package for computing, manipulating, and plotting of Fisher information matrices.
 
+### Why `fitk`?
+
+* easy to use
+* minimal dependencies, backwards compatibility (Python 3.7 and above)
+* fully documented
+* large test suite (120+ tests for all modules)
+* can compute arbitrary order derivatives with arbitrary stencils
+
 ### Installation
 
 The best way to install the stable version is via `pip`:

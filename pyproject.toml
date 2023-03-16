@@ -20,6 +20,13 @@ matplotlib = [
     {version = "^3.5", python = "<3.11"},
     {version = "^3.6", python = ">=3.11"}
 ]
+classy = { version = "*", optional = true }
+coffe = { version = "*", optional = true }
+
+[tool.poetry.extras]
+classy = ["classy"]
+coffe = ["coffe"]
+interfaces = ["coffe", "classy"]
 
 [tool.poetry.dev-dependencies]
 black = "*"

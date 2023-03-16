@@ -2011,6 +2011,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         self,
         fisher: FisherMatrix,
         *args,
+        autolim: bool = True,
         mark_fiducials: Union[bool, dict] = False,
         **kwargs,
     ):
@@ -2021,6 +2022,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         ----------
         fisher : FisherMatrix
             the Fisher object which we want to plot
+
+        autolim : bool, optional
+            take the data from the drawn object into account when recomputing
+            the limits of the plot (default: True)
 
         mark_fiducials : bool or dict, optional
             whether or not the fiducials should be marked on the plots

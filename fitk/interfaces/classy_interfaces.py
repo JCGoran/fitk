@@ -8,6 +8,7 @@ from __future__ import annotations
 # standard library imports
 from abc import ABC
 from configparser import ConfigParser
+from itertools import product
 from pathlib import Path
 from typing import Optional, Union
 
@@ -92,6 +93,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         return {
             "temperature": "tCl" in outputs,
             "polarization": "pCl" in outputs,
+            "galaxy_counts": "nCl" in outputs or "dCl" in outputs,
         }
 
 
@@ -252,5 +254,112 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
                     np.diag(c_ee**2), np.diag(c_bb**2)
                 )
             return self._prefactor_covariance(1) * np.diag(c_ee**2)
+
+        return NotImplemented
+
+
+class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
+    r"""
+    Interface for computing derivatives using the galaxy number counts as the
+    signal and covariance
+    """
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        The signal ($C_\ell$s) of galaxy number counts
+        """
+
+        cosmo = classy.Class()
+        final_kwargs = {**self.config, **kwargs}
+        for name, value in args:
+            final_kwargs[name] = value
+        cosmo.set(final_kwargs)
+        cosmo.compute()
+
+        outputs = self._parse_outputs()
+
+        if isinstance(self.config.get("selection_mean" ""), (tuple, list, np.ndarray)):
+            redshifts = self.config["selection_mean"]
+        else:
+            redshifts = [
+                item.strip()
+                for item in self.config.get("selection_mean", "").split(",")
+            ]
+
+        if outputs["galaxy_counts"]:
+            result = cosmo.density_cl()["dd"]
+            elements = {(i, i): result[i][2:] for i in range(len(redshifts))}
+
+            has_xc = int(self.config.get("non_diagonal", 0)) == len(redshifts) - 1
+
+            if has_xc:
+                counter = len(redshifts)
+                for i in range(len(redshifts)):
+                    for j in range(i + 1, len(redshifts)):
+                        elements[(i, j)] = elements[(j, i)] = result[counter][2:]
+                        counter += 1
+
+            return np.concatenate([elements[key] for key in sorted(elements)])
+
+        return NotImplemented
+
+    def covariance(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        The covariance of the $C_\ell$s of galaxy number counts
+        """
+        cosmo = classy.Class()
+        final_kwargs = {**self.config, **kwargs}
+        for name, value in args:
+            final_kwargs[name] = value
+        cosmo.set(final_kwargs)
+        cosmo.compute()
+
+        outputs = self._parse_outputs()
+
+        if isinstance(self.config.get("selection_mean" ""), (tuple, list, np.ndarray)):
+            redshifts = self.config["selection_mean"]
+        else:
+            redshifts = [
+                item.strip()
+                for item in self.config.get("selection_mean", "").split(",")
+            ]
+
+        z_size = len(redshifts)
+
+        if outputs["galaxy_counts"]:
+            result = cosmo.density_cl()["dd"]
+            elements = {(i, i): result[i][2:] for i in range(z_size)}
+
+            has_xc = int(self.config.get("non_diagonal", 0)) == z_size - 1
+
+            if has_xc:
+                counter = z_size
+                for i in range(z_size):
+                    for j in range(i + 1, z_size):
+                        elements[(i, j)] = elements[(j, i)] = result[counter][2:]
+                        counter += 1
+
+                return np.block(
+                    [
+                        [
+                            np.diag(
+                                elements[(i, p)] * elements[(j, q)]
+                                + elements[(i, q)] * elements[(j, p)]
+                            )
+                            for p, q in product(range(z_size), repeat=2)
+                        ]
+                        for i, j in product(range(z_size), repeat=2)
+                    ]
+                )
+
+            return block_diag(*[np.diag(2 * result[i][2:] ** 2) for i in range(z_size)])
 
         return NotImplemented

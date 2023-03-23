@@ -88,7 +88,13 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         return cls(config=final_config)
 
     def _parse_outputs(self):
-        outputs = {item.strip() for item in self.config.get("output", "").split(",")}
+        raw_output = self.config.get("output", "")
+
+        if isinstance(raw_output, (tuple, list, np.ndarray)):
+            outputs = raw_output
+        else:
+            outputs = {item.strip() for item in raw_output.split(",")}
+
         return {
             "temperature": "tCl" in outputs,
             "polarization": "pCl" in outputs,
@@ -190,7 +196,8 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             compute the derivative
 
         **kwargs
-            any other parameters which will be passed to `classy.Class`
+            keyword arguments for the covariance. Can be `fsky` (the sky
+            fraction)
 
         Returns
         -------
@@ -208,7 +215,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         """
 
         cosmo = classy.Class()
-        final_kwargs = {**self.config, **kwargs}
+        final_kwargs = {**self.config}
         for name, value in args:
             final_kwargs[name] = value
         cosmo.set(final_kwargs)
@@ -237,20 +244,27 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             )
 
             if np.any(c_bb):
-                return self._prefactor_covariance(4) * block_diag(
+                result = self._prefactor_covariance(4) * block_diag(
                     result,
                     np.diag(c_bb**2),
                 )
-            return self._prefactor_covariance(3) * result
+            else:
+                result = self._prefactor_covariance(3) * result
 
-        if outputs["temperature"]:
-            return self._prefactor_covariance(1) * np.diag(c_tt**2)
+        elif outputs["temperature"]:
+            result = self._prefactor_covariance(1) * np.diag(c_tt**2)
 
-        if outputs["polarization"]:
+        elif outputs["polarization"]:
             if np.any(c_bb):
-                return self._prefactor_covariance(2) * block_diag(
+                result = self._prefactor_covariance(2) * block_diag(
                     np.diag(c_ee**2), np.diag(c_bb**2)
                 )
-            return self._prefactor_covariance(1) * np.diag(c_ee**2)
+            else:
+                result = self._prefactor_covariance(1) * np.diag(c_ee**2)
 
-        return NotImplemented
+        else:
+            return NotImplemented
+
+        fsky = float(kwargs.pop("fsky", 1))
+
+        return result / fsky

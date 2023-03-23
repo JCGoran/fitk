@@ -21,25 +21,28 @@ from fitk.utilities import find_diff_weights
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
 
-def test_outputs():
-    cosmo_all = ClassyCMBDerivative(config={"output": "tCl,pCl"})
-    validate_signal_and_covariance(cosmo_all)
+class TestClassy:
+    def test_outputs(self):
+        cosmo_all = ClassyCMBDerivative(config={"output": "tCl,pCl"})
+        validate_signal_and_covariance(cosmo_all)
 
-    cosmo_t = ClassyCMBDerivative(config={"output": "tCl"})
-    validate_signal_and_covariance(cosmo_t)
+        cosmo_t = ClassyCMBDerivative(config={"output": "tCl"})
+        validate_signal_and_covariance(cosmo_t)
 
-    cosmo_p = ClassyCMBDerivative(config={"output": "pCl"})
-    validate_signal_and_covariance(cosmo_p)
+        cosmo_p = ClassyCMBDerivative(config={"output": "pCl"})
+        validate_signal_and_covariance(cosmo_p)
 
+    def test_another(self):
+        lmax = 999
+        cosmo_lmax = ClassyCMBDerivative(
+            config={"output": "tCl", "l_max_scalars": lmax}
+        )
 
-def test_another():
-    lmax = 999
-    cosmo_lmax = ClassyCMBDerivative(config={"output": "tCl", "l_max_scalars": lmax})
+        assert cosmo_lmax.signal().shape == (lmax - 1,)
 
-    assert cosmo_lmax.signal().shape == (lmax - 1,)
-
-
-def test_from_file():
-    cosmo = ClassyCMBDerivative.from_file(DATADIR_INPUT / "classy_parameter_file.ini")
-    cosmo.signal()
-    cosmo.covariance()
+    def test_from_file(self):
+        cosmo = ClassyCMBDerivative.from_file(
+            DATADIR_INPUT / "classy_parameter_file.ini"
+        )
+        cosmo.signal()
+        cosmo.covariance()

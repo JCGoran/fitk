@@ -30,7 +30,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
     r"""
     Base interface for CLASS
     """
-    name = "classy"
+    software_names = "classy"
     urls = dict(github="https://github.com/lesgourg/class_public")
     version = "1.0.0"
     authors = [
@@ -57,7 +57,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         """
         if not self.__imported__:
             raise ImportError(
-                f"Unable to import the `{self.name}` module, "
+                f"Unable to import the `{self.software_names}` module, "
                 "please make sure it is installed; "
                 f"for additional help, please consult one of the following URL(s): {self.urls}"
             )

@@ -65,8 +65,11 @@ class CoffeBaseDerivative(ABC, FisherDerivative):
     r"""
     Base class for all COFFE interfaces
     """
-    name = "coffe"
-    urls = dict(github="https://github.com/JCGoran/coffe")
+    software_names = "coffe"
+    urls = dict(
+        github="https://github.com/JCGoran/coffe",
+        pypi="https://pypi.org/project/coffe/",
+    )
     version = "1.0.0"
     authors = [
         dict(
@@ -93,7 +96,7 @@ class CoffeBaseDerivative(ABC, FisherDerivative):
         """
         if not self.__imported__:
             raise ImportError(
-                f"Unable to import the `{self.name}` module, "
+                f"Unable to import the `{self.software_names}` module, "
                 "please make sure it is installed; "
                 f"for additional help, please consult one of the following URL(s): {self.urls}"
             )

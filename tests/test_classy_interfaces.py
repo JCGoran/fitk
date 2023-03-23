@@ -46,3 +46,28 @@ class TestClassy:
         )
         cosmo.signal()
         cosmo.covariance()
+
+    def test_parse_outputs1(self):
+        cosmo = ClassyCMBDerivative(config={"output": ["tCl", "pCl"]})
+        result = cosmo._parse_outputs()
+        assert result == {"temperature": True, "polarization": True}
+
+    def test_parse_outputs2(self):
+        cosmo = ClassyCMBDerivative(config={"output": "tCl,pCl"})
+        result = cosmo._parse_outputs()
+        assert result == {"temperature": True, "polarization": True}
+
+    def test_parse_outputs3(self):
+        cosmo = ClassyCMBDerivative(config={"output": "tCl"})
+        result = cosmo._parse_outputs()
+        assert result == {"temperature": True, "polarization": False}
+
+    def test_parse_outputs4(self):
+        cosmo = ClassyCMBDerivative(config={"output": "pCl"})
+        result = cosmo._parse_outputs()
+        assert result == {"temperature": False, "polarization": True}
+
+    def test_parse_outputs5(self):
+        cosmo = ClassyCMBDerivative(config={"output": ["pCl"]})
+        result = cosmo._parse_outputs()
+        assert result == {"temperature": False, "polarization": True}

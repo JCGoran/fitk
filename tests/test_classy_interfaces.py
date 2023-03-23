@@ -11,6 +11,7 @@ from typing import Any
 
 import numpy as np
 import pytest
+from helpers import validate_signal_and_covariance
 from scipy.linalg import block_diag
 
 from fitk import D, FisherDerivative, FisherMatrix
@@ -20,22 +21,15 @@ from fitk.utilities import find_diff_weights
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
 
-def helper(cosmo: FisherDerivative):
-    signal = cosmo.signal()
-    cov = cosmo.covariance()
-    assert np.allclose(cov.T, cov)
-    return np.linalg.inv(cov) @ signal
-
-
 def test_outputs():
     cosmo_all = ClassyCMBDerivative(config={"output": "tCl,pCl"})
-    helper(cosmo_all)
+    validate_signal_and_covariance(cosmo_all)
 
     cosmo_t = ClassyCMBDerivative(config={"output": "tCl"})
-    helper(cosmo_t)
+    validate_signal_and_covariance(cosmo_t)
 
     cosmo_p = ClassyCMBDerivative(config={"output": "pCl"})
-    helper(cosmo_p)
+    validate_signal_and_covariance(cosmo_p)
 
 
 def test_another():

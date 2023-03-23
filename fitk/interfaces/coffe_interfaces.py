@@ -11,6 +11,7 @@ from __future__ import annotations
 # standard library imports
 import re
 import warnings
+from abc import ABC
 from dataclasses import dataclass
 from typing import Optional, Sequence
 
@@ -42,6 +43,8 @@ def _parse_and_set_args(
         "galaxy_bias2",
         "magnification_bias1",
         "magnification_bias2",
+        "evolution_bias1",
+        "evolution_bias2",
     )
 
     bias = {}
@@ -62,31 +65,8 @@ def _parse_and_set_args(
     return result
 
 
-class CoffeMultipolesDerivative(FisherDerivative):
-    r"""
-    Class for computing the derivatives of the multipoles of the 2PCF w.r.t. cosmological parameters.
-
-    Examples
-    --------
-    Import the necessary modules:
-    >>> from fitk import D
-
-    Set some cosmology:
-    >>> cosmo = CoffeMultipolesDerivative(
-    ... config=dict(omega_m=0.32, sep=[10, 20, 30], l=[0], pixelsize=[5],
-    ... number_density1=[1e-3], number_density2=[1e-3], fsky=[0.3]))
-
-    Compute the first derivative of the signal (multipoles of 2PCF), using a
-    fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
-    $0.67$ and an absolute step size $10^{-3}$:
-    >>> cosmo.derivative('signal', D(P('h', 0.67), 1e-3))
-
-    Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
-    parameters:
-    >>> fm = cosmo.fisher_matrix(
-    ... D(P(name='omega_m', fiducial=0.32), abs_step=1e-3),
-    ... D(P(name='n_s', fiducial=0.96), abs_step=1e-3))
-    """
+class CoffeBaseDerivative(ABC, FisherDerivative):
+    r"""Base class for all COFFE interfaces."""
 
     software_names = "coffe"
     urls = dict(
@@ -131,6 +111,33 @@ class CoffeMultipolesDerivative(FisherDerivative):
     def config(self):
         """Return the current COFFE configuration as a dictionary."""
         return self._config
+
+
+class CoffeMultipolesDerivative(CoffeBaseDerivative):
+    r"""
+    Class for computing the derivatives of the multipoles of the 2PCF w.r.t. cosmological parameters.
+
+    Examples
+    --------
+    Import the necessary modules:
+    >>> from fitk import D
+
+    Set some cosmology:
+    >>> cosmo = CoffeMultipolesDerivative(
+    ... config=dict(omega_m=0.32, sep=[10, 20, 30], l=[0], pixelsize=[5],
+    ... number_density1=[1e-3], number_density2=[1e-3], fsky=[0.3]))
+
+    Compute the first derivative of the signal (multipoles of 2PCF), using a
+    fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
+    $0.67$ and an absolute step size $10^{-3}$:
+    >>> cosmo.derivative('signal', D(P('h', 0.67), 1e-3))
+
+    Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
+    parameters:
+    >>> fm = cosmo.fisher_matrix(
+    ... D(P(name='omega_m', fiducial=0.32), abs_step=1e-3),
+    ... D(P(name='n_s', fiducial=0.96), abs_step=1e-3))
+    """
 
     def signal(
         self,
@@ -198,6 +205,98 @@ class CoffeMultipolesDerivative(FisherDerivative):
             setattr(cosmo, arg, value)
 
         covariance = cosmo.compute_covariance_bulk()
+
+        result = block_diag(
+            *[
+                np.reshape(
+                    [
+                        _.value
+                        for _ in covariance[
+                            i : i + len(cosmo.sep) ** 2 * len(cosmo.l) ** 2
+                        ]
+                    ],
+                    (len(cosmo.sep) * len(cosmo.l), len(cosmo.sep) * len(cosmo.l)),
+                )
+                for i in range(
+                    0,
+                    len(covariance),
+                    len(cosmo.sep) ** 2 * len(cosmo.l) ** 2,
+                )
+            ]
+        )
+
+        return result
+
+
+class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
+    r"""Class for computing the derivatives of the redshift-averaged multipoles of the 2PCF w.r.t. cosmological parameters."""
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        Compute the redshift-averaged multipoles of the 2PCF for some cosmology.
+
+        Returns
+        -------
+        array_like : float
+            the signal as a numpy array
+
+        Notes
+        -----
+        The coordinates used are $(r, \ell, z_\mathrm{min}, z_\mathrm{max})$,
+        in that increasing order. The size of the output is $\text{size}(r)
+        \times \text{size}(\ell) \times \text{size}(z_\mathrm{min})$.
+
+        For more details on the exact theoetical modelling used, see <a
+        href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
+        noreferrer">arXiv:1806.11090</a>, section 2.
+        """
+        cosmo = _parse_and_set_args(**self.config)
+        for arg, value in args:
+            setattr(cosmo, arg, value)
+
+        return np.array(
+            [_.value for _ in cosmo.compute_average_multipoles_bulk()],
+        )
+
+    def covariance(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        Compute the covariance of the redshift-averaged multipoles of the 2PCF for some cosmology.
+
+        Returns
+        -------
+        array_like : float
+            the covariance matrix as a numpy array
+
+        Notes
+        -----
+        The covariance does not take into account cross-correlations between
+        the different redshifts, i.e. for $n$ redshift bins it has the form:
+        $$
+            \begin{pmatrix}
+            \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
+            0 & \mathsf{C}(\bar{z}_2) & \ldots & 0\\\
+            \vdots & \vdots & \ddots & \vdots\\\
+            0 & 0 & \ldots & \mathsf{C}(\bar{z}_n)
+            \end{pmatrix}
+        $$
+
+        For more details on the exact theoetical modelling used, see <a
+        href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
+        noreferrer">arXiv:1806.11090</a>, section 2.
+        """
+        cosmo = _parse_and_set_args(**self.config)
+        for arg, value in args:
+            setattr(cosmo, arg, value)
+
+        covariance = cosmo.compute_average_covariance_bulk()
 
         result = block_diag(
             *[
@@ -378,8 +477,7 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     _allowed_biases = [
         _BiasParameter(longname="galaxy", shortname="b"),
         _BiasParameter(longname="magnification", shortname="s"),
-        # TODO implement evolution bias
-        # _BiasParameter(longname="evolution", shortname="e"),
+        _BiasParameter(longname="evolution", shortname="e"),
     ]
 
     def validate_parameter(self, arg) -> bool:

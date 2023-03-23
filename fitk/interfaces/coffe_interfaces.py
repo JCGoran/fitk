@@ -88,9 +88,12 @@ class CoffeMultipolesDerivative(FisherDerivative):
     ... D(P(name='n_s', fiducial=0.96), abs_step=1e-3))
     """
 
-    name = "coffe"
-    urls = dict(github="https://github.com/JCGoran/coffe")
-    version = "3.0.0"
+    software_names = "coffe"
+    urls = dict(
+        github="https://github.com/JCGoran/coffe",
+        pypi="https://pypi.org/project/coffe/",
+    )
+    version = "1.0.0"
     authors = [
         dict(
             name="Goran Jelic-Cizmek",
@@ -116,7 +119,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
         """
         if not self.__imported__:
             raise ImportError(
-                f"Unable to import the `{self.name}` module, "
+                f"Unable to import the `{self.software_names}` module, "
                 "please make sure it is installed; "
                 f"for additional help, please consult one of the following URL(s): {self.urls}"
             )

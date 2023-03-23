@@ -35,7 +35,7 @@ jobs:
           command: |
             # we don't need any other dependencies
             python3 -m pip install matplotlib scipy numpy sympy pytest pytest-mpl git+https://github.com/jcgoran/cosmicfish@feature/pip-install
-            python3 -m pytest -k 'not test_interfaces'
+            python3 -m pytest -k 'not interfaces and not __init__.py'
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows

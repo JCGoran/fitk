@@ -8,6 +8,7 @@ from __future__ import annotations
 # standard library imports
 from abc import ABC
 from configparser import ConfigParser
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional, Union
 
@@ -64,6 +65,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
 
         self.config = config if config is not None else {}
         super().__init__(*args, **kwargs)
+        self._run_classy = lru_cache(maxsize=None)(self._run_classy)  # type: ignore
 
     @classmethod
     def from_file(cls, path: Union[str, Path]):
@@ -100,6 +102,25 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
             "polarization": "pCl" in outputs,
         }
 
+    def _run_classy(self, *args):  # pylint: disable=method-hidden
+        r"""
+        Runs classy and returns the instance of it after computation
+
+        Notes
+        -----
+        The method is cached using <a
+        href="https://docs.python.org/3/library/functools.html#functools.lru_cache"
+        target="_blank" rel="noreferrer noopener">`functools.lru_cache`</a>
+        """
+        cosmo = classy.Class()  # pylint: disable=c-extension-no-member
+        final_kwargs = {**self.config}
+        for name, value in args:
+            final_kwargs[name] = value
+        cosmo.set(final_kwargs)
+        cosmo.compute()
+
+        return cosmo
+
 
 class ClassyCMBDerivative(ClassyBaseDerivative):
     """
@@ -121,9 +142,6 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             the name(s) and value(s) of the parameter(s) for which we want to
             compute the derivative
 
-        **kwargs
-            any other parameters which will be passed to `classy.Class`
-
         Returns
         -------
         array_like : float
@@ -140,13 +158,14 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
         Note that $\ell = \\{0, 1\\}$ are not part of the output, i.e. we impose
         $\ell_\mathrm{min} = 2$.
+
+        The output is ordered as follows:
+
+        $$
+            \mathbf{S} = \\{C_\ell^{TT}, C_\ell^{EE}, C_\ell^{TE}, C_\ell^{BB} \\}
+        $$
         """
-        cosmo = classy.Class()
-        final_kwargs = {**self.config, **kwargs}
-        for name, value in args:
-            final_kwargs[name] = value
-        cosmo.set(final_kwargs)
-        cosmo.compute()
+        cosmo = self._run_classy(*args)
 
         outputs = self._parse_outputs()
 
@@ -167,7 +186,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
     def _prefactor_covariance(self, size: int):
         l_max = int(self.config.get("l_max_scalars", 2500))
-        return block_diag([2 / (2 * l + 1) for l in range(2, l_max + 1)] * size)
+        return block_diag([2 / (2 * ell + 1) for ell in range(2, l_max + 1)] * size)
 
     def covariance(
         self,
@@ -214,12 +233,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         noopener">arXiv:0911.3105</a>, eq. (27).
         """
 
-        cosmo = classy.Class()
-        final_kwargs = {**self.config}
-        for name, value in args:
-            final_kwargs[name] = value
-        cosmo.set(final_kwargs)
-        cosmo.compute()
+        cosmo = self._run_classy(*args)
 
         outputs = self._parse_outputs()
 

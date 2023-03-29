@@ -9,11 +9,41 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Collection, Sequence
+from dataclasses import dataclass
 from math import factorial
 from typing import Optional, Union
 
 # third party imports
 import numpy as np
+
+
+@dataclass
+class P:
+    r"""
+    Class for describing a generic parameter
+
+    Parameters
+    ----------
+    name : str
+        the name of the parameter
+
+    fiducial : float, optional
+        the fiducial value of the parameter. If not specified, defaults to 0
+
+    latex_name : str, optional
+        the LaTeX (display) name of the parameter. If not specified, defaults
+        to the same value as `name`
+    """
+
+    name: str
+    fiducial: Optional[float] = None
+    latex_name: Optional[str] = None
+
+    def __post_init__(self):
+        if self.fiducial is None:
+            self.fiducial = 0
+        if self.latex_name is None:
+            self.latex_name = self.name
 
 
 class FisherEncoder(json.JSONEncoder):

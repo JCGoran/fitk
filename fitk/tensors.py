@@ -24,6 +24,7 @@ from fitk.utilities import (
     FisherEncoder,
     MismatchingSizeError,
     MismatchingValuesError,
+    P,
     ParameterNotFoundError,
     get_index_of_other_array,
     is_iterable,
@@ -312,7 +313,6 @@ class FisherMatrix:
 
         self._size = np.shape(self._values)[0]
         self._ndim = np.ndim(self._values)
-
         # setting the fiducials
         if fiducials is None:
             self._fiducials = np.zeros(self._size, dtype=float)
@@ -346,6 +346,18 @@ class FisherMatrix:
                 self._fiducials,
                 self._latex_names,
             )
+
+    @classmethod
+    def from_parameters(cls, values, *args: P):
+        r"""
+        Alternative constructor, which takes as arguments instances of `P`
+        """
+        return cls(
+            values,
+            names=[arg.name for arg in args],
+            fiducials=[arg.fiducial for arg in args],  # type: ignore
+            latex_names=[arg.latex_name for arg in args],  # type: ignore
+        )
 
     @property
     def matrix(self):

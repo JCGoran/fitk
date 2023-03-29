@@ -132,13 +132,13 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
     Compute the first derivative of the signal (multipoles of 2PCF), using a
     fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
     $0.67$ and an absolute step size $10^{-3}$:
-    >>> cosmo.derivative('signal', D('h', 0.67, 1e-3))
+    >>> cosmo.derivative('signal', D(P('h', 0.67), 1e-3))
 
     Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
     parameters:
     >>> fm = cosmo.fisher_matrix(
-    ... D(name='omega_m', fiducial=0.32, abs_step=1e-3),
-    ... D(name='n_s', fiducial=0.96, abs_step=1e-3))
+    ... D(P(name='omega_m', fiducial=0.32), abs_step=1e-3),
+    ... D(P(name='n_s', fiducial=0.96), abs_step=1e-3))
     """
 
     def signal(

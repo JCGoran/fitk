@@ -61,6 +61,17 @@ There are several options you can use:
 ... latex_names=['$x$', '$y$', '$z$']
 ... )
 
+There is also the option of specifying the names as instances of
+`fitk.utilities.P` using the `fitk.tensors.FisherMatrix.from_parameters`
+constructor:
+>>> # same as above
+>>> my_matrix = FisherMatrix.from_parameters(
+... np.diag([1, 2, 3]),
+... P('a', -1, '$x$'),
+... P('b', 0, '$y$'),
+... P('c', 1, '$z$')
+... )
+
 ## ...sort a matrix according to some criterion?
 
 Use the `fitk.tensors.FisherMatrix.sort` method, which returns a new Fisher

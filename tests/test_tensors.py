@@ -783,3 +783,21 @@ class TestFisherMatrix:
     def test_eigenvectors(self):
         fm = FisherMatrix(np.diag([1, 2, 3]))
         assert np.allclose(fm.eigenvectors(), np.linalg.eigh(fm.values)[-1])
+
+    def test_from_parameters(self):
+        fm = FisherMatrix.from_parameters(
+            np.diag([1, 2, 3]),
+            P("a"),
+            P("b", latex_name=r"$\mathrm{B}$", fiducial=-3),
+            P("c", fiducial=1),
+        )
+
+        assert all(fm.names == ["a", "b", "c"])
+        assert np.allclose(fm.fiducials, [0, -3, 1])
+        assert all(fm.latex_names == ["a", r"$\mathrm{B}$", "c"])
+
+        with pytest.raises(MismatchingSizeError):
+            fm = FisherMatrix.from_parameters(
+                np.diag([1, 2]),
+                P("a"),
+            )

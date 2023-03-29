@@ -347,6 +347,18 @@ class FisherMatrix:
                 self._latex_names,
             )
 
+    @classmethod
+    def from_parameters(cls, values, *args: P):
+        r"""
+        Alternative constructor, which takes as arguments instances of `P`
+        """
+        return cls(
+            values,
+            names=[arg.name for arg in args],
+            fiducials=[arg.fiducial for arg in args],  # type: ignore
+            latex_names=[arg.latex_name for arg in args],  # type: ignore
+        )
+
     @property
     def matrix(self):
         """

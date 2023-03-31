@@ -19,7 +19,13 @@ import numpy as np
 
 # first party imports
 from fitk.tensors import FisherMatrix
-from fitk.utilities import P, ValidationError, find_diff_weights, is_iterable
+from fitk.utilities import (
+    P,
+    ValidationError,
+    fast_positive_definite_inverse,
+    find_diff_weights,
+    is_iterable,
+)
 
 
 def _zero_out(array, threshold: float):
@@ -570,6 +576,9 @@ class FisherDerivative:
         ValueError
             if the argument `external_covariance` is not a square matrix
 
+        LinAlgError
+            if the covariance matrix is singular
+
         Notes
         -----
         The `order` parameter is ignored if passed to `D`.
@@ -636,7 +645,7 @@ class FisherDerivative:
                 *zip(names, fiducials), **kwargs_covariance
             )
 
-        inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+        inverse_covariance_matrix = fast_positive_definite_inverse(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
 

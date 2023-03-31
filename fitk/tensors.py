@@ -29,6 +29,7 @@ from fitk.utilities import (
     MismatchingValuesError,
     P,
     ParameterNotFoundError,
+    fast_positive_definite_inverse,
     get_index_of_other_array,
     is_iterable,
     is_positive_semidefinite,
@@ -1413,6 +1414,11 @@ class FisherMatrix:
         array_like : float
             the covariance matrix as a numpy array
 
+        Raises
+        ------
+        LinAlgError
+            if the Fisher matrix is singular
+
         Examples
         --------
         >>> fm = FisherMatrix(np.diag([1, 2, 5]))
@@ -1421,7 +1427,7 @@ class FisherMatrix:
                [0. , 0.5, 0. ],
                [0. , 0. , 0.2]])
         """
-        return np.linalg.inv(self.values)
+        return fast_positive_definite_inverse(self.values)
 
     def determinant(self):
         """

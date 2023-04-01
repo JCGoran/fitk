@@ -20,6 +20,7 @@ matplotlib = [
     {version = "^3.5", python = "<3.11"},
     {version = "^3.6", python = ">=3.11"}
 ]
+sympy = {version = "*"}
 
 [tool.poetry.dev-dependencies]
 black = "*"

@@ -146,11 +146,12 @@ def _jacobian(
     old_params_list = list(old_params)
     new_params_list = list(new_params)
 
-    # edge case: there are more new parameters than there are old ones
-    if len(new_params_list) > len(old_params_list):
+    # edge case: there is a different number of new parameters than there are
+    # old ones
+    if len(new_params_list) != len(old_params_list):
         raise ValueError(
-            f"Cannot have more new parameters (size={len(new_params_list)}) "
-            f"than old ones (size={len(old_params_list)})"
+            f"The number of new parameters (size={len(new_params_list)}) "
+            f"differs from the number of old ones (size={len(old_params_list)})"
         )
 
     # we fill the transformation with identity maps for implicitly transformed
@@ -1794,7 +1795,7 @@ class FisherMatrix:
             if any of the old parameters is on both sides of the mapping
 
         ValueError
-            if the number of new parameters is larger than the number of old
+            if the number of new parameters is different from the number of old
             parameters
 
         Warns

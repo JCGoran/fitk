@@ -730,6 +730,14 @@ class TestFisherMatrix:
 
         assert np.allclose(fm_new.fiducial("x"), 0.445677)
 
+        # same thing, but with `initial_guess` set
+        fm_new = fm.reparametrize_symbolic(
+            {"omega_m": "x * exp(x) * sin(x)"},
+            initial_guess={"x": 0.4},
+        )
+
+        assert np.allclose(fm_new.fiducial("x"), 0.445677)
+
     def test_reparametrize_symbolic_invalid(self):
         """
         Check that we properly handle non-existing and complex solutions

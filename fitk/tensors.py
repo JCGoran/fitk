@@ -43,6 +43,7 @@ def _solve_eqns(
     new_params: Collection[sympy.Symbol],
     transformation: dict[str, str],
     solution_index: Optional[int] = None,
+    initial_guess: Optional[dict[str, float]] = None,
 ):
     r"""
     Solves the equations to obtain the new values of the fiducials, and returns
@@ -84,11 +85,15 @@ def _solve_eqns(
             if _ in {symbol for __ in equations for symbol in __.free_symbols}
         ]
 
-        # TODO find a more clever initial guess
+        if initial_guess is not None:
+            x0 = [initial_guess[key.name] for key in equation_parameters]
+        else:
+            x0 = [1] * len(equation_parameters)
+
         solutions = sympy.nsolve(
             equations,
             equation_parameters,
-            [1] * len(equation_parameters),
+            x0,
             dict=True,
         )
 
@@ -1751,11 +1756,15 @@ class FisherMatrix:
             the old names
 
         **kwargs
-            any keyword arguments passed to the solver for obtaining the new
-            fiducials. Available arguments:
-            - `solution_index`: in case of multiple solutions, one can select
+            any optional keyword arguments passed to the solver for obtaining
+            the new fiducials. Available arguments:
+            - `solution_index`, int: in case of multiple solutions, one can select
               the index of the solution (default: None, meaning the first
               element is selected)
+            - `initial_guess`, dict: in case of using the numerical solver,
+              this should be a dictionary of the initial guesses for the new
+              fiducials (default: None, and the initial guess is set to all
+              ones)
 
         Returns
         -------

@@ -48,6 +48,32 @@ def _solve_eqns(
     r"""
     Solves the equations to obtain the new values of the fiducials, and returns
     one of them
+
+    Parameters
+    ----------
+    params : dict
+        the names of the parameters as keys, and the fiducials as corresponding
+        values
+
+    new_params : array_like of symbols
+        the new parameters as sympy symbols
+
+    transformation : dict
+        the transformation from old parameters to new ones as a dictionary
+
+    solution_index : int, optional
+        in case we want to specify which (of the potentially multiple) new
+        fiducials we want
+
+    initial_guess : dict, optional
+        the mapping of the new names and the initial guess used to obtain it.
+        Only used if `sympy.solve` fails to find a solution
+
+    Returns
+    -------
+    solution : dict
+        the solution for the new fiducials, with names of the parameters as
+        keys, and corresponding fiducials as values
     """
     # we need to obtain the new fiducial from the old one; since the
     # equations are not necessarily solvable analytically, we we first
@@ -120,16 +146,35 @@ def _jacobian(
     r"""
     Returns the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the
     transformation as a matrix
+
+    Parameters
+    ----------
+    params : dict
+        the names of the parameters as keys, and the fiducials as corresponding
+        values
+    transformation : dict
+        the transformation from old parameters to new ones as a dictionary
+
+    **kwargs
+        any other kwargs passed to `_solve_eqns`
+
+    Returns
+    -------
+    result : 3-tuple
+        the new names, new fiducials, and the Jacobian of the transformation
     """
     # remove any identity maps, since we insert those later anyway
     transformation = {
         key: value for key, value in transformation.items() if key != value
     }
 
+    # all of the old names as SymPy symbols
     old_params = set(sympy.symbols(list(params)))
 
+    # the old names, which we explicitly want to remove
     removed_params = set(sympy.symbols(list(transformation)))
 
+    # the new names, derived from the values of the map
     new_params = {
         symbol
         for value in transformation.values()
@@ -182,6 +227,8 @@ def _jacobian(
         dtype=float,
     )
 
+    # get the new fiducials from the solution, or, in case some of the old
+    # parameters remain, get the values from those instead
     new_fiducials = [
         solution[key] if key in solution else params[key.name]
         for key in new_params_list
@@ -1841,16 +1888,20 @@ class FisherMatrix:
             except sympy.SympifyError as err:
                 raise sympy.SympifyError(err) from err
 
+        # get the new names, fiducials, and the Jacobian
         names_new, fiducials_new, jacobian = _jacobian(
             dict(zip(self.names, self.fiducials)),
             jacobian,
             **kwargs,
         )
 
+        # set the new LaTeX names from the old ones (if they're still present),
+        # otherwise use the new names
         latex_names_new = [
             self.latex_name(key) if key in self.names else key for key in names_new
         ]
 
+        # in case any of the new names are specified, set them
         if latex_names is not None:
             latex_names_new = [
                 latex_names[key] if key in latex_names else key

@@ -11,6 +11,7 @@ from pathlib import Path
 # third-party imports
 import numpy as np
 import pytest
+import sympy
 from cosmicfish_pylib.fisher_derived import fisher_derived as CFFisherDerived
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
 from cosmicfish_pylib.fisher_operations import (
@@ -682,6 +683,7 @@ class TestFisherMatrix:
             {
                 "omega_b": "Omega_b * c**2",
                 "omega_a": "Omega_a * c**2",
+                "c": "c",
             },
             latex_names={"Omega_b": r"$\Omega_b$"},
         ).sort(key=benchmark.names)
@@ -727,6 +729,26 @@ class TestFisherMatrix:
         fm_new = fm.reparametrize_symbolic({"omega_m": "x * exp(x) * sin(x)"})
 
         assert np.allclose(fm_new.fiducial("x"), 0.445677)
+
+    def test_reparametrize_symbolic_invalid(self):
+        """
+        Check that we properly handle non-existing and complex solutions
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2, 3]),
+            names=["omega_m", "b", "c"],
+            fiducials=[0.3, 1.2, 0.1],
+        )
+
+        # no solution
+        with pytest.raises(ValueError):
+            fm.reparametrize_symbolic({"omega_m": "-sqrt(x)"})
+
+        # complex solution
+        # NOTE this raises a `UserWarning`, but later raises an exception, so
+        # we're good
+        with pytest.raises(TypeError), pytest.warns(UserWarning):
+            fm.reparametrize_symbolic({"omega_m": "-x**2"})
 
     def test_reparametrize_symbolic_multiple_solutions(self):
         """

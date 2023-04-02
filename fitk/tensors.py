@@ -1750,6 +1750,50 @@ class FisherMatrix:
             names of new parameters as values (default: None). If None, uses
             the old names
 
+        **kwargs
+            any keyword arguments passed to the solver for obtaining the new
+            fiducials. Available arguments:
+            - `solution_index`: in case of multiple solutions, one can select
+              the index of the solution (default: None, meaning the first
+              element is selected)
+
+        Returns
+        -------
+        FisherMatrix
+            The new Fisher object with the specified names, LaTeX names, and
+            fiducials.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if any of the keys in the mapping is not in the names of the Fisher
+            matrix
+
+        SympifyError
+            if any of the expressions in the values cannot be transformed using
+            <a
+            href="https://docs.sympy.org/latest/modules/core.html#module-sympy.core.sympify"
+            target="_blank" rel="noopener noreferrer">`sympy.sympify`</a>
+
+        ValueError
+            if SymPy is is unable to find a solution for the new fiducials
+
+        TypeError
+            if SymPy is unable to find a real solution for the new fiducials
+
+        ValueError
+            if any of the old parameters is on both sides of the mapping
+
+        ValueError
+            if the number of new parameters is larger than the number of old
+            parameters
+
+        Warns
+        -----
+        UserWarning
+            if the SymPy solver returns multiple solutions for the values of
+            the new fiducials
+
         See also
         --------
         `reparametrize` : the numerical version of this method

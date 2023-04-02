@@ -692,6 +692,73 @@ class TestFisherMatrix:
 
         assert result == benchmark
 
+    def test_reparametrize_symbolic_exceptions(self):
+        """
+        Test that various exceptions are raised in invalid scenarios
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2, 3, 10]),
+            names=["omega_a", "omega_b", "c", "q"],
+            fiducials=[0.21, 0.035, 0.7, 2],
+        )
+
+        with pytest.raises(ParameterNotFoundError):
+            fm.reparametrize_symbolic({"Omega_a": "asdf"})
+
+        with pytest.raises(sympy.SympifyError):
+            fm.reparametrize_symbolic({"omega_a": "3x /// z"})
+
+        with pytest.raises(ValueError):
+            fm.reparametrize_symbolic({"omega_a": "q * e", "c": "omega_a * b"})
+
+        with pytest.raises(ValueError):
+            fm.reparametrize_symbolic({"omega_b": "a * b"})
+
+    def test_reparametrize_symbolic_nsolve(self):
+        """
+        Check that `sympy.nsolve` works when finding the new fiducials
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2, 3]),
+            names=["omega_m", "b", "c"],
+            fiducials=[0.3, 1.2, 0.1],
+        )
+
+        fm_new = fm.reparametrize_symbolic({"omega_m": "x * exp(x) * sin(x)"})
+
+        assert np.allclose(fm_new.fiducial("x"), 0.445677)
+
+    def test_reparametrize_symbolic_multiple_solutions(self):
+        """
+        Check that `solution_index` keyword argument works
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2, 3]),
+            names=["omega_m", "b", "c"],
+            fiducials=[0.3, 1.2, 0.1],
+        )
+
+        with pytest.warns(UserWarning):
+            fm_new = fm.reparametrize_symbolic({"omega_m": "x**2"})
+
+        # should not raise a warning if we specify an index
+        fm_new = fm.reparametrize_symbolic({"omega_m": "x**2"}, solution_index=-1)
+
+    def test_reparametrize_symbolic_identity(self):
+        """
+        Check that calling `reparametrize_symbolic` with the parameters being
+        just renamed outputs the same result as calling `rename`
+        """
+        fm = FisherMatrix(
+            np.diag([1, 2, 3]),
+            names=["a", "b", "c"],
+            fiducials=[4, 5, 6],
+        )
+
+        mapping = {"a": "x", "b": "y"}
+
+        assert fm.rename(mapping) == fm.reparametrize_symbolic(mapping)
+
     @pytest.mark.xfail(reason="CosmicFish fails for some reason")
     def test_reparametrize_cf(self):
         m2 = FisherMatrix(np.diag([1, 2]))

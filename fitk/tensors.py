@@ -42,8 +42,12 @@ def _solve_eqns(
     params: dict[str, float],
     new_params: Collection[sympy.Symbol],
     transformation: dict[str, str],
-    constraints: Optional[Collection[str]] = None,
+    solution_index: Optional[int] = None,
 ):
+    r"""
+    Solves the equations to obtain the new values of the fiducials, and returns
+    one of them
+    """
     # we need to obtain the new fiducial from the old one; since the
     # equations are not necessarily solvable analytically, we we first
     # plug in the values of the old fiducials
@@ -93,18 +97,14 @@ def _solve_eqns(
             f"Unable to solve system of equations {equations} over the real numbers"
         )
 
-    if isinstance(solutions, list):
-        if len(solutions) > 1:
-            warnings.warn(
-                "Multiple solutions for new fiducials found; using the first one, "
-                "if you want to customize this behavior, pass XYZ"
-            )
+    if len(solutions) > 1 and solution_index is None:
+        warnings.warn(
+            f"Multiple solutions for new fiducials found: {solutions}; "
+            "using the first one available, if you want to customize this behavior, pass "
+            "`solution_index=[INDEX]` to select a particular solution"
+        )
 
-        solution = solutions[0]
-    else:
-        solution = solutions
-
-    return solution
+    return solutions[solution_index if solution_index is not None else 0]
 
 
 def _jacobian(

@@ -1797,6 +1797,27 @@ class FisherMatrix:
         See also
         --------
         `reparametrize` : the numerical version of this method
+
+        Examples
+        --------
+        Create a Fisher matrix:
+        >>> fm = FisherMatrix(
+        ... np.diag([1, 2, 3]),
+        ... names=["omega_m", "omega_b", "h"],
+        ... fiducials=[0.147, 0.025, 0.7],
+        ... )
+
+        Reparametrize it:
+        >>> fm.reparametrize_symbolic(
+        ... {'omega_m' : 'Omega_m * h**2', 'omega_b' : 'Omega_b * h**2'}
+        ... ).sort(key=['Omega_m', 'Omega_b', 'h'])
+        FisherMatrix(
+            array([[0.2401    , 0.        , 0.2058    ],
+               [0.        , 0.4802    , 0.07      ],
+               [0.2058    , 0.07      , 3.18660408]]),
+            names=array(['Omega_m', 'Omega_b', 'h'], dtype=object),
+            latex_names=array(['Omega_m', 'Omega_b', 'h'], dtype=object),
+            fiducials=array([0.3       , 0.05102041, 0.7       ]))
         """
         # check that the keys of the dictionary are present in the names
         for key in jacobian:

@@ -38,9 +38,79 @@ from fitk.utilities import (
 )
 
 
+def _solve_eqns(
+    params: dict[str, float],
+    new_params: Collection[sympy.Symbol],
+    transformation: dict[str, str],
+    constraints: Optional[Collection[str]] = None,
+):
+    # we need to obtain the new fiducial from the old one; since the
+    # equations are not necessarily solvable analytically, we we first
+    # plug in the values of the old fiducials
+    equations = [
+        sympy.Eq(
+            sympy.sympify(value).subs(list(params.items())),
+            params[key],
+        )
+        for key, value in transformation.items()
+    ]
+
+    # remove any trivial equations
+    equations = list(
+        filter(
+            lambda x: not isinstance(x, sympy.logic.boolalg.BooleanTrue),
+            equations,
+        )
+    )
+
+    # TODO handle the case when we have less new parameters than old ones
+
+    # case 1: the solutions are obtainable analytically, and we use
+    # `solve`
+    try:
+        solutions = sympy.solve(equations, new_params, dict=True)
+
+    # case 2: `solve` has failed, so we use numerical methods instead
+    # with `nsolve`
+    except NotImplementedError:
+        # TODO fix this
+        equation_parameters = [
+            _
+            for _ in new_params
+            if _ in {symbol for __ in equations for symbol in __.free_symbols}
+        ]
+
+        # TODO find a more clever initial guess
+        solutions = sympy.nsolve(
+            equations,
+            equation_parameters,
+            [1] * len(equation_parameters),
+            dict=True,
+        )
+
+    if not solutions:
+        raise ValueError(
+            f"Unable to solve system of equations {equations} over the real numbers"
+        )
+
+    if isinstance(solutions, list):
+        if len(solutions) > 1:
+            warnings.warn(
+                "Multiple solutions for new fiducials found; using the first one, "
+                "if you want to customize this behavior, pass XYZ"
+            )
+
+        solution = solutions[0]
+    else:
+        solution = solutions
+
+    return solution
+
+
 def _jacobian(
     params: dict[str, float],
     transformation: dict[str, str],
+    **kwargs,
 ):
     r"""
     Returns the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the
@@ -88,65 +158,7 @@ def _jacobian(
     # messed up
     transformation = {key: transformation[key] for key in params}
 
-    # we need to obtain the new fiducial from the old one; since the
-    # equations are not necessarily solvable analytically, we we first
-    # plug in the values of the old fiducials
-    equations = [
-        sympy.Eq(
-            sympy.sympify(value).subs(
-                [(name.name, params[name.name]) for name in old_params_list]
-            ),
-            params[key],
-        )
-        for key, value in transformation.items()
-    ]
-
-    # remove any trivial equations
-    equations = [
-        _ for _ in equations if not isinstance(_, sympy.logic.boolalg.BooleanTrue)
-    ]
-
-    # TODO handle the case when we have less new parameters than old ones
-
-    # case 1: the solutions are obtainable analytically, and we use
-    # `solve`
-    try:
-        solution = sympy.solve(
-            equations,
-            new_params_list,
-            dict=True,
-        )
-
-    # case 2: `solve` has failed, so we use numerical methods instead
-    # with `nsolve`
-    except NotImplementedError:
-        equation_parameters = [
-            _
-            for _ in new_params_list
-            if _ in {symbol for __ in equations for symbol in __.free_symbols}
-        ]
-
-        # TODO find a more clever initial guess
-        solution = sympy.nsolve(
-            equations,
-            equation_parameters,
-            [1] * len(equation_parameters),
-            dict=True,
-        )
-
-    if not solution:
-        raise ValueError(
-            f"Unable to solve system of equations {equations} over the real numbers"
-        )
-
-    if isinstance(solution, list):
-        if len(solution) > 1:
-            warnings.warn(
-                "Multiple solutions for new fiducials found; using the first one, "
-                "if you want to customize this behavior, pass XYZ"
-            )
-
-        solution = solution[0]
+    solution = _solve_eqns(params, new_params_list, transformation, **kwargs)
 
     # getting the symbolic Jacobian
     jacobian_symbolic = sympy.Matrix(
@@ -1725,6 +1737,7 @@ class FisherMatrix:
         self,
         jacobian: dict[str, str],
         latex_names: Optional[dict[str, str]] = None,
+        **kwargs,
     ) -> FisherMatrix:
         r"""
         Parameters
@@ -1756,6 +1769,7 @@ class FisherMatrix:
         names_new, fiducials_new, jacobian = _jacobian(
             dict(zip(self.names, self.fiducials)),
             jacobian,
+            **kwargs,
         )
 
         latex_names_new = [

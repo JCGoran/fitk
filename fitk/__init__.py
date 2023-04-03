@@ -152,6 +152,17 @@ Note that the Jacobian does *not* need to be a square matrix, so the new names,
 fiducials, and LaTeX names should have the same dimensions as the output
 matrix.
 
+Alternatively, in case your reparametrization is bijective (i.e. 1-to-1), you
+can use `fitk.tensors.FisherMatrix.reparametrize_symbolic` to perform the
+reparametrization symbolically:
+>>> my_matrix.reparametrize_symbolic({
+... 'old_param1' : 'new_param1 * new_param2**2',
+... 'old_param_i' : 'new_param1 * exp(new_param2) * sin(new_param3)'
+... })
+
+The values of the dictionary can be any expression, as long as the
+reparametrization is invertible.
+
 ## ...verify that the Fisher matrix is valid?
 
 Use the `fitk.tensors.FisherMatrix.is_valid` method, which returns a boolean

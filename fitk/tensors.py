@@ -9,6 +9,7 @@ from __future__ import annotations
 # standard library imports
 import copy
 import json
+import warnings
 from collections.abc import Collection, Mapping
 from itertools import permutations, product
 from numbers import Number
@@ -17,6 +18,7 @@ from typing import Any, Optional, Union
 
 # third party imports
 import numpy as np
+import sympy
 from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 # first party imports
@@ -34,6 +36,207 @@ from fitk.utilities import (
     make_default_names,
     reindex_array,
 )
+
+
+def _solve_eqns(
+    params: dict[str, float],
+    new_params: Collection[sympy.Symbol],
+    transformation: dict[str, str],
+    solution_index: Optional[int] = None,
+    initial_guess: Optional[dict[str, float]] = None,
+):
+    r"""
+    Solves the equations to obtain the new values of the fiducials, and returns
+    one of them
+
+    Parameters
+    ----------
+    params : dict
+        the names of the parameters as keys, and the fiducials as corresponding
+        values
+
+    new_params : array_like of symbols
+        the new parameters as sympy symbols
+
+    transformation : dict
+        the transformation from old parameters to new ones as a dictionary
+
+    solution_index : int, optional
+        in case we want to specify which (of the potentially multiple) new
+        fiducials we want
+
+    initial_guess : dict, optional
+        the mapping of the new names and the initial guess used to obtain it.
+        Only used if `sympy.solve` fails to find a solution
+
+    Returns
+    -------
+    solution : dict
+        the solution for the new fiducials, with names of the parameters as
+        keys, and corresponding fiducials as values
+    """
+    # we need to obtain the new fiducial from the old one; since the
+    # equations are not necessarily solvable analytically, we we first
+    # plug in the values of the old fiducials
+    equations = [
+        sympy.Eq(
+            sympy.sympify(value).subs(list(params.items())),
+            params[key],
+        )
+        for key, value in transformation.items()
+    ]
+
+    # remove any trivial equations
+    equations = list(
+        filter(
+            lambda x: not isinstance(x, sympy.logic.boolalg.BooleanTrue),
+            equations,
+        )
+    )
+
+    # TODO handle the case when we have less new parameters than old ones
+
+    # case 1: the solutions are obtainable analytically, and we use
+    # `solve`
+    try:
+        solutions = sympy.solve(equations, new_params, dict=True)
+
+    # case 2: `solve` has failed, so we use numerical methods instead
+    # with `nsolve`
+    except NotImplementedError:
+        # TODO fix this
+        equation_parameters = [
+            _
+            for _ in new_params
+            if _ in {symbol for __ in equations for symbol in __.free_symbols}
+        ]
+
+        if initial_guess is not None:
+            x0 = [initial_guess[key.name] for key in equation_parameters]
+        else:
+            x0 = [1] * len(equation_parameters)
+
+        solutions = sympy.nsolve(
+            equations,
+            equation_parameters,
+            x0,
+            dict=True,
+        )
+
+    if not solutions:
+        raise ValueError(
+            f"Unable to solve system of equations {equations} over the real numbers"
+        )
+
+    if len(solutions) > 1 and solution_index is None:
+        warnings.warn(
+            f"Multiple solutions for new fiducials found: {solutions}; "
+            "using the first one available, if you want to customize this behavior, pass "
+            "`solution_index=[INDEX]` to select a particular solution"
+        )
+
+    return solutions[solution_index if solution_index is not None else 0]
+
+
+def _jacobian(
+    params: dict[str, float],
+    transformation: dict[str, str],
+    **kwargs,
+):
+    r"""
+    Returns the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the
+    transformation as a matrix
+
+    Parameters
+    ----------
+    params : dict
+        the names of the parameters as keys, and the fiducials as corresponding
+        values
+    transformation : dict
+        the transformation from old parameters to new ones as a dictionary
+
+    **kwargs
+        any other kwargs passed to `_solve_eqns`
+
+    Returns
+    -------
+    result : 3-tuple
+        the new names, new fiducials, and the Jacobian of the transformation
+    """
+    # remove any identity maps, since we insert those later anyway
+    transformation = {
+        key: value for key, value in transformation.items() if key != value
+    }
+
+    # all of the old names as SymPy symbols
+    old_params = set(sympy.symbols(list(params)))
+
+    # the old names, which we explicitly want to remove
+    removed_params = set(sympy.symbols(list(transformation)))
+
+    # the new names, derived from the values of the map
+    new_params = {
+        symbol
+        for value in transformation.values()
+        for symbol in sympy.sympify(value).free_symbols
+    }
+
+    if any(param in removed_params for param in new_params):
+        raise ValueError("Parameter cannot be on both sides of the mapping")
+
+    # the new parameters can contain the old ones if the old ones are not
+    # present in the keys of the dictionary
+    new_params = new_params | (old_params - removed_params)
+
+    old_params_list = list(old_params)
+    new_params_list = list(new_params)
+
+    # edge case: there is a different number of new parameters than there are
+    # old ones
+    if len(new_params_list) != len(old_params_list):
+        raise ValueError(
+            f"The number of new parameters (size={len(new_params_list)}) "
+            f"differs from the number of old ones (size={len(old_params_list)})"
+        )
+
+    # we fill the transformation with identity maps for implicitly transformed
+    # parameters
+    for param in new_params_list:
+        if param not in removed_params and param in old_params:
+            transformation[param.name] = param.name
+
+    # this is necessary because otherwise the ordering of the old parameters is
+    # messed up
+    transformation = {key: transformation[key] for key in params}
+
+    solution = _solve_eqns(params, new_params_list, transformation, **kwargs)
+
+    # getting the symbolic Jacobian
+    jacobian_symbolic = sympy.Matrix(
+        [sympy.sympify(expr) for expr in transformation.values()]
+    ).jacobian(new_params_list)
+
+    # evaluating the symbolic Jacobian at the new fiducials
+    jacobian_numeric = np.array(
+        jacobian_symbolic.evalf(
+            subs={
+                **solution,
+                **params,
+            }
+        ),
+        dtype=float,
+    )
+
+    # get the new fiducials from the solution, or, in case some of the old
+    # parameters remain, get the values from those instead
+    new_fiducials = [
+        solution[key] if key in solution else params[key.name]
+        for key in new_params_list
+    ]
+
+    new_names = [item.name for item in new_params_list]
+
+    return (new_names, new_fiducials, jacobian_numeric)
 
 
 def _parse_sigma(
@@ -1583,6 +1786,135 @@ class FisherMatrix:
         """
         return self.__mul__(other)
 
+    def reparametrize_symbolic(
+        self,
+        transformation: dict[str, str],
+        latex_names: Optional[dict[str, str]] = None,
+        **kwargs,
+    ) -> FisherMatrix:
+        r"""
+        Parameters
+        ----------
+        transformation : mapping
+            a mapping between the old and new parameters (or new and old ones)
+
+        latex_names : mapping, optional
+            a dictionary with the names of new parameters as keys, and LaTeX
+            names of new parameters as values (default: None). If not
+            specified, uses the names extracted from `transformation`.
+
+        **kwargs
+            any optional keyword arguments passed to the solver for obtaining
+            the new fiducials. Available arguments:
+            - `solution_index`, int: in case of multiple solutions, one can select
+              the index of the solution (default: None, meaning the first
+              element is selected)
+            - `initial_guess`, dict: in case of using the numerical solver,
+              this should be a dictionary of the initial guesses for the new
+              fiducials (default: None, and the initial guess is set to all
+              ones)
+
+        Returns
+        -------
+        FisherMatrix
+            The new Fisher object with the specified names, LaTeX names, and
+            fiducials.
+
+        Raises
+        ------
+        ParameterNotFoundError
+            if any of the keys in the mapping is not in the names of the Fisher
+            matrix
+
+        SympifyError
+            if any of the expressions in the values cannot be transformed using
+            <a
+            href="https://docs.sympy.org/latest/modules/core.html#module-sympy.core.sympify"
+            target="_blank" rel="noopener noreferrer">`sympy.sympify`</a>
+
+        ValueError
+            if SymPy is is unable to find a solution for the new fiducials
+
+        TypeError
+            if SymPy is unable to find a real solution for the new fiducials
+
+        ValueError
+            if any of the old parameters is on both sides of the mapping
+
+        ValueError
+            if the number of new parameters is different from the number of old
+            parameters
+
+        Warns
+        -----
+        UserWarning
+            if the SymPy solver returns multiple solutions for the values of
+            the new fiducials
+
+        See also
+        --------
+        `reparametrize` : the numerical version of this method
+
+        Examples
+        --------
+        Create a Fisher matrix:
+        >>> fm = FisherMatrix(
+        ... np.diag([1, 2, 3]),
+        ... names=["omega_m", "omega_b", "h"],
+        ... fiducials=[0.147, 0.025, 0.7],
+        ... )
+
+        Reparametrize it:
+        >>> fm.reparametrize_symbolic(
+        ... {'omega_m' : 'Omega_m * h**2', 'omega_b' : 'Omega_b * h**2'}
+        ... ).sort(key=['Omega_m', 'Omega_b', 'h'])
+        FisherMatrix(
+            array([[0.2401    , 0.        , 0.2058    ],
+               [0.        , 0.4802    , 0.07      ],
+               [0.2058    , 0.07      , 3.18660408]]),
+            names=array(['Omega_m', 'Omega_b', 'h'], dtype=object),
+            latex_names=array(['Omega_m', 'Omega_b', 'h'], dtype=object),
+            fiducials=array([0.3       , 0.05102041, 0.7       ]))
+        """
+        # check that the keys of the dictionary are present in the names
+        for key in transformation:
+            if key not in self.names:
+                raise ParameterNotFoundError(key, self.names)
+
+        # check that we can "sympify" all of the expressions
+        for value in transformation.values():
+            try:
+                sympy.sympify(value)
+            except sympy.SympifyError as err:
+                raise sympy.SympifyError(err) from err
+
+        # get the new names, fiducials, and the Jacobian
+        names_new, fiducials_new, jacobian = _jacobian(
+            dict(zip(self.names, self.fiducials)),
+            transformation,
+            **kwargs,
+        )
+
+        # set the new LaTeX names from the old ones (if they're still present),
+        # otherwise use the new names
+        latex_names_new = [
+            self.latex_name(key) if key in self.names else key for key in names_new
+        ]
+
+        # in case any of the new names are specified, set them
+        if latex_names is not None:
+            latex_names_new = [
+                latex_names[key] if key in latex_names else key
+                for key in latex_names_new
+            ]
+
+        return self.reparametrize(
+            jacobian,
+            names=names_new,
+            fiducials=fiducials_new,
+            latex_names=latex_names_new,
+        )
+
     def reparametrize(
         self,
         jacobian,
@@ -1614,13 +1946,17 @@ class FisherMatrix:
 
         fiducials : array_like of float, optional
             the new values of the fiducials (default: None). If None, defaults
-            to old values.
+            to the old values of the fiducials.
 
         Returns
         -------
         FisherMatrix
             The new Fisher object with the specified names, LaTeX names, and
             fiducials.
+
+        See also
+        --------
+        `reparametrize_symbolic` : the symbolic version of this method
 
         Examples
         --------

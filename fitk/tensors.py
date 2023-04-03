@@ -1788,14 +1788,14 @@ class FisherMatrix:
 
     def reparametrize_symbolic(
         self,
-        jacobian: dict[str, str],
+        transformation: dict[str, str],
         latex_names: Optional[dict[str, str]] = None,
         **kwargs,
     ) -> FisherMatrix:
         r"""
         Parameters
         ----------
-        jacobian : mapping
+        transformation : mapping
             a mapping between the old and new parameters (or new and old ones)
 
         latex_names : mapping, optional
@@ -1877,12 +1877,12 @@ class FisherMatrix:
             fiducials=array([0.3       , 0.05102041, 0.7       ]))
         """
         # check that the keys of the dictionary are present in the names
-        for key in jacobian:
+        for key in transformation:
             if key not in self.names:
                 raise ParameterNotFoundError(key, self.names)
 
         # check that we can "sympify" all of the expressions
-        for value in jacobian.values():
+        for value in transformation.values():
             try:
                 sympy.sympify(value)
             except sympy.SympifyError as err:
@@ -1891,7 +1891,7 @@ class FisherMatrix:
         # get the new names, fiducials, and the Jacobian
         names_new, fiducials_new, jacobian = _jacobian(
             dict(zip(self.names, self.fiducials)),
-            jacobian,
+            transformation,
             **kwargs,
         )
 

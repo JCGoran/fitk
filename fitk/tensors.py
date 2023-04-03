@@ -1799,9 +1799,9 @@ class FisherMatrix:
             a mapping between the old and new parameters (or new and old ones)
 
         latex_names : mapping, optional
-            a dictionary with the names of new paramters as keys, and LaTeX
-            names of new parameters as values (default: None). If None, uses
-            the old names
+            a dictionary with the names of new parameters as keys, and LaTeX
+            names of new parameters as values (default: None). If not
+            specified, uses the names extracted from `transformation`.
 
         **kwargs
             any optional keyword arguments passed to the solver for obtaining

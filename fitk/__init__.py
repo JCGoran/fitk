@@ -8,8 +8,8 @@ matrices.
 
 # Installation
 
-FITK is available on [PyPI](https://pypi.org/project/fitk/), and can be
-installed via `pip`:
+FITK is available on <a href="https://pypi.org/project/fitk/" target="_blank"
+rel="noopener noreferrer">PyPI</a>, and can be installed via `pip`:
 
 ```sh
 pip install fitk
@@ -17,11 +17,13 @@ pip install fitk
 
 # Bug reports and feature requests
 
-Development of FITK is currently done [on
-GitHub](https://github.com/JCGoran/fitk/), and if you encounter any bugs in the
-package, or would like to ask for new features (or submit your own), please
-open an [issue](https://github.com/JCGoran/fitk/issues/) or a [pull
-request](https://github.com/JCGoran/fitk/pulls/).
+Development of FITK is currently done <a
+href="https://github.com/JCGoran/fitk/" target="_blank" rel="noopener
+noreferrer">on GitHub</a>, and if you encounter any bugs in the package, or
+would like to ask for new features (or submit your own), please open an <a
+href="https://github.com/JCGoran/fitk/issues/" target="_blank" rel="noopener
+noreferrer">issue</a> or a <a href="https://github.com/JCGoran/fitk/pulls/"
+target="_blank" rel="noopener noreferrer">pull request</a>.
 
 # Notes
 

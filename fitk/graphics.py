@@ -1,5 +1,6 @@
 """
 Submodule for plotting of Fisher objects.
+
 See here for documentation of `FisherFigure1D`, `FisherFigure2D`, and `FisherBarFigure`.
 """
 
@@ -135,7 +136,11 @@ class _FisherBaseFigure:
         **kwargs,
     ):
         """
-        Constructor
+        Create an instance.
+
+        Notes
+        -----
+        Mixin.
         """
         self._figure = None
         self._axes: Optional[Union[Axes, Sequence[Axes]]] = None
@@ -186,40 +191,37 @@ class _FisherBaseFigure:
 
     @property
     def options(self):
-        """
-        Returns the matplotlib options which were used for plotting.
-        """
+        """Return the matplotlib options which were used for plotting."""
         return self._options
 
     @property
     def axes(self):
-        """
-        Returns the axes of the figure as a numpy array.
-        """
+        """Return the axes of the figure as a numpy array."""
         return self._axes
 
     @property
     def figure(self):
         """
-        Returns the underlying figure, an instance of <a
-        href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure"
-        target="_blank" rel="noreferrer
-        noopener">`matplotlib.figure.Figure`</a>.
+        Return the underlying figure.
+
+        Returns
+        -------
+        fig
+            an instance of <a
+            href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure"
+            target="_blank" rel="noreferrer
+            noopener">`matplotlib.figure.Figure`</a>.
         """
         return self._figure
 
     @property
     def handles(self):
-        """
-        Returns the handles of the currently drawn artists.
-        """
+        """Return the handles of the currently drawn artists."""
         return self._handles
 
     @property
     def labels(self):
-        """
-        Returns the legend labels of the currently drawn artists.
-        """
+        """Return the legend labels of the currently drawn artists."""
         return self._labels
 
     def savefig(
@@ -230,6 +232,10 @@ class _FisherBaseFigure:
         **kwargs,
     ):
         """
+        Save a figure.
+
+        Notes
+        -----
         Convenience wrapper for <a
         href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
         target="_blank" rel="noreferrer
@@ -273,9 +279,7 @@ class _FisherBaseFigure:
 
 
 class EmptyFigureError(Exception):
-    """
-    Error raised when the figure is empty
-    """
+    """Error raised when the figure is empty."""
 
     def __init__(self):
         self.message = (
@@ -285,9 +289,7 @@ class EmptyFigureError(Exception):
 
 
 class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
-    """
-    The abstract base class for plotting Fisher objects.
-    """
+    """The abstract base class for plotting multiple axes on a figure."""
 
     def __init__(
         self,
@@ -299,7 +301,27 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         **kwargs,
     ):
         """
-        Constructor
+        Create an instance.
+
+        Parameters
+        ----------
+        *args
+            placeholder args
+
+        options : dict, optional
+            the plotting options
+
+        hspace : float, optional
+            the vertical space between plots (default: 0.1)
+
+        wspace : float, optional
+            the horizontal space between plots (default: 0.1)
+
+        contour_levels : array_like of 2-tuples, optional
+            the contour levels which we want to plot
+
+        ****kwargs
+            placeholder kwargs
         """
         self._names = None
         self._options: dict = {}
@@ -317,19 +339,17 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
 
     @abstractmethod
     def plot(self, fisher: FisherMatrix, *args, **kwargs):
-        """
-        Implements plotting of Fisher objects.
-        """
+        """Implement plotting of Fisher objects."""
 
     @abstractmethod
     def __getitem__(self, key):
-        """
-        Implements element access.
-        """
+        """Implement element access."""
 
     @property
     def hspace(self) -> float:
         """
+        Return the vertical spacing between axes.
+
         The amount of height reserved for space between subplots, expressed as
         a fraction of the average axis height.
         """
@@ -338,6 +358,8 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
     @property
     def wspace(self) -> float:
         """
+        Return the horizontal spacing between axes.
+
         The amount of width reserved for space between subplots, expressed as a
         fraction of the average axis width.
         """
@@ -345,15 +367,11 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
 
     @property
     def names(self):
-        """
-        Returns the names of the original parameters plotted.
-        """
+        """Return the names of the parameters plotted."""
         return self._names
 
     def __repr__(self):
-        """
-        Returns the representation of the figure
-        """
+        """Return the representation of the figure."""
         return (
             f"<{self.__class__.__name__}(\n"
             f"    names={repr(self.names)},\n"
@@ -362,9 +380,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         )
 
     def __str__(self):
-        """
-        Returns the string representation of the figure
-        """
+        """Return the string representation of the figure."""
         return (
             f"{self.__class__.__name__}(\n"
             f"    names={str(self.names)},\n"
@@ -378,8 +394,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         label: str,
     ):
         r"""
-        This is a convenience function for correctly updating the legend after
-        directly plotting some artist via `<instance>[<name(s)>].<method>`
+        Add a plotted artist to the legend.
 
         Parameters
         ----------
@@ -392,6 +407,11 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         Returns
         -------
         None
+
+        Notes
+        -----
+        This is a convenience function for correctly updating the legend after
+        directly plotting some artist via `<instance>[<name(s)>].<method>`
 
         Examples
         --------
@@ -426,7 +446,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         **kwargs,
     ):
         """
-        Collectively sets both x and y label parameters.
+        Set both x and y label parameters on all axes.
 
         Parameters
         ----------
@@ -479,7 +499,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         **kwargs,
     ):
         """
-        Collectively sets both x and y tick parameters.
+        Set both x and y tick parameters on all axes.
 
         Parameters
         ----------
@@ -540,7 +560,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         which: str = "both",
     ):
         """
-        Sets the major locator for all of the axes.
+        Set the major locator for all axes.
 
         Parameters
         ----------
@@ -589,7 +609,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         which: str = "both",
     ):
         """
-        Sets the minor locator for all of the axes.
+        Set the minor locator for all axes.
 
         Parameters
         ----------
@@ -637,7 +657,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         which: str = "both",
     ):
         """
-        Sets the major formatter for all of the axes.
+        Set the major formatter for all axes.
 
         Parameters
         ----------
@@ -674,7 +694,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
         which: str = "both",
     ):
         """
-        Sets the minor formatter for all of the axes.
+        Set the minor formatter for all axes.
 
         Parameters
         ----------
@@ -707,10 +727,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
 
 
 class FisherBarFigure(_FisherBaseFigure):
-    """
-    Container for plotting single-axis bar-like figures
-    (`plot_absolute_constraints` and `plot_relative_constraints`)
-    """
+    """Container for plotting single-axis bar-like figures."""
 
     def _parse_fractional_constraints(
         self,
@@ -811,7 +828,7 @@ class FisherBarFigure(_FisherBaseFigure):
         **kwargs,
     ):
         r"""
-        Makes a plot of the constraints of the Fisher matrices
+        Make a plot of the constraints of the Fisher matrices.
 
         Parameters
         ----------
@@ -857,6 +874,7 @@ class FisherBarFigure(_FisherBaseFigure):
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html"
             target="_blank" rel=noreferrer
             noopener>`matplotlib.pyplot.errorbar`</a>.
+
         Returns
         -------
         None
@@ -1041,8 +1059,7 @@ class FisherBarFigure(_FisherBaseFigure):
         **kwargs,
     ):
         r"""
-        Makes a plot of the constraints (relative to the fiducial) of the
-        Fisher matrices
+        Make a plot of the constraints (relative to the fiducial) of the Fisher matrices.
 
         Parameters
         ----------
@@ -1256,7 +1273,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         contour_levels: Optional[Sequence[tuple[float, float]]] = None,
     ):
         """
-        Constructor.
+        Create an instance.
 
         Parameters
         ----------
@@ -1307,9 +1324,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         self,
         key: str,
     ):
-        """
-        Returns the axis associated to the name `key`.
-        """
+        """Return the axis associated to the name `key`."""
         if not self.figure:
             raise EmptyFigureError
 
@@ -1326,8 +1341,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Implements drawing of other objects on the axis where the parameter
-        `name` has already been plotted.
+        Implement drawing of other objects on the axis.
 
         Parameters
         ----------
@@ -1359,6 +1373,10 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
 
         AttributeError
             if `method` is not a valid plotting method
+
+        Notes
+        -----
+        The parameter `name` has to have already been plotted.
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -1397,7 +1415,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Plots the 1D curves of the Fisher objects.
+        Plot the 1D curves of the Fisher objects.
 
         Parameters
         ----------
@@ -1529,7 +1547,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Creates a legend on the figure.
+        Create a legend on the figure.
 
         Parameters
         ----------
@@ -1593,8 +1611,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Thin wrapper for setting the title of the figure with the correct
-        options.
+        Draw a title on the figure.
 
         Parameters
         ----------
@@ -1688,7 +1705,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         contour_levels_2d: Optional[Sequence[tuple[float, float]]] = None,
     ):
         """
-        Constructor.
+        Create an instance.
 
         Parameters
         ----------
@@ -1806,7 +1823,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Creates a legend on the figure.
+        Create a legend on the figure.
 
         Parameters
         ----------
@@ -1883,8 +1900,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Thin wrapper for setting the title of the figure with the correct
-        options.
+        Draw a title on the figure.
 
         Parameters
         ----------
@@ -1943,8 +1959,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         """
-        Implements drawing of other objects on the axis where the parameters
-        `name1` and `name2` have already been plotted.
+        Implement drawing of other objects on the axis.
 
         Parameters
         ----------
@@ -1976,6 +1991,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
         AttributeError
             if `method` is not a valid plotting method
+
+        Notes
+        -----
+        The parameters `name1` and `name2` have to have already been plotted.
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(
@@ -2015,7 +2034,7 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
         **kwargs,
     ):
         r"""
-        Plots the 2D contours (and optionally 1D curves) of the Fisher objects.
+        Plot the 2D contours (and optionally 1D curves) of the Fisher objects.
 
         Parameters
         ----------
@@ -2252,7 +2271,8 @@ def _get_chisq(
     df: int = 2,
 ):
     r"""
-    Returns $\Delta \chi^2$.
+    Return $\Delta \chi^2$.
+
     To obtain the scaling coefficient $\alpha$, just take the square root of
     the output.
 
@@ -2278,7 +2298,9 @@ def _add_plot_1d(
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
     """
-    Adds a 1D Gaussian with marginalized constraints `sigma` close to fiducial
+    Add a 1D Gaussian to axis.
+
+    Add a 1D Gaussian with marginalized constraints `sigma` close to fiducial
     value `fiducial` to axis `ax`.
     """
     if ax is None:
@@ -2306,9 +2328,7 @@ def _add_shading_1d(
     level: float = 1,
     **kwargs,
 ) -> tuple[Figure, Axes]:
-    """
-    Add shading to a 1D axes.
-    """
+    """Add shading to a 1D axes."""
     if ax is None:
         _, ax = plt.subplots()
 
@@ -2356,7 +2376,7 @@ def plot_curve_1d(
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
     r"""
-    Plots a 1D curve (usually marginalized Gaussian) from a Fisher object.
+    Plot a 1D curve (usually marginalized Gaussian) from a Fisher object.
 
     Parameters
     ----------
@@ -2418,7 +2438,7 @@ def plot_curve_2d(
     **kwargs,
 ) -> tuple[Figure, Axes, Artist]:
     r"""
-    Plots a 2D curve (usually ellipse) from two parameters of a Fisher object.
+    Plot a 2D curve (usually ellipse) from two parameters of a Fisher object.
 
     Parameters
     ----------
@@ -2502,9 +2522,7 @@ def _get_ellipse(
     name1: str,
     name2: str,
 ) -> tuple[float, float, float]:
-    """
-    Constructs parameters for a Gaussian ellipse from the names.
-    """
+    """Construct parameters for a Gaussian ellipse from the names."""
     if name1 == name2:
         raise ValueError("Names must be different")
 

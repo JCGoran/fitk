@@ -1,5 +1,6 @@
 """
 Submodule for computing derivatives using finite differences.
+
 See here for documentation of `D` and `FisherDerivative`.
 """
 
@@ -18,14 +19,11 @@ import numpy as np
 
 # first party imports
 from fitk.tensors import FisherMatrix
-from fitk.utilities import P
-from fitk.utilities import ValidationError, find_diff_weights, is_iterable
+from fitk.utilities import P, ValidationError, find_diff_weights, is_iterable
 
 
 def _zero_out(array, threshold: float):
-    """
-    Returns the input array with elements smaller than `threshold` zeroed out.
-    """
+    """Return the input array with elements smaller than `threshold` zeroed out."""
     # Create a copy of the input array
     new_array = np.copy(array)
 
@@ -42,7 +40,7 @@ def _validate_derivatives(
     *args: D,
 ):
     """
-    Checks whether we are able to compute the requested derivatives
+    Check whether we are able to compute the requested derivatives.
 
     Raises
     ------
@@ -58,9 +56,7 @@ def _validate_derivatives(
 
 
 def _parse_derivatives(*args: D):
-    """
-    Parses the derivatives
-    """
+    """Parse the derivatives."""
     parsed_args: list[D] = []
     for arg in args:
         # in case the argument repeats, we just increase the order of the
@@ -81,7 +77,7 @@ def matrix_element_from_input(
     covariance_derivative2: Optional[Collection[Collection[float]]] = None,
 ):
     """
-    Computes the element of a Fisher matrix given the raw derivative arrays
+    Compute the element of a Fisher matrix given the raw derivative arrays.
 
     Parameters
     ----------
@@ -188,8 +184,7 @@ def matrix_element_from_input(
 @dataclass
 class D:
     """
-    Class for describing information about a derivative of a parameter using
-    finite differences
+    Class for describing information about a derivative of a parameter using finite differences.
 
     Parameters
     ----------
@@ -298,8 +293,12 @@ class FisherDerivative:
 
     def __init__(self, *args, **kwargs):
         """
-        Placeholder constructor that does nothing. The user should override
-        this method if they wish to perform custom initialization.
+        Create an instance.
+
+        Notes
+        -----
+        The user should override this method if they wish to perform custom
+        initialization.
         """
 
     def validate_parameter(
@@ -307,9 +306,7 @@ class FisherDerivative:
         arg: P,
     ) -> bool:
         """
-        Placeholder method used for validating a parameter when calling
-        `fisher_matrix`. The user should override this method if they wish to
-        perform custom validation.
+        Validate a parameter when calling `fisher_matrix`.
 
         Parameters
         ----------
@@ -320,6 +317,11 @@ class FisherDerivative:
         -------
         bool
             the outcome of the validation (default: True)
+
+        Notes
+        -----
+        The user should override this method if they wish to perform custom
+        validation.
         """
         return True
 
@@ -329,7 +331,7 @@ class FisherDerivative:
         **kwargs,
     ):
         """
-        The method to implement for computing the signal.
+        Compute the signal as input for a Fisher object.
 
         Parameters
         ----------
@@ -359,7 +361,7 @@ class FisherDerivative:
         **kwargs,
     ):
         """
-        The (optional) method to implement for computing the covariance.
+        Compute the covariance as input for a Fisher object.
 
         Parameters
         ----------
@@ -391,7 +393,7 @@ class FisherDerivative:
         **kwargs,
     ):
         r"""
-        Evaluates the derivative of `method` with respect to arguments `args`.
+        Evaluate the derivative of `method` with respect to arguments `args`.
 
         Parameters
         ----------
@@ -486,24 +488,7 @@ class FisherDerivative:
         kwargs_covariance: Optional[dict] = None,
     ) -> FisherMatrix:
         r"""
-        Computes the Fisher matrix, $\mathsf{F}$, using finite differences.
-        The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
-        defined as:
-        $$
-            \frac{\partial \mathbf{S}^T}{\partial \theta_i}
-            \mathsf{C}^{-1}
-            \frac{\partial \mathbf{S}}{\partial \theta_j}
-            +
-            \frac{1}{2}
-            \mathrm{Tr}\left(
-            \frac{\partial \mathsf{C}}{\partial \theta_i}
-            \mathsf{C}^{-1}
-            \frac{\partial \mathsf{C}}{\partial \theta_j}
-            \mathsf{C}^{-1}
-            \right)
-        $$
-        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
-        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
+        Compute the Fisher matrix, $\mathsf{F}$, using finite differences.
 
         Parameters
         ----------
@@ -557,6 +542,24 @@ class FisherDerivative:
         Notes
         -----
         The `order` parameter is ignored if passed to `D`.
+
+        The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
+        defined as:
+        $$
+            \frac{\partial \mathbf{S}^T}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathbf{S}}{\partial \theta_j}
+            +
+            \frac{1}{2}
+            \mathrm{Tr}\left(
+            \frac{\partial \mathsf{C}}{\partial \theta_i}
+            \mathsf{C}^{-1}
+            \frac{\partial \mathsf{C}}{\partial \theta_j}
+            \mathsf{C}^{-1}
+            \right)
+        $$
+        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
+        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
         """
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early

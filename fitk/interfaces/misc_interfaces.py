@@ -1,5 +1,8 @@
 """
-Various interfaces that do not belong to any particular third-party software
+Misc interfaces for FITK.
+
+Module with various interfaces that do not belong to any particular third-party
+software.
 """
 
 # for compatibility with Python 3.7
@@ -55,7 +58,9 @@ def _validate_config(
 
 class SupernovaDerivative(FisherDerivative):
     r"""
-    Computes derivatives w.r.t. cosmological parameters $\Omega_\mathrm{m}$ and
+    Interface for derivatives of supernova measurements.
+
+    Compute derivatives w.r.t. cosmological parameters $\Omega_\mathrm{m}$ and
     $w$ for a supernova measurement.
     For definitions of the quantities used, refer to the documentation of
     `signal` and `covariance`.
@@ -101,7 +106,7 @@ class SupernovaDerivative(FisherDerivative):
         **kwargs,
     ):
         """
-        Constructor
+        Create an instance.
 
         Parameters
         ----------
@@ -124,9 +129,7 @@ class SupernovaDerivative(FisherDerivative):
 
     @property
     def config(self):
-        """
-        Returns the current configuration.
-        """
+        """Returns the current configuration."""
         return self._config
 
     @config.setter
@@ -140,6 +143,10 @@ class SupernovaDerivative(FisherDerivative):
         **kwargs,
     ):
         r"""
+        Compute the signal.
+
+        Notes
+        -----
         The signal is modelled as:
 
         $$
@@ -149,7 +156,6 @@ class SupernovaDerivative(FisherDerivative):
         where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =
         (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.
         """
-
         config = {**self.config}
         for arg in args:
             name, value = arg
@@ -163,6 +169,10 @@ class SupernovaDerivative(FisherDerivative):
         **kwargs,
     ):
         r"""
+        Compute the covariance.
+
+        Notes
+        -----
         The covariance is modelled as:
 
         $$

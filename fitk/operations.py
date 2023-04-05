@@ -1,5 +1,6 @@
 """
 Submodule containing functions which act upon Fisher objects.
+
 See here for documentation of `bayes_factor`, `kl_divergence`, and `kl_matrix`.
 """
 
@@ -32,20 +33,7 @@ def bayes_factor(
     offsets: Collection[float],
 ) -> float:
     r"""
-    Returns the expected Bayes factor for a nested model (base model $M_B$ and
-    extended model $M_E$), defined as:
-    $$
-        \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2}
-        \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}
-        {\sqrt{\mathrm{det} \mathsf{F}_B}}
-        \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
-        \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
-    $$
-    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n \times
-    n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
-    \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
-    (size $n'$), and $\Delta \theta_\alpha$ is the array of priors on the extra
-    parameters in the extended model (size $p$).
+    Return the expected Bayes factor for a nested model.
 
     Parameters
     ----------
@@ -82,6 +70,20 @@ def bayes_factor(
 
     Notes
     -----
+    For base model $M_B$ and extended model $M_E$, the output is defined as:
+    $$
+        \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2}
+        \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}
+        {\sqrt{\mathrm{det} \mathsf{F}_B}}
+        \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
+        \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
+    $$
+    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n \times
+    n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
+    \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
+    (size $n'$), and $\Delta \theta_\alpha$ is the array of priors on the extra
+    parameters in the extended model (size $p$).
+
     For more details, see <a href="https://arxiv.org/abs/astro-ph/0703191"
     target="_blank" rel="noopener noreferrer">arXiv:astro-ph/0703191</a>, eq.
     (14).
@@ -146,9 +148,11 @@ def kl_divergence(
     units: str = "b",
 ) -> tuple[float, float, float]:
     r"""
+    Compute the Kullback-Leibler divergence, its expectation value, and sqrt of variance, between two Gaussians.
+
     Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
-    P_1)$, its expectation value, $\langle D \rangle$, and the square roots
-    of the variance, $\sqrt{\sigma^2(D)}$, between two Gaussian probability
+    P_1)$, its expectation value, $\langle D \rangle$, and the square roots of
+    the variance, $\sqrt{\sigma^2(D)}$, between two Gaussian probability
     distributions, $P_1$ and $P_2$.
 
     Parameters
@@ -183,6 +187,10 @@ def kl_divergence(
 
     ValueError
         if the value of `units` cannot be parsed
+
+    See Also
+    --------
+    `kl_matrix` : compute K-L divergence for multiple observables
 
     Notes
     -----
@@ -244,13 +252,7 @@ def kl_matrix(
     **kwargs,
 ):
     r"""
-    Returns the Kullback-Leibler matrix of different sets of observables. The
-    matrix has elements defined by:
-    $$
-        \mathcal{K}_{ij} \equiv D(P_j || P_i)
-    $$
-    where $D(P_j || P_i)$ is the Kullback-Leibler divergence (see also
-    `kl_divergence`) of the pair of observables $(i, j)$.
+    Return the Kullback-Leibler matrix of different sets of observables.
 
     Parameters
     ----------
@@ -270,8 +272,20 @@ def kl_matrix(
     MismatchingValueError
         if the parameter names of the Fisher matrices do not match
 
+    See Also
+    --------
+    `kl_divergence` : compute K-L divergence, expectation value, and sqrt of
+    variance
+
     Notes
     -----
+    The matrix has elements defined by:
+    $$
+        \mathcal{K}_{ij} \equiv D(P_j || P_i)
+    $$
+    where $D(P_j || P_i)$ is the Kullback-Leibler divergence of a pair of
+    observables $(i, j)$.
+
     For more details, see <a href="https://arxiv.org/abs/1703.01271"
     target="_blank" rel="noopener noreferrer">arXiv:1703.01271</a>, section 4.
     """

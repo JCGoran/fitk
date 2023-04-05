@@ -1,5 +1,6 @@
 """
 Submodule for performing operations on Fisher objects.
+
 See here for documentation of `FisherMatrix`.
 """
 
@@ -46,8 +47,7 @@ def _solve_eqns(
     initial_guess: Optional[dict[str, float]] = None,
 ):
     r"""
-    Solves the equations to obtain the new values of the fiducials, and returns
-    one of them
+    Solves the equations to obtain the new values of the fiducials.
 
     Parameters
     ----------
@@ -144,8 +144,7 @@ def _jacobian(
     **kwargs,
 ):
     r"""
-    Returns the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the
-    transformation as a matrix
+    Return the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the transformation as a matrix.
 
     Parameters
     ----------
@@ -267,9 +266,7 @@ def _parse_sigma(
 
 
 def _process_fisher_mapping(value: Mapping) -> dict[str, Union[str, float]]:
-    """
-    Processes a mapping/dict and returns the sanitized output.
-    """
+    """Process a mapping/dict and returns the sanitized output."""
     if "name" not in value:
         raise ValueError("The mapping/dict must contain at least the key `name`")
 
@@ -452,7 +449,7 @@ class FisherMatrix:
         fiducials: Optional[Collection[float]] = None,
     ):
         r"""
-        Constructor for Fisher object.
+        Create for Fisher object.
 
         Parameters
         ----------
@@ -553,7 +550,31 @@ class FisherMatrix:
     @classmethod
     def from_parameters(cls, values, *args: P):
         r"""
-        Alternative constructor, which takes as arguments instances of `P`
+        Alternative constructor.
+
+        Parameters
+        ----------
+        values : array_like of float
+            the values of the Fisher object
+
+        *args : P
+            the Fisher parameters
+
+        Examples
+        --------
+        >>> FisherMatrix.from_parameters(
+        ... np.diag([1, 2, 3]),
+        ... P('a', -1, '$x$'),
+        ... P('b', 0, '$y$'),
+        ... P('c', 1, '$z$')
+        ... )
+        FisherMatrix(
+            array([[1., 0., 0.],
+               [0., 2., 0.],
+               [0., 0., 3.]]),
+            names=array(['a', 'b', 'c'], dtype=object),
+            latex_names=array(['$x$', '$y$', '$z$'], dtype=object),
+            fiducials=array([-1.,  0.,  1.]))
         """
         return cls(
             values,
@@ -564,10 +585,7 @@ class FisherMatrix:
 
     @property
     def matrix(self):
-        """
-        Returns the values of the Fisher matrix (the Gaussian contribution to
-        the likelihood) as a numpy array.
-        """
+        """Return the (multivariate) Gaussian part of the Fisher object."""
         return self._values
 
     @property
@@ -680,8 +698,7 @@ class FisherMatrix:
         ignore_errors: bool = False,
     ) -> FisherMatrix:
         """
-        Returns a Fisher object with new names. This is primarily useful for
-        renaming individual parameters.
+        Return a Fisher object with new names. This is primarily useful for renaming individual parameters.
 
         Parameters
         ----------
@@ -742,10 +759,7 @@ class FisherMatrix:
         )
 
     def _repr_html_(self):
-        """
-        Representation of the Fisher object suitable for viewing in Jupyter
-        notebook environments.
-        """
+        """Representation of the Fisher object suitable for viewing in Jupyter notebook environments."""
         header_matrix = (
             "<thead><tr><th></th>"
             + (
@@ -781,9 +795,7 @@ class FisherMatrix:
         return html_matrix
 
     def __repr__(self):
-        """
-        Representation of the Fisher object for non-Jupyter interfaces.
-        """
+        """Representation of the Fisher object for non-Jupyter interfaces."""
         return (
             "FisherMatrix(\n"
             f"    {repr(self.values)},\n"
@@ -793,9 +805,7 @@ class FisherMatrix:
         )
 
     def __str__(self):
-        """
-        String representation of the Fisher object.
-        """
+        """Representation of the Fisher object as a string."""
         return (
             "FisherMatrix(\n"
             f"    {self.values},\n"
@@ -805,6 +815,15 @@ class FisherMatrix:
         )
 
     def __iter__(self):
+        """
+        Iterate over the Fisher object.
+
+        Raises
+        ------
+        NotImplementedError
+            always raised as iteration should be performed using `__getitem__`
+            instead
+        """
         raise NotImplementedError(
             f"Object of type `{self.__class__.__name__}` is not iterable; "
             "use `<object>[<key>]` to get or set elements of the object instead"
@@ -815,7 +834,10 @@ class FisherMatrix:
         keys: Union[tuple[str, ...], slice],
     ):
         """
-        Implements access to elements in the Fisher object.
+        Implement access to elements in the Fisher object.
+
+        Notes
+        -----
         Has support for slicing.
         """
         # the object can be sliced
@@ -867,8 +889,7 @@ class FisherMatrix:
         value: float,
     ):
         """
-        Implements setting of elements in the Fisher object.
-        Does not support slicing.
+        Implement setting of elements in the Fisher object.
 
         Raises
         ------
@@ -881,6 +902,10 @@ class FisherMatrix:
 
         ParameterNotFoundError
             if any of the keys is not in the parameter names
+
+        Notes
+        -----
+        Does not support slicing.
         """
         try:
             _ = iter(keys)
@@ -918,7 +943,12 @@ class FisherMatrix:
 
     def fiducial(self, name: str) -> float:
         r"""
-        Returns the value of the fiducial associated to the parameter `name`.
+        Return the value of the fiducial associated to the parameter `name`.
+
+        Parameters
+        ----------
+        name : str
+            the name of the parameter
 
         Raises
         ------
@@ -942,7 +972,15 @@ class FisherMatrix:
 
     def set_fiducial(self, name: str, value: float):
         """
-        Sets the fiducial of parameter `name`.
+        Set the fiducial of parameter `name`.
+
+        Parameters
+        ----------
+        name : str
+            the name of the parameter
+
+        value : float
+            the new fiducial value of the parameter
 
         Raises
         ------
@@ -972,7 +1010,12 @@ class FisherMatrix:
 
     def latex_name(self, name: str) -> str:
         r"""
-        Returns the LaTeX name associated to the parameter `name`.
+        Return the LaTeX name associated to the parameter `name`.
+
+        Parameters
+        ----------
+        name : str
+            the name of the parameter
 
         Raises
         ------
@@ -996,7 +1039,15 @@ class FisherMatrix:
 
     def set_latex_name(self, name: str, value: str):
         r"""
-        Sets the LaTeX name of parameter `name`.
+        Set the LaTeX name of parameter `name`.
+
+        Parameters
+        ----------
+        name : str
+            the name of the parameter
+
+        value : str
+            the new LaTeX name of the parameter
 
         Raises
         ------
@@ -1026,7 +1077,8 @@ class FisherMatrix:
 
     def is_valid(self):
         """
-        Checks whether the values make a valid Fisher object.
+        Check whether the values make a valid Fisher object.
+
         A (square) matrix is a Fisher matrix if it satisifies the following two
         criteria:
 
@@ -1053,7 +1105,7 @@ class FisherMatrix:
         **kwargs,
     ) -> FisherMatrix:
         """
-        Sorts the Fisher object by name according to some criterion.
+        Sort the Fisher object by name according to some criterion.
 
         Parameters
         ----------
@@ -1169,7 +1221,8 @@ class FisherMatrix:
 
     def __eq__(self, other):
         """
-        The equality operator.
+        Compare Fisher object with another object.
+
         Returns `True` if the operands have the following properties:
 
         * are instances of FisherMatrix
@@ -1201,20 +1254,16 @@ class FisherMatrix:
 
     @property
     def ndim(self):
-        """
-        Returns the number of dimensions of the Fisher object (for now always 2).
-        """
+        """Return the number of dimensions of the Fisher object (for now always 2)."""
         return np.ndim(self._values)
 
     def __len__(self):
-        """
-        Returns the number of parameters in the Fisher object.
-        """
+        """Return the number of parameters in the Fisher object."""
         return self._size
 
     def is_diagonal(self):
         """
-        Checks whether the Fisher matrix is diagonal.
+        Check whether the Fisher matrix is diagonal.
 
         Returns
         -------
@@ -1224,7 +1273,7 @@ class FisherMatrix:
 
     def diagonal(self, **kwargs):
         """
-        Returns the diagonal elements of the Fisher object as a numpy array.
+        Return the diagonal elements of the Fisher object as a numpy array.
 
         Returns
         -------
@@ -1240,7 +1289,7 @@ class FisherMatrix:
         ignore_errors: bool = False,
     ) -> FisherMatrix:
         """
-        Removes parameters from the Fisher object.
+        Remove parameters from the Fisher object.
 
         Parameters
         ----------
@@ -1331,26 +1380,20 @@ class FisherMatrix:
         self,
         **kwargs,
     ):
-        """
-        Returns the trace of the Fisher object as a numpy array.
-        """
+        """Return the trace of the Fisher object as a numpy array."""
         return np.trace(self.values, **kwargs)
 
     def eigenvalues(self):
-        """
-        Returns the eigenvalues of the Fisher object as a numpy array.
-        """
+        """Return the eigenvalues of the Fisher object as a numpy array."""
         return np.linalg.eigvalsh(self.values)
 
     def eigenvectors(self):
-        """
-        Returns the right eigenvectors of the Fisher object as a numpy array.
-        """
+        """Return the right eigenvectors of the Fisher object as a numpy array."""
         return np.linalg.eigh(self.values)[-1]
 
     def condition_number(self):
         r"""
-        Returns the condition number of the matrix with respect to the $L^2$ norm.
+        Return the condition number of the matrix with respect to the $L^2$ norm.
 
         Examples
         --------
@@ -1363,7 +1406,7 @@ class FisherMatrix:
 
     def inverse(self):
         """
-        Returns the inverse of the Fisher matrix.
+        Return the inverse of the Fisher matrix.
 
         Returns
         -------
@@ -1382,7 +1425,7 @@ class FisherMatrix:
 
     def determinant(self):
         """
-        Returns the determinant of the matrix.
+        Return the determinant of the matrix.
 
         Returns
         -------
@@ -1398,8 +1441,7 @@ class FisherMatrix:
         p: Optional[float] = None,
     ):
         r"""
-        Returns the constraints on a parameter as a float, or on all of them
-        as a numpy array if `name` is not specified.
+        Compute the constraints on parameters.
 
         Parameters
         ----------
@@ -1484,7 +1526,7 @@ class FisherMatrix:
         other: FisherMatrix,
     ) -> FisherMatrix:
         """
-        Returns the result of adding two Fisher objects.
+        Return the result of adding two Fisher objects.
 
         Notes
         -----
@@ -1578,15 +1620,11 @@ class FisherMatrix:
         self,
         other: FisherMatrix,
     ) -> FisherMatrix:
-        """
-        Addition when the Fisher object is the right operand.
-        """
+        """Addition when the Fisher object is the right operand."""
         return self.__add__(other)
 
     def __neg__(self) -> FisherMatrix:
-        """
-        Returns the negation of the Fisher object.
-        """
+        """Return the negation of the Fisher object."""
         return self.__class__(
             -self.values,
             names=self.names,
@@ -1598,18 +1636,14 @@ class FisherMatrix:
         self,
         other: FisherMatrix,
     ) -> FisherMatrix:
-        """
-        Returns the result of subtracting two Fisher objects.
-        """
+        """Return the result of subtracting two Fisher objects."""
         return self.__add__(-other)
 
     def __rsub__(
         self,
         other: FisherMatrix,
     ) -> FisherMatrix:
-        """
-        Subtraction when the Fisher object is the right operand.
-        """
+        """Subtraction when the Fisher object is the right operand."""
         # this will never be called if we subtract two FisherMatrix instances,
         # so we just need to handle floats
         return -self.__add__(-other)
@@ -1622,7 +1656,10 @@ class FisherMatrix:
         **kwargs,
     ):
         """
-        Handles numpy's universal functions.
+        Handle numpy's universal functions.
+
+        Notes
+        -----
         For a complete list and explanation, see:
         https://numpy.org/doc/stable/reference/ufuncs.html
         """
@@ -1664,9 +1701,7 @@ class FisherMatrix:
         self,
         other: Union[float, int],
     ) -> FisherMatrix:
-        """
-        Raises the Fisher object to some power.
-        """
+        """Raise the Fisher object to some power."""
         return self.__class__(
             np.power(self.values, other),
             names=self.names,
@@ -1678,9 +1713,7 @@ class FisherMatrix:
         self,
         other: FisherMatrix,
     ):
-        """
-        Matrix multiplies two Fisher objects.
-        """
+        """Matrix-multiply two Fisher objects."""
         # make sure they have the right parameters
         if set(other.names) != set(self.names):
             raise MismatchingValuesError("parameter name", other.names, self.names)
@@ -1706,10 +1739,7 @@ class FisherMatrix:
         self,
         other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
-        """
-        Returns the result of dividing a Fisher object by a number, or another
-        Fisher object (element-wise).
-        """
+        """Return the result of dividing a Fisher object by a number, or another Fisher object (element-wise)."""
         # we can only divide two objects if they have the same dimensions and sizes
         if isinstance(other, self.__class__):
             # maybe it's a FisherMatrix
@@ -1743,10 +1773,7 @@ class FisherMatrix:
         self,
         other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
-        """
-        Returns the result of multiplying a Fisher object by a number, or
-        another Fisher object (element-wise).
-        """
+        """Return the result of multiplying a Fisher object by a number, or another Fisher object (element-wise)."""
         # we can only multiply two objects if they have the same dimensions and sizes
         if isinstance(other, self.__class__):
             # maybe it's a FisherMatrix
@@ -1780,10 +1807,7 @@ class FisherMatrix:
         self,
         other: Union[FisherMatrix, float, int],
     ) -> FisherMatrix:
-        """
-        Returns the result of multiplying a number by a Fisher object, or
-        another Fisher object (element-wise).
-        """
+        """Return the result of multiplying a number by a Fisher object, or another Fisher object (element-wise)."""
         return self.__mul__(other)
 
     def reparametrize_symbolic(
@@ -1793,6 +1817,8 @@ class FisherMatrix:
         **kwargs,
     ) -> FisherMatrix:
         r"""
+        Perform a symbolic transformation of the Fisher object.
+
         Parameters
         ----------
         transformation : mapping
@@ -1851,7 +1877,7 @@ class FisherMatrix:
             if the SymPy solver returns multiple solutions for the values of
             the new fiducials
 
-        See also
+        See Also
         --------
         `reparametrize` : the numerical version of this method
 
@@ -1923,12 +1949,7 @@ class FisherMatrix:
         fiducials: Optional[Collection[float]] = None,
     ) -> FisherMatrix:
         """
-        Returns a new Fisher object with parameters `names`, which are
-        related to the old ones via the transformation `jacobian`.
-        See the <a
-        href="https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization"
-        target="_blank" rel="noopener noreferrer">Wikipedia article</a> for
-        more information.
+        Perform a numerical transformation of the Fisher object using a Jacobian.
 
         Parameters
         ----------
@@ -1954,9 +1975,16 @@ class FisherMatrix:
             The new Fisher object with the specified names, LaTeX names, and
             fiducials.
 
-        See also
+        See Also
         --------
         `reparametrize_symbolic` : the symbolic version of this method
+
+        Notes
+        -----
+        See the <a
+        href="https://en.wikipedia.org/w/index.php?title=Fisher_information&oldid=1063384000#Reparametrization"
+        target="_blank" rel="noopener noreferrer">Wikipedia article</a> for
+        more information.
 
         Examples
         --------
@@ -2010,9 +2038,7 @@ class FisherMatrix:
         )
 
     def to_dict(self) -> dict:
-        """
-        Returns the Fisher object as a dictionary.
-        """
+        """Return the Fisher object as a dictionary."""
         return dict(
             values=self.values,
             names=self.names,
@@ -2024,10 +2050,7 @@ class FisherMatrix:
         self, path: Union[str, Path], metadata: Optional[Mapping[str, Any]] = None
     ) -> dict[str, Any]:
         r"""
-        Saves the Fisher object to a file (UTF-8 encoded).
-        The format used is a simple JSON file, containing at least the values of the
-        Fisher object, the names of the parameters, the LaTeX names, and the
-        fiducial values.
+        Save the Fisher object to a file (UTF-8 encoded).
 
         Parameters
         ----------
@@ -2042,6 +2065,12 @@ class FisherMatrix:
         -------
         dict
             the dictionary that was saved
+
+        Notes
+        -----
+        The format used is a simple JSON file, containing at least the values of the
+        Fisher object, the names of the parameters, the LaTeX names, and the
+        fiducial values.
 
         Examples
         --------
@@ -2151,7 +2180,7 @@ class FisherMatrix:
         path: Union[str, Path],
     ):
         """
-        Reads a Fisher object from a file.
+        Read a Fisher object from a file.
 
         Parameters
         ----------
@@ -2185,7 +2214,7 @@ class FisherMatrix:
         data: dict,
     ):
         """
-        Reads a Fisher object from a dictionary.
+        Read a Fisher object from a dictionary.
 
         Parameters
         ----------
@@ -2210,18 +2239,21 @@ class FisherMatrix:
 
     def correlation_matrix(self):
         r"""
-        Computes the correlation matrix from the Fisher matrix, whose entries
-        are given by:
-        $$
-            \mathsf{P}_{ij} \equiv \frac{\mathsf{C}_{ij}}{\sqrt{\mathsf{C}_{ii} \mathsf{C}_{jj}}}
-        $$
-        where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
-        matrix (the inverse of the Fisher matrix).
+        Compute the correlation matrix from the Fisher matrix.
 
         Returns
         -------
         array_like : float
             the correlation matrix as a numpy array
+
+        Notes
+        -----
+        The entries of the output matrix are given by:
+        $$
+            \mathsf{P}_{ij} \equiv \frac{\mathsf{C}_{ij}}{\sqrt{\mathsf{C}_{ii} \mathsf{C}_{jj}}}
+        $$
+        where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
+        matrix (the inverse of the Fisher matrix).
         """
         inv = self.inverse()
         diag = np.diag(inv)
@@ -2234,7 +2266,7 @@ class FisherMatrix:
         name2: str,
     ) -> float:
         r"""
-        Returns the correlation coefficient between two parameters.
+        Return the correlation coefficient between two parameters.
 
         Parameters
         ----------
@@ -2252,11 +2284,7 @@ class FisherMatrix:
 
     def figure_of_merit(self) -> float:
         r"""
-        Computes the figure of merit (FoM), defined here as:
-        $$
-            \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
-        $$
-        where $\mathsf{F}$ denotes the Fisher matrix.
+        Compute the figure of merit (FoM).
 
         Returns
         -------
@@ -2264,8 +2292,14 @@ class FisherMatrix:
 
         Notes
         -----
-        Occasionally, the FoM (also sometimes called the signal-to-noise,
-        $\mathrm{SNR}$), is defined as:
+        The figure of merit is computed as:
+        $$
+            \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
+        $$
+        where $\mathsf{F}$ denotes the Fisher matrix.
+
+        Some authors define the FoM (also sometimes called the signal-to-noise,
+        $\mathrm{SNR}$) as:
         $$
             \mathrm{SNR} = \sqrt{\det \mathsf{F}}
         $$
@@ -2278,15 +2312,22 @@ class FisherMatrix:
 
     def figure_of_correlation(self) -> float:
         r"""
-        Computes the figure of correlation (FoC), defined here as:
-        $$
-            \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
-        $$
-        where $\mathsf{P}$ denotes the correlation matrix (see
-        `correlation_matrix` for definition of $\mathsf{P}$).
+        Compute the figure of correlation (FoC).
 
         Returns
         -------
         float
+
+        See Also
+        --------
+        `correlation_matrix` : compute the correlation matrix
+
+        Notes
+        -----
+        The output is computed as:
+        $$
+            \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
+        $$
+        where $\mathsf{P}$ denotes the correlation matrix.
         """
         return -np.linalg.slogdet(self.correlation_matrix())[-1] / 2

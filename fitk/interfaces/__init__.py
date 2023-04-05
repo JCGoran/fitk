@@ -1,4 +1,6 @@
 """
+Interfaces for FITK.
+
 This module defines interfaces to various third-party software with which
 one can compute Fisher matrices using finite differences.
 

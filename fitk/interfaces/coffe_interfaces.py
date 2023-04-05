@@ -1,6 +1,8 @@
 """
-Various interfaces for computing derivatives w.r.t. parameters using the COFFE
-code
+COFFE interfaces for FITK.
+
+Module containing various interfaces for computing derivatives w.r.t.
+parameters using the COFFE code.
 """
 
 # for compatibility with Python 3.7
@@ -32,9 +34,7 @@ from fitk.utilities import P
 def _parse_and_set_args(
     **kwargs,
 ):
-    """
-    Parses kwargs for COFFE, and returns an instance of it.
-    """
+    """Parse kwargs for COFFE, and returns an instance of it."""
     # these can't be set using `setattr(<instance>, <name>, <value>)`,
     # so we need to process them separately
     special_kwargs = (
@@ -64,8 +64,7 @@ def _parse_and_set_args(
 
 class CoffeMultipolesDerivative(FisherDerivative):
     r"""
-    Class for computing the derivatives of the multipoles of the 2PCF w.r.t.
-    cosmological parameters defined in the COFFE code.
+    Class for computing the derivatives of the multipoles of the 2PCF w.r.t. cosmological parameters.
 
     Examples
     --------
@@ -102,7 +101,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
         **kwargs,
     ):
         """
-        The constructor for the class.
+        Create an instance.
 
         Parameters
         ----------
@@ -122,9 +121,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
     @property
     def config(self):
-        """
-        Returns the current COFFE configuration as a dictionary.
-        """
+        """Return the current COFFE configuration as a dictionary."""
         return self._config
 
     def signal(
@@ -133,7 +130,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
         **kwargs,
     ):
         r"""
-        Computes the multipoles of the 2PCF with some cosmology.
+        Compute the multipoles of the 2PCF with some cosmology.
 
         Returns
         -------
@@ -164,8 +161,7 @@ class CoffeMultipolesDerivative(FisherDerivative):
         **kwargs,
     ):
         r"""
-        Computes the covariance of the multipoles of the 2PCF with some
-        cosmology.
+        Compute the covariance of the multipoles of the 2PCF with some cosmology.
 
         Returns
         -------
@@ -228,9 +224,9 @@ class CoffeMultipolesDerivative(FisherDerivative):
 
 class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     r"""
-    Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and
-    $\tilde{b}$ parametrization, which are defined as:
+    Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and $\tilde{b}$ parameters.
 
+    The parameters are defined as:
     $$
         \tilde{f}(z) = f(z) \sigma_8(z),
         \quad
@@ -349,8 +345,10 @@ class _BiasParameter:
 
 class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     r"""
-    Class for computing the derivatives of the 2PCF w.r.t. the galaxy,
-    magnification, and evolution bias parameters in each redshift bin.
+    Class for computing the derivatives of the 2PCF w.r.t. biases.
+
+    Class for computing the derivatives of the 2PCF w.r.t. the magnification,
+    and evolution bias parameters in each redshift bin.
 
     The valid parameters are:
     * $b_n$ - `b[N]`, the galaxy bias in a redshift bin, where `[N]` is a
@@ -377,6 +375,7 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
 
     If the biases are set for two populations, the second population is ignored.
     """
+
     _allowed_biases = [
         _BiasParameter(longname="galaxy", shortname="b"),
         _BiasParameter(longname="magnification", shortname="s"),

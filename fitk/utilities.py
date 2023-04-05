@@ -1,5 +1,7 @@
 """
 Various helper utilities for Fisher objects.
+
+See here for documentation of `P`.
 """
 
 # needed for compatibility with Python 3.7
@@ -20,7 +22,7 @@ import numpy as np
 @dataclass
 class P:
     r"""
-    Class for describing a generic parameter
+    Class for describing a generic Fisher parameter.
 
     Parameters
     ----------
@@ -47,9 +49,7 @@ class P:
 
 
 class FisherEncoder(json.JSONEncoder):
-    """
-    Class for custom conversion of numpy objects as JSON
-    """
+    """Class for custom conversion of numpy objects as JSON."""
 
     def default(self, o):
         if isinstance(o, np.ndarray):
@@ -58,9 +58,7 @@ class FisherEncoder(json.JSONEncoder):
 
 
 def is_iterable(value):
-    """
-    Checks whether an object is iterable.
-    """
+    """Check whether an object is iterable."""
     try:
         _ = iter(value)
         return True
@@ -81,7 +79,6 @@ def float_to_latex(
     sigdigits : int, default = 3
         number of significant digits
     """
-
     # annoying case of small exponents
     if 1e-4 <= np.abs(value) < 1e-2:
         specifier = "e"
@@ -103,9 +100,7 @@ def float_to_latex(
 
 
 class ParameterNotFoundError(ValueError):
-    """
-    Error raised when a parameter is not found in the Fisher object.
-    """
+    """Error raised when a parameter is not found in the Fisher object."""
 
     def __init__(
         self,
@@ -117,10 +112,7 @@ class ParameterNotFoundError(ValueError):
 
 
 class ValidationError(Exception):
-    """
-    Error raised when
-    `fitk.derivatives.FisherDerivative.validate_parameter` fails.
-    """
+    """Error raised when `fitk.derivatives.FisherDerivative.validate_parameter` fails."""
 
     def __init__(self, parameter):
         self.message = f"Parameter '{parameter.name}' contains invalid values"
@@ -128,9 +120,7 @@ class ValidationError(Exception):
 
 
 class MismatchingValuesError(ValueError):
-    """
-    Error raised when values of either fiducials or names do not match.
-    """
+    """Error raised when values of either fiducials or names do not match."""
 
     def __init__(
         self,
@@ -143,9 +133,7 @@ class MismatchingValuesError(ValueError):
 
 
 class MismatchingSizeError(ValueError):
-    """
-    Error for handling a list of arrays that have mismatching sizes.
-    """
+    """Error for handling a list of arrays that have mismatching sizes."""
 
     def __init__(
         self,
@@ -157,9 +145,7 @@ class MismatchingSizeError(ValueError):
 
 
 class HTMLWrapper:
-    """
-    A wrapper class for pretty printing objects in a Jupyter notebook.
-    """
+    """Wrapper class for pretty printing objects in a Jupyter notebook."""
 
     def __init__(self, string):
         self._string = string
@@ -176,7 +162,7 @@ def make_html_table(
     title: Optional[str] = None,
 ):
     """
-    Makes a HTML formatted table with names (optional) and values.
+    Make a HTML formatted table with names (optional) and values.
 
     Parameters
     ----------
@@ -221,18 +207,14 @@ def make_default_names(
     size: int,
     character: str = "p",
 ):
-    """
-    Returns the array with default names `p1, ..., pn`
-    """
+    """Return the array with default names `p1, ..., pn`."""
     if size < 0:
         raise ValueError
     return np.array([f"{character}{_ + 1}" for _ in range(size)], dtype=object)
 
 
 def is_square(values):
-    """
-    Checks whether a numpy array-able object is square.
-    """
+    """Check whether a numpy array-able object is square."""
     try:
         values = np.array(values, dtype=float)
     except ValueError:
@@ -246,23 +228,17 @@ def is_square(values):
 
 
 def is_symmetric(values):
-    """
-    Checks whether a numpy array-able object is symmetric.
-    """
+    """Check whether a numpy array-able object is symmetric."""
     return np.allclose(np.transpose(values), values)
 
 
 def is_positive_semidefinite(values):
-    """
-    Checks whether a numpy array-able object is positive semi-definite.
-    """
+    """Check whether a numpy array-able object is positive semi-definite."""
     return np.all(np.linalg.eigvalsh(values) >= 0)
 
 
 def get_index_of_other_array(A, B):
-    """
-    Returns the index (an array) which is such that `B[index] == A`.
-    """
+    """Return the index (an array) which is such that `B[index] == A`."""
     A, B = np.array(A), np.array(B)
     xsorted = np.argsort(B)
 
@@ -270,9 +246,7 @@ def get_index_of_other_array(A, B):
 
 
 def reindex_array(values, index):
-    """
-    Returns the array sorted according to (1D) index `index`.
-    """
+    """Return the array sorted according to (1D) index `index`."""
     for dim in range(np.ndim(values)):
         values = np.swapaxes(np.swapaxes(values, 0, dim)[index], dim, 0)
 
@@ -281,11 +255,11 @@ def reindex_array(values, index):
 
 def get_default_rcparams():
     """
-    Returns a dictionary with default parameters used in FITK.
+    Return a dictionary with default plotting parameters used in FITK.
 
     Returns
     -------
-    `dict`
+    dict
     """
     return {
         "mathtext.fontset": "cm",
@@ -295,7 +269,7 @@ def get_default_rcparams():
 
 def process_units(arg: str) -> float:
     """
-    Processes unit arguments
+    Process SI unit arguments.
 
     Returns
     -------
@@ -339,7 +313,7 @@ def find_diff_weights(
     order: int = 1,
 ):
     """
-    Finds the weights for computing derivatives using finite differences.
+    Find the weights for computing derivatives using finite differences.
 
     Parameters
     ----------
@@ -378,9 +352,7 @@ def find_diff_weights(
 
 
 def _expansion_coefficient(n1: int, n2: int):
-    """
-    Returns the expansion coefficient formed with $n_1$ and $n_2$ derivatives.
-    """
+    """Return the expansion coefficient formed with $n_1$ and $n_2$ derivatives."""
     if n1 != n2:
         return 1 / factorial(n1) / factorial(n2)
 
@@ -391,7 +363,7 @@ def math_mode(
     arg: Union[str, Sequence[str]],
 ) -> Union[str, list[str]]:
     """
-    Returns the argument with surrounding math characters (`$...$`).
+    Return the argument with surrounding math characters (`$...$`).
 
     Parameters
     ----------

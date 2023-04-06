@@ -21,6 +21,11 @@ matplotlib = [
     {version = "^3.6", python = ">=3.11"}
 ]
 sympy = {version = "*"}
+coffe = { version = "*", optional = true }
+
+[tool.poetry.extras]
+coffe = ["coffe"]
+interfaces = ["coffe"]
 
 [tool.poetry.dev-dependencies]
 black = "*"

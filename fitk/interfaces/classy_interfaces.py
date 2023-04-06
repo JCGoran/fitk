@@ -1,5 +1,8 @@
 """
-Interfaces for the CLASS (Cosmic Linear Anisotropy System Solver) code
+CLASS interfaces for FITK.
+
+Module containing various interfaces for the CLASS (Cosmic Linear Anisotropy
+System Solver) code.
 """
 
 # for compatibility with Python 3.7
@@ -28,9 +31,8 @@ from fitk.derivatives import FisherDerivative
 
 
 class ClassyBaseDerivative(ABC, FisherDerivative):
-    r"""
-    Base interface for CLASS
-    """
+    r"""Base interface for CLASS."""
+
     software_names = "classy"
     urls = dict(github="https://github.com/lesgourg/class_public")
     version = "1.0.0"
@@ -49,7 +51,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         **kwargs,
     ):
         """
-        The constructor for the CLASS interface
+        Create an instance.
 
         Parameters
         ----------
@@ -70,7 +72,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
     @classmethod
     def from_file(cls, path: Union[str, Path]):
         r"""
-        Loads a CLASS configuration from a file
+        Load a CLASS configuration from a file.
 
         Parameters
         ----------
@@ -104,7 +106,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
 
     def _run_classy(self, *args):  # pylint: disable=method-hidden
         r"""
-        Runs classy and returns the instance of it after computation
+        Run classy and returns the instance of it after computation.
 
         Notes
         -----
@@ -124,8 +126,10 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
 
 class ClassyCMBDerivative(ClassyBaseDerivative):
     """
+    Interface for CMB quantities.
+
     Interface for computing derivatives using the CMB signal and covariance
-    (temperature, polarization, or both)
+    (temperature, polarization, or both).
     """
 
     def signal(
@@ -232,7 +236,6 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         href="https://arxiv.org/abs/0911.3105" target="_blank" rel="noreferrer
         noopener">arXiv:0911.3105</a>, eq. (27).
         """
-
         cosmo = self._run_classy(*args)
 
         outputs = self._parse_outputs()

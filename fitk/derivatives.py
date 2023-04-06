@@ -12,7 +12,7 @@ import warnings
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 from itertools import product
-from typing import Optional
+from typing import Optional, Union
 
 # third party imports
 import numpy as np
@@ -290,6 +290,37 @@ class FisherDerivative:
     Furthermore, the `covariance` method, if implemented, needs to return an
     array that is shape-compatible with the output of the `signal` method.
     """
+
+    software_names: Optional[Union[str, dict[str, str]]] = None
+    """
+    The name of the software which we are interfacing. Can be either a
+    string, or a dictionary with the keys `signal` and `covariance` and the
+    names of each software as values
+    """
+    version: Optional[str] = None
+    """
+    The version of the interface (is *not* necessarily the same as the version
+    of the software itself)
+    """
+    authors: Optional[list[dict[str, str]]] = None
+    """
+    The list of authors of the interface (is *not* necessarily the same as the
+    authors of the software itself)
+    """
+    urls: Optional[dict[str, str]] = None
+    """
+    Any URL(s) to the original software(s)
+    """
+
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"\tsoftware name(s): {self.software_names},\n"
+            f"\tinterface version: {self.version},\n"
+            f"\tauthors: {self.authors},\n"
+            f"\tURL(s): {self.urls}\n"
+            ")"
+        )
 
     def __init__(self, *args, **kwargs):
         """

@@ -88,10 +88,18 @@ class CoffeMultipolesDerivative(FisherDerivative):
     ... D(P(name='n_s', fiducial=0.96), abs_step=1e-3))
     """
 
-    __software_name__ = "coffe"
-    __url__ = "https://github.com/JCGoran/coffe"
-    __version__ = "3.0.0"
-    __maintainers__ = ["Goran Jelic-Cizmek <goran.jelic-cizmek@unige.ch>"]
+    software_names = "coffe"
+    urls = dict(
+        github="https://github.com/JCGoran/coffe",
+        pypi="https://pypi.org/project/coffe/",
+    )
+    version = "1.0.0"
+    authors = [
+        dict(
+            name="Goran Jelic-Cizmek",
+            email="goran.jelic-cizmek@unige.ch>",
+        )
+    ]
     __imported__ = IMPORT_SUCCESS
 
     def __init__(
@@ -111,9 +119,9 @@ class CoffeMultipolesDerivative(FisherDerivative):
         """
         if not self.__imported__:
             raise ImportError(
-                f"Unable to import the `{self.__software_name__}` module, "
+                f"Unable to import the `{self.software_names}` module, "
                 "please make sure it is installed; "
-                f"for additional help, please consult the following URL: {self.__url__}"
+                f"for additional help, please consult one of the following URL(s): {self.urls}"
             )
 
         self._config = config if config is not None else {}
@@ -211,15 +219,6 @@ class CoffeMultipolesDerivative(FisherDerivative):
         )
 
         return result
-
-    @property
-    def __credits__(self):
-        return (
-            f"Software: {self.__software_name__}\n"
-            f"Version: {self.__version__}\n"
-            f"URL: {self.__url__}\n"
-            f"Interface maintainer(s): {self.__maintainers__}"
-        )
 
 
 class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):

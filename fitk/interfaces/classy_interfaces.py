@@ -12,6 +12,7 @@ from __future__ import annotations
 from abc import ABC
 from configparser import ConfigParser
 from functools import lru_cache
+from itertools import product
 from pathlib import Path
 from typing import Optional, Union
 
@@ -107,6 +108,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         return {
             "temperature": "tCl" in outputs,
             "polarization": "pCl" in outputs,
+            "galaxy_counts": "nCl" in outputs or "dCl" in outputs,
         }
 
     def _run_classy(self, *args):  # pylint: disable=method-hidden
@@ -323,3 +325,131 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         final_kwargs = self._parse_covariance_kwargs(**kwargs)
 
         return result / final_kwargs["fsky"]
+
+
+class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
+    r"""
+    Interface for computing derivatives using the galaxy number counts as the
+    signal and covariance
+    """
+
+    def _parse_redshifts(self):
+        r"""
+        Parses the redshifts from the configuration and returns them
+        """
+        raw_redshifts = self.config.get("selection_mean", "")
+
+        if isinstance(raw_redshifts, (tuple, list, np.ndarray)):
+            redshifts = raw_redshifts if raw_redshifts else [1.0]
+        else:
+            redshifts = (
+                [item.strip() for item in raw_redshifts.split(",")]
+                if raw_redshifts
+                else [1.0]
+            )
+
+        return redshifts
+
+    def _cross_correlations(self) -> int:
+        r"""
+        Returns which cross-correlations the output contains
+        """
+        return int(self.config.get("non_diagonal", 0))
+
+    def _compute_angular_power_spectrum(self, *args):
+        r"""
+        Computes the angular power spectrum (the $C_\ell$s) and returns the
+        number of angular power spectra, the number of redshift bins, and the
+        angular power spectra as a dictionary with keys `(ell, index_z1,
+        index_z2)`
+        """
+        cosmo = self._run_classy(*args)
+
+        outputs = self._parse_outputs()
+
+        z_size = len(self._parse_redshifts())
+
+        if outputs["galaxy_counts"]:
+            # the output from CLASS
+            c_ells = cosmo.density_cl()["dd"]
+
+            # how many angular power spectra do we have
+            ell_size = len(c_ells[0])
+
+            # the angular power spectra as a dictionary
+            c_ells_dict = {}
+
+            # if we have cross-correlations, we need to handle them specially
+            if self._cross_correlations() >= 1 and z_size > 1:
+                for ell in range(2, ell_size):
+                    counter = 0
+                    for i in range(z_size):
+                        for j in range(i, z_size):
+                            c_ells_dict[(ell, i, j)] = c_ells_dict[
+                                (ell, j, i)
+                            ] = c_ells[counter][ell]
+                            counter += 1
+            else:
+                c_ells_dict = {
+                    (ell, i, i): c_ells[i][ell]
+                    for i in range(z_size)
+                    for ell in range(2, ell_size)
+                }
+
+            return ell_size, z_size, c_ells_dict
+
+        return NotImplemented
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        The signal ($C_\ell$s) of galaxy number counts
+        """
+        *_, c_ells = self._compute_angular_power_spectrum(*args)
+
+        if c_ells is NotImplemented:
+            return c_ells
+
+        return np.array([c_ells[key] for key in sorted(c_ells)])
+
+    def covariance(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        The covariance of the $C_\ell$s of galaxy number counts
+        """
+        ell_size, z_size, c_ells = self._compute_angular_power_spectrum(*args)
+
+        if c_ells is NotImplemented:
+            return c_ells
+
+        if self._cross_correlations():
+            blocks = []
+            # we skip ell=0 and ell=1 as CLASS sets them to zero anyway
+            for ell in range(2, ell_size):
+                # array containing the covariance for fixed ell
+                covariance_fixed_ell = np.zeros([z_size] * 4)
+                for i1, i2, j1, j2 in product(  # pylint: disable=invalid-name
+                    range(z_size), repeat=4
+                ):
+                    covariance_fixed_ell[i1, i2, j1, j2] = (
+                        c_ells[(ell, i1, j1)] * c_ells[(ell, i2, j2)]
+                        + c_ells[(ell, i1, j2)] * c_ells[(ell, i2, j1)]
+                    )
+                blocks.append(
+                    np.reshape(covariance_fixed_ell, (z_size * z_size, z_size * z_size))
+                )
+
+            result = block_diag(*blocks)
+
+        else:
+            result = np.diag(np.array([2 * c_ells[key] ** 2 for key in sorted(c_ells)]))
+
+        fsky = float(kwargs.pop("fsky", 1))
+
+        return result / fsky

@@ -8,7 +8,10 @@ import pytest
 from helpers import get_signal_and_covariance, validate_signal_and_covariance
 
 from fitk import D, P
-from fitk.interfaces.classy_interfaces import ClassyCMBDerivative
+from fitk.interfaces.classy_interfaces import (
+    ClassyCMBDerivative,
+    ClassyGalaxyCountsDerivative,
+)
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
@@ -77,3 +80,21 @@ class TestClassy:
         fm = cosmo.fisher_matrix(*parameters)
 
         assert fm.is_valid()
+
+    @pytest.mark.parametrize(
+        "config",
+        [
+            {"selection_mean": "0.1"},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 0},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 1},
+        ],
+    )
+    def test_galaxy_counts(self, config):
+        cosmo = ClassyGalaxyCountsDerivative(
+            config={
+                "output": "nCl",
+                "l_max_lss": 3,
+                **config,
+            }
+        )
+        helper(cosmo)

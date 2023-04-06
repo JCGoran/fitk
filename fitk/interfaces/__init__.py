@@ -13,6 +13,11 @@ installed separately by the user.
 
 ### List of interfaces
 
+#### <a href="https://github.com/lesgourg/class_public" target="_blank" rel="noopener noreferrer">CLASS</a>
+
+- installable with `pip install fitk[classy]`
+- for documentation of available interfaces, see `fitk.interfaces.classy_interfaces`
+
 #### <a href="https://github.com/JCGoran/coffe" target="_blank" rel="noopener noreferrer">COFFE</a>
 
 - installable with `pip install fitk[coffe]` (only on Linux; for other

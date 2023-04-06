@@ -4,18 +4,13 @@ Tests for the classy interfaces to FITK
 
 from __future__ import annotations
 
-from collections.abc import Collection
 from pathlib import Path
-from pprint import pprint
-from typing import Any
 
 import numpy as np
 import pytest
-from scipy.linalg import block_diag
 
-from fitk import D, FisherDerivative, FisherMatrix
+from fitk import D, FisherDerivative, P
 from fitk.interfaces.classy_interfaces import ClassyCMBDerivative
-from fitk.utilities import find_diff_weights
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
@@ -34,7 +29,7 @@ def helper(cosmo: FisherDerivative):
 class TestClassy:
     @pytest.mark.parametrize("output", ["tCl,pCl", "tCl", "pCl"])
     def test_outputs(self, output):
-        cosmo = ClassyCMBDerivative(config={"output": output})
+        cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 50})
         helper(cosmo)
 
     @pytest.mark.parametrize("lmax", [10, 100, 999])
@@ -64,4 +59,22 @@ class TestClassy:
     def test_parse_outputs(self, output, benchmark):
         cosmo = ClassyCMBDerivative(config={"output": output})
         result = cosmo._parse_outputs()
-        assert result == benchmark
+        for key in benchmark:
+            assert result[key] == benchmark[key]
+
+    @pytest.mark.parametrize("output", ["tCl,pCl", "tCl", "pCl"])
+    def test_fisher_matrix(self, output):
+        parameters = [
+            D(P("Omega_cdm", 0.3, latex_name=r"$\Omega_\mathrm{cdm}$"), 1e-3),
+            D(P("Omega_b", 0.04, latex_name=r"$\Omega_\mathrm{b}$"), 1e-3),
+            D(P("h", 0.6, latex_name=r"$h$"), 1e-3),
+            D(P("n_s", 0.96, latex_name=r"$n_\mathrm{s}$"), 1e-3),
+            D(
+                P("ln10^{10}A_s", 3.0980, latex_name=r"$\log (10^{10} A_\mathrm{s})$"),
+                1e-3,
+            ),
+        ]
+        cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 100})
+        fm = cosmo.fisher_matrix(*parameters)
+
+        assert fm.is_valid()

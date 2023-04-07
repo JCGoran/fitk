@@ -16,7 +16,7 @@ from fitk.interfaces.classy_interfaces import (
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
 
-class TestClassy:
+class TestCMB:
     @pytest.mark.parametrize(
         "output,benchmark",
         [
@@ -81,6 +81,8 @@ class TestClassy:
 
         assert fm.is_valid()
 
+
+class TestGalaxyCounts:
     @pytest.mark.parametrize(
         "config",
         [
@@ -89,7 +91,7 @@ class TestClassy:
             {"selection_mean": "0.1, 0.5", "non_diagonal": 1},
         ],
     )
-    def test_galaxy_counts(self, config):
+    def test_signal_and_covariance(self, config):
         cosmo = ClassyGalaxyCountsDerivative(
             config={
                 "output": "nCl",
@@ -97,4 +99,37 @@ class TestClassy:
                 **config,
             }
         )
-        helper(cosmo)
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
+
+    @pytest.mark.parametrize(
+        "config",
+        [
+            {"selection_mean": "0.1"},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 0},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 1},
+        ],
+    )
+    def test_fisher_matrix(self, config, l_max: int = 500):
+        cosmo = ClassyGalaxyCountsDerivative(
+            config={
+                "output": "nCl",
+                "l_max_lss": l_max,
+                **config,
+            }
+        )
+
+        parameters = [
+            D(P("Omega_cdm", 0.3, latex_name=r"$\Omega_\mathrm{cdm}$"), 1e-3),
+            D(P("Omega_b", 0.04, latex_name=r"$\Omega_\mathrm{b}$"), 1e-3),
+            D(P("h", 0.6, latex_name=r"$h$"), 1e-3),
+            D(P("n_s", 0.96, latex_name=r"$n_\mathrm{s}$"), 1e-3),
+            D(
+                P("ln10^{10}A_s", 3.0980, latex_name=r"$\log (10^{10} A_\mathrm{s})$"),
+                1e-3,
+            ),
+        ]
+
+        fm = cosmo.fisher_matrix(*parameters)
+
+        assert fm.is_valid()

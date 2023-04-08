@@ -5,6 +5,8 @@ on:
     permissions:
       push:
         roles: [maintainer]
+      pull_request:
+        types: [opened, synchronize]
 
 jobs:
   setup:
@@ -50,11 +52,11 @@ jobs:
     if: github.event.inputs.job == 'coffe'
     steps:
       - name: Run COFFE tests
-        run: poetry run -v tests/test_coffe_interfaces.py
+        run: poetry run pytest -v tests/test_coffe_interfaces.py
   classy:
     needs: setup
     runs-on: self-hosted
     if: github.event.inputs.job == 'classy'
     steps:
       - name: Run CLASS tests
-        run: poetry run -v tests/test_classy_interfaces.py
+        run: poetry run pytest -v tests/test_classy_interfaces.py

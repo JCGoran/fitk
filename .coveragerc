@@ -5,4 +5,5 @@ omit =
     fitk/interfaces/classy_interfaces.py
     tests/test_coffe_interfaces.py
     tests/test_classy_interfaces.py
+    tests/helpers.py
     change_version.py

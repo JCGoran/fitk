@@ -4,44 +4,36 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import numpy as np
 import pytest
+from helpers import get_signal_and_covariance, validate_signal_and_covariance
 
-from fitk import D, FisherDerivative, P
+from fitk import D, P
 from fitk.interfaces.classy_interfaces import ClassyCMBDerivative
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
-
-
-def helper(cosmo: FisherDerivative):
-    signal = cosmo.signal()
-    cov = cosmo.covariance()
-    assert cov.ndim == 2
-    assert np.all(np.diag(cov) > 0)
-    assert np.all(np.linalg.eigvalsh(cov) >= 0)
-    assert signal.shape[0] == cov.shape[0] == cov.shape[1]
-    assert np.allclose(cov.T, cov)
-    return np.linalg.inv(cov) @ signal
 
 
 class TestClassy:
     @pytest.mark.parametrize("output", ["tCl,pCl", "tCl", "pCl"])
     def test_outputs(self, output):
         cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 50})
-        helper(cosmo)
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
 
     @pytest.mark.parametrize("lmax", [10, 100, 999])
     def test_lmax(self, lmax: int):
         cosmo = ClassyCMBDerivative(config={"output": "tCl", "l_max_scalars": lmax})
+        signal, cov = get_signal_and_covariance(cosmo)
 
-        assert cosmo.signal().shape == (lmax - 1,)
-        helper(cosmo)
+        assert signal.shape == (lmax - 1,)
+        validate_signal_and_covariance(signal, cov)
 
     def test_from_file(self):
         cosmo = ClassyCMBDerivative.from_file(
             DATADIR_INPUT / "classy_parameter_file.ini"
         )
-        helper(cosmo)
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
 
     @pytest.mark.parametrize(
         "output,benchmark",

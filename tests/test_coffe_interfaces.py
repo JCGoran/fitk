@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 import pytest
+from helpers import validate_covariance
 from scipy.linalg import block_diag
 
 try:
@@ -146,6 +147,8 @@ class TestMultipolesInterface:
         )
 
         result = d.covariance()
+
+        validate_covariance(result)
 
         assert np.allclose(benchmark, result, rtol=1e-3)
 

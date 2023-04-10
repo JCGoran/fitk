@@ -1,6 +1,4 @@
-"""
-Tests for the classy interfaces to FITK
-"""
+"""Tests for classy interfaces."""
 
 from __future__ import annotations
 

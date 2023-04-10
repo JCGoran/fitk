@@ -12,11 +12,13 @@ import json
 import math
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
+from functools import lru_cache
 from math import factorial
 from typing import Optional, Union
 
 # third party imports
 import numpy as np
+from scipy.linalg.lapack import dpotrf, dpotri  # pylint: disable=no-name-in-module
 
 
 @dataclass
@@ -396,3 +398,29 @@ def math_mode(
         raise TypeError(err) from err
 
     return [f"${_}$" for _ in arg]
+
+
+@lru_cache(maxsize=None)
+def _get_inds(size: int):
+    return np.tri(size, k=-1, dtype=bool)
+
+
+def upper_triangular_to_symmetric(upper_triangular):
+    r"""Convert an upper triangular matrix to a full, symmetric matrix."""
+    size = upper_triangular.shape[0]
+    inds = _get_inds(size)
+    upper_triangular[inds] = upper_triangular.T[inds]
+
+
+def fast_positive_definite_inverse(matrix):
+    r"""Compute the fast inverse of a positive-definite symmetric NxN matrix."""
+    cholesky, info = dpotrf(matrix)
+    if info != 0:
+        raise np.linalg.LinAlgError(f"dpotrf failed on input {matrix}")
+
+    inv, info = dpotri(cholesky)
+    if info != 0:
+        raise np.linalg.LinAlgError(f"dpotri failed on input {cholesky}")
+
+    upper_triangular_to_symmetric(inv)
+    return inv

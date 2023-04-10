@@ -837,6 +837,16 @@ class TestFisherMatrix:
         assert np.allclose(m_cf_marginalized1.get_fisher_matrix(), m_marg1.values)
         assert np.allclose(m_cf_marginalized2.get_fisher_matrix(), m_marg2.values)
 
+    def test_inverse(self):
+        fm = FisherMatrix([[1, -1], [-1, 1]])
+
+        # singular matrix
+        with pytest.raises(np.linalg.LinAlgError):
+            fm.inverse()
+
+        # using the pseudoinverse, we do not encounter any errors
+        fm.inverse(use_pinv=True)
+
     def test_ufunc(self):
         """
         Test of numpy universal functions.

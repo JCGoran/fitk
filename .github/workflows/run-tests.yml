@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   linting:
+    name: Linting
     runs-on: ubuntu-latest
     steps:
       #----------------------------------------------
@@ -30,7 +31,7 @@ jobs:
         with:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
-      - run: poetry install --no-interaction --no-root
+      - run: poetry install --extras interfaces --no-interaction --no-root
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - run: poetry install --no-interaction
       #----------------------------------------------
@@ -38,6 +39,7 @@ jobs:
       #----------------------------------------------
       - run: sh check_syntax.sh
   test:
+    name: Tests of general module
     needs: linting
     strategy:
       fail-fast: true
@@ -87,3 +89,84 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}  # Only required for private repositories
           file: ./coverage.xml
           fail_ci_if_error: true
+
+  classy:
+    name: Tests for CLASS interfaces
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+      #----------------------------------------------
+      #        poetry setup
+      #----------------------------------------------
+      - name: cache poetry install
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-1.1.12-0
+      - uses: snok/install-poetry@v1
+        with:
+          version: 1.1.12
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: cache deps
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+      - run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+      - run: poetry install --no-interaction
+      - name: Install CLASS
+        run: |
+          poetry install --no-interaction
+          poetry run pip install Cython
+          git clone --depth 1 --branch feature/conda https://github.com/JCGoran/class_public && cd class_public && poetry run make classy && cd -
+      - name: Run CLASS tests
+        run: poetry run pytest -v tests/test_classy_interfaces.py
+
+  coffe:
+    name: Tests for COFFE interfaces
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+      #----------------------------------------------
+      #        poetry setup
+      #----------------------------------------------
+      - name: cache poetry install
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-1.1.12-0
+      - uses: snok/install-poetry@v1
+        with:
+          version: 1.1.12
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: cache deps
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+      - run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+      - run: poetry install --no-interaction
+      - name: Install COFFE
+        run: poetry install --extras coffe --no-interaction
+      - name: Run COFFE tests
+        run: poetry run pytest -v tests/test_coffe_interfaces.py

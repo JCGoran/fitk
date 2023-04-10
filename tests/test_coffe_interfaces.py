@@ -1,6 +1,4 @@
-"""
-Tests for the various third-party interfaces to FITK
-"""
+"""Tests for COFFE interfaces."""
 
 from __future__ import annotations
 
@@ -21,8 +19,7 @@ from fitk.interfaces.coffe_interfaces import (
     CoffeMultipolesDerivative,
     CoffeMultipolesTildeDerivative,
 )
-from fitk.utilities import P
-from fitk.utilities import find_diff_weights
+from fitk.utilities import P, find_diff_weights
 
 COFFE_SETTINGS = {
     "omega_m": 0.32,
@@ -39,6 +36,8 @@ COFFE_SETTINGS = {
     "has_density": True,
     "has_rsd": True,
     "has_flatsky_local": True,
+    "N_ncdm": 0,
+    "A_s": 2.2e-09,
 }
 COFFE_REDSHIFTS = np.array([0, 0.5, 1, 1.5, 2])
 COFFE_GALAXY_BIAS1 = np.array([np.sqrt(1 + _) for _ in COFFE_REDSHIFTS])
@@ -52,15 +51,11 @@ def _split_array(item, index: int):
     return np.array([item[_ : _ + index] for _ in range(0, len(item), index)])
 
 
-class TestCoffeInterfaces:
-    """
-    Tests for the interfaces of the COFFE code
-    """
+class TestMultipolesInterface:
+    """Tests for the `CoffeMultipolesDerivative` class."""
 
-    def test_signal_multipoles(self):
-        """
-        Testing multipoles of COFFE
-        """
+    def test_signal(self):
+        """Test multipoles of COFFE."""
         cosmo = coffe.Coffe(**COFFE_SETTINGS)
         cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
         cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
@@ -79,10 +74,8 @@ class TestCoffeInterfaces:
 
         assert np.allclose(benchmark, result, rtol=1e-3)
 
-    def test_signal_multipoles_derivative(self):
-        """
-        Testing the derivatives of the multipoles of COFFE
-        """
+    def test_signal_derivative(self):
+        """Test the derivatives of the multipoles of COFFE."""
         parameters = [
             D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
@@ -122,10 +115,8 @@ class TestCoffeInterfaces:
 
             assert np.allclose(benchmark, result, rtol=1e-3)
 
-    def test_covariance_multipoles(self):
-        """
-        Testing the covariance of multipoles of COFFE
-        """
+    def test_covariance(self):
+        """Test the covariance of multipoles of COFFE."""
         cosmo = coffe.Coffe(**COFFE_SETTINGS)
         cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
         cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
@@ -158,10 +149,8 @@ class TestCoffeInterfaces:
 
         assert np.allclose(benchmark, result, rtol=1e-3)
 
-    def test_covariance_multipoles_derivative(self):
-        """
-        Testing the derivatives of the covariance of multipoles of COFFE
-        """
+    def test_covariance_derivative(self):
+        """Test the derivatives of the covariance of multipoles of COFFE."""
         parameters = [
             D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
@@ -219,9 +208,7 @@ class TestCoffeInterfaces:
             assert np.allclose(benchmark, result, rtol=1e-3)
 
     def test_fisher_matrix(self):
-        """
-        Tests the full Fisher matrix obtained using multipoles from COFFE
-        """
+        """Test the full Fisher matrix obtained using multipoles from COFFE."""
         parameters = [
             D(P(name=_, fiducial=COFFE_SETTINGS[_]), abs_step=1e-3, accuracy=2)
             for _ in [
@@ -297,9 +284,7 @@ class TestCoffeInterfaces:
 
 
 class TestTildeInterface:
-    """
-    Tests for the `CoffeMultipolesTildeDerivative` class
-    """
+    """Tests for the `CoffeMultipolesTildeDerivative` class."""
 
     @staticmethod
     def monopole_derivative_f(b: float, f: float, cosmo):
@@ -346,16 +331,14 @@ class TestTildeInterface:
         return [0 for _ in cosmo.sep]
 
     def test_derivative(self):
-        """
-        Test for the `derivative` method
-        """
-        l = [0, 2, 4]
+        """Test the `derivative` method."""
+        multipoles = [0, 2, 4]
         z_mean = [1, 1.2, 1.5]
         deltaz = [0.1, 0.1, 0.1]
         cosmo = coffe.Coffe(**COFFE_SETTINGS)
         cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
         cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
-        cosmo.l = l
+        cosmo.l = multipoles
         cosmo.z_mean = z_mean
         cosmo.deltaz = deltaz
 
@@ -364,7 +347,7 @@ class TestTildeInterface:
                 "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
                 "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
                 **COFFE_SETTINGS,
-                "l": l,
+                "l": multipoles,
                 "z_mean": z_mean,
                 "deltaz": deltaz,
             }
@@ -419,21 +402,17 @@ class TestTildeInterface:
 
 
 class TestBiasInterface:
-    """
-    Tests for the `CoffeMultipolesBiasDerivative` class
-    """
+    """Tests for the `CoffeMultipolesBiasDerivative` class."""
 
     def test_derivative(self):
-        """
-        Test for the `derivative` method
-        """
-        l = [0, 2]
+        """Test the `derivative` method."""
+        multipoles = [0, 2]
         z_mean = [1, 1.2, 1.5]
         deltaz = [0.1, 0.1, 0.1]
         cosmo = coffe.Coffe(**COFFE_SETTINGS)
         cosmo.set_galaxy_bias1(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1)
         cosmo.set_galaxy_bias2(COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2)
-        cosmo.l = l
+        cosmo.l = multipoles
         cosmo.z_mean = z_mean
         cosmo.deltaz = deltaz
 
@@ -442,7 +421,7 @@ class TestBiasInterface:
                 "galaxy_bias1": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS1),
                 "galaxy_bias2": (COFFE_REDSHIFTS, COFFE_GALAXY_BIAS2),
                 **COFFE_SETTINGS,
-                "l": l,
+                "l": multipoles,
                 "z_mean": z_mean,
                 "deltaz": deltaz,
             }
@@ -485,8 +464,10 @@ class TestBiasInterface:
 
     def test_warning_flatsky_local(self):
         """
+        Test local flatsky warning.
+
         Check that the code shows a warning when not using the flat-sky
-        approximation (for local terms)
+        approximation (for local terms).
         """
         derivative = CoffeMultipolesBiasDerivative(
             config={
@@ -502,8 +483,10 @@ class TestBiasInterface:
 
     def test_warning_flatsky_nonlocal(self):
         """
+        Test nonlocal flatsky warning.
+
         Check that the code shows a warning when not using the flat-sky
-        approximation (for non-local terms)
+        approximation (for non-local terms).
         """
 
         derivative = CoffeMultipolesBiasDerivative(

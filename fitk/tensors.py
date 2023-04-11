@@ -1414,6 +1414,11 @@ class FisherMatrix:
             use the Moore-Penrose pseudoinverse (default: False). Can be useful
             if the Fisher matrix is weakly singular. Use with caution!
 
+        Raises
+        ------
+        LinAlgError
+            if the Fisher matrix is singular
+
         Returns
         -------
         array_like : float

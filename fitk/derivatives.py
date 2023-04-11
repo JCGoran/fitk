@@ -576,6 +576,9 @@ class FisherDerivative:
         ValueError
             if the argument `external_covariance` is not a square matrix
 
+        LinAlgError
+            if the covariance matrix is singular
+
         Notes
         -----
         The `order` parameter is ignored if passed to `D`.

@@ -2285,6 +2285,7 @@ class FisherMatrix:
         self,
         name1: str,
         name2: str,
+        **kwargs,
     ) -> float:
         r"""
         Return the correlation coefficient between two parameters.
@@ -2297,11 +2298,17 @@ class FisherMatrix:
         name2 : str
             the name of the second parameter
 
+        **kwargs
+            any kwargs passed to `correlation_matrix`
+
         Returns
         -------
         float
         """
-        return self.__class__(self.correlation_matrix(), names=self.names)[name1, name2]
+        return self.__class__(
+            self.correlation_matrix(**kwargs),
+            names=self.names,
+        )[name1, name2]
 
     def figure_of_merit(self) -> float:
         r"""
@@ -2331,9 +2338,14 @@ class FisherMatrix:
         """
         return np.linalg.slogdet(self.values)[-1] / 2
 
-    def figure_of_correlation(self) -> float:
+    def figure_of_correlation(self, **kwargs) -> float:
         r"""
         Compute the figure of correlation (FoC).
+
+        Parameters
+        ----------
+        **kwargs
+            any kwargs passed to `correlation_matrix`
 
         Returns
         -------
@@ -2351,4 +2363,4 @@ class FisherMatrix:
         $$
         where $\mathsf{P}$ denotes the correlation matrix.
         """
-        return -np.linalg.slogdet(self.correlation_matrix())[-1] / 2
+        return -np.linalg.slogdet(self.correlation_matrix(**kwargs))[-1] / 2

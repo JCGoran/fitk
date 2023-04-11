@@ -2047,7 +2047,9 @@ class FisherMatrix:
         )
 
     def to_file(
-        self, path: Union[str, Path], metadata: Optional[Mapping[str, Any]] = None
+        self,
+        path: Union[str, Path],
+        metadata: Optional[Mapping[str, Any]] = None,
     ) -> dict[str, Any]:
         r"""
         Save the Fisher object to a file (UTF-8 encoded).

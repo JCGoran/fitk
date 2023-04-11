@@ -128,6 +128,16 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
 
         return cosmo
 
+    def _parse_covariance_kwargs(self, **kwargs):
+        """Parse any keyword arguments for the covariance."""
+        final_kwargs = {}
+        final_kwargs["fsky"] = float(kwargs.pop("fsky", 1))
+        final_kwargs["delta_ell"] = int(
+            kwargs.pop("delta_ell", 2 / final_kwargs["fsky"])
+        )
+
+        return final_kwargs
+
 
 class ClassyCMBDerivative(ClassyBaseDerivative):
     """
@@ -287,6 +297,6 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         else:
             return NotImplemented
 
-        fsky = float(kwargs.pop("fsky", 1))
+        final_kwargs = self._parse_covariance_kwargs(**kwargs)
 
-        return result / fsky
+        return result / final_kwargs["fsky"]

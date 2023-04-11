@@ -443,6 +443,7 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
                     )
                 blocks.append(
                     np.reshape(covariance_fixed_ell, (z_size * z_size, z_size * z_size))
+                    / (2 * ell + 1)
                 )
 
             result = block_diag(*blocks)

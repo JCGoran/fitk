@@ -84,6 +84,7 @@ jobs:
       - name: Run tests
         run: sh check_coverage.sh
       - name: Upload coverage
+        if: ${{ matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest' }}
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}  # Only required for private repositories

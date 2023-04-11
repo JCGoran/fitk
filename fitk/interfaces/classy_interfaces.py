@@ -506,6 +506,6 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
         else:
             result = np.diag(np.array([2 * c_ells[key] ** 2 for key in sorted(c_ells)]))
 
-        fsky = float(kwargs.pop("fsky", 1))
+        final_kwargs = self._parse_covariance_kwargs(**kwargs)
 
-        return result / fsky
+        return result / final_kwargs["fsky"] / final_kwargs["delta_ell"]

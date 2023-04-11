@@ -10,3 +10,4 @@ dist/
 .ipynb_checkpoints/
 tests/data_output/
 tags
+*.orig

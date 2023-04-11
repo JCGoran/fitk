@@ -329,13 +329,15 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
 class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
     r"""
-    Interface for computing derivatives using the galaxy number counts as the
-    signal and covariance
+    Interface for galaxy number count quantities.
+
+    Interface for computing derivatives using the galaxy number count signal
+    and covariance.
     """
 
     def _parse_redshifts(self):
         r"""
-        Parses the redshifts from the configuration and returns them
+        Parse the redshifts from the configuration and return them.
         """
         raw_redshifts = self.config.get("selection_mean", "")
 
@@ -352,12 +354,14 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
 
     def _cross_correlations(self) -> int:
         r"""
-        Returns which cross-correlations the output contains
+        Return which cross-correlations the output contains.
         """
         return int(self.config.get("non_diagonal", 0))
 
     def _compute_angular_power_spectrum(self, *args):
         r"""
+        Compute the $C_\ell$s.
+
         Computes the angular power spectrum (the $C_\ell$s) and returns the
         number of angular power spectra, the number of redshift bins, and the
         angular power spectra as a dictionary with keys `(ell, index_z1,
@@ -406,7 +410,19 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        The signal ($C_\ell$s) of galaxy number counts
+        Compute the signal ($C_\ell$s) of galaxy number counts.
+
+        Parameters
+        ----------
+        *args
+            the name(s) and fiducial value(s) of the parameter(s) for which we
+            want to compute the covariance
+
+        Notes
+        -----
+        The coordinates used are $(z_1, z_2, \ell)$, in that increasing order.
+        Note that $\ell = \\{0, 1\\}$ are not part of the output, i.e. we
+        impose $\ell_\mathrm{min} = 2$.
         """
         *_, c_ells = self._compute_angular_power_spectrum(*args)
 
@@ -421,7 +437,46 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        The covariance of the $C_\ell$s of galaxy number counts
+        Compute the covariance of the $C_\ell$s of galaxy number counts.
+
+        Parameters
+        ----------
+        *args
+            the name(s) and fiducial value(s) of the parameter(s) for which we
+            want to compute the covariance
+
+        **kwargs
+            keyword arguments for the covariance. Supported values are:
+            - `fsky`: the sky coverage of the survey (default: 1)
+            - `delta_ell`: the bin width in multipole space (default: 2 / `fsky`)
+
+        Notes
+        -----
+        The covariance is computed as:
+
+        $$
+            \mathsf{C}[(ij), (pq), \ell, \ell'] = \delta_{\ell, \ell'}
+            \frac{
+                C_\ell(i, p) C_\ell(j, q) + C_\ell(i, q) C_\ell(j, p)
+            }
+            {
+                f_\mathrm{sky} \Delta \ell (2 \ell + 1)
+            }
+        $$
+
+        The covariance is block diagonal in $\ell$, that is:
+        $$
+            \begin{pmatrix}
+            \mathsf{C}[(ij), (pq), \ell = 2] & 0 & \ldots & 0\\\
+            0 & \mathsf{C}[(ij), (pq), \ell = 3] & \ldots & 0\\\
+            \vdots & \vdots & \ddots & \vdots\\\
+            0 & 0 & \ldots & \mathsf{C}[(ij), (pq), \ell = \ell_\mathrm{max}]
+            \end{pmatrix}
+        $$
+
+        Note that the covariance may be singular if the cross-correlations
+        between redshift bins are not zero (i.e. if using a non-zero value for
+        the `non_diagonal` parameter).
         """
         ell_size, z_size, c_ells = self._compute_angular_power_spectrum(*args)
 

@@ -335,6 +335,24 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
     and covariance.
     """
 
+    def __init__(
+        self,
+        *args,
+        config: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Create an instance.
+
+        Parameters
+        ----------
+        config : dict, optional
+            the CLASS configuration to use. All parameters are accepted.
+            If not specified, defaults to `{'output' : 'nCl'}`.
+        """
+        super().__init__(*args, config=config, **kwargs)
+        self._config = config if config is not None else {"output": "nCl"}
+
     def _parse_redshifts(self):
         r"""
         Parse the redshifts from the configuration and return them.

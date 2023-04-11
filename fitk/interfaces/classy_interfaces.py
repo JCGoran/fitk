@@ -147,6 +147,24 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
     (temperature, polarization, or both).
     """
 
+    def __init__(
+        self,
+        *args,
+        config: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Create an instance.
+
+        Parameters
+        ----------
+        config : dict, optional
+            the CLASS configuration to use. All parameters are accepted.
+            If not specified, defaults to `{'output' : 'tCl'}`.
+        """
+        super().__init__(*args, config=config, **kwargs)
+        self._config = config if config is not None else {"output": "tCl"}
+
     def signal(
         self,
         *args: tuple[str, float],

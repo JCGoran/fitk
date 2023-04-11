@@ -513,6 +513,7 @@ class FisherDerivative:
         self,
         *args: D,
         parameter_dependence: str = "signal",
+        use_pinv: bool = False,
         external_covariance: Optional[Sequence[Sequence[float]]] = None,
         rounding_threshold: float = 0.0,
         kwargs_signal: Optional[dict] = None,
@@ -530,6 +531,11 @@ class FisherDerivative:
         parameter_dependence : {'signal', 'covariance', 'both'}
             where the parameter dependence is located, in the signal, the
             covariance, or both (default: 'signal')
+
+        use_pinv : bool, optional
+            use the Moore-Penrose pseudoinverse to obtain the inverse of the
+            covariance matrix (default: False). Can be useful if the covariance
+            matrix is weakly signular. Use with caution!
 
         external_covariance : array_like, optional
             the external covariance matrix to use when computing the result
@@ -569,6 +575,9 @@ class FisherDerivative:
 
         ValueError
             if the argument `external_covariance` is not a square matrix
+
+        LinAlgError
+            if the covariance matrix is singular
 
         Notes
         -----
@@ -636,7 +645,13 @@ class FisherDerivative:
                 *zip(names, fiducials), **kwargs_covariance
             )
 
-        inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
+        if use_pinv:
+            inverse_covariance_matrix = np.linalg.pinv(
+                covariance_matrix,
+                hermitian=True,
+            )
+        else:
+            inverse_covariance_matrix = np.linalg.inv(covariance_matrix)
 
         covariance_shape = np.shape(inverse_covariance_matrix)
 

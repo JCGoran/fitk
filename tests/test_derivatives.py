@@ -467,6 +467,15 @@ class TestMiscDerivatives:
             kwargs_covariance={"sample_kwarg": "sample_value"},
         )
 
+        fm_with_pinv = sn.fisher_matrix(
+            D(P("omega_m", 0.32), 1e-3),
+            kwargs_signal={"sample_kwarg": "sample_value"},
+            kwargs_covariance={"sample_kwarg": "sample_value"},
+            use_pinv=True,
+        )
+
+        assert fm == fm_with_pinv
+
         with pytest.raises(KeyError):
             sn.config = dict(q="asdf")
 

@@ -1404,9 +1404,20 @@ class FisherMatrix:
         values = np.abs(self.eigenvalues())
         return np.max(values) / np.min(values)
 
-    def inverse(self):
+    def inverse(self, use_pinv: bool = False):
         """
         Return the inverse of the Fisher matrix.
+
+        Parameters
+        ----------
+        use_pinv : bool, optional
+            use the Moore-Penrose pseudoinverse (default: False). Can be useful
+            if the Fisher matrix is weakly singular. Use with caution!
+
+        Raises
+        ------
+        LinAlgError
+            if the Fisher matrix is singular
 
         Returns
         -------
@@ -1421,6 +1432,8 @@ class FisherMatrix:
                [0. , 0.5, 0. ],
                [0. , 0. , 0.2]])
         """
+        if use_pinv:
+            return np.linalg.pinv(self.values, hermitian=True)
         return np.linalg.inv(self.values)
 
     def determinant(self):
@@ -1439,6 +1452,7 @@ class FisherMatrix:
         marginalized: bool = True,
         sigma: Optional[float] = None,
         p: Optional[float] = None,
+        **kwargs,
     ):
         r"""
         Compute the constraints on parameters.
@@ -1458,6 +1472,9 @@ class FisherMatrix:
 
         p : float, optional
             the confidence interval (p-value) (default: None).
+
+        **kwargs
+            any kwargs passed to `inverse`
 
         Returns
         -------
@@ -1505,7 +1522,7 @@ class FisherMatrix:
 
         if marginalized:
             inv = self.__class__(
-                self.inverse(),
+                self.inverse(**kwargs),
                 names=self.names,
                 latex_names=self.latex_names,
                 fiducials=self.fiducials,
@@ -2111,6 +2128,7 @@ class FisherMatrix:
         *names: str,
         invert: bool = False,
         ignore_errors: bool = False,
+        **kwargs,
     ) -> FisherMatrix:
         """
         Perform marginalization over some parameters.
@@ -2125,6 +2143,9 @@ class FisherMatrix:
 
         ignore_errors : bool, optional
             should non-existing parameters be ignored (default: False)
+
+        **kwargs
+            any kwargs passed to `inverse`
 
         Returns
         -------
@@ -2161,7 +2182,7 @@ class FisherMatrix:
             fiducials=array([0., 0.]))
         """
         inv = self.__class__(
-            self.inverse(),
+            self.inverse(**kwargs),
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,
@@ -2170,7 +2191,7 @@ class FisherMatrix:
             names = tuple(set(names) ^ set(self.names))
         fisher = inv.drop(*names, ignore_errors=ignore_errors)
         return self.__class__(
-            fisher.inverse(),
+            fisher.inverse(**kwargs),
             names=fisher.names,
             latex_names=fisher.latex_names,
             fiducials=fisher.fiducials,
@@ -2239,9 +2260,14 @@ class FisherMatrix:
             fiducials=data["fiducials"],
         )
 
-    def correlation_matrix(self):
+    def correlation_matrix(self, **kwargs):
         r"""
         Compute the correlation matrix from the Fisher matrix.
+
+        Parameters
+        ----------
+        **kwargs
+            any kwargs passed to `inverse`
 
         Returns
         -------
@@ -2257,7 +2283,7 @@ class FisherMatrix:
         where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
         matrix (the inverse of the Fisher matrix).
         """
-        inv = self.inverse()
+        inv = self.inverse(**kwargs)
         diag = np.diag(inv)
 
         return inv / np.sqrt(np.outer(diag, diag))
@@ -2266,6 +2292,7 @@ class FisherMatrix:
         self,
         name1: str,
         name2: str,
+        **kwargs,
     ) -> float:
         r"""
         Return the correlation coefficient between two parameters.
@@ -2278,11 +2305,17 @@ class FisherMatrix:
         name2 : str
             the name of the second parameter
 
+        **kwargs
+            any kwargs passed to `correlation_matrix`
+
         Returns
         -------
         float
         """
-        return self.__class__(self.correlation_matrix(), names=self.names)[name1, name2]
+        return self.__class__(
+            self.correlation_matrix(**kwargs),
+            names=self.names,
+        )[name1, name2]
 
     def figure_of_merit(self) -> float:
         r"""
@@ -2312,9 +2345,14 @@ class FisherMatrix:
         """
         return np.linalg.slogdet(self.values)[-1] / 2
 
-    def figure_of_correlation(self) -> float:
+    def figure_of_correlation(self, **kwargs) -> float:
         r"""
         Compute the figure of correlation (FoC).
+
+        Parameters
+        ----------
+        **kwargs
+            any kwargs passed to `correlation_matrix`
 
         Returns
         -------
@@ -2332,4 +2370,4 @@ class FisherMatrix:
         $$
         where $\mathsf{P}$ denotes the correlation matrix.
         """
-        return -np.linalg.slogdet(self.correlation_matrix())[-1] / 2
+        return -np.linalg.slogdet(self.correlation_matrix(**kwargs))[-1] / 2

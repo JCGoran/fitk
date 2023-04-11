@@ -15,7 +15,9 @@ installed separately by the user.
 
 #### <a href="https://github.com/lesgourg/class_public" target="_blank" rel="noopener noreferrer">CLASS</a>
 
-- installable with `pip install fitk[classy]`
+- installable with `pip install fitk[classy]` (but see <a
+  href="https://github.com/lesgourg/class_public/issues/502" target="_blank"
+  rel="noopener noreferrer">this issue</a> for caveats)
 - for documentation of available interfaces, see `fitk.interfaces.classy_interfaces`
 
 #### <a href="https://github.com/JCGoran/coffe" target="_blank" rel="noopener noreferrer">COFFE</a>

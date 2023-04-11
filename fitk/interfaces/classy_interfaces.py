@@ -171,7 +171,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Interface function for CLASS for computing the CMB $C_\ell$s.
+        Compute the CMB $C_\ell$s.
 
         Parameters
         ----------
@@ -181,7 +181,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
         Returns
         -------
-        array_like : float
+        result : array_like of float
             the signal as a numpy array
 
         Notes
@@ -231,8 +231,25 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Interface function for CLASS for computing the covariance of CMB $C_\ell$s.
+        Compute the covariance of CMB $C_\ell$s.
 
+        Parameters
+        ----------
+        *args
+            the name(s) and fiducial value(s) of the parameter(s) for which we want to
+            compute the covariance
+
+        **kwargs
+            keyword arguments for the covariance. Supported values are:
+            - `fsky`: the sky fraction of the survey (default: 1)
+
+        Returns
+        -------
+        result : array_like of float
+            the signal as a numpy array
+
+        Notes
+        -----
         The covariance is the following block-matrix (with the notation $X = C_\ell$):
 
         $$
@@ -245,23 +262,6 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             \end{pmatrix}
         $$
 
-        Parameters
-        ----------
-        *args
-            the name(s) and value(s) of the parameter(s) for which we want to
-            compute the derivative
-
-        **kwargs
-            keyword arguments for the covariance. Can be `fsky` (the sky
-            fraction)
-
-        Returns
-        -------
-        array_like : float
-            the signal as a numpy array
-
-        Notes
-        -----
         See the notes of the `signal` method about the order of the outputs in
         the matrix.
 

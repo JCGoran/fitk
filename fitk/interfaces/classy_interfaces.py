@@ -65,7 +65,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
                 f"for additional help, please consult one of the following URL(s): {self.urls}"
             )
 
-        self.config = config if config is not None else {}
+        self._config = config if config is not None else {}
         super().__init__(*args, **kwargs)
         self._run_classy = lru_cache(maxsize=None)(self._run_classy)  # type: ignore
 
@@ -90,6 +90,11 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         }
 
         return cls(config=final_config)
+
+    @property
+    def config(self):
+        """Return the current configuration used for running CLASS."""
+        return self._config
 
     def _parse_outputs(self):
         raw_output = self.config.get("output", "")

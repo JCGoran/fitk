@@ -134,7 +134,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         """Parse any keyword arguments for the covariance."""
         final_kwargs = {}
         final_kwargs["fsky"] = float(kwargs.pop("fsky", 1))
-        final_kwargs["delta_ell"] = int(
+        final_kwargs["delta_ell"] = round(
             kwargs.pop("delta_ell", 2 / final_kwargs["fsky"])
         )
 

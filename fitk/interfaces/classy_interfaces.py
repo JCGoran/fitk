@@ -223,7 +223,8 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
     def _prefactor_covariance(self, size: int):
         l_max = int(self.config.get("l_max_scalars", 2500))
-        return block_diag([2 / (2 * ell + 1) for ell in range(2, l_max + 1)] * size)
+        matrix = np.diag([2 / (2 * ell + 1) for ell in range(2, l_max + 1)])
+        return np.tile(matrix, (size, size))
 
     def covariance(
         self,

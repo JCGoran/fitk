@@ -33,8 +33,8 @@ If you encounter any bugs running the code, or have a suggestion for new functio
 
 ### Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/JCGoran/fitk/blob/master/CONTRIBUTING.md).
 
 ### License
 
-See [LICENSE](LICENSE) file.
+See [LICENSE](https://github.com/JCGoran/fitk/blob/master/LICENSE) file.

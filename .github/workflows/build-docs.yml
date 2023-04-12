@@ -31,6 +31,7 @@ jobs:
     # Build the site
     - name: Build the site
       run: |
+        git fetch --tags origin
         bash find_tag.sh
         bash generate_docs.sh
 

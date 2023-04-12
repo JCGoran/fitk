@@ -31,6 +31,10 @@ For various examples on how to use FITK, as well as the latest API, please refer
 
 If you encounter any bugs running the code, or have a suggestion for new functionality, please open up a new issue [on GitHub](https://github.com/JCGoran/fitk/issues/).
 
+### Changelog
+
+See the [CHANGELOG.md](https://github.com/JCGoran/fitk/blob/master/CHANGELOG.md) for changes between versions.
+
 ### Contributing
 
 See [CONTRIBUTING.md](https://github.com/JCGoran/fitk/blob/master/CONTRIBUTING.md).

@@ -31,6 +31,7 @@ jobs:
     # Build the site
     - name: Build the site
       run: |
+        bash find_tag.sh
         bash generate_docs.sh
 
     # If we've pushed to master, push the book's HTML to github-pages

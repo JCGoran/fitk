@@ -38,21 +38,24 @@ Load the core modules:
 Load one of the [supported interfaces](fitk/interfaces.html):
 >>> from fitk.interfaces.coffe_interfaces import CoffeMultipolesDerivative
 
-Set up an instance of the interface:
->>> config = CoffeMultipolesDerivative()
+Define some parameters:
+>>> parameters = [P(name='omega_m', fiducial=0.3), D(P(name='omega_baryon', fiducial=0.04)]
 
-Compute some Fisher matrices:
->>> fm = config.fisher_matrix(
-... D(P(name='omega_m', fiducial=0.3), abs_step=1e-3),
-... D(P(name='omega_baryon', fiducial=0.04), abs_step=1e-3),
-... )
+Set up an instance of the interface for computing Fisher matrices:
+>>> instance = CoffeMultipolesDerivative(config={_.name : _.fiducial for _ in parameters})
+
+Compute a Fisher matrix using finite differences:
+>>> fm = instance.fisher_matrix(D(parameters[0], abs_step=1e-3), D(parameters[1], abs_step=1e-3))
 
 Note that the matrix can easily be saved for later:
 >>> fm.to_file('fisher_matrix_example.json', metadata={'comment': 'Example Fisher matrix'})
 
-Plot some contours of the resulting matrix:
+Plot a contour of the resulting matrix:
 >>> ff = FisherFigure2D(show_1d_curves=True, show_joint_dist=True)
 >>> ff.plot(fm, label='COFFE forecast example')
+
+Save the plot:
+>>> ff.savefig('example_forecast.pdf')
 
 # Bug reports and feature requests
 

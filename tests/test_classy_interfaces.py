@@ -84,6 +84,19 @@ class TestCMB:
 
 class TestGalaxyCounts:
     @pytest.mark.parametrize(
+        "output,benchmark",
+        [
+            ({}, "nCl"),
+            ({"output": "nCl"}, "nCl"),
+        ],
+    )
+    def test_outputs(self, output, benchmark):
+        cosmo = ClassyGalaxyCountsDerivative(config={"l_max_lss": 50, **output})
+        assert cosmo.config["output"] == benchmark
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
+
+    @pytest.mark.parametrize(
         "config",
         [
             {"selection_mean": "0.1"},
@@ -97,7 +110,6 @@ class TestGalaxyCounts:
     def test_signal_and_covariance(self, config):
         cosmo = ClassyGalaxyCountsDerivative(
             config={
-                "output": "nCl",
                 "l_max_lss": 3,
                 **config,
             }
@@ -116,7 +128,6 @@ class TestGalaxyCounts:
     def test_fisher_matrix(self, config, l_max: int = 100):
         cosmo = ClassyGalaxyCountsDerivative(
             config={
-                "output": "nCl",
                 "l_max_lss": l_max,
                 **config,
             }

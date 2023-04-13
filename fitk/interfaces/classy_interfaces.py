@@ -349,9 +349,13 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
         config : dict, optional
             the CLASS configuration to use. All parameters are accepted.
             If not specified, defaults to `{'output' : 'nCl'}`.
+            If the key `output` is missing, it is inserted with a default value
+            `nCl`.
         """
         super().__init__(*args, config=config, **kwargs)
         self._config = config if config is not None else {"output": "nCl"}
+        if not self._config.get("output"):
+            self._config["output"] = "nCl"
 
     def _parse_redshifts(self):
         r"""

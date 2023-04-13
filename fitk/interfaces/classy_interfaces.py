@@ -161,9 +161,13 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         config : dict, optional
             the CLASS configuration to use. All parameters are accepted.
             If not specified, defaults to `{'output' : 'tCl'}`.
+            If the key `output` is missing, it is inserted with a default value
+            `tCl`.
         """
         super().__init__(*args, config=config, **kwargs)
         self._config = config if config is not None else {"output": "tCl"}
+        if not self._config.get("output"):
+            self._config["output"] = "tCl"
 
     def signal(
         self,

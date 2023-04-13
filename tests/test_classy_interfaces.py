@@ -14,9 +14,18 @@ DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
 
 class TestClassy:
-    @pytest.mark.parametrize("output", ["tCl,pCl", "tCl", "pCl"])
-    def test_outputs(self, output):
-        cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 50})
+    @pytest.mark.parametrize(
+        "output,benchmark",
+        [
+            ({}, "tCl"),
+            ({"output": "tCl,pCl"}, "tCl,pCl"),
+            ({"output": "tCl"}, "tCl"),
+            ({"output": "pCl"}, "pCl"),
+        ],
+    )
+    def test_outputs(self, output, benchmark):
+        cosmo = ClassyCMBDerivative(config={"l_max_scalars": 50, **output})
+        assert cosmo.config["output"] == benchmark
         signal, cov = get_signal_and_covariance(cosmo)
         validate_signal_and_covariance(signal, cov)
 

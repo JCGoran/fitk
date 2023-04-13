@@ -2,9 +2,20 @@
 
 Contributions are very welcome! The below outlines how the development of FITK is done.
 
+### Submitting contributions
+
+In order to submit your contribution, I strongly suggest that you:
+
+- fork this repository
+- `git clone` the fork to your local machine
+- create a new branch
+- make the necessary code changes on that branch, and commit them
+- push the branch with the changes
+- create a [pull request](https://github.com/JCGoran/fitk/pulls)
+
 ### Development
 
-Development of fitk is done using Poetry for Python.
+Development of fitk is done using [Poetry](https://github.com/python-poetry/poetry/).
 If you have it installed, all you need to do is:
 
 ```plaintext
@@ -57,6 +68,22 @@ If you are implementing features in the `graphics` module, you can generate the 
 ```plaintext
 ./generate_test_images.sh
 ```
+
+##### Testing interfaces
+
+The tests for the interfaces to third-party software are not currently part of the code coverage, and are ran separately.
+In order to run those locally, use:
+
+```plaintext
+poetry run pytest -v tests/test_[INTERFACE]_interfaces.py
+```
+
+where `[INTERFACE]` is one of the following:
+
+- `classy`: for tests of the CLASS code
+- `coffe`: for tests of the COFFE code
+
+Note that the corresponding third-party code(s) must be installed beforehand for the tests to run properly.
 
 #### Generating documentation
 

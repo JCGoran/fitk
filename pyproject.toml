@@ -17,8 +17,8 @@ scipy = [
     {version = ">1.7.3", python = ">=3.8"}
 ]
 matplotlib = [
-    {version = "^3.5", python = "<3.11"},
-    {version = "^3.6", python = ">=3.11"}
+    {version = "3.5.3", python = "==3.7"},
+    {version = ">3.5.3", python = ">=3.8"}
 ]
 sympy = {version = "*"}
 coffe = { version = "*", optional = true }

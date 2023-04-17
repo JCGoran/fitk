@@ -76,7 +76,13 @@ class TestCMB:
                 1e-3,
             ),
         ]
-        cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 100})
+        cosmo = ClassyCMBDerivative(
+            config={
+                "output": output,
+                "l_max_scalars": 100,
+                **{_.parameter.name: _.parameter.fiducial for _ in parameters},
+            }
+        )
         fm = cosmo.fisher_matrix(*parameters)
 
         assert fm.is_valid()
@@ -126,13 +132,6 @@ class TestGalaxyCounts:
         ],
     )
     def test_fisher_matrix(self, config, l_max: int = 100):
-        cosmo = ClassyGalaxyCountsDerivative(
-            config={
-                "l_max_lss": l_max,
-                **config,
-            }
-        )
-
         parameters = [
             D(P("Omega_cdm", 0.3, latex_name=r"$\Omega_\mathrm{cdm}$"), 1e-3),
             D(P("Omega_b", 0.04, latex_name=r"$\Omega_\mathrm{b}$"), 1e-3),
@@ -143,6 +142,14 @@ class TestGalaxyCounts:
                 1e-3,
             ),
         ]
+
+        cosmo = ClassyGalaxyCountsDerivative(
+            config={
+                "l_max_lss": l_max,
+                **config,
+                **{_.parameter.name: _.parameter.fiducial for _ in parameters},
+            }
+        )
 
         fm = cosmo.fisher_matrix(*parameters, use_pinv=True)
 

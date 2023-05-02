@@ -1020,16 +1020,20 @@ class FisherBarFigure(_FisherBaseFigure):
             for color, label, x, y, yerr in zip(
                 colors,  # type: ignore
                 labels,
-                x_array,
+                x_array if kind != "barh" else reversed(x_array),
                 y_array,
                 yerr_array,
             ):
                 getattr(ax, kind)(
                     x,
-                    y,
+                    y if kind != "barh" else list(reversed(y)),
                     color=color,
                     label=label,
-                    **{options[kind]["error_name"]: yerr},
+                    **{
+                        options[kind]["error_name"]: yerr
+                        if kind != "barh"
+                        else list(reversed(yerr))
+                    },
                     **options[kind]["extra_kwargs"],
                     **kwargs,
                 )
@@ -1038,7 +1042,7 @@ class FisherBarFigure(_FisherBaseFigure):
 
             getattr(ax, f'set_{options[kind]["parameters_scale"]}ticks')(range(size))
             getattr(ax, f'set_{options[kind]["parameters_scale"]}ticklabels')(
-                latex_names
+                latex_names if kind != "barh" else reversed(latex_names)
             )
             getattr(ax, f'set_{options[kind]["values_scale"]}label')(values_label)
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 # third party imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from cosmicfish_pylib.fisher_matrix import fisher_matrix as CFFisherMatrix
@@ -35,6 +36,7 @@ from fitk.utilities import (
     MismatchingSizeError,
     MismatchingValuesError,
     ParameterNotFoundError,
+    get_default_rcparams,
 )
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
@@ -935,6 +937,30 @@ def test_absolute_constraints(euclid_opt, euclid_pes):
     baseline_dir=DATADIR_INPUT,
     style="default",
 )
+def test_absolute_constraints_barh():
+    fm1 = FisherMatrix(np.diag([1, 2, 3]), names=["a", "b", "c"], fiducials=[3, 2, 1])
+    fm2 = FisherMatrix(
+        np.diag([4, 5, 6]), names=["a", "b", "c"], fiducials=[3.5, 2.5, 1.5]
+    )
+    fig = FisherBarFigure()
+
+    fig.plot_absolute_constraints(
+        [fm1, fm2],
+        kind="barh",
+        labels=["first", "second"],
+    )
+    with plt.rc_context(get_default_rcparams()):
+        fig.figure.legend(bbox_to_anchor=(0.5, 0.87), loc="lower center")
+
+    return fig.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
 def test_relative_constraints(euclid_opt, euclid_pes):
     euclid_opt = euclid_opt[:7]
     euclid_pes = euclid_pes[:7]
@@ -987,6 +1013,30 @@ def test_relative_constraints(euclid_opt, euclid_pes):
             "bar",
             scale="asdf",
         )
+
+    return fig.figure
+
+
+@pytest.mark.mpl_image_compare(
+    tolerance=20,
+    savefig_kwargs=dict(dpi=300),
+    baseline_dir=DATADIR_INPUT,
+    style="default",
+)
+def test_relative_constraints_barh():
+    fm1 = FisherMatrix(np.diag([1, 2, 3]), names=["a", "b", "c"], fiducials=[3, 2, 1])
+    fm2 = FisherMatrix(
+        np.diag([4, 5, 6]), names=["a", "b", "c"], fiducials=[3.5, 2.5, 1.5]
+    )
+    fig = FisherBarFigure()
+
+    fig.plot_relative_constraints(
+        [fm1, fm2],
+        kind="barh",
+        labels=["first", "second"],
+    )
+    with plt.rc_context(get_default_rcparams()):
+        fig.figure.legend(bbox_to_anchor=(0.5, 0.87), loc="lower center")
 
     return fig.figure
 

@@ -5,6 +5,8 @@ description = "The Fisher Information ToolKit"
 authors = ["JCGoran <goran.jelic-cizmek@unige.ch>"]
 license = "MIT"
 readme = "README.md"
+documentation = "https://jcgoran.github.io/fitk/"
+repository = "https://github.com/JCGoran/fitk/"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"

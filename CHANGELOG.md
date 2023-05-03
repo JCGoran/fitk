@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.10.1
+
+### Fixed
+
+- Fixed plotting order when calling `FisherBarFigure` methods with `kind='barh'`
+
 ## 0.10.0
 
 ### Added

@@ -1495,6 +1495,8 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
             ):
                 ax = axes.flat[index]
 
+                bg_color = ax.get_facecolor()
+
                 _, __, handle = plot_curve_1d(fisher, name, ax, **kwargs)
 
                 if not added and kwargs.get("label"):
@@ -1502,15 +1504,36 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
                     self.labels.append(kwargs["label"])
                     added = True
 
-                for contour_level in self.contour_levels:
+                for i in range(len(self.contour_levels) - 1, 0, -1):
                     _add_shading_1d(
                         fisher.fiducials[index],
                         fisher.constraints(name, marginalized=True),
                         ax,
-                        level=contour_level[0],
-                        alpha=contour_level[1],
+                        level=self.contour_levels[i][0],
+                        alpha=self.contour_levels[i][1],
+                        zorder=2 - i / len(self.contour_levels),
                         **kwargs,
                     )
+
+                    _add_shading_1d(
+                        fisher.fiducials[index],
+                        fisher.constraints(name, marginalized=True),
+                        ax,
+                        level=self.contour_levels[i - 1][0],
+                        alpha=1.0,
+                        color=bg_color,
+                        zorder=2 - i / len(self.contour_levels),
+                    )
+
+                _add_shading_1d(
+                    fisher.fiducials[index],
+                    fisher.constraints(name, marginalized=True),
+                    ax,
+                    level=self.contour_levels[0][0],
+                    alpha=self.contour_levels[0][1],
+                    zorder=1.99,
+                    **kwargs,
+                )
 
                 ax.autoscale()
                 ax.set_xlabel(latex_name)
@@ -2142,6 +2165,10 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                     fisher.names[j],
                     fisher.latex_names[j],
                 )
+
+                # the color of the background of that axis
+                bg_color = ax[i, j].get_facecolor()
+
                 # labels for 2D contours (increasing y)
                 if i > 0 and j == 0:
                     ax[i, j].set_ylabel(latex_namey)
@@ -2161,7 +2188,59 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
 
                 # plotting the 2D contours
                 elif i > j:
-                    # plot 1-sigma 2D curves
+                    # we plot them from the largest to the smallest (excluding the top-most one)
+                    for index in range(len(self.contour_levels_2d) - 1, 0, -1):
+                        # the 2-sigma
+                        plot_curve_2d(
+                            fisher,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=self.contour_levels_2d[index][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
+                            fill=False,
+                            zorder=2,
+                            **kwargs,
+                        )
+
+                        # same thing, but shaded
+                        plot_curve_2d(
+                            fisher,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=self.contour_levels_2d[index][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
+                            fill=True,
+                            alpha=self.contour_levels_2d[index][1],
+                            ec=None,
+                            zorder=2 - i / len(self.contour_levels_2d),
+                            **kwargs,
+                        )
+
+                        # plotting the _smaller_ contour as an opaque "hole" so
+                        # that the opacities are displayed properly
+                        plot_curve_2d(
+                            fisher,
+                            namex,
+                            namey,
+                            ax=ax[i, j],
+                            scaling_factor=self.contour_levels_2d[index - 1][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(
+                                _get_chisq(self.contour_levels_2d[index - 1][0])
+                            ),
+                            fill=True,
+                            alpha=1.0,
+                            ec=None,
+                            fc=bg_color,
+                            zorder=2 - i / len(self.contour_levels_2d),
+                            **kwargs,
+                        )
+
+                    # plot innermost contour (usually 1-sigma)
                     # NOTE this is the "68% of the probability of a
                     # single parameter lying within the bounds projected
                     # onto a parameter axis"
@@ -2173,8 +2252,8 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         scaling_factor=self.contour_levels_2d[0][0]
                         if not self.show_joint_dist
                         else np.sqrt(_get_chisq(self.contour_levels_2d[0][0])),
+                        zorder=2,
                         fill=False,
-                        zorder=20,
                         **kwargs,
                     )
 
@@ -2195,40 +2274,9 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                         fill=True,
                         alpha=self.contour_levels_2d[0][1],
                         ec=None,
-                        zorder=20,
+                        zorder=1.99,
                         **kwargs,
                     )
-
-                    for index in range(1, len(self.contour_levels_2d)):
-                        # the 2-sigma
-                        plot_curve_2d(
-                            fisher,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            scaling_factor=self.contour_levels_2d[index][0]
-                            if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
-                            fill=False,
-                            zorder=20,
-                            **kwargs,
-                        )
-
-                        # same thing, but shaded
-                        plot_curve_2d(
-                            fisher,
-                            namex,
-                            namey,
-                            ax=ax[i, j],
-                            scaling_factor=self.contour_levels_2d[index][0]
-                            if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
-                            fill=True,
-                            alpha=self.contour_levels_2d[index][1],
-                            ec=None,
-                            zorder=20,
-                            **kwargs,
-                        )
 
                 if i == j:
                     # plotting the 1D Gaussians
@@ -2240,18 +2288,47 @@ class FisherFigure2D(_FisherMultipleAxesFigure):
                             **kwargs,
                         )
 
-                        for contour_level in self.contour_levels_1d:
+                        for index in range(len(self.contour_levels_1d) - 1, 0, -1):
                             _add_shading_1d(
                                 fisher.fiducials[i],
                                 fisher.constraints(
                                     name=namex,
                                     marginalized=True,
                                 )[0],
-                                level=contour_level[0],
+                                level=self.contour_levels_1d[index][0],
                                 ax=ax[i, i],
-                                alpha=contour_level[1],
+                                alpha=self.contour_levels_1d[index][1],
+                                zorder=2 - index / len(self.contour_levels_1d),
                                 **kwargs,
                             )
+
+                            # shade the "hole" part of the previous contour
+                            _add_shading_1d(
+                                fisher.fiducials[i],
+                                fisher.constraints(
+                                    name=namex,
+                                    marginalized=True,
+                                )[0],
+                                level=self.contour_levels_1d[index - 1][0],
+                                ax=ax[i, i],
+                                alpha=1.0,
+                                zorder=2 - index / len(self.contour_levels_1d),
+                                color=bg_color,
+                            )
+
+                        # only the innermost contour does not have any "hole"
+                        _add_shading_1d(
+                            fisher.fiducials[i],
+                            fisher.constraints(
+                                name=namex,
+                                marginalized=True,
+                            )[0],
+                            level=self.contour_levels_1d[0][0],
+                            ax=ax[i, i],
+                            alpha=self.contour_levels_1d[0][1],
+                            zorder=1.99,
+                            **kwargs,
+                        )
 
                     else:
                         if self.figure is None:

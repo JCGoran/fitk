@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.10.2
+
+### Fixed
+
+- Fixed shading of contours when calling `plot` method of `FisherFigure`s
+
 ## 0.10.1
 
 ### Fixed

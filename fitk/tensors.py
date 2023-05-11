@@ -1,7 +1,7 @@
 """
 Submodule for performing operations on Fisher objects.
 
-See here for documentation of `FisherMatrix`.
+See here for documentation of ``FisherMatrix``.
 """
 
 # needed for compatibility with Python 3.7
@@ -67,7 +67,7 @@ def _solve_eqns(
 
     initial_guess : dict, optional
         the mapping of the new names and the initial guess used to obtain it.
-        Only used if `sympy.solve` fails to find a solution
+        Only used if ``sympy.solve`` fails to find a solution
 
     Returns
     -------
@@ -144,7 +144,7 @@ def _jacobian(
     **kwargs,
 ):
     r"""
-    Return the 3-tuple `new_names`, `new_fiducials`, and the Jacobian of the transformation as a matrix.
+    Return the 3-tuple ``new_names``, ``new_fiducials``, and the Jacobian of the transformation as a matrix.
 
     Parameters
     ----------
@@ -155,7 +155,7 @@ def _jacobian(
         the transformation from old parameters to new ones as a dictionary
 
     **kwargs
-        any other kwargs passed to `_solve_eqns`
+        any other kwargs passed to ``_solve_eqns``
 
     Returns
     -------
@@ -454,7 +454,7 @@ class FisherMatrix:
      'latex_names': ['$\\mathbf{X}$', '$\\mathbf{Y}$'],
      'fiducials': [0.0, 0.0]}
 
-    Loading is performed by a class method `from_file`:
+    Loading is performed by a class method ``from_file``:
 
     >>> fm_new = FisherMatrix.from_file('example_matrix.json') # doctest: +SKIP
     """
@@ -476,11 +476,11 @@ class FisherMatrix:
 
         names : array_like of str, optional
             The names of the parameters (default: None).
-            If not specified, defaults to `p1, ..., pn`.
+            If not specified, defaults to ``p1, ..., pn``.
 
         latex_names : array_like of str, optional
             The LaTeX names of the parameters (default: None).
-            If not specified, defaults to `names`.
+            If not specified, defaults to ``names``.
 
         fiducials : array_like of float, optional
             The fiducial values of the parameters (default: None). If not
@@ -626,7 +626,7 @@ class FisherMatrix:
 
         Notes
         -----
-        Currently returns the same output as `matrix` (subject to change).
+        Currently returns the same output as ``matrix`` (subject to change).
         """
         return self._values
 
@@ -725,8 +725,8 @@ class FisherMatrix:
         names : dict-like
             a mapping (dictionary-like object) between the old names and the
             new ones. The values it maps to can either be a string (the new
-            name), or a dict with keys `name`, `latex_name`, and `fiducial`
-            (only `name` is mandatory).
+            name), or a dict with keys ``name``, ``latex_name``, and ``fiducial``
+            (only ``name`` is mandatory).
 
         ignore_errors : bool, optional
             if set to True, will not raise an error if a parameter doesn't
@@ -914,7 +914,7 @@ class FisherMatrix:
         Raises
         ------
         TypeError
-            if keys are not a tuple, or if `value` is not a number
+            if keys are not a tuple, or if ``value`` is not a number
 
         MismatchingSizeError
             if the size of keys are not equal to the dimensionality of the
@@ -963,7 +963,7 @@ class FisherMatrix:
 
     def fiducial(self, name: str) -> float:
         r"""
-        Return the value of the fiducial associated to the parameter `name`.
+        Return the value of the fiducial associated to the parameter ``name``.
 
         Parameters
         ----------
@@ -982,7 +982,7 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
-        Get the value of the fiducial associated to parameter `b`:
+        Get the value of the fiducial associated to parameter ``b``:
 
         >>> fm.fiducial('b')
         3.0
@@ -994,7 +994,7 @@ class FisherMatrix:
 
     def set_fiducial(self, name: str, value: float):
         """
-        Set the fiducial of parameter `name`.
+        Set the fiducial of parameter ``name``.
 
         Parameters
         ----------
@@ -1016,7 +1016,7 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
-        Set the value of the fiducial associated to parameter `b`:
+        Set the value of the fiducial associated to parameter ``b``:
 
         >>> fm.set_fiducial('b', 4)
         >>> fm
@@ -1034,7 +1034,7 @@ class FisherMatrix:
 
     def latex_name(self, name: str) -> str:
         r"""
-        Return the LaTeX name associated to the parameter `name`.
+        Return the LaTeX name associated to the parameter ``name``.
 
         Parameters
         ----------
@@ -1053,7 +1053,7 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
 
-        Get the LaTeX name associated to parameter `b`:
+        Get the LaTeX name associated to parameter ``b``:
 
         >>> fm.latex_name('b')
         '$\\mathbf{B}$'
@@ -1065,7 +1065,7 @@ class FisherMatrix:
 
     def set_latex_name(self, name: str, value: str):
         r"""
-        Set the LaTeX name of parameter `name`.
+        Set the LaTeX name of parameter ``name``.
 
         Parameters
         ----------
@@ -1087,7 +1087,7 @@ class FisherMatrix:
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
-        Set the value of the fiducial associated to parameter `b`:
+        Set the value of the fiducial associated to parameter ``b``:
 
         >>> fm.set_latex_name('b', r'$\mathcal{B}$')
         >>> fm
@@ -1140,15 +1140,15 @@ class FisherMatrix:
         **kwargs
             all of the other keyword arguments for the Python builtin <a
             href="https://docs.python.org/3/library/functions.html#sorted"
-            target="_blank" rel="noopener noreferrer">`sorted`</a>.
+            target="_blank" rel="noopener noreferrer">``sorted``</a>.
             If none are specified, will sort according to the names of the parameters.
-            In the special case that the value of the keyword `key` is set to
-            either `'fiducials'` or `'latex_names'`, it will sort according to those.
-            In the second special case that the value of the keyword `key` is
+            In the special case that the value of the keyword ``key`` is set to
+            either ``'fiducials'`` or ``'latex_names'``, it will sort according to those.
+            In the second special case that the value of the keyword ``key`` is
             set to an array of integers of equal size as the Fisher object, sorts them
             according to those instead.
             In the third (and final) special case that the value of the keyword
-            `key` is set to an array strings matching those of parameter names
+            ``key`` is set to an array strings matching those of parameter names
             of the FisherMatrix, the items are sorted according to those
             values.
 
@@ -1160,10 +1160,10 @@ class FisherMatrix:
         Raises
         ------
         ValueError
-            if `key` does not match the names of the Fisher object
+            if ``key`` does not match the names of the Fisher object
 
         TypeError
-            if `key` is not a callable
+            if ``key`` is not a callable
 
         Examples
         --------
@@ -1254,7 +1254,7 @@ class FisherMatrix:
         """
         Compare Fisher object with another object.
 
-        Returns `True` if the operands have the following properties:
+        Returns ``True`` if the operands have the following properties:
 
         * are instances of FisherMatrix
         * have same names (potentially shuffled)
@@ -1347,7 +1347,7 @@ class FisherMatrix:
 
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
 
-        Drop `p1` and `p3`:
+        Drop ``p1`` and ``p3``:
 
         >>> m.drop('p1', 'p3')
         FisherMatrix(
@@ -1356,7 +1356,7 @@ class FisherMatrix:
             latex_names=array(['p2'], dtype=object),
             fiducials=array([0.]))
 
-        Same result, but note the asterisk (`*`):
+        Same result, but note the asterisk (``*``):
 
         >>> m.drop(*['p1', 'p3'])
         FisherMatrix(
@@ -1365,7 +1365,7 @@ class FisherMatrix:
             latex_names=array(['p2'], dtype=object),
             fiducials=array([0.]))
 
-        Drop everything *except* `p1` and `p3`:
+        Drop everything *except* ``p1`` and ``p3``:
 
         >>> m.drop('p1', 'p3', invert=True)
         FisherMatrix(
@@ -1510,7 +1510,7 @@ class FisherMatrix:
             the confidence interval (p-value) (default: None).
 
         **kwargs
-            any kwargs passed to `inverse`
+            any kwargs passed to ``inverse``
 
         Returns
         -------
@@ -1518,11 +1518,11 @@ class FisherMatrix:
 
         Notes
         -----
-        The user should specify either `sigma` or `p`, but not both
+        The user should specify either ``sigma`` or ``p``, but not both
         simultaneously.
-        If neither are specified, defaults to `sigma=1`.
+        If neither are specified, defaults to ``sigma=1``.
 
-        The relationship between `p` and `sigma` is defined via:
+        The relationship between ``p`` and ``sigma`` is defined via:
 
         .. math::
             p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
@@ -1534,7 +1534,7 @@ class FisherMatrix:
         .. math::
             \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
 
-        The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
+        The values of ``p`` corresponding to 1, 2, 3 ``sigma`` are roughly
         0.683, 0.954, and 0.997, respectively.
 
         Examples
@@ -1592,11 +1592,11 @@ class FisherMatrix:
         We can add or subtract Fisher objects which have different parameter
         names.
 
-        Due to the peculiarities of Python's `set` built-in, the ordering of
+        Due to the peculiarities of Python's ``set`` built-in, the ordering of
         names in the result is not guaranteed to be preserved, even for
-        identical inputs. This is not a problem though, since `__eq__` can
-        handle parameter shuffling, so if `m1` and `m2` are instances of
-        `FisherMatrix`, `m1 + m2 == m1 + m2` will always yield `True`.
+        identical inputs. This is not a problem though, since ``__eq__`` can
+        handle parameter shuffling, so if ``m1`` and ``m2`` are instances of
+        ``FisherMatrix``, ``m1 + m2 == m1 + m2`` will always yield ``True``.
         """
         if isinstance(other, self.__class__):
             values = np.zeros(
@@ -1886,15 +1886,16 @@ class FisherMatrix:
         latex_names : mapping, optional
             a dictionary with the names of new parameters as keys, and LaTeX
             names of new parameters as values (default: None). If not
-            specified, uses the names extracted from `transformation`.
+            specified, uses the names extracted from ``transformation``.
 
         **kwargs
             any optional keyword arguments passed to the solver for obtaining
             the new fiducials. Available arguments:
-            - `solution_index`, int: in case of multiple solutions, one can select
+
+            - ``solution_index``, int: in case of multiple solutions, one can select
               the index of the solution (default: None, meaning the first
               element is selected)
-            - `initial_guess`, dict: in case of using the numerical solver,
+            - ``initial_guess``, dict: in case of using the numerical solver,
               this should be a dictionary of the initial guesses for the new
               fiducials (default: None, and the initial guess is set to all
               ones)
@@ -1915,7 +1916,7 @@ class FisherMatrix:
             if any of the expressions in the values cannot be transformed using
             <a
             href="https://docs.sympy.org/latest/modules/core.html#module-sympy.core.sympify"
-            target="_blank" rel="noopener noreferrer">`sympy.sympify`</a>
+            target="_blank" rel="noopener noreferrer">``sympy.sympify``</a>
 
         ValueError
             if SymPy is is unable to find a solution for the new fiducials
@@ -1938,7 +1939,7 @@ class FisherMatrix:
 
         See Also
         --------
-        `reparametrize` : the numerical version of this method
+        ``reparametrize`` : the numerical version of this method
 
         Examples
         --------
@@ -2023,7 +2024,7 @@ class FisherMatrix:
 
         latex_names: array_like of str, optional
             list of new LaTeX names for the Fisher object (default: None). If
-            None, and `names` is set, uses those instead, otherwise uses the
+            None, and ``names`` is set, uses those instead, otherwise uses the
             old LaTeX names.
 
         fiducials : array_like of float, optional
@@ -2038,7 +2039,7 @@ class FisherMatrix:
 
         See Also
         --------
-        `reparametrize_symbolic` : the symbolic version of this method
+        ``reparametrize_symbolic`` : the symbolic version of this method
 
         Notes
         -----
@@ -2195,7 +2196,7 @@ class FisherMatrix:
             should non-existing parameters be ignored (default: False)
 
         **kwargs
-            any kwargs passed to `inverse`
+            any kwargs passed to ``inverse``
 
         Returns
         -------
@@ -2224,7 +2225,7 @@ class FisherMatrix:
             latex_names=array(['p3', 'p4', 'p5'], dtype=object),
             fiducials=array([0., 0., 0.]))
 
-        Marginalize over all parameters which are NOT `p1` or `p2`:
+        Marginalize over all parameters which are NOT ``p1`` or ``p2``:
 
         >>> fm.marginalize_over('p1', 'p2', invert=True)
         FisherMatrix(
@@ -2276,7 +2277,7 @@ class FisherMatrix:
         >>> with open(<filename>, 'r') as f: # doctest: +SKIP
         ...     data = json.loads(f.read()) # doctest: +SKIP
 
-        Then `data` will contain a dictionary with all of the data from the
+        Then ``data`` will contain a dictionary with all of the data from the
         file, which can be easily parsed.
         """
         with open(path, "r", encoding="utf-8") as file_handle:
@@ -2320,7 +2321,7 @@ class FisherMatrix:
         Parameters
         ----------
         **kwargs
-            any kwargs passed to `inverse`
+            any kwargs passed to ``inverse``
 
         Returns
         -------
@@ -2360,7 +2361,7 @@ class FisherMatrix:
             the name of the second parameter
 
         **kwargs
-            any kwargs passed to `correlation_matrix`
+            any kwargs passed to ``correlation_matrix``
 
         Returns
         -------
@@ -2408,7 +2409,7 @@ class FisherMatrix:
         Parameters
         ----------
         **kwargs
-            any kwargs passed to `correlation_matrix`
+            any kwargs passed to ``correlation_matrix``
 
         Returns
         -------
@@ -2416,7 +2417,7 @@ class FisherMatrix:
 
         See Also
         --------
-        `correlation_matrix` : compute the correlation matrix
+        ``correlation_matrix`` : compute the correlation matrix
 
         Notes
         -----

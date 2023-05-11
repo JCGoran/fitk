@@ -1,7 +1,7 @@
 """
 Submodule for computing derivatives using finite differences.
 
-See here for documentation of `D` and `FisherDerivative`.
+See here for documentation of ``D`` and ``FisherDerivative``.
 """
 
 # for compatibility with Python 3.7
@@ -23,7 +23,7 @@ from fitk.utilities import P, ValidationError, find_diff_weights, is_iterable
 
 
 def _zero_out(array, threshold: float):
-    """Return the input array with elements smaller than `threshold` zeroed out."""
+    """Return the input array with elements smaller than ``threshold`` zeroed out."""
     # Create a copy of the input array
     new_array = np.copy(array)
 
@@ -107,14 +107,14 @@ def matrix_element_from_input(
         if the inputs have mismatching sizes
 
     ValueError
-        if all of the parameters (`signal_derivative1`,
-        `signal_derivative2`, `covariance_derivative1`,
-        `covariance_derivative2`) are `None`
+        if all of the parameters (``signal_derivative1``,
+        ``signal_derivative2``, ``covariance_derivative1``,
+        ``covariance_derivative2``) are ``None``
 
     ValueError
-        if only one of the two derivatives (`signal_derivative1` or
-        `signal_derivative2`, `covariance_derivative1` or
-        `covariance_derivative2`) is not `None`
+        if only one of the two derivatives (``signal_derivative1`` or
+        ``signal_derivative2``, ``covariance_derivative1`` or
+        ``covariance_derivative2``) is not ``None``
 
     Notes
     -----
@@ -122,7 +122,7 @@ def matrix_element_from_input(
 
     This convenience method is useful if one has already computed the
     derivatives, and wishes to get the Fisher matrix element without using
-    `FisherDerivative` directly.
+    ``FisherDerivative`` directly.
     """
     signal_derivative1 = np.array(signal_derivative1)
     signal_derivative2 = np.array(signal_derivative2)
@@ -189,7 +189,7 @@ class D:
     Parameters
     ----------
     parameter
-        the instance of `P` for which we want to compute the derivative
+        the instance of ``P`` for which we want to compute the derivative
 
     abs_step
         the absolute step size for computing the derivative
@@ -205,20 +205,20 @@ class D:
 
     stencil, optional
         the custom stencil used for computing the derivative (default: None).
-        If specified, the arguments `accuracy` and `kind` are ignored.
+        If specified, the arguments ``accuracy`` and ``kind`` are ignored.
 
     Raises
     ------
     ValueError
         is raised in one of the following situations:
-        * if the value of `abs_step` is not positive
-        * if the value of `stencil` is not strictly monotonically
+        * if the value of ``abs_step`` is not positive
+        * if the value of ``stencil`` is not strictly monotonically
         increasing
-        * if the value of `accuracy` is not at least 1
-        * if the value of `kind` is not one of: 'center', 'forward', 'backward'
+        * if the value of ``accuracy`` is not at least 1
+        * if the value of ``kind`` is not one of: 'center', 'forward', 'backward'
 
     TypeError
-        if the value of `stencil` is not an iterable
+        if the value of ``stencil`` is not an iterable
     """
 
     parameter: P
@@ -285,16 +285,16 @@ class FisherDerivative:
 
     Notes
     -----
-    The user must implement the `signal` or the `covariance` method (or both)
+    The user must implement the ``signal`` or the ``covariance`` method (or both)
     to be able to use a subclass.
-    Furthermore, the `covariance` method, if implemented, needs to return an
-    array that is shape-compatible with the output of the `signal` method.
+    Furthermore, the ``covariance`` method, if implemented, needs to return an
+    array that is shape-compatible with the output of the ``signal`` method.
     """
 
     software_names: Optional[Union[str, dict[str, str]]] = None
     """
     The name of the software which we are interfacing. Can be either a
-    string, or a dictionary with the keys `signal` and `covariance` and the
+    string, or a dictionary with the keys ``signal`` and ``covariance`` and the
     names of each software as values
     """
     version: Optional[str] = None
@@ -337,12 +337,12 @@ class FisherDerivative:
         arg: P,
     ) -> bool:
         """
-        Validate a parameter when calling `fisher_matrix`.
+        Validate a parameter when calling ``fisher_matrix``.
 
         Parameters
         ----------
         arg
-            the parameter (see description of `P`) which we want to validate
+            the parameter (see description of ``P``) which we want to validate
 
         Returns
         -------
@@ -424,7 +424,7 @@ class FisherDerivative:
         **kwargs,
     ):
         r"""
-        Evaluate the derivative of `method` with respect to arguments `args`.
+        Evaluate the derivative of ``method`` with respect to arguments ``args``.
 
         Parameters
         ----------
@@ -432,7 +432,7 @@ class FisherDerivative:
             the object (method) for which we want to compute the derivative
 
         *args
-            the parameters (see description of `D`) for which we want to
+            the parameters (see description of ``D``) for which we want to
             compute the derivatives
 
         rounding_threshold, optional
@@ -450,7 +450,7 @@ class FisherDerivative:
         Raises
         ------
         ValueError
-            if `method` is not one of {'signal', 'covariance'}
+            if ``method`` is not one of {'signal', 'covariance'}
         """
         # check that `method` is valid
         valid_methods = ["signal", "covariance"]
@@ -525,7 +525,7 @@ class FisherDerivative:
         Parameters
         ----------
         *args
-            the parameters (see description of `D`) for which we want to
+            the parameters (see description of ``D``) for which we want to
             compute the derivatives
 
         parameter_dependence : {'signal', 'covariance', 'both'}
@@ -546,11 +546,11 @@ class FisherDerivative:
             other considerations that it should be zero (default: 0)
 
         kwargs_signal : dict, optional
-            any keyword arguments that should be passed to `signal` (default:
+            any keyword arguments that should be passed to ``signal`` (default:
             None)
 
         kwargs_covariance : dict, optional
-            any keyword arguments that should be passed to `covariance`
+            any keyword arguments that should be passed to ``covariance``
             (default: None)
 
         Returns
@@ -561,27 +561,27 @@ class FisherDerivative:
         Warns
         -----
         UserWarning
-            if `parameter_dependence` is set to 'covariance' or 'both', and
-            `external_covariance` is not `None`
+            if ``parameter_dependence`` is set to 'covariance' or 'both', and
+            ``external_covariance`` is not ``None``
 
         Raises
         ------
         NotImplementedError
-            if either `signal` or `covariance` have not been implemented, and
-            the user set `parameter_dependence` to be in one of those
+            if either ``signal`` or ``covariance`` have not been implemented, and
+            the user set ``parameter_dependence`` to be in one of those
 
         ValidationError
             if the parameter validation failed
 
         ValueError
-            if the argument `external_covariance` is not a square matrix
+            if the argument ``external_covariance`` is not a square matrix
 
         LinAlgError
             if the covariance matrix is singular
 
         Notes
         -----
-        The `order` parameter is ignored if passed to `D`.
+        The ``order`` parameter is ignored if passed to ``D``.
 
         The element :math:`\mathsf{F}_{ij}` for parameters :math:`(\theta_i, \theta_j)` is
         defined as:

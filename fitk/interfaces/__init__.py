@@ -115,14 +115,14 @@ class MyFisher(FisherDerivative):
 The following are some general recommendations when creating a new interface:
 
 - for ease of use, any additional parameters specifying the configuration for
-  the interface should be passed to the constructor (i.e. the `__init__`
+  the interface should be passed to the constructor (i.e. the ``__init__``
   method)
 - extra information (methods, members, custom parameters) should be documented
   accordingly
 - if the external module could not be imported, rather than directly raising an
   exception, it is preferable that instantiating a class from that module
-  raises an `ImportError` instead. A simple way to accomplish this is to wrap
-  the import in a `try...except ImportError`, pass the success result (perhaps
+  raises an ``ImportError`` instead. A simple way to accomplish this is to wrap
+  the import in a ``try...except ImportError``, pass the success result (perhaps
   stored as a boolean) to the constructor of the class, and then only raise the
-  `ImportError` there
+  ``ImportError`` there
 """

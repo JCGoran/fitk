@@ -340,15 +340,15 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     perturbation at 8 :math:`\mathrm{Mpc}/h`.
 
     The valid parameters are:
-    * :math:`\tilde{f}` - `f[N]`, the parameter :math:`\sigma_8(z) D_1(z)` in a redshift
-    bin, where `[N]` is a number from 1 to the number of redshift bins
-    * :math:`\tilde{b}` - `b[N]`, the parameter :math:`b(z) D_1(z)` in a redshift bin,
-    where `[N]` is a number from 1 to the number of redshift bins
+    * :math:`\tilde{f}` - ``f[N]``, the parameter :math:`\sigma_8(z) D_1(z)` in a redshift
+    bin, where ``[N]`` is a number from 1 to the number of redshift bins
+    * :math:`\tilde{b}` - ``b[N]``, the parameter :math:`b(z) D_1(z)` in a redshift bin,
+    where ``[N]`` is a number from 1 to the number of redshift bins
 
     Notes
     -----
-    Just like for `CoffeMultipolesDerivative`, one can set the configuration in
-    the constructor by specifying the `config` argument.
+    Just like for ``CoffeMultipolesDerivative``, one can set the configuration in
+    the constructor by specifying the ``config`` argument.
 
     Only density and RSD effects are taken into account when computing the
     signal.
@@ -453,27 +453,27 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     and evolution bias parameters in each redshift bin.
 
     The valid parameters are:
-    * :math:`b_n` - `b[N]`, the galaxy bias in a redshift bin, where `[N]` is a
+    * :math:`b_n` - ``b[N]``, the galaxy bias in a redshift bin, where ``[N]`` is a
     number from 1 to the number of redshift bins
-    * :math:`s_n` - `s[N]`, the magnification bias in a redshift bin, where `[N]` is
+    * :math:`s_n` - ``s[N]``, the magnification bias in a redshift bin, where ``[N]`` is
     a number from 1 to the number of redshift bins
-    * :math:`e_n` - `e[N]`, the evolution bias in a redshift bin, where `[N]` is a
+    * :math:`e_n` - ``e[N]``, the evolution bias in a redshift bin, where ``[N]`` is a
     number from 1 to the number of redshift bins
 
     Warns
     -----
     UserWarning
-        if `has_density=True` or `has_rsd=True` and `has_flatsky_local=False`
+        if ``has_density=True`` or ``has_rsd=True`` and ``has_flatsky_local=False``
         in the configuration
 
     UserWarning
-        if `has_lensing=True` and `has_flatsky_nonlocal=False` or
-        `has_flatsky_local_nonlocal=False` in the configuration
+        if ``has_lensing=True`` and ``has_flatsky_nonlocal=False`` or
+        ``has_flatsky_local_nonlocal=False`` in the configuration
 
     Notes
     -----
-    Just like for `CoffeMultipolesDerivative`, one can set the configuration in
-    the constructor by specifying the `config` argument.
+    Just like for ``CoffeMultipolesDerivative``, one can set the configuration in
+    the constructor by specifying the ``config`` argument.
 
     If the biases are set for two populations, the second population is ignored.
     """

@@ -63,7 +63,7 @@ class SupernovaDerivative(FisherDerivative):
     Compute derivatives w.r.t. cosmological parameters :math:`\Omega_\mathrm{m}` and
     :math:`w` for a supernova measurement.
     For definitions of the quantities used, refer to the documentation of
-    `signal` and `covariance`.
+    ``signal`` and ``covariance``.
 
     Examples
     --------
@@ -113,8 +113,8 @@ class SupernovaDerivative(FisherDerivative):
         config : dict, optional
             the configuration for the supernova measurement. Should be a
             dictionary with the following keys and types: 'omega_m' (`float`,
-            default: 0.32), 'w' (`float`, default: -1), 'z', (array-like of
-            `float`, default: [1]), 'sigma' (array-like of `float`, default:
+            default: 0.32), 'w' (``float``, default: -1), 'z', (array-like of
+            ``float``, default: [1]), 'sigma' (array-like of ``float``, default:
             [1])
         """
         self._config = dict(

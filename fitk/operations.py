@@ -1,7 +1,7 @@
 """
 Submodule containing functions which act upon Fisher objects.
 
-See here for documentation of `bayes_factor`, `kl_divergence`, and `kl_matrix`.
+See here for documentation of ``bayes_factor``, ``kl_divergence``, and ``kl_matrix``.
 """
 
 # needed for compatibility with Python 3.7
@@ -57,10 +57,10 @@ def bayes_factor(
     ------
     ValueError
         is raised in one of the following situations:
-        * `fisher_extended` does not have at least the same parameter names as `fisher_base`
-        * the size of `priors` is not equal to the difference between the sizes of
-        `fisher_extended` and `fisher_base`
-        * the size of `offsets` is not equal to the size of `fisher_extended`
+        * ``fisher_extended`` does not have at least the same parameter names as ``fisher_base``
+        * the size of ``priors`` is not equal to the difference between the sizes of
+        ``fisher_extended`` and ``fisher_base``
+        * the size of ``offsets`` is not equal to the size of ``fisher_extended``
 
     Warns
     -----
@@ -166,8 +166,8 @@ def kl_divergence(
 
     units : str = 'b'
         the information units in which to output the result (default in bits).
-        Can be either `'b'` (bits) or `'B'` (bytes), with an optional SI (such
-        as `'MB'`) or binary (such as `'MiB'`) prefix. Please consult the table
+        Can be either ``'b'`` (bits) or ``'B'`` (bytes), with an optional SI (such
+        as ``'MB'``) or binary (such as ``'MiB'``) prefix. Please consult the table
         at the <a href="https://en.wikipedia.org/wiki/Binary_prefix"
         target="_blank" rel="noopener noreferrer">Wikipedia article</a> for
         more details.
@@ -184,11 +184,11 @@ def kl_divergence(
         not match
 
     ValueError
-        if the value of `units` cannot be parsed
+        if the value of ``units`` cannot be parsed
 
     See Also
     --------
-    `kl_matrix` : compute K-L divergence for multiple observables
+    ``kl_matrix`` : compute K-L divergence for multiple observables
 
     Notes
     -----
@@ -258,7 +258,7 @@ def kl_matrix(
         the Fisher matrices of the different sets of observables
 
     kwargs
-        any keyword arguments that are passed to `kl_divergence`
+        any keyword arguments that are passed to ``kl_divergence``
 
     Returns
     -------
@@ -272,7 +272,7 @@ def kl_matrix(
 
     See Also
     --------
-    `kl_divergence` : compute K-L divergence, expectation value, and sqrt of
+    ``kl_divergence`` : compute K-L divergence, expectation value, and sqrt of
     variance
 
     Notes

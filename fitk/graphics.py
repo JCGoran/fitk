@@ -1,7 +1,7 @@
 """
 Submodule for plotting of Fisher objects.
 
-See here for documentation of `FisherFigure1D`, `FisherFigure2D`, and `FisherBarFigure`.
+See here for documentation of ``FisherFigure1D``, ``FisherFigure2D``, and ``FisherBarFigure``.
 """
 
 # needed for compatibility with Python 3.7
@@ -210,7 +210,7 @@ class FisherBaseFigure:
             an instance of <a
             href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.figure.Figure`</a>.
+            noopener">``matplotlib.figure.Figure``</a>.
         """
         return self._figure
 
@@ -239,7 +239,7 @@ class FisherBaseFigure:
         Convenience wrapper for <a
         href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
         target="_blank" rel="noreferrer
-        noopener">`matplotlib.figure.Figure.savefig`</a>.
+        noopener">``matplotlib.figure.Figure.savefig``</a>.
 
         Parameters
         ----------
@@ -256,7 +256,7 @@ class FisherBaseFigure:
             any other keyword arguments that should be passed to <a
             href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.savefig"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.figure.Figure.savefig`</a>
+            noopener">``matplotlib.figure.Figure.savefig``</a>
 
         Returns
         -------
@@ -265,7 +265,7 @@ class FisherBaseFigure:
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -411,7 +411,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Notes
         -----
         This is a convenience function for correctly updating the legend after
-        directly plotting some artist via `<instance>[<name(s)>].<method>`
+        directly plotting some artist via ``<instance>[<name(s)>].<method>``
 
         Examples
         --------
@@ -461,7 +461,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
             any keyword arguments that are also valid for <a
             href="https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.text.Text`</a>.
+            noreferrer">``matplotlib.text.Text``</a>.
 
         Returns
         -------
@@ -470,7 +470,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -521,10 +521,10 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
 
         ValueError
-            if `which` is not one of the allowed values
+            if ``which`` is not one of the allowed values
         """
         if not self.figure:
             raise EmptyFigureError
@@ -572,7 +572,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
             the instance of <a
             href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.ticker.Locator`</a> to use.
+            noreferrer">``matplotlib.ticker.Locator``</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -584,7 +584,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -621,7 +621,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
             the instance of <a
             href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.ticker.Locator`</a> to use.
+            noreferrer">``matplotlib.ticker.Locator``</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -633,7 +633,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -669,7 +669,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
             the instance of <a
             href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Formatter"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.ticker.Formatter`</a> to use.
+            noreferrer">``matplotlib.ticker.Formatter``</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -681,7 +681,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -706,7 +706,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
             the instance of <a
             href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Formatter"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.ticker.Formatter`</a> to use.
+            noreferrer">``matplotlib.ticker.Formatter``</a> to use.
 
         which : {'both', 'x', 'y'}
             which axis to change (default: 'both')
@@ -718,7 +718,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -855,7 +855,7 @@ class FisherBarFigure(FisherBaseFigure):
 
         values_label : str, optional
             the label for the axis containing the constraints (default:
-            `$\theta_\mathrm{fid}$`)
+            ``$\theta_\mathrm{fid}$``)
 
         scale : str, {'linear', 'log'}
             the scale used for the y axis (default: 'linear')
@@ -871,13 +871,13 @@ class FisherBarFigure(FisherBaseFigure):
             any keyword arguments passed to <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html"
             target="_blank" rel=noreferrer
-            noopener>`matplotlib.pyplot.bar`</a>, or <a
+            noopener>``matplotlib.pyplot.bar``</a>, or <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.barh.html"
             target="_blank" rel=noreferrer
-            noopener>`matplotlib.pyplot.barh`</a>, or <a
+            noopener>``matplotlib.pyplot.barh``</a>, or <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html"
             target="_blank" rel=noreferrer
-            noopener>`matplotlib.pyplot.errorbar`</a>.
+            noopener>``matplotlib.pyplot.errorbar``</a>.
 
         Returns
         -------
@@ -1096,9 +1096,7 @@ class FisherBarFigure(FisherBaseFigure):
             the labels for the Fisher matrices (default: None)
 
         values_label : str, optional
-            the label for the values, that is, the y axis (default: `$\sigma /
-            \theta_\mathrm{fid}$` if `percent` is false, otherwise `$\sigma /
-            \theta_\mathrm{fid}\ (\%)$`
+            the label for the values, that is, the y axis (default: ``$\sigma / \theta_\mathrm{fid}$`` if ``percent`` is false, otherwise ``$\sigma / \theta_\mathrm{fid}\ (\%)$``
 
         scale : str, {'linear', 'log'}
             the scale used for the y axis (default: 'linear')
@@ -1113,7 +1111,7 @@ class FisherBarFigure(FisherBaseFigure):
             any keyword arguments passed to
             <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html"
-            target="_blank" rel=noreferrer noopener>`matplotlib.pyplot.bar`</a>
+            target="_blank" rel=noreferrer noopener>``matplotlib.pyplot.bar``</a>
 
         Returns
         -------
@@ -1317,7 +1315,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
             be one of the outputs of <a
             href="https://matplotlib.org/stable/api/style_api.html#matplotlib.style.matplotlib.style.available"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.style.available`</a>, or a path to a file.
+            noreferrer">``matplotlib.style.available``</a>, or a path to a file.
             If using a file, does not use the default rc parameters).
 
         max_cols : int, optional
@@ -1334,7 +1332,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         contour_levels : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded, along with
             the associated opacity (default: None). If not specified, defaults
-            to `[(1, 0.3), (2, 0.1)]`.
+            to ``[(1, 0.3), (2, 0.1)]``.
 
         Notes
         -----
@@ -1358,7 +1356,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         self,
         key: str,
     ):
-        """Return the axis associated to the name `key`."""
+        """Return the axis associated to the name ``key``."""
         if not self.figure:
             raise EmptyFigureError
 
@@ -1385,9 +1383,9 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         method : str
             the name of the method which we want to plot (such as <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
-            target="_blank" rel="noopener noreferrer">`plot`</a>, <a
+            target="_blank" rel="noopener noreferrer">``plot``</a>, <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html"
-            target="_blank" rel="noopener noreferrer">`scatter`</a>, etc.)
+            target="_blank" rel="noopener noreferrer">``scatter``</a>, etc.)
 
         *args
             any positional arguments passed to the method (usually some data)
@@ -1403,14 +1401,14 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
 
         AttributeError
-            if `method` is not a valid plotting method
+            if ``method`` is not a valid plotting method
 
         Notes
         -----
-        The parameter `name` has to have already been plotted.
+        The parameter ``name`` has to have already been plotted.
         """
         if not hasattr(self[name], method):
             raise AttributeError(
@@ -1458,16 +1456,16 @@ class FisherFigure1D(FisherMultipleAxesFigure):
 
         mark_fiducials : bool or dict, optional
             whether or not the fiducials should be marked on the plots
-            (default: False). If set to `True`, uses `linestyle='--'` and
-            `color='black'` as the default. If a dictionary, accepts the same
+            (default: False). If set to ``True``, uses ``linestyle='--'`` and
+            ``color='black'`` as the default. If a dictionary, accepts the same
             keyword arguments as <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvline.html#matplotlib.axes.Axes.axvline"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.axes.Axes.axvline`</a>.  If an empty
+            noopener">``matplotlib.axes.Axes.axvline``</a>.  If an empty
             dictionary, uses the default style (determined automatically).
 
         **kwargs
-            any keyword arguments used for plotting (same as `plot_curve_1d`)
+            any keyword arguments used for plotting (same as ``plot_curve_1d``)
 
         Returns
         -------
@@ -1612,7 +1610,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
             any positional arguments for the legend
 
         overwrite : bool, optional
-            whether to overwrite any "nice" options set by `fitk` (default:
+            whether to overwrite any "nice" options set by ``fitk`` (default:
             False)
 
         loc : str or tuple of floats, optional
@@ -1620,7 +1618,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
             (default: 'lower center')
 
         bbox_to_anchor : Any, optional
-            the location of where to place the legend (default: `[0.5, 1]`)
+            the location of where to place the legend (default: ``[0.5, 1]``)
 
         **kwargs
             any other keyword arguments for the legend
@@ -1633,7 +1631,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1673,16 +1671,16 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         Parameters
         ----------
         *args
-            any positional arguments to `figure.suptitle`
+            any positional arguments to ``figure.suptitle``
 
         x : float, optional
-            the x position of the title (default: `0.5`)
+            the x position of the title (default: ``0.5``)
 
         y : float, optional
-            the y position of the title (default: `1.2`)
+            the y position of the title (default: ``1.2``)
 
         **kwargs
-            any keyword arguments to `figure.suptitle`
+            any keyword arguments to ``figure.suptitle``
 
         Returns
         -------
@@ -1692,7 +1690,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1780,7 +1778,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             be one of the outputs of <a
             href="https://matplotlib.org/stable/api/style_api.html#matplotlib.style.matplotlib.style.available"
             target="_blank" rel="noopener
-            noreferrer">`matplotlib.style.available`</a>, or a path to a file.
+            noreferrer">``matplotlib.style.available``</a>, or a path to a file.
             If using a file, does not use the default rc parameters).
 
         hspace : float, optional
@@ -1802,17 +1800,17 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         contour_levels : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded, along with
             the associated opacity (default: None). If not specified, defaults
-            to `[(1, 0.3), (2, 0.1)]`.
+            to ``[(1, 0.3), (2, 0.1)]``.
 
         contour_levels_1d : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded (on the 1D
             plots), along with the associated opacity (default: None). If not
-            specified, defaults to `[(1, 0.3), (2, 0.1)]`.
+            specified, defaults to ``[(1, 0.3), (2, 0.1)]``.
 
         contour_levels_2d : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded (on the 2D
             plots), along with the associated opacity (default: None). If not
-            specified, defaults to `[(1, 0.3), (2, 0.1)]`.
+            specified, defaults to ``[(1, 0.3), (2, 0.1)]``.
 
         Notes
         -----
@@ -1821,7 +1819,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         target="_blank" rel="noreferrer noopener">the matplotlib
         documentation</a>.
 
-        **Regarding `show_joint_dist`**: this argument specifies whether we
+        **Regarding ``show_joint_dist``**: this argument specifies whether we
         wish to plot the p-value of the *joint* distribution, or the p-value of
         the probability of a single parameter lying within the bounds projected
         onto a parameter axis. For more details, see <a
@@ -1896,7 +1894,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             any positional arguments for the legend
 
         overwrite : bool, optional
-            whether to overwrite any "nice" options set by `fitk` (default:
+            whether to overwrite any "nice" options set by ``fitk`` (default:
             False)
 
         loc : str or tuple of floats, optional
@@ -1905,7 +1903,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
 
         bbox_to_anchor : Any, optional
             the location of where to place the legend (default: None, picked by
-            `fitk` based on information about the plot)
+            ``fitk`` based on information about the plot)
 
         **kwargs
             any other keyword arguments for the legend
@@ -1918,7 +1916,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -1970,16 +1968,16 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         Parameters
         ----------
         *args
-            any positional arguments to `figure.suptitle`
+            any positional arguments to ``figure.suptitle``
 
         xscale : float, optional
-            the x position of the title (default: `0.5`)
+            the x position of the title (default: ``0.5``)
 
         yscale : float, optional
-            the y position of the title (default: `1.08`)
+            the y position of the title (default: ``1.08``)
 
         **kwargs
-            any keyword arguments to `figure.suptitle`
+            any keyword arguments to ``figure.suptitle``
 
         Returns
         -------
@@ -1989,7 +1987,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
         """
         if not self.figure:
             raise EmptyFigureError
@@ -2035,8 +2033,8 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             the name (label) of the second parameter where we want to draw
 
         method : str
-            the name of the method which we want to plot (such as `plot`,
-            `scatter`, etc.)
+            the name of the method which we want to plot (such as ``plot``,
+            ``scatter``, etc.)
 
         *args
             any positional arguments passed to the method (usually some data)
@@ -2052,14 +2050,14 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         Raises
         ------
         EmptyFigureError
-            if `figure` is not set
+            if ``figure`` is not set
 
         AttributeError
-            if `method` is not a valid plotting method
+            if ``method`` is not a valid plotting method
 
         Notes
         -----
-        The parameters `name1` and `name2` have to have already been plotted.
+        The parameters ``name1`` and ``name2`` have to have already been plotted.
         """
         if not hasattr(self[name1, name2], method):
             raise AttributeError(
@@ -2108,16 +2106,16 @@ class FisherFigure2D(FisherMultipleAxesFigure):
 
         mark_fiducials : bool or dict, optional
             whether or not the fiducials should be marked on the plots
-            (default: False). If set to `True`, uses `linestyle='--'` and
-            `color='black'` as the default. If a dictionary, accepts the same
+            (default: False). If set to ``True``, uses ``linestyle='--'`` and
+            ``color='black'`` as the default. If a dictionary, accepts the same
             keyword arguments as <a
             href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvline.html#matplotlib.axes.Axes.axvline"
             target="_blank" rel="noreferrer
-            noopener">`matplotlib.axes.Axes.axvline`</a>.  If an empty
+            noopener">``matplotlib.axes.Axes.axvline``</a>.  If an empty
             dictionary, uses the default style (determined automatically).
 
         **kwargs
-            any keyword arguments used for plotting (same as `plot_curve_2d`)
+            any keyword arguments used for plotting (same as ``plot_curve_2d``)
 
         Returns
         -------
@@ -2423,8 +2421,8 @@ def _add_plot_1d(
     """
     Add a 1D Gaussian to axis.
 
-    Add a 1D Gaussian with marginalized constraints `sigma` close to fiducial
-    value `fiducial` to axis `ax`.
+    Add a 1D Gaussian with marginalized constraints ``sigma`` close to fiducial
+    value ``fiducial`` to axis ``ax``.
     """
     if ax is None:
         _, ax = plt.subplots()
@@ -2516,11 +2514,11 @@ def plot_curve_1d(
     **kwargs
         any keyword arguments passed to <a
         href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html"
-        target="_blank" rel="noopener noreferrer">`matplotlib.pyplot.plot`</a>.
+        target="_blank" rel="noopener noreferrer">``matplotlib.pyplot.plot``</a>.
 
     Returns
     -------
-    A 3-tuple `(Figure, Axes, Artist)`
+    A 3-tuple ``(Figure, Axes, Artist)``
         The figure and the axis on which the artist was drawn on, as well as
         the artist itself.
 
@@ -2534,7 +2532,7 @@ def plot_curve_1d(
     ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
     ... )
 
-    Draw the marginalized parameter `a`:
+    Draw the marginalized parameter ``a``:
 
     >>> fig, ax, artist = plot_curve_1d(m, name='a', ls='--', color='red')
 
@@ -2585,11 +2583,11 @@ def plot_curve_2d(
         any keyword arguments passed to <a
         href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Ellipse.html"
         target="_blank" rel="noopener
-        noreferrer">`matplotlib.patches.Ellipse`</a>.
+        noreferrer">``matplotlib.patches.Ellipse``</a>.
 
     Returns
     -------
-    A 3-tuple `(Figure, Axes, Artist)`
+    A 3-tuple ``(Figure, Axes, Artist)``
         The figure and the axis on which the artist was drawn on, as well as
         the artist itself.
 
@@ -2604,7 +2602,7 @@ def plot_curve_2d(
     ... latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'],
     ... )
 
-    Draw the 1$\sigma$ contour of the parameter combination `a`, `b`:
+    Draw the 1$\sigma$ contour of the parameter combination ``a``, ``b``:
 
     >>> fig, ax, artist = plot_curve_2d(m, name1='a', name2='b', ls='--', color='red', fill=False)
 

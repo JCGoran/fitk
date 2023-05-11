@@ -117,7 +117,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         -----
         The method is cached using <a
         href="https://docs.python.org/3/library/functools.html#functools.lru_cache"
-        target="_blank" rel="noreferrer noopener">`functools.lru_cache`</a>
+        target="_blank" rel="noreferrer noopener">``functools.lru_cache``</a>
         """
         cosmo = classy.Class()  # pylint: disable=c-extension-no-member
         final_kwargs = {**self.config}
@@ -160,9 +160,9 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         ----------
         config : dict, optional
             the CLASS configuration to use. All parameters are accepted.
-            If not specified, defaults to `{'output' : 'tCl'}`.
-            If the key `output` is missing, it is inserted with a default value
-            `tCl`.
+            If not specified, defaults to ``{'output' : 'tCl'}``.
+            If the key ``output`` is missing, it is inserted with a default value
+            ``tCl``.
         """
         super().__init__(*args, config=config, **kwargs)
         self._config = config if config is not None else {"output": "tCl"}
@@ -191,11 +191,11 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         Notes
         -----
         The signal is composed of the following contributions, in this order:
-        - temperature :math:`C_\ell`s if `output` contains `tCl`
-        - E-mode :math:`C_\ell`s if `output` contains `pCl`
-        - cross-correlations between T and E-modes if `output` contains `tCl`
-          and `pCl`
-        - B-mode :math:`C_\ell`s if `output` contains `pCl` *and they are non-zero*
+        - temperature :math:`C_\ell`s if ``output`` contains ``tCl``
+        - E-mode :math:`C_\ell`s if ``output`` contains ``pCl``
+        - cross-correlations between T and E-modes if ``output`` contains ``tCl``
+          and ``pCl``
+        - B-mode :math:`C_\ell`s if ``output`` contains ``pCl`` *and they are non-zero*
 
         Note that :math:`\ell = \\{0, 1\\}` are not part of the output, i.e. we impose
         :math:`\ell_\mathrm{min} = 2`.
@@ -265,7 +265,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             0 & 0 & 0 & (X^{BB})^2
             \end{pmatrix}
 
-        See the notes of the `signal` method about the order of the outputs in
+        See the notes of the ``signal`` method about the order of the outputs in
         the matrix.
 
         The covariance has been taken from <a

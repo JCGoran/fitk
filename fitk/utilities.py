@@ -1,7 +1,7 @@
 """
 Various helper utilities for Fisher objects.
 
-See here for documentation of `P`.
+See here for documentation of ``P``.
 """
 
 # needed for compatibility with Python 3.7
@@ -34,7 +34,7 @@ class P:
 
     latex_name : str, optional
         the LaTeX (display) name of the parameter. If not specified, defaults
-        to the same value as `name`
+        to the same value as ``name``
     """
 
     name: str
@@ -112,7 +112,7 @@ class ParameterNotFoundError(ValueError):
 
 
 class ValidationError(Exception):
-    """Error raised when `fitk.derivatives.FisherDerivative.validate_parameter` fails."""
+    """Error raised when ``fitk.derivatives.FisherDerivative.validate_parameter`` fails."""
 
     def __init__(self, parameter):
         self.message = f"Parameter '{parameter.name}' contains invalid values"
@@ -170,7 +170,7 @@ def make_html_table(
         the values in the table
 
     names : Collection[str], default = None
-        the names of the values in the table. Must have the same length as `values`
+        the names of the values in the table. Must have the same length as ``values``
 
     fmt_values : str, default = '{}'
         the format string for the values
@@ -207,7 +207,7 @@ def make_default_names(
     size: int,
     character: str = "p",
 ):
-    """Return the array with default names `p1, ..., pn`."""
+    """Return the array with default names ``p1, ..., pn``."""
     if size < 0:
         raise ValueError
     return np.array([f"{character}{_ + 1}" for _ in range(size)], dtype=object)
@@ -238,7 +238,7 @@ def is_positive_semidefinite(values):
 
 
 def get_index_of_other_array(A, B):
-    """Return the index (an array) which is such that `B[index] == A`."""
+    """Return the index (an array) which is such that ``B[index] == A``."""
     A, B = np.array(A), np.array(B)
     xsorted = np.argsort(B)
 
@@ -246,7 +246,7 @@ def get_index_of_other_array(A, B):
 
 
 def reindex_array(values, index):
-    """Return the array sorted according to (1D) index `index`."""
+    """Return the array sorted according to (1D) index ``index``."""
     for dim in range(np.ndim(values)):
         values = np.swapaxes(np.swapaxes(values, 0, dim)[index], dim, 0)
 
@@ -326,7 +326,7 @@ def find_diff_weights(
     Raises
     ------
     ValueError
-        if `order >= len(stencil)`
+        if ``order >= len(stencil)``
 
     Returns
     -------
@@ -363,7 +363,7 @@ def math_mode(
     arg: Union[str, Sequence[str]],
 ) -> Union[str, list[str]]:
     """
-    Return the argument with surrounding math characters (`$...$`).
+    Return the argument with surrounding math characters (``$...$``).
 
     Parameters
     ----------

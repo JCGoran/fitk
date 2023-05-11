@@ -113,6 +113,7 @@ class MyFisher(FisherDerivative):
 ```
 
 The following are some general recommendations when creating a new interface:
+
 - for ease of use, any additional parameters specifying the configuration for
   the interface should be passed to the constructor (i.e. the `__init__`
   method)

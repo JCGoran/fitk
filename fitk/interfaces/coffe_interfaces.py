@@ -191,6 +191,7 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
         -----
         The covariance does not take into account cross-correlations between
         the different redshifts, i.e. for $n$ redshift bins it has the form:
+
         $$
             \begin{pmatrix}
             \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
@@ -283,6 +284,7 @@ class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
         -----
         The covariance does not take into account cross-correlations between
         the different redshifts, i.e. for $n$ redshift bins it has the form:
+
         $$
             \begin{pmatrix}
             \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
@@ -329,6 +331,7 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and $\tilde{b}$ parameters.
 
     The parameters are defined as:
+
     $$
         \tilde{f}(z) = f(z) \sigma_8(z),
         \quad

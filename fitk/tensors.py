@@ -1523,15 +1523,19 @@ class FisherMatrix:
         If neither are specified, defaults to `sigma=1`.
 
         The relationship between `p` and `sigma` is defined via:
+
         $$
             p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
                         f(x, \mu, 1)\, \mathrm{d}x
                       = \mathrm{Erf}(\sigma / \sqrt{2})
         $$
+
         and therefore the inverse is simply:
+
         $$
             \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
         $$
+
         The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
         0.683, 0.954, and 0.997, respectively.
 
@@ -2328,9 +2332,11 @@ class FisherMatrix:
         Notes
         -----
         The entries of the output matrix are given by:
+
         $$
             \mathsf{P}_{ij} \equiv \frac{\mathsf{C}_{ij}}{\sqrt{\mathsf{C}_{ii} \mathsf{C}_{jj}}}
         $$
+
         where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
         matrix (the inverse of the Fisher matrix).
         """
@@ -2379,17 +2385,22 @@ class FisherMatrix:
         Notes
         -----
         The figure of merit is computed as:
+
         $$
             \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
         $$
+
         where $\mathsf{F}$ denotes the Fisher matrix.
 
         Some authors define the FoM (also sometimes called the signal-to-noise,
         $\mathrm{SNR}$) as:
+
         $$
             \mathrm{SNR} = \sqrt{\det \mathsf{F}}
         $$
+
         The two are related by a simple transformation:
+
         $$
             \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}
         $$
@@ -2416,9 +2427,11 @@ class FisherMatrix:
         Notes
         -----
         The output is computed as:
+
         $$
             \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
         $$
+
         where $\mathsf{P}$ denotes the correlation matrix.
         """
         return -np.linalg.slogdet(self.correlation_matrix(**kwargs))[-1] / 2

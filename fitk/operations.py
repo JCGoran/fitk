@@ -71,6 +71,7 @@ def bayes_factor(
     Notes
     -----
     For base model $M_B$ and extended model $M_E$, the output is defined as:
+
     $$
         \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2}
         \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}
@@ -78,6 +79,7 @@ def bayes_factor(
         \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
         \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
     $$
+
     where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n \times
     n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
     \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
@@ -280,9 +282,11 @@ def kl_matrix(
     Notes
     -----
     The matrix has elements defined by:
+
     $$
         \mathcal{K}_{ij} \equiv D(P_j || P_i)
     $$
+
     where $D(P_j || P_i)$ is the Kullback-Leibler divergence of a pair of
     observables $(i, j)$.
 

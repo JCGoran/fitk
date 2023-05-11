@@ -585,6 +585,7 @@ class FisherDerivative:
 
         The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
         defined as:
+
         $$
             \frac{\partial \mathbf{S}^T}{\partial \theta_i}
             \mathsf{C}^{-1}
@@ -598,6 +599,7 @@ class FisherDerivative:
             \mathsf{C}^{-1}
             \right)
         $$
+
         where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
         matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
         """

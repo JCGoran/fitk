@@ -288,9 +288,11 @@ class FisherMatrix:
     Examples
     --------
     Specify a Fisher object with default names and fiducials:
+
     >>> fm = FisherMatrix(np.diag([5, 4]), latex_names=['$p_1$', '$p_2$'])
 
     The object has a friendly representation in the interactive session:
+
     >>> fm
     FisherMatrix(
         array([[5., 0.],
@@ -326,20 +328,24 @@ class FisherMatrix:
     </table>
 
     List the names:
+
     >>> fm.names
     array(['p1', 'p2'], dtype=object)
 
     List the values of the Fisher object:
+
     >>> fm.values
     array([[5., 0.],
            [0., 4.]])
 
     List the values of the fiducials:
+
     >>> fm.fiducials
     array([0., 0.])
 
     Names can be changed in bulk (ditto for fiducials and values; dimension
     must of course match the original):
+
     >>> fm = FisherMatrix(np.diag([5, 4]))
     >>> fm.names = ['x', 'y']
     >>> fm.latex_names = [r'$\mathbf{X}$', r'$\mathbf{Y}$']
@@ -352,11 +358,13 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     We can get and set individual elements of the matrix using dict-like notation:
+
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
     >>> fm['x', 'x']
     5.0
 
     The off-diagonal elements are automatically updated when using the setter:
+
     >>> fm = FisherMatrix(np.diag([5, 4]), names=['x', 'y'])
     >>> fm['x', 'y'] = -2
     >>> fm
@@ -368,6 +376,7 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     We can select submatrices by index:
+
     >>> fm = FisherMatrix(np.diag([1, 2, 3]), names=['x', 'y', 'z'])
     >>> fm[1:]
     FisherMatrix(
@@ -378,11 +387,13 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     Fisher object with parameter names:
+
     >>> fm = FisherMatrix(np.diag([5, 4]),
     ... names=['x', 'y'], latex_names=['$\\mathbf{X}$', '$\\mathbf{Y}$'])
     >>> fm_with_names = FisherMatrix(np.diag([1, 2]), names=['x', 'y'])
 
     We can add Fisher objects (ordering of names is taken care of):
+
     >>> fm + fm_with_names # doctest: +SKIP
     FisherMatrix(
         array([[6., 0.],
@@ -392,6 +403,7 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     We can also do element-wise multiplication or division:
+
     >>> fm * fm_with_names
     FisherMatrix(
         array([[5., 0.],
@@ -401,6 +413,7 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     Furthermore, we can do matrix multiplication:
+
     >>> fm @ fm_with_names
     FisherMatrix(
         array([[5., 0.],
@@ -410,6 +423,7 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     We can also perform standard matrix operations like the trace, eigenvalues, determinant:
+
     >>> fm.trace()
     9.0
     >>> fm.eigenvalues()
@@ -418,11 +432,13 @@ class FisherMatrix:
     19.999999999999996
 
     We can also get the inverse (the covariance matrix):
+
     >>> fm.inverse()
     array([[0.2 , 0.  ],
            [0.  , 0.25]])
 
     We can drop parameters from the object:
+
     >>> fm.drop('x')
     FisherMatrix(
         array([[4.]]),
@@ -431,6 +447,7 @@ class FisherMatrix:
         fiducials=array([0.]))
 
     We can save it to a file (the returned value is the dictionary that was saved):
+
     >>> pprint(fm.to_file('example_matrix.json'), sort_dicts=False) # doctest: +SKIP
     {'values': [[5.0, 0.0], [0.0, 4.0]],
      'names': ['x', 'y'],
@@ -438,6 +455,7 @@ class FisherMatrix:
      'fiducials': [0.0, 0.0]}
 
     Loading is performed by a class method `from_file`:
+
     >>> fm_new = FisherMatrix.from_file('example_matrix.json') # doctest: +SKIP
     """
 
@@ -483,6 +501,7 @@ class FisherMatrix:
         Examples
         --------
         Specify a Fisher object without names:
+
         >>> FisherMatrix(np.diag([1, 2, 3]))
         FisherMatrix(
             array([[1., 0., 0.],
@@ -493,6 +512,7 @@ class FisherMatrix:
             fiducials=array([0., 0., 0.]))
 
         Specify a Fisher object with names, LaTeX names, and fiducials:
+
         >>> FisherMatrix(np.diag([1, 2]), names=['alpha', 'beta'],
         ... latex_names=[r'$\alpha$', r'$\beta$'], fiducials=[-3, 2])
         FisherMatrix(
@@ -958,10 +978,12 @@ class FisherMatrix:
         Examples
         --------
         Create a Fisher matrix:
+
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
         Get the value of the fiducial associated to parameter `b`:
+
         >>> fm.fiducial('b')
         3.0
         """
@@ -990,10 +1012,12 @@ class FisherMatrix:
         Examples
         --------
         Create a Fisher matrix:
+
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
         Set the value of the fiducial associated to parameter `b`:
+
         >>> fm.set_fiducial('b', 4)
         >>> fm
         FisherMatrix(
@@ -1025,10 +1049,12 @@ class FisherMatrix:
         Examples
         --------
         Create a Fisher matrix:
+
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], latex_names=[r'$\mathbf{A}$', r'$\mathbf{B}$'])
 
         Get the LaTeX name associated to parameter `b`:
+
         >>> fm.latex_name('b')
         '$\\mathbf{B}$'
         """
@@ -1057,10 +1083,12 @@ class FisherMatrix:
         Examples
         --------
         Create a Fisher matrix:
+
         >>> fm = FisherMatrix(np.diag([1, 2]),
         ... names=['a', 'b'], fiducials=[2, 3])
 
         Set the value of the fiducial associated to parameter `b`:
+
         >>> fm.set_latex_name('b', r'$\mathcal{B}$')
         >>> fm
         FisherMatrix(
@@ -1140,10 +1168,12 @@ class FisherMatrix:
         Examples
         --------
         Define a Fisher matrix:
+
         >>> m = FisherMatrix(np.diag([3, 1, 2]), names=list('sdf'),
         ... latex_names=['hjkl', 'qwe', 'll'], fiducials=[8, 7, 3])
 
         Sort according to values of the fiducials:
+
         >>> m.sort(key='fiducials')
         FisherMatrix(
             array([[2., 0., 0.],
@@ -1154,6 +1184,7 @@ class FisherMatrix:
             fiducials=array([3., 7., 8.]))
 
         Sort according to the LaTeX names (alphabetically):
+
         >>> m.sort(key='latex_names')
         FisherMatrix(
             array([[3., 0., 0.],
@@ -1312,9 +1343,12 @@ class FisherMatrix:
 
         Examples
         --------
+        Create an example Fisher matrix:
+
         >>> m = FisherMatrix(np.diag([1, 2, 3]))
 
         Drop `p1` and `p3`:
+
         >>> m.drop('p1', 'p3')
         FisherMatrix(
             array([[2.]]),
@@ -1323,6 +1357,7 @@ class FisherMatrix:
             fiducials=array([0.]))
 
         Same result, but note the asterisk (`*`):
+
         >>> m.drop(*['p1', 'p3'])
         FisherMatrix(
             array([[2.]]),
@@ -1331,6 +1366,7 @@ class FisherMatrix:
             fiducials=array([0.]))
 
         Drop everything *except* `p1` and `p3`:
+
         >>> m.drop('p1', 'p3', invert=True)
         FisherMatrix(
             array([[1., 0.],
@@ -1502,19 +1538,23 @@ class FisherMatrix:
         Examples
         --------
         Get (marginalized by default) constraints for all parameters:
+
         >>> m = FisherMatrix([[3, -2], [-2, 5]])
         >>> m.constraints()
         array([0.67419986, 0.52223297])
 
         Get the unmarginalized constraints instead:
+
         >>> m.constraints(marginalized=False)
         array([0.57735027, 0.4472136 ])
 
         Get the unmarginalized constraints for a single parameter:
+
         >>> m.constraints('p1', marginalized=False)
         array([0.57735027])
 
         Get the marginalized constraints for a single parameter:
+
         >>> m.constraints('p1', p=0.682689) # p-value roughly equal to 1 sigma
         array([0.67419918])
         """
@@ -1901,6 +1941,7 @@ class FisherMatrix:
         Examples
         --------
         Create a Fisher matrix:
+
         >>> fm = FisherMatrix(
         ... np.diag([1, 2, 3]),
         ... names=["omega_m", "omega_b", "h"],
@@ -1908,6 +1949,7 @@ class FisherMatrix:
         ... )
 
         Reparametrize it:
+
         >>> fm.reparametrize_symbolic(
         ... {'omega_m' : 'Omega_m * h**2', 'omega_b' : 'Omega_b * h**2'}
         ... ).sort(key=['Omega_m', 'Omega_b', 'h'])
@@ -2005,6 +2047,8 @@ class FisherMatrix:
 
         Examples
         --------
+        Create an example Fisher matrix:
+
         >>> fm = FisherMatrix(np.diag([1, 2]))
         >>> fm
         FisherMatrix(
@@ -2015,9 +2059,11 @@ class FisherMatrix:
             fiducials=array([0., 0.]))
 
         Define a Jacobian:
+
         >>> jac = [[1, 4], [3, 2]]
 
         Reparametrize according to that Jacobian:
+
         >>> fm.reparametrize(jac, names=['a', 'b'])
         FisherMatrix(
             array([[19., 16.],
@@ -2104,9 +2150,11 @@ class FisherMatrix:
          'fiducials': array([0., 0.])}
 
         There is also a convenience function for reading it:
+
         >>> fm_read = FisherMatrix.from_file('example_matrix.json') # doctest: +SKIP
 
         Verify it's the same object:
+
         >>> fm == fm_read # doctest: +SKIP
         True
         """
@@ -2155,6 +2203,7 @@ class FisherMatrix:
         Examples
         --------
         Generate a Fisher object using a random orthogonal matrix:
+
         >>> rm = np.array([[-0.0942819 ,  0.56164959,  0.7638867 ,  0.18138749, -0.24338518],
         ... [ 0.22058622,  0.74746891, -0.33297073, -0.47219083,  0.24248352],
         ... [-0.23923712,  0.18017836, -0.44325216,  0.05300493, -0.84321964],
@@ -2163,6 +2212,7 @@ class FisherMatrix:
         >>> fm = FisherMatrix(rm.T @ np.diag([1, 2, 3, 7, 6]) @ rm)
 
         Marginalize over some parameters:
+
         >>> fm.marginalize_over('p1', 'p2')
         FisherMatrix(
             array([[ 1.67715593, -1.01556087,  0.30020774],
@@ -2173,6 +2223,7 @@ class FisherMatrix:
             fiducials=array([0., 0., 0.]))
 
         Marginalize over all parameters which are NOT `p1` or `p2`:
+
         >>> fm.marginalize_over('p1', 'p2', invert=True)
         FisherMatrix(
             array([[ 5.04480061, -0.04490451],

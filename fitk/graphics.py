@@ -416,17 +416,21 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         Examples
         --------
         Setup the plot:
+
         >>> fig = FisherFigure1D()
         >>> fig.plot(FisherMatrix(np.diag([1, 2]), names=["a", "b"]), label="Fisher matrix")
 
         Add something to the plot that has a handle:
+
         >>> handle, = fig["a"].plot([-1, 0, 1], [-1, 0, 1], color='red')
 
         Finally, add the handle to the legend, and draw the legend:
+
         >>> fig.add_artist_to_legend(handle, "linear function")
         >>> _ = fig.legend() # the artist will now be shown correctly in the legend
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_add_artist_to_legend1.png",
         ... dpi=150)
@@ -882,15 +886,18 @@ class FisherBarFigure(FisherBaseFigure):
         Examples
         --------
         Define some Fisher matrices:
+
         >>> fm1 = FisherMatrix(np.diag([1, 2, 3]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.3, 0.7, 0.96])
         >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
 
         Make a vertical bar plot:
+
         >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_bar.png",
         ... dpi=150)
@@ -898,11 +905,13 @@ class FisherBarFigure(FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_bar.png">
 
         Make a horizontal bar plot:
+
         >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_barh.png",
         ... dpi=150)
@@ -910,11 +919,13 @@ class FisherBarFigure(FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_absolute_constraints_barh.png">
 
         Make an errobar plot:
+
         >>> fig = FisherBarFigure()
         >>> fig.plot_absolute_constraints([fm1, fm2], 'errorbar', labels=['Fisher 1', 'Fisher 2'], capsize=4)
         >>> _ = fig.figure.legend()
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_absolute_constraints_errorbar.png",
         ... dpi=150)
@@ -1111,15 +1122,18 @@ class FisherBarFigure(FisherBaseFigure):
         Examples
         --------
         Define some Fisher matrices:
+
         >>> fm1 = FisherMatrix(np.diag([1, 2, 3]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.3, 0.7, 0.96])
         >>> fm2 = FisherMatrix(np.diag([4, 5, 6]) * 1e3, names=["a", "b", "c"], latex_names=[r'$\Omega_\mathrm{m}$', '$h$', "$n_s$"], fiducials=[0.35, 0.67, 0.9])
 
         Make a vertical bar plot:
+
         >>> fig = FisherBarFigure()
         >>> fig.plot_relative_constraints([fm1, fm2], 'bar', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_relative_constraints_bar.png",
         ... dpi=150)
@@ -1127,11 +1141,13 @@ class FisherBarFigure(FisherBaseFigure):
         <img width="100%" src="$IMAGE_PATH/fisher_figure_plot_relative_constraints_bar.png">
 
         Make a horizontal bar plot:
+
         >>> fig = FisherBarFigure()
         >>> fig.plot_relative_constraints([fm1, fm2], 'barh', labels=['Fisher 1', 'Fisher 2'])
         >>> _ = fig.figure.legend()
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure_plot_relative_constraints_barh.png",
         ... dpi=150)
@@ -1232,6 +1248,7 @@ class FisherFigure1D(FisherMultipleAxesFigure):
     Examples
     --------
     Define some Fisher matrices:
+
     >>> m1 = FisherMatrix(
     ... [[3, -2], [-2, 5]],
     ... names=['a', 'b'],
@@ -1244,15 +1261,19 @@ class FisherFigure1D(FisherMultipleAxesFigure):
     ... )
 
     Instantiate a figure:
+
     >>> fig = FisherFigure1D()
 
     Draw marginalized 1D plots with the previously defined Fisher matrix:
+
     >>> fig.plot(m1, label='first')
 
     Add another plot with a different color and style:
+
     >>> fig.plot(m2, label='second', ls=':', color='green')
 
     Draw some other stuff on it:
+
     >>> artist, = fig.draw('a', 'plot', [-1, 0, 1], [-1, 0, 1], color='red', label='curve')
     >>> # alternatively, the below will accomplish the same thing
     >>> # artist, = fig['a'].plot([-1, 0, 1], [-1, 0, 1], color='red')
@@ -1261,12 +1282,15 @@ class FisherFigure1D(FisherMultipleAxesFigure):
     >>> # fig.add_artist_to_legend(artist, label='curve')
 
     Add a legend:
+
     >>> _ = fig.legend(ncol=3, loc='center')
 
     Add a title:
+
     >>> _ = fig.set_title('Example Fisher matrix 1D plotting')
 
     Save it to a file:
+
     >>> fig.savefig(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure1d_example1.png",
     ... dpi=150)
@@ -1684,6 +1708,7 @@ class FisherFigure2D(FisherMultipleAxesFigure):
     Examples
     --------
     Define some Fisher matrices:
+
     >>> m1 = FisherMatrix(
     ... [[3, -2], [-2, 5]],
     ... names=['a', 'b'],
@@ -1696,15 +1721,19 @@ class FisherFigure2D(FisherMultipleAxesFigure):
     ... )
 
     Instantiate a figure:
+
     >>> fig = FisherFigure2D(show_1d_curves=True)
 
     Draw a "triangle plot" with the previously defined Fisher matrix:
+
     >>> fig.plot(m1, label='first')
 
     Add a plot with a different color and style:
+
     >>> fig.plot(m2, label='second', ls=':', color='green')
 
     Draw some other stuff on it:
+
     >>> artist, = fig.draw('a', 'b', 'plot', [-1, 0, 1], [-1, 0, 1], color='red', label='curve')
     >>> # alternatively, the below will accomplish the same thing
     >>> # artist, = fig['a', 'b'].plot([-1, 0, 1], [-1, 0, 1], color='red')
@@ -1713,12 +1742,15 @@ class FisherFigure2D(FisherMultipleAxesFigure):
     >>> # fig.add_artist_to_legend(artist, label='curve')
 
     Add a legend:
+
     >>> _ = fig.legend()
 
     Add a title:
+
     >>> _ = fig.set_title('Example Fisher matrix 2D plotting')
 
     Save it to a file:
+
     >>> fig.savefig(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_example1.png",
     ... dpi=150)
@@ -2094,15 +2126,19 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         Examples
         --------
         Define a Fisher matrix:
+
         >>> m = FisherMatrix([[3, -2], [-2, 5]], names=['a', 'b'], latex_names=[r'$\mathcal{A}$', r'$\mathcal{B}$'])
 
         Initiate a figure:
+
         >>> fig = FisherFigure2D(show_1d_curves=True)
 
         Draw a "triangle plot" with the previously defined Fisher matrix:
+
         >>> fig.plot(m)
 
         Save it to a file:
+
         >>> fig.savefig(
         ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "fisher_figure2d_plot_example.png",
         ... dpi=150)
@@ -2491,6 +2527,7 @@ def plot_curve_1d(
     Examples
     --------
     Define a Fisher matrix:
+
     >>> m = FisherMatrix(
     ... [[3, -2], [-2, 5]],
     ... names=['a', 'b'],
@@ -2498,9 +2535,11 @@ def plot_curve_1d(
     ... )
 
     Draw the marginalized parameter `a`:
+
     >>> fig, ax, artist = plot_curve_1d(m, name='a', ls='--', color='red')
 
     Save it to a file:
+
     >>> fig.savefig(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_1d_example1.png",
     ... dpi=100)
@@ -2557,6 +2596,7 @@ def plot_curve_2d(
     Examples
     --------
     Define a Fisher matrix:
+
     >>> m = FisherMatrix(
     ... [[3, -2], [-2, 5]],
     ... names=['a', 'b'],
@@ -2565,14 +2605,17 @@ def plot_curve_2d(
     ... )
 
     Draw the 1$\sigma$ contour of the parameter combination `a`, `b`:
+
     >>> fig, ax, artist = plot_curve_2d(m, name1='a', name2='b', ls='--', color='red', fill=False)
 
     Rescale the view a bit:
+
     >>> _ = ax.autoscale()
     >>> _ = ax.relim()
     >>> _ = ax.autoscale_view()
 
     Save it to a file:
+
     >>> fig.savefig(
     ... Path(__file__).parent.parent / os.environ.get("TEMP_IMAGE_DIR", "") / "plot_curve_2d_example1.png",
     ... dpi=100)

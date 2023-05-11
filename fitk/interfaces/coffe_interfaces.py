@@ -120,21 +120,26 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
     Examples
     --------
     Import the necessary modules:
+
     >>> from fitk import P, D
 
     Define some parameters:
+
     >>> parameters = [P('omega_m', 0.32), P('n_s', 0.96), P('h', 0.67)]
 
     Set a cosmology consistent with those parameters:
+
     >>> cosmo = CoffeMultipolesDerivative(config={**{_.name : _.fiducial for _ in parameters}})
 
     Compute the first derivative of the signal (multipoles of 2PCF), using a
     fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
     $0.67$ and an absolute step size $10^{-3}$:
+
     >>> derivative = cosmo.derivative('signal', D(parameters[-1], 1e-3))
 
     Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
     parameters:
+
     >>> fm = cosmo.fisher_matrix(D(parameters[0], abs_step=1e-3), D(parameters[1], abs_step=1e-3))
     """
 

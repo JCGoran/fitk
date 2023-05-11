@@ -302,7 +302,7 @@ class FisherMatrix:
         fiducials=array([0., 0.]))
 
     In a Jupyter notebook, it looks similar to the below (you can hover over
-    the $\LaTeX$ label to show the corresponding name and fiducial of that
+    the :math:`\LaTeX` label to show the corresponding name and fiducial of that
     parameter):
 
     <table>
@@ -1429,7 +1429,7 @@ class FisherMatrix:
 
     def condition_number(self):
         r"""
-        Return the condition number of the matrix with respect to the $L^2$ norm.
+        Return the condition number of the matrix with respect to the :math:`L^2` norm.
 
         Examples
         --------
@@ -1524,17 +1524,15 @@ class FisherMatrix:
 
         The relationship between `p` and `sigma` is defined via:
 
-        $$
+        .. math::
             p(\sigma) = \int\limits_{\mu - \sigma}^{\mu + \sigma}
                         f(x, \mu, 1)\, \mathrm{d}x
                       = \mathrm{Erf}(\sigma / \sqrt{2})
-        $$
 
         and therefore the inverse is simply:
 
-        $$
+        .. math::
             \sigma(p) = \sqrt{2}\, \mathrm{Erf}^{-1}(p)
-        $$
 
         The values of `p` corresponding to 1, 2, 3 `sigma` are roughly
         0.683, 0.954, and 0.997, respectively.
@@ -2333,11 +2331,10 @@ class FisherMatrix:
         -----
         The entries of the output matrix are given by:
 
-        $$
+        .. math::
             \mathsf{P}_{ij} \equiv \frac{\mathsf{C}_{ij}}{\sqrt{\mathsf{C}_{ii} \mathsf{C}_{jj}}}
-        $$
 
-        where $\mathsf{C}_{ij}$ is the $(i, j)$ element of the covariance
+        where :math:`\mathsf{C}_{ij}` is the :math:`(i, j)` element of the covariance
         matrix (the inverse of the Fisher matrix).
         """
         inv = self.inverse(**kwargs)
@@ -2386,24 +2383,21 @@ class FisherMatrix:
         -----
         The figure of merit is computed as:
 
-        $$
+        .. math::
             \mathrm{FoM} \equiv \frac{1}{2} \log \left[ \det \mathsf{F} \right]
-        $$
 
-        where $\mathsf{F}$ denotes the Fisher matrix.
+        where :math:`\mathsf{F}` denotes the Fisher matrix.
 
         Some authors define the FoM (also sometimes called the signal-to-noise,
-        $\mathrm{SNR}$) as:
+        :math:`\mathrm{SNR}`) as:
 
-        $$
+        .. math::
             \mathrm{SNR} = \sqrt{\det \mathsf{F}}
-        $$
 
         The two are related by a simple transformation:
 
-        $$
+        .. math::
             \mathrm{SNR} = \exp{\left( \mathrm{FoM} \right)}
-        $$
         """
         return np.linalg.slogdet(self.values)[-1] / 2
 
@@ -2428,10 +2422,9 @@ class FisherMatrix:
         -----
         The output is computed as:
 
-        $$
+        .. math::
             \mathrm{FoC} \equiv - \frac{1}{2} \log \left[ \det \mathsf{P} \right]
-        $$
 
-        where $\mathsf{P}$ denotes the correlation matrix.
+        where :math:`\mathsf{P}` denotes the correlation matrix.
         """
         return -np.linalg.slogdet(self.correlation_matrix(**kwargs))[-1] / 2

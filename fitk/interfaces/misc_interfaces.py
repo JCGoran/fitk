@@ -60,8 +60,8 @@ class SupernovaDerivative(FisherDerivative):
     r"""
     Interface for derivatives of supernova measurements.
 
-    Compute derivatives w.r.t. cosmological parameters $\Omega_\mathrm{m}$ and
-    $w$ for a supernova measurement.
+    Compute derivatives w.r.t. cosmological parameters :math:`\Omega_\mathrm{m}` and
+    :math:`w` for a supernova measurement.
     For definitions of the quantities used, refer to the documentation of
     `signal` and `covariance`.
 
@@ -70,16 +70,16 @@ class SupernovaDerivative(FisherDerivative):
     Create an instance with the default config:
     >>> sn = SupernovaDerivative()
 
-    Compute the derivative of the signal w.r.t. $\Omega_\mathrm{m}$:
+    Compute the derivative of the signal w.r.t. :math:`\Omega_\mathrm{m}`:
     >>> sn.derivative('signal', D(P(name='omega_m', fiducial=0.32), abs_step=1e-3))
     array([-3.17838358])
 
-    Compute the mixed derivative of the signal w.r.t. both $\Omega_\mathrm{m}$
-    and $w$:
+    Compute the mixed derivative of the signal w.r.t. both :math:`\Omega_\mathrm{m}`
+    and :math:`w`:
     >>> sn.derivative('signal', D(P('omega_m', 0.32), 1e-3), D(P('w', -1), 1e-3))
     array([2.94319875])
 
-    Compute the Fisher with $\Omega_\mathrm{m}$ and $w$ as parameters:
+    Compute the Fisher with :math:`\Omega_\mathrm{m}` and :math:`w` as parameters:
     >>> fm1 = sn.fisher_matrix(
     ... D(P('omega_m', 0.32, latex_name=r'$\Omega_\mathrm{m}$'), 1e-3),
     ... D(P('w', -1, latex_name='$w$'), 1e-3))
@@ -149,12 +149,10 @@ class SupernovaDerivative(FisherDerivative):
         -----
         The signal is modelled as:
 
-        $$
+        .. math::
             m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}
-        $$
 
-        where $m(z)$ is the distance modulus, $\boldsymbol{\theta} =
-        (\Omega_\mathrm{m}, w)$, and $d_L$ is the luminosity distance.
+        where :math:`m(z)` is the distance modulus, :math`\boldsymbol{\theta} = (\Omega_\mathrm{m}, w)`, and :math:`d_L` is the luminosity distance.
         """
         config = {**self.config}
         for arg in args:
@@ -175,11 +173,10 @@ class SupernovaDerivative(FisherDerivative):
         -----
         The covariance is modelled as:
 
-        $$
+        .. math::
             \mathsf{C} = \mathrm{diag}(\sigma_1^2, \ldots, \sigma_n^2)
-        $$
 
-        where $\sigma_i^2$ is the (parameter-independent!) variance at the
-        $i$-th redshift bin.
+        where :math:`\sigma_i^2` is the (parameter-independent!) variance at the
+        :math:`i`-th redshift bin.
         """
         return np.diag(np.array(self.config["sigma"], dtype=float) ** 2)

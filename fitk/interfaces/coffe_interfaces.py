@@ -132,12 +132,12 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
     >>> cosmo = CoffeMultipolesDerivative(config={**{_.name : _.fiducial for _ in parameters}})
 
     Compute the first derivative of the signal (multipoles of 2PCF), using a
-    fourth-order central derivative scheme, w.r.t. $h$ with a fiducial value of
-    $0.67$ and an absolute step size $10^{-3}$:
+    fourth-order central derivative scheme, w.r.t. :math:`h` with a fiducial value of
+    :math:`0.67` and an absolute step size :math:`10^{-3}`:
 
     >>> derivative = cosmo.derivative('signal', D(parameters[-1], 1e-3))
 
-    Compute the Fisher matrix with $\Omega_\mathrm{m}$ and $n_s$ as the
+    Compute the Fisher matrix with :math:`\Omega_\mathrm{m}` and :math:`n_s` as the
     parameters:
 
     >>> fm = cosmo.fisher_matrix(D(parameters[0], abs_step=1e-3), D(parameters[1], abs_step=1e-3))
@@ -158,7 +158,7 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
 
         Notes
         -----
-        The coordinates used are $(r, \ell, \bar{z})$, in that increasing order.
+        The coordinates used are :math:`(r, \ell, \bar{z})`, in that increasing order.
         The size of the output is $\text{size}(r) \times \text{size}(\ell)
         \times \text{size}(\bar{z})$.
 
@@ -190,16 +190,15 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
         Notes
         -----
         The covariance does not take into account cross-correlations between
-        the different redshifts, i.e. for $n$ redshift bins it has the form:
+        the different redshifts, i.e. for :math:`n` redshift bins it has the form:
 
-        $$
+        .. math::
             \begin{pmatrix}
             \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
             0 & \mathsf{C}(\bar{z}_2) & \ldots & 0\\\
             \vdots & \vdots & \ddots & \vdots\\\
             0 & 0 & \ldots & \mathsf{C}(\bar{z}_n)
             \end{pmatrix}
-        $$
 
         For more details on the exact theoetical modelling used, see <a
         href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
@@ -251,7 +250,7 @@ class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
 
         Notes
         -----
-        The coordinates used are $(r, \ell, z_\mathrm{min}, z_\mathrm{max})$,
+        The coordinates used are :math:`(r, \ell, z_\mathrm{min}, z_\mathrm{max})`,
         in that increasing order. The size of the output is $\text{size}(r)
         \times \text{size}(\ell) \times \text{size}(z_\mathrm{min})$.
 
@@ -283,16 +282,15 @@ class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
         Notes
         -----
         The covariance does not take into account cross-correlations between
-        the different redshifts, i.e. for $n$ redshift bins it has the form:
+        the different redshifts, i.e. for :math:`n` redshift bins it has the form:
 
-        $$
+        .. math::
             \begin{pmatrix}
             \mathsf{C}(\bar{z}_1) & 0 & \ldots & 0\\\
             0 & \mathsf{C}(\bar{z}_2) & \ldots & 0\\\
             \vdots & \vdots & \ddots & \vdots\\\
             0 & 0 & \ldots & \mathsf{C}(\bar{z}_n)
             \end{pmatrix}
-        $$
 
         For more details on the exact theoetical modelling used, see <a
         href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
@@ -328,24 +326,23 @@ class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
 
 class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     r"""
-    Class for computing the derivatives of the 2PCF w.r.t. $\tilde{f}$ and $\tilde{b}$ parameters.
+    Class for computing the derivatives of the 2PCF w.r.t. :math:`\tilde{f}` and :math:`\tilde{b}` parameters.
 
     The parameters are defined as:
 
-    $$
+    .. math::
         \tilde{f}(z) = f(z) \sigma_8(z),
         \quad
         \tilde{b}(z) = b(z) \sigma_8(z)
-    $$
 
-    where $f(z)$ is the growth rate of matter, $b(z)$ is the linear galaxy
-    bias, and $\sigma_8(z)$ is the size of the redshift-dependent matter
-    perturbation at 8 $\mathrm{Mpc}/h$.
+    where :math:`f(z)` is the growth rate of matter, :math:`b(z)` is the linear galaxy
+    bias, and :math:`\sigma_8(z)` is the size of the redshift-dependent matter
+    perturbation at 8 :math:`\mathrm{Mpc}/h`.
 
     The valid parameters are:
-    * $\tilde{f}$ - `f[N]`, the parameter $\sigma_8(z) D_1(z)$ in a redshift
+    * :math:`\tilde{f}` - `f[N]`, the parameter :math:`\sigma_8(z) D_1(z)` in a redshift
     bin, where `[N]` is a number from 1 to the number of redshift bins
-    * $\tilde{b}$ - `b[N]`, the parameter $b(z) D_1(z)$ in a redshift bin,
+    * :math:`\tilde{b}` - `b[N]`, the parameter :math:`b(z) D_1(z)` in a redshift bin,
     where `[N]` is a number from 1 to the number of redshift bins
 
     Notes
@@ -456,11 +453,11 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     and evolution bias parameters in each redshift bin.
 
     The valid parameters are:
-    * $b_n$ - `b[N]`, the galaxy bias in a redshift bin, where `[N]` is a
+    * :math:`b_n` - `b[N]`, the galaxy bias in a redshift bin, where `[N]` is a
     number from 1 to the number of redshift bins
-    * $s_n$ - `s[N]`, the magnification bias in a redshift bin, where `[N]` is
+    * :math:`s_n` - `s[N]`, the magnification bias in a redshift bin, where `[N]` is
     a number from 1 to the number of redshift bins
-    * $e_n$ - `e[N]`, the evolution bias in a redshift bin, where `[N]` is a
+    * :math:`e_n` - `e[N]`, the evolution bias in a redshift bin, where `[N]` is a
     number from 1 to the number of redshift bins
 
     Warns

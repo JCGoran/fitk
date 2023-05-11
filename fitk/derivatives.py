@@ -520,7 +520,7 @@ class FisherDerivative:
         kwargs_covariance: Optional[dict] = None,
     ) -> FisherMatrix:
         r"""
-        Compute the Fisher matrix, $\mathsf{F}$, using finite differences.
+        Compute the Fisher matrix, :math:`\mathsf{F}`, using finite differences.
 
         Parameters
         ----------
@@ -583,10 +583,10 @@ class FisherDerivative:
         -----
         The `order` parameter is ignored if passed to `D`.
 
-        The element $\mathsf{F}_{ij}$ for parameters $(\theta_i, \theta_j)$ is
+        The element :math:`\mathsf{F}_{ij}` for parameters :math:`(\theta_i, \theta_j)` is
         defined as:
 
-        $$
+        .. math::
             \frac{\partial \mathbf{S}^T}{\partial \theta_i}
             \mathsf{C}^{-1}
             \frac{\partial \mathbf{S}}{\partial \theta_j}
@@ -598,10 +598,9 @@ class FisherDerivative:
             \frac{\partial \mathsf{C}}{\partial \theta_j}
             \mathsf{C}^{-1}
             \right)
-        $$
 
-        where $\mathbf{S}$ is the signal vector, $\mathsf{C}$ is the covariance
-        matrix, and $\mathrm{Tr}(X)$ denotes the trace of the quantity $X$.
+        where :math:`\mathbf{S}` is the signal vector, :math:`\mathsf{C}` is the covariance
+        matrix, and :math:`\mathrm{Tr}(X)` denotes the trace of the quantity :math:`X`.
         """
         # first we attempt to compute the covariance; if that fails, it means
         # it hasn't been implemented, so we fail fast and early

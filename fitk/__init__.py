@@ -255,7 +255,7 @@ Note that when setting a value, the transpose element (in this case, `('b',
 
 ## ...add a Gaussian prior for a specific parameter?
 
-Since this is equivalent to adding $1 / \sigma^2$ to the diagonal element
+Since this is equivalent to adding :math:`1 / \sigma^2` to the diagonal element
 corresponding to that parameter, see: [...get/set a value for a specific
 element in the
 matrix?](#getset-a-value-for-a-specific-element-in-the-matrix)
@@ -267,10 +267,10 @@ constraints as a numpy array:
 
 >>> my_matrix.constraints()
 
-By default, the constraints returned are the 1$\sigma$ marginalized ones; if
+By default, the constraints returned are the 1:math:`\sigma` marginalized ones; if
 you want the unmarginalized ones, pass `marginalized=False` to the above.
 Furthermore, if you want to compute the constraints at a certain threshold
-(like a $p$-value or a $\sigma$ value), pass `p=[VALUE]` or `sigma=[VALUE]` to
+(like a :math:`p`-value or a :math:`\sigma` value), pass `p=[VALUE]` or `sigma=[VALUE]` to
 the above.
 
 ## ...compute the covariance matrix of the parameters?

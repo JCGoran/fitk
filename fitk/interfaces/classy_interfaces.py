@@ -175,7 +175,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Compute the CMB $C_\ell$s.
+        Compute the CMB :math:`C_\ell`s.
 
         Parameters
         ----------
@@ -191,20 +191,19 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         Notes
         -----
         The signal is composed of the following contributions, in this order:
-        - temperature $C_\ell$s if `output` contains `tCl`
-        - E-mode $C_\ell$s if `output` contains `pCl`
+        - temperature :math:`C_\ell`s if `output` contains `tCl`
+        - E-mode :math:`C_\ell`s if `output` contains `pCl`
         - cross-correlations between T and E-modes if `output` contains `tCl`
           and `pCl`
-        - B-mode $C_\ell$s if `output` contains `pCl` *and they are non-zero*
+        - B-mode :math:`C_\ell`s if `output` contains `pCl` *and they are non-zero*
 
-        Note that $\ell = \\{0, 1\\}$ are not part of the output, i.e. we impose
-        $\ell_\mathrm{min} = 2$.
+        Note that :math:`\ell = \\{0, 1\\}` are not part of the output, i.e. we impose
+        :math:`\ell_\mathrm{min} = 2`.
 
         The output is ordered as follows:
 
-        $$
+        .. math::
             \mathbf{S} = \\{C_\ell^{TT}, C_\ell^{EE}, C_\ell^{TE}, C_\ell^{BB} \\}
-        $$
         """
         cosmo = self._run_classy(*args)
 
@@ -236,7 +235,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Compute the covariance of CMB $C_\ell$s.
+        Compute the covariance of CMB :math:`C_\ell`s.
 
         Parameters
         ----------
@@ -255,9 +254,9 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
         Notes
         -----
-        The covariance is the following block-matrix (with the notation $X = C_\ell$):
+        The covariance is the following block-matrix (with the notation :math:`X = C_\ell`):
 
-        $$
+        .. math::
             \frac{2}{2 \ell + 1}
             \begin{pmatrix}
             (X^{TT})^2 & (X^{TE})^2 & X^{TT} X^{TE} & 0 \\\\
@@ -265,7 +264,6 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
             X^{TT} X^{TE} & X^{EE} X^{TE} & [(X^{TE})^2 + X^{TT} X^{EE}] / 2 & 0 \\\\
             0 & 0 & 0 & (X^{BB})^2
             \end{pmatrix}
-        $$
 
         See the notes of the `signal` method about the order of the outputs in
         the matrix.

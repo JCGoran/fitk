@@ -65,26 +65,23 @@ def bayes_factor(
     Warns
     -----
     UserWarning
-        raised if the value of any of the offsets is larger than the $1\sigma$
+        raised if the value of any of the offsets is larger than the :math:`1\sigma`
         marginalized constraints
 
     Notes
     -----
-    For base model $M_B$ and extended model $M_E$, the output is defined as:
+    For base model :math:`M_B` and extended model :math:`M_E`, the output is defined as:
 
-    $$
+    .. math::
         \left\langle B \right\rangle \equiv (2 \pi)^{-p / 2}
         \frac{\sqrt{\mathrm{det} \mathsf{F}_E}}
         {\sqrt{\mathrm{det} \mathsf{F}_B}}
         \exp{\left[-\frac{1}{2} \delta \theta_\alpha \mathsf{F}_E \delta \theta_\beta\right]}
         \prod\limits_{q = 1}^{p} \Delta \theta_{n + q}
-    $$
 
-    where $\mathsf{F}_B$ is the Fisher matrix of the base model (size $n \times
-    n$), $\mathsf{F}_E$ is the Fisher matrix of the extended model (size $n'
-    \times n'$, with $n' = n + p$), $\delta \theta_\alpha$ is the offset array
-    (size $n'$), and $\Delta \theta_\alpha$ is the array of priors on the extra
-    parameters in the extended model (size $p$).
+    where :math:`\mathsf{F}_B` is the Fisher matrix of the base model (size :math:`n \times n`), :math:`\mathsf{F}_E` is the Fisher matrix of the extended model (size :math:`n' \times n'`, with :math:`n' = n + p`), :math:`\delta \theta_\alpha` is the offset array
+    (size :math:`n'`), and :math:`\Delta \theta_\alpha` is the array of priors on the extra
+    parameters in the extended model (size :math:`p`).
 
     For more details, see <a href="https://arxiv.org/abs/astro-ph/0703191"
     target="_blank" rel="noopener noreferrer">arXiv:astro-ph/0703191</a>, eq.
@@ -152,10 +149,9 @@ def kl_divergence(
     r"""
     Compute the Kullback-Leibler divergence, its expectation value, and sqrt of variance, between two Gaussians.
 
-    Computes the Kullback-Leibler divergence (or relative entropy), $D(P_2 ||
-    P_1)$, its expectation value, $\langle D \rangle$, and the square roots of
-    the variance, $\sqrt{\sigma^2(D)}$, between two Gaussian probability
-    distributions, $P_1$ and $P_2$.
+    Computes the Kullback-Leibler divergence (or relative entropy), :math:`D(P_2 || P_1)`, its expectation value, :math:`\langle D \rangle`, and the square roots of
+    the variance, :math:`\sqrt{\sigma^2(D)}`, between two Gaussian probability
+    distributions, :math:`P_1` and :math:`P_2`.
 
     Parameters
     ----------
@@ -283,12 +279,11 @@ def kl_matrix(
     -----
     The matrix has elements defined by:
 
-    $$
+    .. math::
         \mathcal{K}_{ij} \equiv D(P_j || P_i)
-    $$
 
-    where $D(P_j || P_i)$ is the Kullback-Leibler divergence of a pair of
-    observables $(i, j)$.
+    where :math:`D(P_j || P_i)` is the Kullback-Leibler divergence of a pair of
+    observables :math:`(i, j)`.
 
     For more details, see <a href="https://arxiv.org/abs/1703.01271"
     target="_blank" rel="noopener noreferrer">arXiv:1703.01271</a>, section 4.

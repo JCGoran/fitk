@@ -211,9 +211,9 @@ class D:
     ------
     ValueError
         is raised in one of the following situations:
+
         * if the value of ``abs_step`` is not positive
-        * if the value of ``stencil`` is not strictly monotonically
-        increasing
+        * if the value of ``stencil`` is not strictly monotonically increasing
         * if the value of ``accuracy`` is not at least 1
         * if the value of ``kind`` is not one of: 'center', 'forward', 'backward'
 

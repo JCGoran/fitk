@@ -159,8 +159,7 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
         Notes
         -----
         The coordinates used are :math:`(r, \ell, \bar{z})`, in that increasing order.
-        The size of the output is $\text{size}(r) \times \text{size}(\ell)
-        \times \text{size}(\bar{z})$.
+        The size of the output is :math:`\text{size}(r) \times \text{size}(\ell) \times \text{size}(\bar{z})`.
 
         For more details on the exact theoetical modelling used, see <a
         href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
@@ -251,8 +250,7 @@ class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
         Notes
         -----
         The coordinates used are :math:`(r, \ell, z_\mathrm{min}, z_\mathrm{max})`,
-        in that increasing order. The size of the output is $\text{size}(r)
-        \times \text{size}(\ell) \times \text{size}(z_\mathrm{min})$.
+        in that increasing order. The size of the output is :math:`\text{size}(r) \times \text{size}(\ell) \times \text{size}(z_\mathrm{min})`.
 
         For more details on the exact theoetical modelling used, see <a
         href="https://arxiv.org/abs/1806.11090" target="_blank" rel="noopener
@@ -340,10 +338,11 @@ class CoffeMultipolesTildeDerivative(CoffeMultipolesDerivative):
     perturbation at 8 :math:`\mathrm{Mpc}/h`.
 
     The valid parameters are:
+
     * :math:`\tilde{f}` - ``f[N]``, the parameter :math:`\sigma_8(z) D_1(z)` in a redshift
-    bin, where ``[N]`` is a number from 1 to the number of redshift bins
+        bin, where ``[N]`` is a number from 1 to the number of redshift bins
     * :math:`\tilde{b}` - ``b[N]``, the parameter :math:`b(z) D_1(z)` in a redshift bin,
-    where ``[N]`` is a number from 1 to the number of redshift bins
+        where ``[N]`` is a number from 1 to the number of redshift bins
 
     Notes
     -----
@@ -453,12 +452,13 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
     and evolution bias parameters in each redshift bin.
 
     The valid parameters are:
+
     * :math:`b_n` - ``b[N]``, the galaxy bias in a redshift bin, where ``[N]`` is a
-    number from 1 to the number of redshift bins
+        number from 1 to the number of redshift bins
     * :math:`s_n` - ``s[N]``, the magnification bias in a redshift bin, where ``[N]`` is
-    a number from 1 to the number of redshift bins
+        a number from 1 to the number of redshift bins
     * :math:`e_n` - ``e[N]``, the evolution bias in a redshift bin, where ``[N]`` is a
-    number from 1 to the number of redshift bins
+        number from 1 to the number of redshift bins
 
     Warns
     -----

@@ -57,9 +57,9 @@ def bayes_factor(
     ------
     ValueError
         is raised in one of the following situations:
+
         * ``fisher_extended`` does not have at least the same parameter names as ``fisher_base``
-        * the size of ``priors`` is not equal to the difference between the sizes of
-        ``fisher_extended`` and ``fisher_base``
+        * the size of ``priors`` is not equal to the difference between the sizes of ``fisher_extended`` and ``fisher_base``
         * the size of ``offsets`` is not equal to the size of ``fisher_extended``
 
     Warns
@@ -272,8 +272,7 @@ def kl_matrix(
 
     See Also
     --------
-    ``kl_divergence`` : compute K-L divergence, expectation value, and sqrt of
-    variance
+    ``kl_divergence`` : compute K-L divergence, expectation value, and sqrt of variance
 
     Notes
     -----

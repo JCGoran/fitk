@@ -175,7 +175,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Compute the CMB :math:`C_\ell`s.
+        Compute the CMB :math:`C_\ell` s.
 
         Parameters
         ----------
@@ -191,11 +191,12 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         Notes
         -----
         The signal is composed of the following contributions, in this order:
-        - temperature :math:`C_\ell`s if ``output`` contains ``tCl``
-        - E-mode :math:`C_\ell`s if ``output`` contains ``pCl``
+
+        - temperature :math:`C_\ell` s if ``output`` contains ``tCl``
+        - E-mode :math:`C_\ell` s if ``output`` contains ``pCl``
         - cross-correlations between T and E-modes if ``output`` contains ``tCl``
           and ``pCl``
-        - B-mode :math:`C_\ell`s if ``output`` contains ``pCl`` *and they are non-zero*
+        - B-mode :math:`C_\ell` s if ``output`` contains ``pCl`` *and they are non-zero*
 
         Note that :math:`\ell = \\{0, 1\\}` are not part of the output, i.e. we impose
         :math:`\ell_\mathrm{min} = 2`.
@@ -235,7 +236,7 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         **kwargs,
     ):
         r"""
-        Compute the covariance of CMB :math:`C_\ell`s.
+        Compute the covariance of CMB :math:`C_\ell` s.
 
         Parameters
         ----------
@@ -245,7 +246,8 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
         **kwargs
             keyword arguments for the covariance. Supported values are:
-            - `fsky`: the sky fraction of the survey (default: 1)
+
+            - ``fsky``: the sky fraction of the survey (default: 1)
 
         Returns
         -------

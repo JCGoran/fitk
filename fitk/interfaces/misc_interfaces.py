@@ -68,18 +68,22 @@ class SupernovaDerivative(FisherDerivative):
     Examples
     --------
     Create an instance with the default config:
+
     >>> sn = SupernovaDerivative()
 
     Compute the derivative of the signal w.r.t. :math:`\Omega_\mathrm{m}`:
+
     >>> sn.derivative('signal', D(P(name='omega_m', fiducial=0.32), abs_step=1e-3))
     array([-3.17838358])
 
     Compute the mixed derivative of the signal w.r.t. both :math:`\Omega_\mathrm{m}`
     and :math:`w`:
+
     >>> sn.derivative('signal', D(P('omega_m', 0.32), 1e-3), D(P('w', -1), 1e-3))
     array([2.94319875])
 
     Compute the Fisher with :math:`\Omega_\mathrm{m}` and :math:`w` as parameters:
+
     >>> fm1 = sn.fisher_matrix(
     ... D(P('omega_m', 0.32, latex_name=r'$\Omega_\mathrm{m}$'), 1e-3),
     ... D(P('w', -1, latex_name='$w$'), 1e-3))
@@ -92,6 +96,7 @@ class SupernovaDerivative(FisherDerivative):
         fiducials=array([ 0.32, -1.  ]))
 
     Finally, check that we don't alter the result by using a smaller stepsize:
+
     >>> fm2 = sn.fisher_matrix(
     ... D(P('omega_m', 0.32, latex_name=r'$\Omega_\mathrm{m}$'), 1e-4),
     ... D(P('w', -1, latex_name='$w$'), 1e-4))

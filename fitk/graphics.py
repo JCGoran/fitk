@@ -320,7 +320,7 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         contour_levels : array_like of 2-tuples, optional
             the contour levels which we want to plot
 
-        ****kwargs
+        **kwargs
             placeholder kwargs
         """
         self._names = None

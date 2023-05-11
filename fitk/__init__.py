@@ -250,8 +250,7 @@ while the below sets its value:
 
 >>> my_matrix['a', 'b'] = 5
 
-Note that when setting a value, the transpose element (in this case, `('b',
-'a')`) is automatically updated to keep the Fisher matrix symmetric.
+Note that when setting a value, the transpose element (in this case, ``('b', 'a')``) is automatically updated to keep the Fisher matrix symmetric.
 
 ## ...add a Gaussian prior for a specific parameter?
 

@@ -129,7 +129,7 @@ class _TempContainer:
     scale: str
 
 
-class _FisherBaseFigure:
+class FisherBaseFigure:
     def __init__(
         self,
         options: Optional[dict] = None,
@@ -288,7 +288,7 @@ class EmptyFigureError(Exception):
         super().__init__(self.message)
 
 
-class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
+class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
     """The abstract base class for plotting multiple axes on a figure."""
 
     def __init__(
@@ -726,7 +726,7 @@ class _FisherMultipleAxesFigure(_FisherBaseFigure, ABC):
                 self[nameiter].yaxis.set_minor_formatter(formatter)
 
 
-class FisherBarFigure(_FisherBaseFigure):
+class FisherBarFigure(FisherBaseFigure):
     """Container for plotting single-axis bar-like figures."""
 
     def _parse_fractional_constraints(
@@ -1225,7 +1225,7 @@ class FisherBarFigure(_FisherBaseFigure):
         self._axes = ax
 
 
-class FisherFigure1D(_FisherMultipleAxesFigure):
+class FisherFigure1D(FisherMultipleAxesFigure):
     r"""
     Container for easy access to elements in the 1D plot.
 
@@ -1677,7 +1677,7 @@ class FisherFigure1D(_FisherMultipleAxesFigure):
             return self.figure.suptitle(*args, x=x, y=y, **kwargs)
 
 
-class FisherFigure2D(_FisherMultipleAxesFigure):
+class FisherFigure2D(FisherMultipleAxesFigure):
     r"""
     Container for easy access to elements in the 2D plot.
 

@@ -334,18 +334,19 @@ stored as a boolean) to the constructor of the class, and then only raise the
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">```</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">The following are some general recommendations when creating a new interface:</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">- for ease of use, any additional parameters specifying the configuration for</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">  the interface should be passed to the constructor (i.e. the `__init__`</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">  method)</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">- extra information (methods, members, custom parameters) should be documented</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">  accordingly</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">- if the external module could not be imported, rather than directly raising an</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">  exception, it is preferable that instantiating a class from that module</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">  raises an `ImportError` instead. A simple way to accomplish this is to wrap</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">  the import in a `try...except ImportError`, pass the success result (perhaps</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">  stored as a boolean) to the constructor of the class, and then only raise the</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">  `ImportError` there</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">- for ease of use, any additional parameters specifying the configuration for</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">  the interface should be passed to the constructor (i.e. the ``__init__``</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">  method)</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">- extra information (methods, members, custom parameters) should be documented</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">  accordingly</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">- if the external module could not be imported, rather than directly raising an</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">  exception, it is preferable that instantiating a class from that module</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">  raises an ``ImportError`` instead. A simple way to accomplish this is to wrap</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">  the import in a ``try...except ImportError``, pass the success result (perhaps</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">  stored as a boolean) to the constructor of the class, and then only raise the</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">  ``ImportError`` there</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 
 

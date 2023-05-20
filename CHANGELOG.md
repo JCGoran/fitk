@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.10.3
+
+### Changed
+
+- Changed documentation template so inherited methods are not duplicated
+- Renamed `_FisherBaseFigure` to `FisherBaseFigure`
+- Renamed `_FisherMultipleAxesFigure` to `FisherMultipleAxesFigure`
+- Updated documentation so it's more compatible with ReST
+
 ## 0.10.2
 
 ### Fixed

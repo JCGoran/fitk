@@ -1,0 +1,17 @@
+{% extends "default/module.html.jinja2" %}
+
+{% block nav_members %}
+    {% if module.members %}
+        {% set filtered_modules = {} %}
+        {% for key, value in module.members.items() %}
+            {% if not key.startswith('__') %}
+                {% set _ = filtered_modules.update({key: value}) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if filtered_modules %}
+            <h2>API Documentation</h2>
+            {{ nav_members(module.members.values()) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}

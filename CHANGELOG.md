@@ -80,6 +80,7 @@
 ### Added
 
 - Added `P` class for specifying Fisher parameters
+- added `from_parameters` method to `FisherMatrix`
 
 ### Changed
 

@@ -572,6 +572,8 @@ class FisherMatrix:
         r"""
         Alternative constructor.
 
+        .. versionadded:: 0.8.0
+
         Parameters
         ----------
         values : array_like of float
@@ -965,6 +967,8 @@ class FisherMatrix:
         r"""
         Return the value of the fiducial associated to the parameter ``name``.
 
+        .. versionadded:: 0.6.4
+
         Parameters
         ----------
         name : str
@@ -995,6 +999,8 @@ class FisherMatrix:
     def set_fiducial(self, name: str, value: float):
         """
         Set the fiducial of parameter ``name``.
+
+        .. versionadded:: 0.6.4
 
         Parameters
         ----------
@@ -1036,6 +1042,8 @@ class FisherMatrix:
         r"""
         Return the LaTeX name associated to the parameter ``name``.
 
+        .. versionadded:: 0.6.4
+
         Parameters
         ----------
         name : str
@@ -1066,6 +1074,8 @@ class FisherMatrix:
     def set_latex_name(self, name: str, value: str):
         r"""
         Set the LaTeX name of parameter ``name``.
+
+        .. versionadded:: 0.6.4
 
         Parameters
         ----------
@@ -1447,8 +1457,11 @@ class FisherMatrix:
         Parameters
         ----------
         use_pinv : bool, optional
-            use the Moore-Penrose pseudoinverse (default: False). Can be useful
-            if the Fisher matrix is weakly singular. Use with caution!
+            use the Moore-Penrose pseudoinverse (default: False).
+
+            .. warning::
+                Can be useful if the Fisher matrix is weakly singular. Use with
+                caution as the pseudoinverse may not converge towards the inverse
 
         Raises
         ------
@@ -1877,6 +1890,8 @@ class FisherMatrix:
     ) -> FisherMatrix:
         r"""
         Perform a symbolic transformation of the Fisher object.
+
+        .. versionadded:: 0.9.0
 
         Parameters
         ----------

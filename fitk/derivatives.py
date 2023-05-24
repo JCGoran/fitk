@@ -186,6 +186,9 @@ class D:
     """
     Class for describing information about a derivative of a parameter using finite differences.
 
+    .. versionchanged:: 0.8.0
+        Replaced ``name``, ``fiducial``, and ``latex_name`` members with ``parameter``
+
     Parameters
     ----------
     parameter
@@ -296,20 +299,28 @@ class FisherDerivative:
     The name of the software which we are interfacing. Can be either a
     string, or a dictionary with the keys ``signal`` and ``covariance`` and the
     names of each software as values
+
+    .. versionadded:: 0.9.2
     """
     version: Optional[str] = None
     """
     The version of the interface (is *not* necessarily the same as the version
     of the software itself)
+
+    .. versionadded:: 0.9.2
     """
     authors: Optional[list[dict[str, str]]] = None
     """
     The list of authors of the interface (is *not* necessarily the same as the
     authors of the software itself)
+
+    .. versionadded:: 0.9.2
     """
     urls: Optional[dict[str, str]] = None
     """
     Any URL(s) to the original software(s)
+
+    .. versionadded:: 0.9.2
     """
 
     def __str__(self):
@@ -522,6 +533,13 @@ class FisherDerivative:
         r"""
         Compute the Fisher matrix, :math:`\mathsf{F}`, using finite differences.
 
+        .. versionchanged:: 0.6.2
+            Replaced ``**kwargs`` with ``kwargs_signal`` and ``kwargs_covariance``
+
+        .. warning::
+            No check is performed to validate whether the derivatives have
+            converged with the input step size
+
         Parameters
         ----------
         *args
@@ -534,8 +552,14 @@ class FisherDerivative:
 
         use_pinv : bool, optional
             use the Moore-Penrose pseudoinverse to obtain the inverse of the
-            covariance matrix (default: False). Can be useful if the covariance
-            matrix is weakly signular. Use with caution!
+            covariance matrix (default: False).
+
+            .. warning::
+                Can be useful if the covariance matrix is weakly singular. Use
+                with caution as the pseudoinverse may not converge towards the
+                inverse
+
+            .. versionadded:: 0.10.0
 
         external_covariance : array_like, optional
             the external covariance matrix to use when computing the result
@@ -549,9 +573,13 @@ class FisherDerivative:
             any keyword arguments that should be passed to ``signal`` (default:
             None)
 
+            .. versionadded:: 0.6.2
+
         kwargs_covariance : dict, optional
             any keyword arguments that should be passed to ``covariance``
             (default: None)
+
+            .. versionadded:: 0.6.2
 
         Returns
         -------

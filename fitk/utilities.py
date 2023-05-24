@@ -24,6 +24,8 @@ class P:
     r"""
     Class for describing a generic Fisher parameter.
 
+    .. versionadded:: 0.8.0
+
     Parameters
     ----------
     name : str

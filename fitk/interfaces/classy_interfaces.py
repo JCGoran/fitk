@@ -93,7 +93,12 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
 
     @property
     def config(self):
-        """Return the current configuration used for running CLASS."""
+        """
+        Return the current configuration used for running CLASS.
+
+        .. versionchanged:: 0.10.0
+            member is now read-only
+        """
         return self._config
 
     def _parse_outputs(self):
@@ -145,6 +150,8 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
 
     Interface for computing derivatives using the CMB signal and covariance
     (temperature, polarization, or both).
+
+    .. versionadded:: 0.9.2
     """
 
     def __init__(

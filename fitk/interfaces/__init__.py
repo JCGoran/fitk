@@ -4,12 +4,13 @@ Interfaces for FITK.
 This module defines interfaces to various third-party software with which one
 can compute Fisher matrices.
 
-### Important notice
-Due to the complexities involved in distributing software that is not under
-direct control of the developers/maintainers of `fitk` (version, installation,
-license issues, etc.), any external, third-party software (such as cosmological
-codes) is *not* bundled with `fitk` (i.e. installed automatically), and must be
-installed separately by the user.
+.. note::
+
+    Due to the complexities involved in distributing software that is not under
+    direct control of the developers/maintainers of `fitk` (version, installation,
+    license issues, etc.), any external, third-party software (such as cosmological
+    codes) is *not* bundled with `fitk` (i.e. installed automatically), and must be
+    installed separately by the user.
 
 ### List of interfaces
 

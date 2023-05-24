@@ -232,7 +232,11 @@ class CoffeMultipolesDerivative(CoffeBaseDerivative):
 
 
 class CoffeAverageMultipolesDerivative(CoffeBaseDerivative):
-    r"""Class for computing the derivatives of the redshift-averaged multipoles of the 2PCF w.r.t. cosmological parameters."""
+    r"""
+    Class for computing the derivatives of the redshift-averaged multipoles of the 2PCF w.r.t. cosmological parameters.
+
+    .. versionadded:: 0.9.2
+    """
 
     def signal(
         self,
@@ -459,6 +463,9 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
         a number from 1 to the number of redshift bins
     * :math:`e_n` - ``e[N]``, the evolution bias in a redshift bin, where ``[N]`` is a
         number from 1 to the number of redshift bins
+
+    .. versionchanged:: 0.9.2
+        Added the ability to compute derivatives w.r.t. the evolution bias
 
     Warns
     -----

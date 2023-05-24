@@ -731,7 +731,11 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
 
 
 class FisherBarFigure(FisherBaseFigure):
-    """Container for plotting single-axis bar-like figures."""
+    """
+    Container for plotting single-axis bar-like figures.
+
+    .. versionadded:: 0.6.0
+    """
 
     def _parse_fractional_constraints(
         self,
@@ -1464,6 +1468,8 @@ class FisherFigure1D(FisherMultipleAxesFigure):
             noopener">``matplotlib.axes.Axes.axvline``</a>.  If an empty
             dictionary, uses the default style (determined automatically).
 
+            .. versionadded:: 0.6.0
+
         **kwargs
             any keyword arguments used for plotting (same as ``plot_curve_1d``)
 
@@ -1797,6 +1803,15 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             whether to plot the isocontours of the joint distribution (default:
             False)
 
+            .. note::
+
+                This argument specifies whether we wish to plot the p-value of
+                the *joint* distribution, or the p-value of the probability of
+                a single parameter lying within the bounds projected onto a
+                parameter axis. For more details, see <a
+                href="https://arxiv.org/abs/0906.0664" target="_blank"
+                rel="noopener noreferrer">arXiv:0906.0664</a>, section 2.
+
         contour_levels : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded, along with
             the associated opacity (default: None). If not specified, defaults
@@ -1807,10 +1822,14 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             plots), along with the associated opacity (default: None). If not
             specified, defaults to ``[(1, 0.3), (2, 0.1)]``.
 
+            .. versionadded:: 0.6.1
+
         contour_levels_2d : array_like of 2-tuples, optional
             the points at which the sigma level should be shaded (on the 2D
             plots), along with the associated opacity (default: None). If not
             specified, defaults to ``[(1, 0.3), (2, 0.1)]``.
+
+            .. versionadded:: 0.6.1
 
         Notes
         -----
@@ -1818,13 +1837,6 @@ class FisherFigure2D(FisherMultipleAxesFigure):
         href="https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html"
         target="_blank" rel="noreferrer noopener">the matplotlib
         documentation</a>.
-
-        **Regarding ``show_joint_dist``**: this argument specifies whether we
-        wish to plot the p-value of the *joint* distribution, or the p-value of
-        the probability of a single parameter lying within the bounds projected
-        onto a parameter axis. For more details, see <a
-        href="https://arxiv.org/abs/0906.0664" target="_blank" rel="noopener
-        noreferrer">arXiv:0906.0664</a>, section 2.
         """
         super().__init__(
             options=options,
@@ -2113,6 +2125,8 @@ class FisherFigure2D(FisherMultipleAxesFigure):
             target="_blank" rel="noreferrer
             noopener">``matplotlib.axes.Axes.axvline``</a>.  If an empty
             dictionary, uses the default style (determined automatically).
+
+            .. versionadded:: 0.6.0
 
         **kwargs
             any keyword arguments used for plotting (same as ``plot_curve_2d``)

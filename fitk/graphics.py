@@ -42,6 +42,52 @@ from fitk.utilities import (
 )
 
 
+def _set_label_params(ax: Axes, which: str = "both", **kwargs):
+    allowed_axis: dict[str, list[str]] = {
+        "both": ["x", "y"],
+        "x": ["x"],
+        "y": ["y"],
+    }
+
+    if which not in allowed_axis:
+        raise ValueError(
+            f"Argument `which={which}` is not one of {list(allowed_axis.keys())}"
+        )
+
+    for axis in allowed_axis[which]:
+        if getattr(ax, f"get_{axis}label")():
+            getattr(ax, f"set_{axis}label")(
+                getattr(ax, f"get_{axis}label")(),
+                **kwargs,
+            )
+
+
+def _set_tick_params(ax: Axes, which: str = "both", **kwargs):
+    allowed_axis: dict[str, list[str]] = {
+        "both": ["x", "y"],
+        "x": ["x"],
+        "y": ["y"],
+    }
+
+    if which not in allowed_axis:
+        raise ValueError(
+            f"Argument `which={which}` is not one of {list(allowed_axis.keys())}"
+        )
+
+    for axis in allowed_axis[which]:
+        for item in getattr(ax, f"get_{axis}ticklabels")():
+            for key, value in kwargs.items():
+                getattr(item, f"set_{key}")(value)
+
+    # also alter any exponential offsets
+    for key, value in kwargs.items():
+        for axis in allowed_axis[which]:
+            getattr(
+                getattr(ax, f"get_{axis}axis")().get_offset_text(),
+                f"set_{key}",
+            )(value)
+
+
 def _set_limits_2d(*, ax, size: int):
     for i, j in product(range(size), repeat=2):
         if i == j:
@@ -471,6 +517,9 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         ------
         EmptyFigureError
             if ``figure`` is not set
+
+        ValueError
+            if ``which`` is not one of the allowed values
         """
         if not self.figure:
             raise EmptyFigureError
@@ -478,24 +527,8 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         for nameiter in product(self.names, repeat=self._ndim):
             # only set the parameters which are not empty (should this be done
             # for all of them instead?)
-            if (
-                self[nameiter]
-                and self[nameiter].get_xlabel()
-                and which in ["both", "x"]
-            ):
-                self[nameiter].set_xlabel(
-                    self[nameiter].get_xlabel(),
-                    **kwargs,
-                )
-            if (
-                self[nameiter]
-                and self[nameiter].get_ylabel()
-                and which in ["both", "y"]
-            ):
-                self[nameiter].set_ylabel(
-                    self[nameiter].get_ylabel(),
-                    **kwargs,
-                )
+            if self[nameiter]:
+                _set_label_params(self[nameiter], which=which, **kwargs)
 
     def set_tick_params(
         self,
@@ -529,34 +562,9 @@ class FisherMultipleAxesFigure(FisherBaseFigure, ABC):
         if not self.figure:
             raise EmptyFigureError
 
-        allowed_axis: dict[str, list[str]] = {
-            "both": ["x", "y"],
-            "x": ["x"],
-            "y": ["y"],
-        }
-
-        if which not in allowed_axis:
-            raise ValueError(
-                f"Argument `which={which}` is not one of {list(allowed_axis.keys())}"
-            )
-
         for nameiter in product(self.names, repeat=self._ndim):
             if self[nameiter]:
-                for axis in allowed_axis[which]:
-                    for item in getattr(self[nameiter], f"get_{axis}ticklabels")():
-                        for key, value in kwargs.items():
-                            getattr(item, f"set_{key}")(value)
-
-            # also alter any exponential offsets
-            for key, value in kwargs.items():
-                if self[nameiter]:
-                    for axis in allowed_axis[which]:
-                        getattr(
-                            getattr(
-                                self[nameiter], f"get_{axis}axis"
-                            )().get_offset_text(),
-                            f"set_{key}",
-                        )(value)
+                _set_tick_params(self[nameiter], which=which, **kwargs)
 
     def set_major_locator(
         self,
@@ -1241,6 +1249,80 @@ class FisherBarFigure(FisherBaseFigure):
 
         self._figure = fig
         self._axes = ax
+
+    def set_label_params(
+        self,
+        which: str = "both",
+        **kwargs,
+    ):
+        """
+        Set both x and y label parameters.
+
+        .. versionadded:: 0.10.4
+
+        Parameters
+        ----------
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
+
+        **kwargs
+            any keyword arguments that are also valid for <a
+            href="https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text"
+            target="_blank" rel="noopener
+            noreferrer">``matplotlib.text.Text``</a>.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if ``figure`` is not set
+
+        ValueError
+            if ``which`` is not one of the allowed values
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        _set_label_params(self.axes, which=which, **kwargs)
+
+    def set_tick_params(
+        self,
+        which: str = "both",
+        **kwargs,
+    ):
+        """
+        Set both x and y tick parameters.
+
+        .. versionadded:: 0.10.4
+
+        Parameters
+        ----------
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
+
+        **kwargs
+            any keyword arguments passed to the methods for handling tick
+            parameters (such as 'fontsize', 'rotation', etc.)
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if ``figure`` is not set
+
+        ValueError
+            if ``which`` is not one of the allowed values
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        _set_tick_params(self.axes, which=which, **kwargs)
 
 
 class FisherFigure1D(FisherMultipleAxesFigure):

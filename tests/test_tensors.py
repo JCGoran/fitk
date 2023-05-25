@@ -202,6 +202,7 @@ class TestFisherMatrix:
     def test_rename(self):
         m1 = FisherMatrix(np.diag([1, 2, 3]), names=list("abc"))
         m2 = m1.rename({"a": dict(name="x", latex_name=None, fiducial=1)})
+        m2_with_p = m1.rename({"a": P(name="x", latex_name=None, fiducial=1)})
 
         assert m2 == FisherMatrix(
             m1.values,
@@ -209,6 +210,8 @@ class TestFisherMatrix:
             latex_names=list("xbc"),
             fiducials=[1, 0, 0],
         )
+
+        assert m2 == m2_with_p
 
         # the new names are not unique
         with pytest.raises(MismatchingSizeError):

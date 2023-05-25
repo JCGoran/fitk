@@ -1250,6 +1250,80 @@ class FisherBarFigure(FisherBaseFigure):
         self._figure = fig
         self._axes = ax
 
+    def set_label_params(
+        self,
+        which: str = "both",
+        **kwargs,
+    ):
+        """
+        Set both x and y label parameters.
+
+        .. versionadded:: 0.10.4
+
+        Parameters
+        ----------
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
+
+        **kwargs
+            any keyword arguments that are also valid for <a
+            href="https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text"
+            target="_blank" rel="noopener
+            noreferrer">``matplotlib.text.Text``</a>.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if ``figure`` is not set
+
+        ValueError
+            if ``which`` is not one of the allowed values
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        _set_label_params(self.axes, which=which, **kwargs)
+
+    def set_tick_params(
+        self,
+        which: str = "both",
+        **kwargs,
+    ):
+        """
+        Set both x and y tick parameters.
+
+        .. versionadded:: 0.10.4
+
+        Parameters
+        ----------
+        which : {'both', 'x', 'y'}
+            which axis to change (default: 'both')
+
+        **kwargs
+            any keyword arguments passed to the methods for handling tick
+            parameters (such as 'fontsize', 'rotation', etc.)
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        EmptyFigureError
+            if ``figure`` is not set
+
+        ValueError
+            if ``which`` is not one of the allowed values
+        """
+        if not self.figure:
+            raise EmptyFigureError
+
+        _set_tick_params(self.axes, which=which, **kwargs)
+
 
 class FisherFigure1D(FisherMultipleAxesFigure):
     r"""

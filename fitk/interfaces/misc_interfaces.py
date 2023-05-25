@@ -157,7 +157,7 @@ class SupernovaDerivative(FisherDerivative):
         .. math::
             m(z | \boldsymbol{\theta}) = 5 \log{ d_L (z | \boldsymbol{\theta})}
 
-        where :math:`m(z)` is the distance modulus, :math`\boldsymbol{\theta} = (\Omega_\mathrm{m}, w)`, and :math:`d_L` is the luminosity distance.
+        where :math:`m(z)` is the distance modulus, :math:`\boldsymbol{\theta} = (\Omega_\mathrm{m}, w)`, and :math:`d_L` is the luminosity distance.
         """
         config = {**self.config}
         for arg in args:

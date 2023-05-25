@@ -739,6 +739,21 @@ class FisherMatrix:
         FisherMatrix
             the Fisher object with new names
 
+        Raises
+        ------
+        ParameterNotFoundError
+            if ``ignore_errors`` is set to False, and any of the keys in the
+            mapping ``names`` does not correspond to an existing name in the
+            Fisher object
+
+        Notes
+        -----
+        If the value of ``names`` is a dictionary and ``fiducial`` or
+        ``latex_name`` of a new parameter is not specified, they default to
+        having a fiducial of zero and a LaTeX name equal to the new name.
+        Otherwise, the fiducial and the LaTeX name are taken from the old
+        parameter.
+
         Examples
         --------
         >>> m = FisherMatrix(np.diag([1, 2, 3]))

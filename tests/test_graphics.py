@@ -81,12 +81,20 @@ class TestFisherFigure:
             contour_levels=[(1, 0.2), (2, 0.1)],
         )
 
-    def test_set_tick_params(self):
+    def test_set_tick_params_invalid(self):
+        ff = FisherFigure1D()
+
+        ff.plot(FisherMatrix(np.diag([1, 2])))
+
+        with pytest.raises(ValueError):
+            ff.set_tick_params(which="asdf")
+
+    def test_set_label_params_invalid(self):
         ff = FisherFigure1D()
 
         ff.plot(FisherMatrix(np.diag([1, 2])))
         with pytest.raises(ValueError):
-            ff.set_tick_params(which="asdf")
+            ff.set_label_params(which="asdf")
 
 
 @pytest.fixture
@@ -797,6 +805,21 @@ def test_plot_1d_figure_error(euclid_opt):
     )
 
 
+def test_plot_bar_figure_error(euclid_opt):
+    """
+    Check that we can't draw anything before calling
+    `plot_relative_constraints` or `plot_absolute_constraints`
+    """
+
+    fp = FisherBarFigure()
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_label_params()
+
+    with pytest.raises(EmptyFigureError):
+        fp.set_tick_params()
+
+
 def test_plot_2d_figure_error(euclid_opt):
     """
     Check that we can't draw anything before calling `plot`
@@ -972,6 +995,9 @@ def test_relative_constraints(euclid_opt, euclid_pes):
         [euclid_opt, euclid_pes, euclid1, euclid2],
         "bar",
     )
+
+    fig.set_tick_params(fontsize=20, which="x")
+    fig.set_label_params(fontsize=20, which="y")
 
     # kwarg `scale` outside of allowed range
     with pytest.raises(ValueError):

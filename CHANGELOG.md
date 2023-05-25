@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- Added `set_label_params` and `set_tick_params` methods to `FisherBarFigure`
+- Added option for `names` value in `FisherMatrix.rename` to be an instance of `P`
+- Updated docstrings
+
 ## 0.10.3
 
 ### Changed

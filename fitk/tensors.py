@@ -716,19 +716,23 @@ class FisherMatrix:
 
     def rename(
         self,
-        names: Mapping[str, Union[str, Mapping]],
+        names: Mapping[str, Union[str, Mapping, P]],
         ignore_errors: bool = False,
     ) -> FisherMatrix:
         """
         Return a Fisher object with new names. This is primarily useful for renaming individual parameters.
+
+        .. versionchanged:: 0.10.4
+            Added option for ``names`` to map to an instance of ``fitk.utilities.P``
 
         Parameters
         ----------
         names : dict-like
             a mapping (dictionary-like object) between the old names and the
             new ones. The values it maps to can either be a string (the new
-            name), or a dict with keys ``name``, ``latex_name``, and ``fiducial``
-            (only ``name`` is mandatory).
+            name), a dict with keys ``name``, ``latex_name``, and ``fiducial``
+            (only ``name`` is mandatory), or an instance of
+            ``fitk.utilities.P``.
 
         ignore_errors : bool, optional
             if set to True, will not raise an error if a parameter doesn't
@@ -748,11 +752,11 @@ class FisherMatrix:
 
         Notes
         -----
-        If the value of ``names`` is a dictionary and ``fiducial`` or
-        ``latex_name`` of a new parameter is not specified, they default to
-        having a fiducial of zero and a LaTeX name equal to the new name.
-        Otherwise, the fiducial and the LaTeX name are taken from the old
-        parameter.
+        If the value of ``names`` is a dictionary or an instance of
+        ``fitk.utilities.P``, and ``fiducial`` or ``latex_name`` of a new
+        parameter is not specified, they default to having a fiducial of zero
+        and a LaTeX name equal to the new name. Otherwise, the fiducial and the
+        LaTeX name are taken from the old parameter.
 
         Examples
         --------
@@ -783,6 +787,11 @@ class FisherMatrix:
                 latex_names_new[index] = value["latex_name"]
                 fiducial_new[index] = value["fiducial"]
                 names_new[index] = value["name"]
+            # it's a parameter
+            elif isinstance(value, P):
+                latex_names_new[index] = value.latex_name
+                fiducial_new[index] = value.fiducial
+                names_new[index] = value.name
             # otherwise, it's a string
             else:
                 names_new[index] = value

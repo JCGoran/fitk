@@ -340,20 +340,27 @@ def displaced_fisher_matrix(
     linearize : bool, optional
         whether to linearize the transformation (default: False)
 
+    Returns
+    -------
+    result : FisherMatrix
+        the Fisher matrix estimated at the new fiducials
+
     Notes
     -----
     The displaced matrix is computed according to:
 
     .. math::
-        A_{\alpha\beta} (x') = U_{\alpha\mu} F_{\mu\nu}(x) U_{\nu\beta}
+        \mathsf{A} (\mathbf{x}') = \mathsf{U} \mathsf{F}(\mathbf{x}) \mathsf{U}^T
 
-    where:
+    where :math:`\mathsf{F}(\mathbf{x})` is the Fisher matrix at the fiducial
+    :math:`\mathbf{x}`, and the components of the transformation matrix are
+    given by:
 
     .. math::
         U_{\mu\nu} = \exp\left((x'_\alpha - x_\alpha)T_{\mu\nu,\alpha}\right)
 
-    and :math:`T` denote the generators of the transformation, while :math:`s \equiv x' - x`
-    is the displacement (shift) vector.
+    where :math:`T` denote the generators of the transformation, and
+    :math:`s \equiv x' - x` is the displacement (shift) vector.
     """
     if linearize is False:
         umatrix = scipy.linalg.expm(generators @ (fiducials - fisher.fiducials))

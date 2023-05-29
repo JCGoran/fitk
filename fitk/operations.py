@@ -15,6 +15,7 @@ from typing import Optional
 
 # third party imports
 import numpy as np
+import scipy
 
 # first party imports
 from fitk.tensors import FisherMatrix
@@ -293,3 +294,72 @@ def kl_matrix(
         result[i, j] = kl_divergence(arg1, arg2, **kwargs)[0]
 
     return result
+
+
+# TODO implement
+def lie_generators(
+    fisher1: FisherMatrix,
+    fisher2: FisherMatrix,
+):
+    r"""
+    Computes the Lie generators of Fisher matrices.
+
+    Computes the Lie generators that generate variations of Fisher matrices due
+    to varying signal strength and model nonlinearities.
+
+    Notes
+    -----
+    For more information, see <a href="https://arxiv.org/abs/1603.03626"
+    target="_blank" rel="noreferrer noopener">arXiv:1603.03626</a>
+    """
+    root1 = scipy.linalg.sqrtm(fisher1.values)
+    root2 = scipy.linalg.sqrtm(fisher2.values)
+    transform = root2 @ np.linalg.inv(root1)
+
+
+def displaced_fisher_matrix(
+    fisher: FisherMatrix,
+    generators,
+    fiducials: Collection[float],
+    linearize: bool = False,
+) -> FisherMatrix:
+    r"""
+    Computes the displaced Fisher matrix.
+
+    Parameters
+    ----------
+    fisher : FisherMatrix
+        the input Fisher matrix
+
+    generators : array-like of float
+        the generators of the transformation
+
+    fiducials : array-like of float
+        the new fiducials for which one wants to compute the Fisher matrix
+
+    linearize : bool, optional
+        whether to linearize the transformation (default: False)
+
+    Notes
+    -----
+    The displaced matrix is computed according to:
+
+    .. math::
+        A_{\alpha\beta} (x') = U_{\alpha\mu} F_{\mu\nu}(x) U_{\nu\beta}
+
+    where:
+
+    .. math::
+        U_{\mu\nu} = \exp\left((x'_\alpha - x_\alpha)T_{\mu\nu,\alpha}\right)
+
+    and :math:`T` denote the generators of the transformation, while :math:`s \equiv x' - x`
+    is the displacement (shift) vector.
+    """
+    if linearize is False:
+        umatrix = scipy.linalg.expm(generators @ (fiducials - fisher.fiducials))
+    else:
+        umatrix = np.eye(np.ndim(fisher.values)) + generators @ (
+            fiducials - fisher.fiducials
+        )
+
+    return np.einsum("ij,jk,kl->il", umatrix, fisher.values, umatrix)

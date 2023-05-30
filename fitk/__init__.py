@@ -46,7 +46,7 @@ Define some parameters:
 
 Set up an instance of the interface for computing Fisher matrices:
 
->>> instance = CoffeMultipolesDerivative(config={_.name : _.fiducial for _ in parameters})
+>>> instance = CoffeMultipolesDerivative(config={_.parameter.name : _.parameter.fiducial for _ in parameters})
 
 Compute a Fisher matrix using finite differences:
 

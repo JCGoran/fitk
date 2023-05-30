@@ -8,6 +8,10 @@
 - Added option for `names` value in `FisherMatrix.rename` to be an instance of `P`
 - Updated docstrings
 
+### Fixed
+
+- Fixed typo in `__init__.py` file
+
 ## 0.10.3
 
 ### Changed

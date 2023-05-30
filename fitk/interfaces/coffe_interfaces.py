@@ -3,6 +3,24 @@ COFFE interfaces for FITK.
 
 Module containing various interfaces for computing derivatives w.r.t.
 parameters using the COFFE code.
+
+##### Notes
+
+For consistency reasons, when computing derivatives or Fisher matrices, you
+should explicitly pass to `config` the fiducial values of the parameters for
+which you want to compute those quantities. In other words:
+
+The wrong way
+```python
+cosmo = CoffeMultipolesDerivative()
+derivative = cosmo.derivative('signal', D(P('omega_m', 0.3), 1e-3))
+```
+
+The right way
+```python
+cosmo = CoffeMultipolesDerivative(config={'omega_m' : 0.3})
+derivative = cosmo.derivative('signal', D(P('omega_m', 0.3), 1e-3))
+```
 """
 
 # for compatibility with Python 3.7

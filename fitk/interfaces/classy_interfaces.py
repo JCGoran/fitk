@@ -3,6 +3,24 @@ CLASS interfaces for FITK.
 
 Module containing various interfaces for the CLASS (Cosmic Linear Anisotropy
 System Solver) code.
+
+##### Notes
+
+For consistency reasons, when computing derivatives or Fisher matrices, you
+should explicitly pass to `config` the fiducial values of the parameters for
+which you want to compute those quantities. In other words:
+
+The wrong way
+```python
+cosmo = ClassyCMBDerivative()
+derivative = cosmo.derivative('signal', D(P('Omega_cdm', 0.27), 1e-3))
+```
+
+The right way
+```python
+cosmo = ClassyCMBDerivative(config={'output' : 'tCl', 'Omega_cdm' : 0.27})
+derivative = cosmo.derivative('signal', D(P('Omega_cdm', 0.27), 1e-3))
+```
 """
 
 # for compatibility with Python 3.7

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.10.4
+
 ### Added
 
 - Added `set_label_params` and `set_tick_params` methods to `FisherBarFigure`

@@ -6,6 +6,16 @@ on:
   push:
     branches:
     - master
+    paths:
+      - 'pyproject.toml'
+      - '**.py'
+      - 'templates/**'
+      - '.github/workflows/build-docs.yml'
+
+# Cancel existing executions when new commits are pushed onto the branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:

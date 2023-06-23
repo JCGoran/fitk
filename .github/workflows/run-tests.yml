@@ -1,6 +1,17 @@
 name: test
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'pyproject.toml'
+      - '**.py'
+      - 'tests/**'
+      - '.github/workflows/run-tests.yml'
+
+# Cancel existing executions when new commits are pushed onto the branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   linting:

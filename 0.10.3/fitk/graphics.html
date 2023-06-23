@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 13.1.1"/>
+    <meta name="generator" content="pdoc 14.0.0"/>
     <title>fitk.graphics API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -60,6 +60,12 @@
                                 <a class="function" href="#FisherBaseFigure.__init__">FisherBaseFigure</a>
                         </li>
                         <li>
+                                <a class="variable" href="#FisherBaseFigure.cycler">cycler</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#FisherBaseFigure.current_color">current_color</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#FisherBaseFigure.options">options</a>
                         </li>
                         <li>
@@ -83,6 +89,9 @@
             <li>
                     <a class="class" href="#EmptyFigureError">EmptyFigureError</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#EmptyFigureError.message">message</a>
+                        </li>
                 </ul>
 
             </li>
@@ -147,6 +156,9 @@
                                 <a class="function" href="#FisherFigure1D.__init__">FisherFigure1D</a>
                         </li>
                         <li>
+                                <a class="variable" href="#FisherFigure1D.max_cols">max_cols</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#FisherFigure1D.draw">draw</a>
                         </li>
                         <li>
@@ -166,6 +178,12 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#FisherFigure2D.__init__">FisherFigure2D</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#FisherFigure2D.show_1d_curves">show_1d_curves</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#FisherFigure2D.show_joint_dist">show_joint_dist</a>
                         </li>
                         <li>
                                 <a class="function" href="#FisherFigure2D.legend">legend</a>
@@ -196,6 +214,7 @@
       <select id="page-select" onchange="redirectToPage()">
         <option value="">Select an option</option>
             <option value="master">master</option>
+            <option value="0.11.dev1">0.11.dev1</option>
             <option value="0.10.4">0.10.4</option>
             <option value="0.10.3">0.10.3</option>
             <option value="0.10.2">0.10.2</option>
@@ -3265,6 +3284,28 @@
 
 
                             </div>
+                            <div id="FisherBaseFigure.cycler" class="classattr">
+                                <div class="attr variable">
+            <span class="name">cycler</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FisherBaseFigure.cycler"></a>
+    
+    
+
+                            </div>
+                            <div id="FisherBaseFigure.current_color" class="classattr">
+                                <div class="attr variable">
+            <span class="name">current_color</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FisherBaseFigure.current_color"></a>
+    
+    
+
+                            </div>
                             <div id="FisherBaseFigure.options" class="classattr">
                                 <div class="attr variable">
             <span class="name">options</span>
@@ -3471,11 +3512,23 @@ noopener"><code>matplotlib.figure.Figure.savefig</code></a></li>
 </div>
 
 
+                            <div id="EmptyFigureError.message" class="classattr">
+                                <div class="attr variable">
+            <span class="name">message</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EmptyFigureError.message"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>builtins.BaseException</dt>
                                 <dd id="EmptyFigureError.with_traceback" class="function">with_traceback</dd>
+                <dd id="EmptyFigureError.args" class="variable">args</dd>
 
             </div>
                                 </dl>
@@ -4752,7 +4805,9 @@ which axis to change (default: 'both')</li>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="#FisherBaseFigure">FisherBaseFigure</a></dt>
-                                <dd id="FisherMultipleAxesFigure.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
+                                <dd id="FisherMultipleAxesFigure.cycler" class="variable"><a href="#FisherBaseFigure.cycler">cycler</a></dd>
+                <dd id="FisherMultipleAxesFigure.current_color" class="variable"><a href="#FisherBaseFigure.current_color">current_color</a></dd>
+                <dd id="FisherMultipleAxesFigure.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
                 <dd id="FisherMultipleAxesFigure.axes" class="variable"><a href="#FisherBaseFigure.axes">axes</a></dd>
                 <dd id="FisherMultipleAxesFigure.figure" class="variable"><a href="#FisherBaseFigure.figure">figure</a></dd>
                 <dd id="FisherMultipleAxesFigure.handles" class="variable"><a href="#FisherBaseFigure.handles">handles</a></dd>
@@ -5947,6 +6002,8 @@ target="_blank" rel=noreferrer noopener><code>matplotlib.pyplot.bar</code></a></
                                 <dl>
                                     <div><dt><a href="#FisherBaseFigure">FisherBaseFigure</a></dt>
                                 <dd id="FisherBarFigure.__init__" class="function"><a href="#FisherBaseFigure.__init__">FisherBaseFigure</a></dd>
+                <dd id="FisherBarFigure.cycler" class="variable"><a href="#FisherBaseFigure.cycler">cycler</a></dd>
+                <dd id="FisherBarFigure.current_color" class="variable"><a href="#FisherBaseFigure.current_color">current_color</a></dd>
                 <dd id="FisherBarFigure.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
                 <dd id="FisherBarFigure.axes" class="variable"><a href="#FisherBaseFigure.axes">axes</a></dd>
                 <dd id="FisherBarFigure.figure" class="variable"><a href="#FisherBaseFigure.figure">figure</a></dd>
@@ -6615,6 +6672,17 @@ documentation</a>.</p>
 
 
                             </div>
+                            <div id="FisherFigure1D.max_cols" class="classattr">
+                                <div class="attr variable">
+            <span class="name">max_cols</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FisherFigure1D.max_cols"></a>
+    
+    
+
+                            </div>
                             <div id="FisherFigure1D.draw" class="classattr">
                                         <input id="FisherFigure1D.draw-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -7141,7 +7209,9 @@ the y position of the title (default: <code>1.2</code>)</li>
 
             </div>
             <div><dt><a href="#FisherBaseFigure">FisherBaseFigure</a></dt>
-                                <dd id="FisherFigure1D.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
+                                <dd id="FisherFigure1D.cycler" class="variable"><a href="#FisherBaseFigure.cycler">cycler</a></dd>
+                <dd id="FisherFigure1D.current_color" class="variable"><a href="#FisherBaseFigure.current_color">current_color</a></dd>
+                <dd id="FisherFigure1D.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
                 <dd id="FisherFigure1D.axes" class="variable"><a href="#FisherBaseFigure.axes">axes</a></dd>
                 <dd id="FisherFigure1D.figure" class="variable"><a href="#FisherBaseFigure.figure">figure</a></dd>
                 <dd id="FisherFigure1D.handles" class="variable"><a href="#FisherBaseFigure.handles">handles</a></dd>
@@ -8080,7 +8150,7 @@ href="https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.
 target="_blank" rel="noreferrer noopener">the matplotlib
 documentation</a>.</p>
 
-<p><strong>Regarding <code>show_joint_dist</code></strong>: this argument specifies whether we
+<p><strong>Regarding <code><a href="#FisherFigure2D.show_joint_dist">show_joint_dist</a></code></strong>: this argument specifies whether we
 wish to plot the p-value of the <em>joint</em> distribution, or the p-value of
 the probability of a single parameter lying within the bounds projected
 onto a parameter axis. For more details, see <a
@@ -8088,6 +8158,28 @@ href="https://arxiv.org/abs/0906.0664" target="_blank" rel="noopener
 noreferrer">arXiv:0906.0664</a>, section 2.</p>
 </div>
 
+
+                            </div>
+                            <div id="FisherFigure2D.show_1d_curves" class="classattr">
+                                <div class="attr variable">
+            <span class="name">show_1d_curves</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FisherFigure2D.show_1d_curves"></a>
+    
+    
+
+                            </div>
+                            <div id="FisherFigure2D.show_joint_dist" class="classattr">
+                                <div class="attr variable">
+            <span class="name">show_joint_dist</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FisherFigure2D.show_joint_dist"></a>
+    
+    
 
                             </div>
                             <div id="FisherFigure2D.legend" class="classattr">
@@ -8827,7 +8919,9 @@ dictionary, uses the default style (determined automatically).</li>
 
             </div>
             <div><dt><a href="#FisherBaseFigure">FisherBaseFigure</a></dt>
-                                <dd id="FisherFigure2D.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
+                                <dd id="FisherFigure2D.cycler" class="variable"><a href="#FisherBaseFigure.cycler">cycler</a></dd>
+                <dd id="FisherFigure2D.current_color" class="variable"><a href="#FisherBaseFigure.current_color">current_color</a></dd>
+                <dd id="FisherFigure2D.options" class="variable"><a href="#FisherBaseFigure.options">options</a></dd>
                 <dd id="FisherFigure2D.axes" class="variable"><a href="#FisherBaseFigure.axes">axes</a></dd>
                 <dd id="FisherFigure2D.figure" class="variable"><a href="#FisherBaseFigure.figure">figure</a></dd>
                 <dd id="FisherFigure2D.handles" class="variable"><a href="#FisherBaseFigure.handles">handles</a></dd>

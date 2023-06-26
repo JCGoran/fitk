@@ -5,6 +5,7 @@
 ### Added
 
 - Added `ClassyGalaxyCountsDerivative` class to CLASS interfaces
+- Added `CambCMBDerivative` class to CAMB interfaces
 
 ## 0.10.4
 

@@ -25,11 +25,13 @@ matplotlib = [
 sympy = {version = "*"}
 coffe = { version = "*", optional = true }
 classy = { version = "*", optional = true }
+camb = { version = "*", optional = true }
 
 [tool.poetry.extras]
 coffe = ["coffe"]
 classy = ["classy"]
-interfaces = ["coffe", "classy"]
+camb = ["camb"]
+interfaces = ["coffe", "classy", "camb"]
 
 [tool.poetry.dev-dependencies]
 black = "*"

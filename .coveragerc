@@ -3,7 +3,9 @@ source=fitk
 omit =
     fitk/interfaces/coffe_interfaces.py
     fitk/interfaces/classy_interfaces.py
+    fitk/interfaces/camb_interfaces.py
     tests/test_coffe_interfaces.py
     tests/test_classy_interfaces.py
+    tests/test_camb_interfaces.py
     tests/helpers.py
     change_version.py

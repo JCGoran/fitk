@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Added `ClassyGalaxyCountsDerivative` class to CLASS interfaces
+
 ## 0.10.4
 
 ### Added

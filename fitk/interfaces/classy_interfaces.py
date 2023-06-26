@@ -30,6 +30,7 @@ from __future__ import annotations
 from abc import ABC
 from configparser import ConfigParser
 from functools import lru_cache
+from itertools import product
 from pathlib import Path
 from typing import Optional, Union
 
@@ -130,6 +131,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         return {
             "temperature": "tCl" in outputs,
             "polarization": "pCl" in outputs,
+            "galaxy_counts": "nCl" in outputs or "dCl" in outputs,
         }
 
     def _run_classy(self, *args):  # pylint: disable=method-hidden
@@ -155,7 +157,7 @@ class ClassyBaseDerivative(ABC, FisherDerivative):
         """Parse any keyword arguments for the covariance."""
         final_kwargs = {}
         final_kwargs["fsky"] = float(kwargs.pop("fsky", 1))
-        final_kwargs["delta_ell"] = int(
+        final_kwargs["delta_ell"] = round(
             kwargs.pop("delta_ell", 2 / final_kwargs["fsky"])
         )
 
@@ -348,3 +350,209 @@ class ClassyCMBDerivative(ClassyBaseDerivative):
         final_kwargs = self._parse_covariance_kwargs(**kwargs)
 
         return result / final_kwargs["fsky"]
+
+
+class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
+    r"""
+    Interface for galaxy number count quantities.
+
+    Interface for computing derivatives using the galaxy number count signal
+    and covariance.
+    """
+
+    def __init__(
+        self,
+        *args,
+        config: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Create an instance.
+
+        Parameters
+        ----------
+        config : dict, optional
+            the CLASS configuration to use. All parameters are accepted.
+            If not specified, defaults to `{'output' : 'nCl'}`.
+            If the key `output` is missing, it is inserted with a default value
+            `nCl`.
+        """
+        super().__init__(*args, config=config, **kwargs)
+        self._config = config if config is not None else {"output": "nCl"}
+        if not self._config.get("output"):
+            self._config["output"] = "nCl"
+
+    def _parse_redshifts(self):
+        r"""
+        Parse the redshifts from the configuration and return them.
+        """
+        raw_redshifts = self.config.get("selection_mean", "")
+
+        if isinstance(raw_redshifts, (tuple, list, np.ndarray)):
+            redshifts = raw_redshifts if raw_redshifts else [1.0]
+        else:
+            redshifts = (
+                [item.strip() for item in raw_redshifts.split(",")]
+                if raw_redshifts
+                else [1.0]
+            )
+
+        return redshifts
+
+    def _cross_correlations(self) -> int:
+        r"""
+        Return which cross-correlations the output contains.
+        """
+        return int(self.config.get("non_diagonal", 0))
+
+    def _compute_angular_power_spectrum(self, *args):
+        r"""
+        Compute the $C_\ell$s.
+
+        Computes the angular power spectrum (the $C_\ell$s) and returns the
+        number of angular power spectra, the number of redshift bins, and the
+        angular power spectra as a dictionary with keys `(ell, index_z1,
+        index_z2)`
+        """
+        cosmo = self._run_classy(*args)
+
+        outputs = self._parse_outputs()
+
+        z_size = len(self._parse_redshifts())
+
+        if outputs["galaxy_counts"]:
+            # the output from CLASS
+            c_ells = cosmo.density_cl()["dd"]
+
+            # how many angular power spectra do we have
+            ell_size = len(c_ells[0])
+
+            # the angular power spectra as a dictionary
+            c_ells_dict = {}
+
+            # if we have cross-correlations, we need to handle them specially
+            if self._cross_correlations() >= 1 and z_size > 1:
+                for ell in range(2, ell_size):
+                    counter = 0
+                    for i in range(z_size):
+                        for j in range(i, z_size):
+                            c_ells_dict[(ell, i, j)] = c_ells_dict[
+                                (ell, j, i)
+                            ] = c_ells[counter][ell]
+                            counter += 1
+            else:
+                c_ells_dict = {
+                    (ell, i, i): c_ells[i][ell]
+                    for i in range(z_size)
+                    for ell in range(2, ell_size)
+                }
+
+            return ell_size, z_size, c_ells_dict
+
+        return NotImplemented
+
+    def signal(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        Compute the signal ($C_\ell$s) of galaxy number counts.
+
+        Parameters
+        ----------
+        *args
+            the name(s) and fiducial value(s) of the parameter(s) for which we
+            want to compute the covariance
+
+        Notes
+        -----
+        The coordinates used are $(z_1, z_2, \ell)$, in that increasing order.
+        Note that $\ell = \\{0, 1\\}$ are not part of the output, i.e. we
+        impose $\ell_\mathrm{min} = 2$.
+        """
+        *_, c_ells = self._compute_angular_power_spectrum(*args)
+
+        if c_ells is NotImplemented:
+            return c_ells
+
+        return np.array([c_ells[key] for key in sorted(c_ells)])
+
+    def covariance(
+        self,
+        *args: tuple[str, float],
+        **kwargs,
+    ):
+        r"""
+        Compute the covariance of the $C_\ell$s of galaxy number counts.
+
+        Parameters
+        ----------
+        *args
+            the name(s) and fiducial value(s) of the parameter(s) for which we
+            want to compute the covariance
+
+        **kwargs
+            keyword arguments for the covariance. Supported values are:
+            - `fsky`: the sky coverage of the survey (default: 1)
+            - `delta_ell`: the bin width in multipole space (default: 2 / `fsky`)
+
+        Notes
+        -----
+        The covariance is computed as:
+
+        $$
+            \mathsf{C}[(ij), (pq), \ell, \ell'] = \delta_{\ell, \ell'}
+            \frac{
+                C_\ell(i, p) C_\ell(j, q) + C_\ell(i, q) C_\ell(j, p)
+            }
+            {
+                f_\mathrm{sky} \Delta \ell (2 \ell + 1)
+            }
+        $$
+
+        The covariance is block diagonal in $\ell$, that is:
+        $$
+            \begin{pmatrix}
+            \mathsf{C}[(ij), (pq), \ell = 2] & 0 & \ldots & 0\\\
+            0 & \mathsf{C}[(ij), (pq), \ell = 3] & \ldots & 0\\\
+            \vdots & \vdots & \ddots & \vdots\\\
+            0 & 0 & \ldots & \mathsf{C}[(ij), (pq), \ell = \ell_\mathrm{max}]
+            \end{pmatrix}
+        $$
+
+        Note that the covariance may be singular if the cross-correlations
+        between redshift bins are not zero (i.e. if using a non-zero value for
+        the `non_diagonal` parameter).
+        """
+        ell_size, z_size, c_ells = self._compute_angular_power_spectrum(*args)
+
+        if c_ells is NotImplemented:
+            return c_ells
+
+        if self._cross_correlations():
+            blocks = []
+            # we skip ell=0 and ell=1 as CLASS sets them to zero anyway
+            for ell in range(2, ell_size):
+                # array containing the covariance for fixed ell
+                covariance_fixed_ell = np.zeros([z_size] * 4)
+                for i1, i2, j1, j2 in product(  # pylint: disable=invalid-name
+                    range(z_size), repeat=4
+                ):
+                    covariance_fixed_ell[i1, i2, j1, j2] = (
+                        c_ells[(ell, i1, j1)] * c_ells[(ell, i2, j2)]
+                        + c_ells[(ell, i1, j2)] * c_ells[(ell, i2, j1)]
+                    )
+                blocks.append(
+                    np.reshape(covariance_fixed_ell, (z_size * z_size, z_size * z_size))
+                    / (2 * ell + 1)
+                )
+
+            result = block_diag(*blocks)
+
+        else:
+            result = np.diag(np.array([2 * c_ells[key] ** 2 for key in sorted(c_ells)]))
+
+        final_kwargs = self._parse_covariance_kwargs(**kwargs)
+
+        return result / final_kwargs["fsky"] / final_kwargs["delta_ell"]

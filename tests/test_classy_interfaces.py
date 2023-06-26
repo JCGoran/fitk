@@ -8,12 +8,15 @@ import pytest
 from helpers import get_signal_and_covariance, validate_signal_and_covariance
 
 from fitk import D, P
-from fitk.interfaces.classy_interfaces import ClassyCMBDerivative
+from fitk.interfaces.classy_interfaces import (
+    ClassyCMBDerivative,
+    ClassyGalaxyCountsDerivative,
+)
 
 DATADIR_INPUT = Path(__file__).resolve().parent / "data_input"
 
 
-class TestClassy:
+class TestCMB:
     @pytest.mark.parametrize(
         "output,benchmark",
         [
@@ -73,7 +76,81 @@ class TestClassy:
                 1e-3,
             ),
         ]
-        cosmo = ClassyCMBDerivative(config={"output": output, "l_max_scalars": 100})
+        cosmo = ClassyCMBDerivative(
+            config={
+                "output": output,
+                "l_max_scalars": 100,
+                **{_.parameter.name: _.parameter.fiducial for _ in parameters},
+            }
+        )
         fm = cosmo.fisher_matrix(*parameters)
+
+        assert fm.is_valid()
+
+
+class TestGalaxyCounts:
+    @pytest.mark.parametrize(
+        "output,benchmark",
+        [
+            ({}, "nCl"),
+            ({"output": "nCl"}, "nCl"),
+        ],
+    )
+    def test_outputs(self, output, benchmark):
+        cosmo = ClassyGalaxyCountsDerivative(config={"l_max_lss": 50, **output})
+        assert cosmo.config["output"] == benchmark
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
+
+    @pytest.mark.parametrize(
+        "config",
+        [
+            {"selection_mean": "0.1"},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 0},
+            pytest.param(
+                {"selection_mean": "0.1, 0.5", "non_diagonal": 1},
+                marks=pytest.mark.xfail(reason="The covariance matrix is singular"),
+            ),
+        ],
+    )
+    def test_signal_and_covariance(self, config):
+        cosmo = ClassyGalaxyCountsDerivative(
+            config={
+                "l_max_lss": 3,
+                **config,
+            }
+        )
+        signal, cov = get_signal_and_covariance(cosmo)
+        validate_signal_and_covariance(signal, cov)
+
+    @pytest.mark.parametrize(
+        "config",
+        [
+            {"selection_mean": "0.1"},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 0},
+            {"selection_mean": "0.1, 0.5", "non_diagonal": 1},
+        ],
+    )
+    def test_fisher_matrix(self, config, l_max: int = 100):
+        parameters = [
+            D(P("Omega_cdm", 0.3, latex_name=r"$\Omega_\mathrm{cdm}$"), 1e-3),
+            D(P("Omega_b", 0.04, latex_name=r"$\Omega_\mathrm{b}$"), 1e-3),
+            D(P("h", 0.6, latex_name=r"$h$"), 1e-3),
+            D(P("n_s", 0.96, latex_name=r"$n_\mathrm{s}$"), 1e-3),
+            D(
+                P("ln10^{10}A_s", 3.0980, latex_name=r"$\log (10^{10} A_\mathrm{s})$"),
+                1e-3,
+            ),
+        ]
+
+        cosmo = ClassyGalaxyCountsDerivative(
+            config={
+                "l_max_lss": l_max,
+                **config,
+                **{_.parameter.name: _.parameter.fiducial for _ in parameters},
+            }
+        )
+
+        fm = cosmo.fisher_matrix(*parameters, use_pinv=True)
 
         assert fm.is_valid()

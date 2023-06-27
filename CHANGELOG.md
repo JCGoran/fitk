@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.11.1
+
+### Added
+
+- Added CAMB to list of external interfaces
+
+## 0.11.0
+
 ### Added
 
 - Added `ClassyGalaxyCountsDerivative` class to CLASS interfaces

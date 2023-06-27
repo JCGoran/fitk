@@ -29,6 +29,11 @@ can compute Fisher matrices.
   target="_blank" rel="noopener noreferrer">here</a>)
 - for documentation of available interfaces, see `fitk.interfaces.coffe_interfaces`
 
+#### <a href="https://github.com/cmbant/CAMB" target="_blank" rel="noopener noreferrer">CAMB</a>
+
+- installable with `pip install fitk[camb]`
+- for documentation of available interfaces, see `fitk.interfaces.camb_interfaces`
+
 ### Computation of custom derivatives
 To define a new interface for computing derivatives, one should define a class
 that inherits from `fitk.derivatives.FisherDerivative`, and implements

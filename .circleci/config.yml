@@ -34,7 +34,7 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             # we don't need any other dependencies
-            python3 -m pip -e install .[test]
+            python3 -m pip install -e .[test]
             bash scripts/check_coverage.sh
 
 # Invoke jobs via workflows

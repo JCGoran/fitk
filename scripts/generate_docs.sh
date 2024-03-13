@@ -4,6 +4,8 @@
 
 set -eu
 
+this_dir="$(cd "$(dirname "$0")"; pwd -P)"
+cd "${this_dir}/.."
 # the name of the package
 PACKAGE='fitk'
 export PACKAGE
@@ -60,5 +62,7 @@ then
 else
     parse_docs ./docs
 fi
+
+cd - > /dev/null
 
 set +eu

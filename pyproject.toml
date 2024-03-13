@@ -31,18 +31,19 @@ docs = [
     "pdoc",
     "pydocstyle",
 ]
+dev = [
+    "black",
+    "pylint",
+    "mypy",
+]
 
 [project.urls]
 documentation = "https://jcgoran.github.io/fitk/"
 repository = "https://github.com/JCGoran/fitk/"
 
 [tool.poetry.dev-dependencies]
-black = "*"
-pylint = "*"
-mypy = "*"
 jupyterlab = "*"
 vermin = "*"
-coverage = "*"
 python-lsp-server = "*"
 pydocstyle = "*"
 

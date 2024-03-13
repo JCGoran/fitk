@@ -1,37 +1,28 @@
-[tool.poetry]
+[project]
 name = "fitk"
-version = "0.11.1"
+dynamic = ["version"]
 description = "The Fisher Information ToolKit"
-authors = ["JCGoran <goran.jelic-cizmek@unige.ch>"]
-license = "MIT"
+authors = [{ name = "JCGoran", email = "goran.jelic-cizmek@unige.ch" }]
+license = {file = "MIT"}
 readme = "README.md"
+
+requires-python = ">=3.7,<4"
+dependencies = [
+    "numpy==1.21.6;python_version=='3.7'",
+    "numpy>1.22;python_version>='3.8'",
+    "scipy==1.7.3;python_version=='3.7'",
+    "scipy>1.7.3;python_version>='3.8'",
+    "matplotlib==3.5.3;python_version=='3.7'",
+    "matplotlib>3.5.3;python_version>='3.8'",
+]
+
+[project.optional-dependencies]
+sympy = ["sympy"]
+interfaces = ["coffe", "classy", "camb"]
+
+[project.urls]
 documentation = "https://jcgoran.github.io/fitk/"
 repository = "https://github.com/JCGoran/fitk/"
-
-[tool.poetry.dependencies]
-python = ">=3.7,<4"
-numpy = [
-    {version = "1.21.6", python = "==3.7"},
-    {version = ">1.22", python = ">=3.8"}
-]
-scipy = [
-    {version = "1.7.3", python = "==3.7"},
-    {version = ">1.7.3", python = ">=3.8"}
-]
-matplotlib = [
-    {version = "3.5.3", python = "==3.7"},
-    {version = ">3.5.3", python = ">=3.8"}
-]
-sympy = {version = "*"}
-coffe = { version = "*", optional = true }
-classy = { version = "*", optional = true }
-camb = { version = "*", optional = true }
-
-[tool.poetry.extras]
-coffe = ["coffe"]
-classy = ["classy"]
-camb = ["camb"]
-interfaces = ["coffe", "classy", "camb"]
 
 [tool.poetry.dev-dependencies]
 black = "*"
@@ -51,5 +42,11 @@ python-lsp-server = "*"
 pydocstyle = "*"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "setuptools-scm>=8.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[tool.setuptools.packages.find]
+where = ["python"]
+namespaces = false

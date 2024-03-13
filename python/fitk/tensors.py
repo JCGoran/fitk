@@ -1018,6 +1018,7 @@ class FisherMatrix:
         if name not in self.names:
             raise ParameterNotFoundError(name, self.names)
 
+        # FIXME pylint E1126
         return self.fiducials[np.where(self.names == name)][0]
 
     def set_fiducial(self, name: str, value: float):
@@ -1242,6 +1243,7 @@ class FisherMatrix:
             and all(hasattr(_, "__index__") for _ in kwargs["key"])
         ):
             index = np.array(kwargs["key"], dtype=int)
+            # FIXME pylint E1126
             names = self.names[index]
 
         # either 'fiducials' or 'latex_names'
@@ -1646,6 +1648,7 @@ class FisherMatrix:
             latex_names = []
             for name in names:
                 fiducial1 = (
+                    # FIXME pylint E1126
                     self.fiducials[np.where(self.names == name)][0]
                     if name in self.names
                     else None
@@ -1722,7 +1725,7 @@ class FisherMatrix:
     def __neg__(self) -> FisherMatrix:
         """Return the negation of the Fisher object."""
         return self.__class__(
-            -self.values,
+            -np.array(self.values),
             names=self.names,
             latex_names=self.latex_names,
             fiducials=self.fiducials,

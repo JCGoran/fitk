@@ -3,8 +3,8 @@
 set -eux
 
 fix(){
-    modules='fitk/ tests/'
-    poetry run black ${modules}
+    modules='python/fitk/ tests/'
+    python -m black ${modules}
 }
 
 fix

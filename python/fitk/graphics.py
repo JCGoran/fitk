@@ -1053,9 +1053,9 @@ class FisherBarFigure(FisherBaseFigure):
                     color=color,
                     label=label,
                     **{
-                        options[kind]["error_name"]: yerr
-                        if kind != "barh"
-                        else list(reversed(yerr))
+                        options[kind]["error_name"]: (
+                            yerr if kind != "barh" else list(reversed(yerr))
+                        )
                     },
                     **options[kind]["extra_kwargs"],
                     **kwargs,
@@ -1203,16 +1203,20 @@ class FisherBarFigure(FisherBaseFigure):
             for color, label, x, y in zip(
                 computed_parameters.colors,
                 computed_parameters.labels,
-                computed_parameters.x_array
-                if kind != "barh"
-                else reversed(computed_parameters.x_array),
+                (
+                    computed_parameters.x_array
+                    if kind != "barh"
+                    else reversed(computed_parameters.x_array)
+                ),
                 computed_parameters.y_array,
             ):
                 getattr(ax, kind)(
                     x,
-                    (y * 100 if percent else y)
-                    if kind != "barh"
-                    else list(reversed(y * 100 if percent else y)),
+                    (
+                        (y * 100 if percent else y)
+                        if kind != "barh"
+                        else list(reversed(y * 100 if percent else y))
+                    ),
                     color=color,
                     label=label,
                     **options[kind]["extra_kwargs"],
@@ -1220,9 +1224,11 @@ class FisherBarFigure(FisherBaseFigure):
                 )
                 getattr(ax, kind)(
                     x,
-                    -(y * 100 if percent else y)
-                    if kind != "barh"
-                    else list(reversed(-y * 100 if percent else -y)),
+                    (
+                        -(y * 100 if percent else y)
+                        if kind != "barh"
+                        else list(reversed(-y * 100 if percent else -y))
+                    ),
                     color=color,
                     label=None,
                     **options[kind]["extra_kwargs"],
@@ -2326,9 +2332,13 @@ class FisherFigure2D(FisherMultipleAxesFigure):
                             namex,
                             namey,
                             ax=ax[i, j],
-                            scaling_factor=self.contour_levels_2d[index][0]
-                            if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
+                            scaling_factor=(
+                                self.contour_levels_2d[index][0]
+                                if not self.show_joint_dist
+                                else np.sqrt(
+                                    _get_chisq(self.contour_levels_2d[index][0])
+                                )
+                            ),
                             fill=False,
                             zorder=2,
                             **kwargs,
@@ -2340,9 +2350,13 @@ class FisherFigure2D(FisherMultipleAxesFigure):
                             namex,
                             namey,
                             ax=ax[i, j],
-                            scaling_factor=self.contour_levels_2d[index][0]
-                            if not self.show_joint_dist
-                            else np.sqrt(_get_chisq(self.contour_levels_2d[index][0])),
+                            scaling_factor=(
+                                self.contour_levels_2d[index][0]
+                                if not self.show_joint_dist
+                                else np.sqrt(
+                                    _get_chisq(self.contour_levels_2d[index][0])
+                                )
+                            ),
                             fill=True,
                             alpha=self.contour_levels_2d[index][1],
                             ec=None,
@@ -2357,10 +2371,12 @@ class FisherFigure2D(FisherMultipleAxesFigure):
                             namex,
                             namey,
                             ax=ax[i, j],
-                            scaling_factor=self.contour_levels_2d[index - 1][0]
-                            if not self.show_joint_dist
-                            else np.sqrt(
-                                _get_chisq(self.contour_levels_2d[index - 1][0])
+                            scaling_factor=(
+                                self.contour_levels_2d[index - 1][0]
+                                if not self.show_joint_dist
+                                else np.sqrt(
+                                    _get_chisq(self.contour_levels_2d[index - 1][0])
+                                )
                             ),
                             fill=True,
                             alpha=1.0,
@@ -2379,9 +2395,11 @@ class FisherFigure2D(FisherMultipleAxesFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=self.contour_levels_2d[0][0]
-                        if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(self.contour_levels_2d[0][0])),
+                        scaling_factor=(
+                            self.contour_levels_2d[0][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[0][0]))
+                        ),
                         zorder=2,
                         fill=False,
                         **kwargs,
@@ -2398,9 +2416,11 @@ class FisherFigure2D(FisherMultipleAxesFigure):
                         namex,
                         namey,
                         ax=ax[i, j],
-                        scaling_factor=self.contour_levels_2d[0][0]
-                        if not self.show_joint_dist
-                        else np.sqrt(_get_chisq(self.contour_levels_2d[0][0])),
+                        scaling_factor=(
+                            self.contour_levels_2d[0][0]
+                            if not self.show_joint_dist
+                            else np.sqrt(_get_chisq(self.contour_levels_2d[0][0]))
+                        ),
                         fill=True,
                         alpha=self.contour_levels_2d[0][1],
                         ec=None,

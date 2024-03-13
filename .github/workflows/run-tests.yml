@@ -112,7 +112,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install project and COFFE
-      - run: |
+        run: |
           python -m pip install .[test]
           python -m pip install coffe
 
@@ -134,7 +134,7 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install CAMB
+      - name: Install project and CAMB
         run: |
           python -m pip install .[test]
           python -m pip install camb

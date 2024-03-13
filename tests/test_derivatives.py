@@ -188,22 +188,14 @@ class GaussianDerivative(FisherDerivative):
         mu: float,
         sigma: float,
     ):
-        return (
-            self.signal(("mu", mu), ("sigma", sigma))
-            * (mu**2 - sigma**2)
-            / sigma**4
-        )
+        return self.signal(("mu", mu), ("sigma", sigma)) * (mu**2 - sigma**2) / sigma**4
 
     def first_derivative_wrt_sigma(
         self,
         mu: float,
         sigma: float,
     ):
-        return (
-            self.signal(("mu", mu), ("sigma", sigma))
-            * (mu**2 - sigma**2)
-            / sigma**3
-        )
+        return self.signal(("mu", mu), ("sigma", sigma)) * (mu**2 - sigma**2) / sigma**3
 
     def mixed_derivative(
         self,

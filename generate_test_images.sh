@@ -7,6 +7,6 @@ set -eux
 image_directory='tests/data_input/'
 modules="${1:-tests/test_graphics.py}"
 
-python3 -m poetry run pytest --mpl-generate-path="${image_directory}" "${modules}"
+python -m pytest --mpl-generate-path="${image_directory}" "${modules}"
 
 set +eux

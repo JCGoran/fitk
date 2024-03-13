@@ -1,5 +1,5 @@
 r"""
-### FITK - Fisher Information ToolKit, version $VERSION
+### FITK - Fisher Information ToolKit
 
 # What is it?
 
@@ -466,13 +466,15 @@ Add it as an N-dimensional Gaussian:
 ... )
 """
 
+import sys
 from pathlib import Path
 
-__version__ = (
-    (Path(__file__).resolve().parent / "VERSION.txt")
-    .read_text(encoding="utf-8")
-    .strip()
-)
+if sys.version_info >= (3, 9):
+    from importlib.metadata import version
+else:
+    from importlib_metadata import version
+
+__version__ = version("fitk")
 
 from fitk import interfaces, operations, utilities
 from fitk.derivatives import D, FisherDerivative

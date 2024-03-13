@@ -14,11 +14,23 @@ dependencies = [
     "scipy>1.7.3;python_version>='3.8'",
     "matplotlib==3.5.3;python_version=='3.7'",
     "matplotlib>3.5.3;python_version>='3.8'",
+    "importlib_metadata;python_version<'3.9'",
+    "sympy",
 ]
 
 [project.optional-dependencies]
-sympy = ["sympy"]
 interfaces = ["coffe", "classy", "camb"]
+test = [
+    "cosmicfish@git+https://github.com/jcgoran/cosmicfish@feature/pip-install",
+    "pytest",
+    "pytest-mpl",
+    "pytest-cov",
+    "coverage",
+]
+docs = [
+    "pdoc",
+    "pydocstyle",
+]
 
 [project.urls]
 documentation = "https://jcgoran.github.io/fitk/"
@@ -26,18 +38,11 @@ repository = "https://github.com/JCGoran/fitk/"
 
 [tool.poetry.dev-dependencies]
 black = "*"
-pytest = "*"
 pylint = "*"
 mypy = "*"
 jupyterlab = "*"
-cosmicfish = {git = "https://github.com/jcgoran/cosmicfish", rev = "feature/pip-install"}
 vermin = "*"
-pytest-cov = "*"
 coverage = "*"
-pdoc = "*"
-pytest-mpl = "*"
-packaging = "*"
-importlib-metadata = "*"
 python-lsp-server = "*"
 pydocstyle = "*"
 
@@ -50,3 +55,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["python"]
 namespaces = false
+
+[tool.pytest.ini_options]
+paths = ["tests", "python/fitk"]

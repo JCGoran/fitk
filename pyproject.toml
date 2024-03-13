@@ -6,13 +6,10 @@ authors = [{ name = "JCGoran", email = "goran.jelic-cizmek@unige.ch" }]
 license = {file = "MIT"}
 readme = "README.md"
 
-requires-python = ">=3.7,<4"
+requires-python = ">=3.8,<4"
 dependencies = [
-    "numpy==1.21.6;python_version=='3.7'",
     "numpy>1.22;python_version>='3.8'",
-    "scipy==1.7.3;python_version=='3.7'",
     "scipy>1.7.3;python_version>='3.8'",
-    "matplotlib==3.5.3;python_version=='3.7'",
     "matplotlib>3.5.3;python_version>='3.8'",
     "importlib_metadata;python_version<'3.9'",
     "sympy",

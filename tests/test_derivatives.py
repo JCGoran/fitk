@@ -122,8 +122,8 @@ class LinearDerivative(FisherDerivative):
             name, value = arg
             if name == "x":
                 x = value
-
-        return np.array([x])
+                return np.array([x])
+        raise NotImplementedError("Something went wrong")
 
 
 class GaussianDerivative(FisherDerivative):

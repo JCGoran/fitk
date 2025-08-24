@@ -1858,6 +1858,8 @@ class FisherMatrix:
 
             if other.ndim == self.ndim:
                 values = self.values / reindex_array(other.values, index)
+            else:
+                raise MismatchingSizeError(other.ndim, self.ndim)
         else:
             values = self.values / other
 
@@ -1892,6 +1894,9 @@ class FisherMatrix:
 
             if other.ndim == self.ndim:
                 values = self.values * reindex_array(other.values, index)
+            else:
+                raise MismatchingSizeError(other.ndim, self.ndim)
+
         else:
             values = self.values * other
 

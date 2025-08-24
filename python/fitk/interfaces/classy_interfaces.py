@@ -436,9 +436,9 @@ class ClassyGalaxyCountsDerivative(ClassyBaseDerivative):
                     counter = 0
                     for i in range(z_size):
                         for j in range(i, z_size):
-                            c_ells_dict[(ell, i, j)] = c_ells_dict[
-                                (ell, j, i)
-                            ] = c_ells[counter][ell]
+                            c_ells_dict[(ell, i, j)] = c_ells_dict[(ell, j, i)] = (
+                                c_ells[counter][ell]
+                            )
                             counter += 1
             else:
                 c_ells_dict = {

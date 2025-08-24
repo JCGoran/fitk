@@ -575,6 +575,8 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
                         np.full(interp_size_limit, bias.values[-1]),
                     ]
                 )
+        else:
+            raise ValueError(f"Unable to interpolate beyond {interp_size_limit}")
 
         for index, bias in enumerate(self._allowed_biases):
             getattr(cosmo, f"set_{bias.longname}_bias1")(
@@ -630,6 +632,8 @@ class CoffeMultipolesBiasDerivative(CoffeMultipolesDerivative):
                         np.full(interp_size_limit, bias.values[-1]),
                     ]
                 )
+        else:
+            raise ValueError(f"Unable to interpolate beyond {interp_size_limit}")
 
         for index, bias in enumerate(self._allowed_biases):
             getattr(cosmo, f"set_{bias.longname}_bias1")(

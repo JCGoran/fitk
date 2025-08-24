@@ -1,7 +1,11 @@
-name: Publish tagged version to PyPI
-
+name: Publish to PyPI
 on:
-  push:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version of the project to publish'
+        type: string
+        required: true
 
 jobs:
   pypi-publish:
@@ -11,27 +15,27 @@ jobs:
       name: pypi
       url: https://pypi.org/p/fitk
     permissions:
+      contents: read
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
-      #----------------------------------------------
-      #       check-out repo and set-up python
-      #----------------------------------------------
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      #----------------------------------------------
-      #        poetry setup
-      #----------------------------------------------
-      - uses: snok/install-poetry@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: 1.4.2
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+          python-version: '3.11'
 
-      - name: Build wheel and tarball
-        run: poetry build --no-interaction
+      - name: Checkout project
+        uses: actions/checkout@v4
 
-      - name: Publish package distributions to PyPI
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      - name: Build package
+        run: SETUPTOOLS_SCM_PRETEND_VERSION=${{ inputs.version }} python3 -m pip wheel . --wheel-dir dist/ --no-deps
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: dist/*.whl
+
+      - name: Publish package distributions to test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
